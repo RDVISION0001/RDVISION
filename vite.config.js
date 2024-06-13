@@ -15,7 +15,7 @@ export default defineConfig({
 // import react from '@vitejs/plugin-react'
 
 // export default defineConfig({
-//   plugins: [react()],
+// abc  plugins: [react()],
 //   server: {
 //     port: 8080 // Change this to the port you desire
 //   }
