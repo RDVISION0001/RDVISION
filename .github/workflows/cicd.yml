@@ -26,7 +26,6 @@ jobs:
       - name: Pull image from docker hub
         run: docker pull hanusahani4/rdvisioncrmui:latest 
       - name: Delete Old Container
-        run: docker rm -f reactContainer
+        run: docker rm -f reactContainer || true
       - name: Run docker container
         run: docker run -d -p 3000:3000 --name reactContainer hanusahani4/rdvisioncrmui
-   
