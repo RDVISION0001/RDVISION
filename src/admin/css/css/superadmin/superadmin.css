@@ -1,0 +1,124 @@
+.superadmin-page .main-content-block2658 {
+  background-color: #f9f9f9;
+}
+
+.sadmin-top-section .card {
+  border-radius: 1rem;
+  background-color: #fff;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(51, 51, 51, 0.05);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.sadmin-top-section .card .div-top .title {
+  color: #a0aec0;
+  font-size: 1rem;
+  margin: 0;
+}
+.sadmin-top-section .card .div-top .sales {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.sadmin-top-section .card .div-top .sales .indicators {
+  font-size: 1rem;
+  font-weight: 700;
+  color: green;
+}
+.sadmin-top-section .card .icon-wrapper {
+  font-size: 1.5rem;
+  display: grid;
+  place-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background-color: #4fd1c5;
+  color: #fff;
+}
+
+.map-and-rankings {
+  padding: 3rem 0;
+}
+.map-and-rankings .graph-wrapper {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 1rem;
+  position: relative;
+}
+.map-and-rankings .graph-wrapper .title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #343c6a;
+  padding: 1rem 1rem 1.75rem;
+}
+.map-and-rankings .rank-card {
+  padding: 1rem;
+  box-shadow: 0 4px 14px 0 rgba(51, 51, 51, 0.05);
+  margin-bottom: 2.25rem;
+  border-radius: 1rem;
+  background-color: #fff;
+}
+.map-and-rankings .rank-card:last-child {
+  margin-bottom: 0;
+}
+.map-and-rankings .rank-card .heading {
+  text-align: center;
+  padding: 0.5rem 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.map-and-rankings .rank-card .table-wrapper .table {
+  vertical-align: middle;
+}
+.map-and-rankings .rank-card .table-wrapper .table tr {
+  text-align: center;
+}
+.map-and-rankings .rank-card .table-wrapper .table tr td {
+  padding: 1rem 1rem;
+  font-size: 0.9rem;
+}
+.map-and-rankings .rank-card .table-wrapper .table tr td:first-child {
+  padding: 1rem 0.25rem;
+}
+.map-and-rankings .rank-card .table-wrapper .table tr td:nth-child(2) {
+  font-weight: 600;
+  padding: 1rem 0.25rem;
+}
+.map-and-rankings .rank-card .table-wrapper .table tr:last-child td {
+  border: unset;
+}
+.map-and-rankings .rank-card .table-wrapper .profile-wrapper {
+  max-width: 40px;
+  width: clamp(2rem, 2vw, 3rem);
+}
+
+.ticket-modal .modal-content {
+  background-color: transparent;
+  background-image: url("../../img/ticket.svg");
+  background-position: center;
+  background-size: 100%;
+  border: none !important;
+  background-repeat: no-repeat;
+  padding: 2rem 1rem;
+  border-radius: 0;
+}
+.ticket-modal .modal-content .heading-area .vertical-write {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  text-align: center;
+}
+.ticket-modal .modal-content .heading-area .vertical-write .title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0;
+}
+.ticket-modal .modal-content .heading-area .vertical-write .ticket-id {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-left: 0.75rem;
+}
+.ticket-modal .modal-content .heading-area .vertical-write .ticket-id i {
+  rotate: 90deg;
+}/*# sourceMappingURL=superadmin.css.map */

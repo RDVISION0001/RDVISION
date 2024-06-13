@@ -1,0 +1,28 @@
+$dark-text: #343c6a;
+$dark: #123088;
+$mute-text: #a0aec0;
+$ocean-green: #4fd1c5;
+$yellow: #387adf;
+// $yellow: #fba834;
+$shadow: 0 4px 14px 0 rgba(51, 51, 51, 0.05);
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+.badge {
+  color: $dark-text;
+}
+@mixin v-center-flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sales-status-page,
+.orders-status-page {
+}

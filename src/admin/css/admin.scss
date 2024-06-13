@@ -1,0 +1,194 @@
+$shadow: 0 4px 14px 0 rgba(51, 51, 51, 0.05);
+$primary: #123088;
+$fff: #ffffff;
+.btn-assign {
+  background-color: $primary;
+  border-color: $primary;
+  color: $fff;
+  border-radius: 0;
+  &:hover {
+    background-color: rgba($color: $primary, $alpha: 0.8);
+    color: $fff;
+  }
+}
+// --------------------------------
+.user-details-section {
+  border-radius: 1rem;
+  background: linear-gradient(to left, #123088, #c7f1ff);
+  .profile-card-wrapper {
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    .img-wrapper {
+      max-width: 140px;
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+    .content-block {
+      .title {
+        font-size: 1.55rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+      }
+      .sub-title {
+        font-size: 0.9rem;
+        margin-bottom: 0.45rem;
+      }
+      .ip {
+        margin-bottom: 0.45rem;
+        display: block;
+      }
+      .btn-break {
+        background-color: rgb(255, 45, 18);
+        color: #fff;
+        padding: 0.2rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+  .coundown-timer {
+    rect {
+      fill: transparent;
+    }
+    .timing-wrapper {
+      padding: 0 0 1rem;
+      text-align: center;
+      p {
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        margin-bottom: 0.05rem;
+        color: #fff;
+        .break-timer {
+          color: #ff0000;
+        }
+      }
+      small {
+        font-size: 0.7rem;
+        color: #fff;
+      }
+    }
+  }
+}
+// user page -----------------
+.user-management-page {
+  .user-details-section {
+    background: #fff;
+    box-shadow: $shadow;
+    padding: 1.25rem 1.5rem;
+    background-image: url("../../img/texturecard.png");
+    background-size: cover;
+    .card {
+      border-radius: 1rem;
+      background-color: #fff;
+      border: none;
+      box-shadow: 0 4px 14px 0 rgba(51, 51, 51, 0.05);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: space-between;
+      .div-top {
+        .title {
+          color: #a0aec0;
+          font-size: 1rem;
+          margin: 0;
+        }
+        .sales {
+          font-size: 2rem;
+          font-weight: 700;
+          .indicators {
+            font-size: 1rem;
+            font-weight: 700;
+            color: green;
+          }
+        }
+      }
+      .icon-wrapper {
+        font-size: 1.5rem;
+        display: grid;
+        place-content: center;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 1rem;
+        background-color: #4fd1c5;
+        color: #fff;
+      }
+    }
+  }
+  .data-table-bgs_02x24 {
+    .table-wrapper {
+      .recent-transactions-tab-body {
+        .table {
+          tr {
+            td {
+              vertical-align: middle;
+              // text-align: center;
+              .status {
+                background-color: #f2f2f2;
+                height: 1rem;
+                width: 1rem;
+                padding: 0;
+                &.pending {
+                  background-color: rgb(255, 187, 0);
+                }
+                &.complete {
+                  background-color: rgb(0, 187, 16);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+//  ----- tickets-page ------
+
+.tickets-page {
+  .data-table-bgs_02x24 {
+    .table-wrapper {
+      .heading-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        .title {
+          margin: 0;
+        }
+      }
+      .recent-transactions-tab-body {
+        .table {
+          tr {
+            td {
+              vertical-align: middle;
+              // text-align: center;
+              .status {
+                background-color: #f2f2f2;
+                height: 1rem;
+                width: 1rem;
+                padding: 0;
+                &.pending {
+                  background-color: rgb(255, 187, 0);
+                }
+                &.complete {
+                  background-color: rgb(0, 187, 16);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .filter-section {
+    margin-top: 2rem;
+    box-shadow: $shadow;
+    padding: 1rem 0;
+    border-radius: 16px;
+  }
+}
