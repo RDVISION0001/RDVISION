@@ -2,23 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
-////copmponents////
+//// Components ////
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-////auth
+//// Auth ////
 import { useAuth } from '../auth/AuthContext';
 
-
-
 function invoicesa() {
-
   const { userId } = useAuth();
 
-  // State for modal visibilit
+  // State for modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -31,23 +28,22 @@ function invoicesa() {
   const [ticketDetails, setTicketDetails] = useState(null);
 
 
-
   // Fetch tickets from ticketByStatus
   useEffect(() => {
     const fetchTickets = async () => {
+      if (!userId) return; 
       try {
         const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
           params: {
-            userId: userId,
+            userId,
             ticketStatus: 'Sale'
           }
         });
         setTickets(response.data.dtoList);
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 1000);
       } catch (err) {
         console.error('Error fetching tickets:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -61,7 +57,6 @@ function invoicesa() {
         try {
           const response = await axiosInstance.get(`/third_party_api/ticket/getTicket/${selectedTicketId}`);
           setTicketDetails(response.data.dtoList);
-          // handleShow();
         } catch (err) {
           console.error('Error fetching ticket details:', err);
         }
@@ -76,7 +71,6 @@ function invoicesa() {
 
   // Form state for adding products
   const [formData, setFormData] = useState({
-
     // brand: '',
     // treatment: '',
     quantity: '',
@@ -116,7 +110,6 @@ function invoicesa() {
   // State for products
   const [products, setProducts] = useState([]);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,7 +124,6 @@ function invoicesa() {
 
   const [orderDetails, setOrderDetails] = useState(null);
 
-
   // Fetch order details from apiB when selectedTicketId changes
   useEffect(() => {
     if (selectedTicketId) {
@@ -139,7 +131,6 @@ function invoicesa() {
         try {
           const response = await axiosInstance.get(`/order/getOrder/${selectedTicketId}`);
           setOrderDetails(response.data.dtoList);
-          // handleShow();
         } catch (err) {
           console.error('Error fetching order details:', err);
         }
@@ -149,15 +140,13 @@ function invoicesa() {
     }
   }, [selectedTicketId]);
 
-
-  //create shipping address
+  // Create shipping address
   useEffect(() => {
     if (selectedTicketId) {
       const fetchAddressDetails = async () => {
         try {
           const response = await axiosInstance.get(`/address/getAddress/${selectedTicketId}`);
           setaAddressDat(response.data.dto);
-          
         } catch (err) {
           console.error('Error fetching address details:', err);
         }
@@ -167,9 +156,7 @@ function invoicesa() {
     }
   }, [selectedTicketId]);
 
-
-  //create shipping address
-  const [addressData, setAddressData] = useState({
+  const [addressData, setaAddressDat] = useState({
     houseNumber: '',
     landmark: '',
     city: '',
@@ -177,16 +164,16 @@ function invoicesa() {
     state: '',
     country: '',
   });
-  
+
   const [response, setResponse] = useState(null);
-  
+
   const handleshipChange = (e) => {
-    setAddressData({
+    setaAddressDat({
       ...addressData,
       [e.target.name]: e.target.value
     });
   };
-  
+
   const handleshipSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -210,7 +197,19 @@ function invoicesa() {
       setLoading(false);
     }
   };
-  
+
+  // Function to handle sending invoice
+  const handleSendInvoice = async () => {
+    try {
+      const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}`);
+      console.log('Response:', response.data);
+      toast.success('Invoice sent successfully!');
+    } catch (error) {
+      console.error('Error sending invoice:', error);
+      toast.error('Failed to send invoice');
+    }
+  };
+
 
   return (
     <>
@@ -341,70 +340,69 @@ function invoicesa() {
                           )}
                           {/* <!-- ticket details ends here --> */}
                           <div className="accordion status-wrappers" id="accordionExample">
-                          {orderDetails ? (
-  <div className="accordion-item">
-    <h2 className="accordion-header">
-      <button className="accordion-button" type="button" data-bs-toggle="collapseOne" data-bs-target="collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
-    </h2>
-    <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-      <div className="accordion-body">
-        <div className="order-lists">
-          <div className="items-wrapper">
-            <div className="list-item header">
-              <p className="title"></p>
-              <p className="cost"></p>
-            </div>
-            <div className="list-item otr-list">
-              <p className="item">TicketId: <span>{orderDetails.ticketId || ""}</span></p>
-              <p className="item">UserId: <span>{orderDetails.userId || ""}</span></p>
-            </div>
-          </div>
-          {orderDetails.productOrders && orderDetails.productOrders.length > 0 ? (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th scope="col">Name</th>
-                  <th scope="col">Brand</th>
-                  <th scope="col">Composition</th>
-                  <th scope="col">Size</th>
-                  <th scope="col">Pills Qty</th>
-                  <th scope="col">Quantity</th>
-                  <th scope="col">Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orderDetails.productOrders.map((productOrder, index) => (
-                  <tr key={index}>
-                    <td>{productOrder.product[0].name || ""}</td>
-                    <td>{productOrder.product[0].brand || ""}</td>
-                    <td>{productOrder.product[0].composition || ""}</td>
-                    <td>{productOrder.product[0].packagingSize || ""}</td>
-                    <td>{productOrder.product[0].pillsQty || ""}</td>
-                    <td>{productOrder.quantity || ""}</td>
-                    <td>{productOrder.product[0].price || ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No products found</p>
-          )}
-          <div className="total">
-            <p>Total</p>
-            <p>{orderDetails.totalPayableAmount || ""}</p>
-          </div>
-          <div className="add-more-products-wrapper">
-            <Button href="javascript:void()" onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-) : (
-  <p>No order details available</p>
-)}
-
-              
+                            {orderDetails ? (
+                              <div className="accordion-item">
+                                <h2 className="accordion-header">
+                                  <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
+                                </h2>
+                                <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                  <div className="accordion-body">
+                                    <div className="order-lists">
+                                      <div className="items-wrapper">
+                                        <div className="list-item header">
+                                          <p className="title"></p>
+                                          <p className="cost"></p>
+                                        </div>
+                                        <div className="list-item otr-list">
+                                          <p className="item">TicketId: <span>{orderDetails.ticketId}</span></p>
+                                          <p className="item">Quantity : <span>{orderDetails.quantity}</span></p>
+                                          <p className="item">UserId: <span>{orderDetails.userId}</span></p>
+                                        </div>
+                                      </div>
+                                      <table className="table">
+                                        <thead>
+                                          <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Brand</th>
+                                            <th scope="col">Composition</th>
+                                            <th scope="col">Size</th>
+                                            <th scope="col">Pills Qty</th>
+                                            <th scope="col">Price</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {orderDetails.productOrders && orderDetails.productOrders.map((productOrder, index) => (
+                                            productOrder.product && productOrder.product[0] ? (
+                                              <tr key={index}>
+                                                <td>{productOrder.product[0].name}</td>
+                                                <td>{productOrder.product[0].brand}</td>
+                                                <td>{productOrder.product[0].composition}</td>
+                                                <td>{productOrder.product[0].packagingSize}</td>
+                                                <td>{productOrder.product[0].pillsQty}</td>
+                                                <td>{productOrder.product[0].price}</td>
+                                              </tr>
+                                            ) : (
+                                              <tr key={index}>
+                                                <td colSpan="6">Product details not available</td>
+                                              </tr>
+                                            )
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                      <div className="total">
+                                        <p>Total</p>
+                                        <p>{orderDetails.totalPayableAmount}</p>
+                                      </div>
+                                      <div className="add-more-products-wrapper">
+                                        <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <p>Loading...</p>
+                            )}
 
                             {/* /////////////////shipping address */}
 
@@ -504,12 +502,10 @@ function invoicesa() {
                               </div>
                             </div>
 
-
-
                             {/* <!-- order items details ends here --> */}
                             <div className="accordion-item payment">
                               <h2 className="accordion-header">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="paymentDetails" aria-expanded="false" aria-controls="paymentDetails">
                                   <span>Payment Details</span>
                                   <span className="status-icon pending">
                                     {/* <!-- change status from pending to success when payment done and make the second i enable and first one to disable--> */}
@@ -518,12 +514,12 @@ function invoicesa() {
                                   </span>
                                 </button>
                               </h2>
-                              <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                              <div id="paymentDetails" className="accordion-collapse collapse show" data-bs-parent="#accordionAddressDetails">
                                 <div className="accordion-body">
                                   <p className="text text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
                                   <div className="btns-group d-flex gap-3 justify-content-center mt-4">
                                     <a href="#" className="btn btn-primary">Check Status</a>
-                                    <a href="#" className="btn btn-warning">Send Invoice</a>
+                                    <a variant="primary" onClick={handleSendInvoice} className="btn btn-warning">Send Invoice</a>
                                     <a href="#" className="btn btn-success">Mark As Paid</a>
                                     <a href="#" className="btn btn-danger">Mark As Hold</a>
                                   </div>
@@ -544,6 +540,7 @@ function invoicesa() {
                           </div>
                         </div>
                       </div>
+
                       {/* <!-- tab two  --> */}
                       <div className="tab-pane fade show" id="v-pills-ticket2" role="tabpanel" aria-labelledby="v-pills-ticket2-tab" tabindex="0">
                         <div className="order-cards-details-wrapper-main">

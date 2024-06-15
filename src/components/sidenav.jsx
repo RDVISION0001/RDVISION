@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
 
+
+
+
 function Sidenav() {
-  const { roleName } = useAuth();
+  const { roleName, firstName } = useAuth();
+
   // const navigate = useNavigate();
 
   // useEffect(() => {
@@ -21,19 +25,19 @@ function Sidenav() {
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
       <ul className="nav sidebar2658 flex-column w-100">
-        <li className="nav-item d-flex align-items-center user-logo">
-          <div className="profile-icon">
-            <i className="fa-solid fa-display"></i>
-          </div>
-          <a href="#" className="nav-link h3 my-2 w-100 d-block">
-            Super Admin
-            <small className="d-block">UID: DIGVijay</small>
-          </a>
-        </li>
 
         {/* SuperAdmin */}
         {roleName === 'SuperAdmin' && (
           <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon">
+                <i className="fa-solid fa-display"></i>
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
             <li className="nav-item">
               <NavLink to="/super_admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
@@ -76,6 +80,15 @@ function Sidenav() {
         {/* Admin */}
         {roleName === 'Admin' && (
           <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon">
+                <i className="fa-solid fa-display"></i>
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
             <li className="nav-item">
               <NavLink to="/admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
@@ -118,18 +131,27 @@ function Sidenav() {
         {/* Agent */}
         {roleName === 'Agent' && (
           <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon">
+                <i className="fa-solid fa-display"></i>
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
             <li className="nav-item">
               <NavLink to="/agent_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink to="/agent_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
               </NavLink>
-            </li>
+            </li> */}
             <li className="nav-item">
               <NavLink to="/agent_tickets" className="nav-link">
                 <i className="fa-solid fa-ticket"></i>
@@ -160,6 +182,15 @@ function Sidenav() {
         {/* Manager */}
         {roleName === 'Manager' && (
           <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon">
+                <i className="fa-solid fa-display"></i>
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
             <li className="nav-item">
               <NavLink to="/manager_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
@@ -199,14 +230,14 @@ function Sidenav() {
           </>
         )}
 
-        <li className="nav-item">
+        {/* <li className="nav-item">
           <NavLink to="/settings" className="nav-link">
             <i className="fa-solid fa-gear"></i>
             <span className="nav-text">Settings</span>
           </NavLink>
-        </li>
+        </li> */}
         <li className="nav-item">
-          <NavLink to="/logout" className="nav-link">
+          <NavLink to="/" className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
             <span className="nav-text">Log Out</span>
           </NavLink>

@@ -48,6 +48,7 @@ import Invoicesa from './agent/invoicesa';
 import Ordersa from './agent/ordersa';
 import Salesa from './agent/salesa';
 import Ticketsa from './agent/ticketsa';
+import Usersa from './agent/usersa';
 
 // componenets css
 import './components/css/themedigproX01.css';
@@ -132,6 +133,7 @@ function App() {
             <Route exact path="/agent_orders" element={<Ordersa />} />
             <Route exact path="/agent_sales" element={<Salesa />} />
             <Route exact path="/agent_tickets" element={<Ticketsa />} />
+            <Route exact path="/agent_users" element={<Usersa />} />
 
             {/* manager */}
             <Route exact path="/manager_index" element={<Indexm />} />

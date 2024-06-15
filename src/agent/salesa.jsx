@@ -175,8 +175,6 @@ function salesa() {
                             <th tabindex="0">Size</th>
                             <th tabindex="0">Pills Qty</th>
                             <th tabindex="0">price</th>
-                            <th tabindex="0">Quantity</th>
-                            <th tabindex="0">Payment Status</th>
                             <th tabindex="0">Action</th>
                           </tr>
                         </thead>
@@ -194,9 +192,6 @@ function salesa() {
                                 <td>{po.product[0].packagingSize}</td>
                                 <td>{po.product[0].pillsQty}</td>
                                 <td>{po.product[0].price}</td>
-                                <td>{po.quantity}</td>
-                                <td>{orders.paymentStatus}</td>
-
                                 <td className="action">
                                   <button
                                     className="btn btn-outline-secondary"
