@@ -7,11 +7,14 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
 ////auth
-import { useAuth } from '../auth/AuthContext'; 
+import { useAuth } from '../auth/AuthContext';
 
 ////highchart///
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
+
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const options = {
 
@@ -64,7 +67,7 @@ const options = {
 };
 
 function indexa() {
-  
+
   const { userId } = useAuth();
 
 
@@ -114,11 +117,12 @@ function indexa() {
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
+      toast.success('Update successfully!');
       handleClose();
-      setError(null); 
+      setError(null);
     } catch (err) {
-      setError(err.message); 
-      setResponse(null); 
+      setError(err.message);
+      setResponse(null);
     }
   };
 
@@ -141,10 +145,11 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId: userId },
-    ongoing: { userId: userId, ticketStatus: 'Sale' },
-    newTickets: { userId: userId, ticketStatus: 'New' },
-    follow: { userId: userId, ticketStatus: 'Follow' },
+    allTickets: { userId },
+    ongoing: { userId, ticketStatus: 'Sale' },
+    newTickets: { userId, ticketStatus: 'New' },
+    followUp: { userId, ticketStatus: 'follow' },
+
   };
 
   const [data, setData] = useState(null);
@@ -422,7 +427,7 @@ function indexa() {
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
-                        className={`nav-link ${activeTab === "Follow Up" ? "active" : ""}`}
+                        className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
                         onClick={() => setActiveTab("followUp")}
                         // className="nav-link"
                         id="new-arrivals-tkts-tab"
@@ -434,7 +439,7 @@ function indexa() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        Follow Up
+                        Follow-up
                       </button>
                     </li>
                   </ul>
@@ -456,10 +461,10 @@ function indexa() {
                             <tr>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
                               <th tabindex="0">Sender Name</th>
                               <th tabindex="0">Sender Mobile</th>
                               <th tabindex="0">Sender Address</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Query Message</th>
                               <th tabindex="0">Actions</th>
                             </tr>
@@ -474,15 +479,12 @@ function indexa() {
                                   <td>
                                     <span className="client-details">
                                       <h3 className="card-title">{item.queryMcatName}</h3>
-                                      <small
-                                      ><i className="fa-regular fa-clock"></i>
-                                        <span>{item.queryTime}</span></small>
                                     </span>
                                   </td>
-                                  <td><span className="badge new">{item.senderCompany}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderAddress}</span></td>
+                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -542,10 +544,10 @@ function indexa() {
                             <tr>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
                               <th tabindex="0">Sender Name</th>
                               <th tabindex="0">Sender Mobile</th>
                               <th tabindex="0">Sender Address</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Query Message</th>
                               <th tabindex="0">Actions</th>
                             </tr>
@@ -560,15 +562,12 @@ function indexa() {
                                   <td>
                                     <span className="client-details">
                                       <h3 className="card-title">{item.queryMcatName}</h3>
-                                      <small
-                                      ><i className="fa-regular fa-clock"></i>
-                                        <span>{item.queryTime}</span></small>
                                     </span>
                                   </td>
-                                  <td><span className="badge new">{item.senderCompany}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderAddress}</span></td>
+                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -631,10 +630,10 @@ function indexa() {
                             <tr>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
                               <th tabindex="0">Sender Name</th>
                               <th tabindex="0">Sender Mobile</th>
                               <th tabindex="0">Sender Address</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Query Message</th>
                               <th tabindex="0">Actions</th>
                             </tr>
@@ -649,15 +648,99 @@ function indexa() {
                                   <td>
                                     <span className="client-details">
                                       <h3 className="card-title">{item.queryMcatName}</h3>
-                                      <small
-                                      ><i className="fa-regular fa-clock"></i>
-                                        <span>{item.queryTime}</span></small>
                                     </span>
                                   </td>
-                                  <td><span className="badge new">{item.senderCompany}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderAddress}</span></td>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="comment">{item.queryMessage}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
+                                        onClick={() => handleShow(item.uniqueQueryId)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action other"
+                                        title="Write Status"
+                                      >
+                                        <i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                      <a
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i
+                                      ></a>
+                                      <a
+                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i
+                                      ></a>
+                                      <a
+                                        href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></a>
+                                      <a
+                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i
+                                      ></a>
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`tab-pane fade ${activeTab === "followUp" ? "show active" : ""}`}
+                      // className="tab-pane fade"
+                      id="new-arrivals-tkts-tab-pane"
+                      role="tabpanel"
+                      aria-labelledby="new-arrivals-tkts-tab"
+                      tabindex="0"
+                    >
+                      <div className="followups-table table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Query McatName</th>
+                              <th tabindex="0">Sender Name</th>
+                              <th tabindex="0">Sender Mobile</th>
+                              <th tabindex="0">Sender Address</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Query Message</th>
+                              <th tabindex="0">Actions</th>
+                            </tr>
+                          </thead>
+                          {data ? (
+                            <tbody>
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                  <td>
+                                    <span className="client-details">
+                                      <h3 className="card-title">{item.queryMcatName}</h3>
+                                    </span>
+                                  </td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td><span className="text">{item.senderMobile}</span></td>
+                                  <td><span className="text">{item.senderAddress}</span></td>
+                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -744,6 +827,7 @@ function indexa() {
                       <option >Choose Call-Status</option>
                       <option value="Sale">Sale</option>
                       <option value="New">New</option>
+                      <option value="Follow">Follow</option>
                     </select>
                   </div>
                   <div class="col-12">

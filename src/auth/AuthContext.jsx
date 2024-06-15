@@ -8,12 +8,14 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [roleName, setRoleName] = useState('');
-  const [userId, setUserId] = useState(''); 
+  const [userId, setUserId] = useState('');
+  const [firstName, setFirstName] = useState(''); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedRoleName = localStorage.getItem('roleName');
-    const storedUserId = localStorage.getItem('userId'); 
+    const storedUserId = localStorage.getItem('userId');
+    const storedFirstName = localStorage.getItem('firstName'); 
 
     if (token) {
       setIsAuthenticated(true);
@@ -25,8 +27,13 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (storedUserId) {
-      setUserId(storedUserId); 
+      setUserId(storedUserId);
       console.log('User Id:', storedUserId);
+    }
+
+    if (storedFirstName) {
+      setFirstName(storedFirstName); 
+      console.log('First Name:', storedFirstName);
     }
   }, []);
 
@@ -37,11 +44,13 @@ export const AuthProvider = ({ children }) => {
         const { jwtToken, user } = response.data;
         localStorage.setItem('token', jwtToken);
         localStorage.setItem('roleName', user.roleDto.roleName);
-        localStorage.setItem('userId', user.userId); 
+        localStorage.setItem('userId', user.userId);
+        localStorage.setItem('firstName', user.firstName); 
         setIsAuthenticated(true);
         setRoleName(user.roleDto.roleName);
-        setUserId(user.userId); 
-        console.log(userId);
+        setUserId(user.userId);
+        setFirstName(user.firstName);
+        console.log(firstName);
         toast.success('Login successfully!');
         return true;
       } else {
@@ -58,17 +67,20 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('roleName');
-    localStorage.removeItem('userId'); 
+    localStorage.removeItem('userId');
+    localStorage.removeItem('firstName'); 
     setIsAuthenticated(false);
     setRoleName('');
-    setUserId(''); 
+    setUserId('');
+    setFirstName(''); 
     toast.info('Logged out successfully');
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, login, logout }}>
       {children}
     </AuthContext.Provider>
+
   );
 };
 
