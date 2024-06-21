@@ -59,7 +59,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Error during login:', error);
-      toast.error('An error occurred during login');
+      toast.error('Invalid email or password');
+      navigate('/');
       return false;
     }
   };

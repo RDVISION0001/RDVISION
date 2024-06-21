@@ -53,7 +53,8 @@ function login() {
                         <input type="password"
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          id="form2Example22" className="form-control" />
+                          id="form2Example22" className="form-control"
+                          placeholder="********" />
                         <label className="form-label" for="form2Example22">Password</label>
                       </div>
 

@@ -1,18 +1,14 @@
-import React from 'react'
-import { useAuth } from './AuthContext';
-
-
-function logout() {
+import React from 'react';
+import { useAuth } from '../auth/AuthContext'; 
+const logout = () => {
   const { logout } = useAuth();
-  localStorage.removeItem('token');
-  setIsAuthenticated(false);
 
   return (
-    <>
-      <h1>sign_out</h1>
-      <button onClick={logout}>Logout</button>
-    </>
-  )
-}
+    <a onClick={logout}>
+      Log Out
+    </a>
+  );
+};
+
 
 export default logout
