@@ -23,8 +23,8 @@ a:hover {
 }
 
 body {
+  position: absolute;
   margin: 0;
-  /* display: flex; */
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
@@ -64,5 +64,106 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Responsive breakpoints *//* Responsive breakpoints */
+
+@media (max-width: 5120px) { /* 43-inch  */
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 3em;
+  }
+
+  button {
+    font-size: 1.1em;
+  }
+}
+
+@media (max-width: 3840px) { /* 32-inch  */
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 2.8em;
+  }
+
+  button {
+    font-size: 1.05em;
+  }
+}
+
+@media (max-width: 2560px) { /* 24-inch */
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 2.6em;
+  }
+
+  button {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 1920px) { /* 21-inch */
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 2.4em;
+  }
+
+  button {
+    font-size: 0.95em;
+  }
+}
+
+@media (max-width: 1440px) { /* 13-inch */
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 2.2em;
+  }
+
+  button {
+    font-size: 0.9em;
+  }
+}
+
+/* Smaller devices */
+@media (max-width: 768px) {
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  button {
+    font-size: 0.85em;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  button {
+    font-size: 0.8em;
   }
 }
