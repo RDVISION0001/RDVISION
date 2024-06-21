@@ -62,16 +62,20 @@ button:focus-visible {
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
 }
 
-/* Responsive breakpoints *//* Responsive breakpoints */
+/* Responsive breakpoints */
 
-@media (max-width: 5120px) { /* 43-inch  */
+@media (max-width: 5120px) {
+
+  /* 43-inch  */
   body {
     padding: 0px;
+    width: 100%;
   }
 
   h1 {
@@ -83,9 +87,12 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 3840px) { /* 32-inch  */
+@media (max-width: 3840px) {
+
+  /* 32-inch  */
   body {
     padding: 0px;
+    width: 100%;
   }
 
   h1 {
@@ -97,9 +104,12 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 2560px) { /* 24-inch */
+@media (max-width: 2560px) {
+
+  /* 24-inch */
   body {
     padding: 0px;
+    width: 100%;
   }
 
   h1 {
@@ -111,9 +121,12 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 1920px) { /* 21-inch */
+@media (max-width: 1920px) {
+
+  /* 21-inch */
   body {
     padding: 0px;
+    width: 100%;
   }
 
   h1 {
@@ -125,9 +138,13 @@ button:focus-visible {
   }
 }
 
-@media (max-width: 1440px) { /* 13-inch */
+@media (max-width: 1440px) {
+
+  /* 13-inch */
   body {
     padding: 0px;
+    width: 100%;
+
   }
 
   h1 {
@@ -143,6 +160,7 @@ button:focus-visible {
 @media (max-width: 768px) {
   body {
     padding: 0px;
+    width: 100%;
   }
 
   h1 {
@@ -157,6 +175,8 @@ button:focus-visible {
 @media (max-width: 480px) {
   body {
     padding: 0px;
+    width: 100%;
+
   }
 
   h1 {
