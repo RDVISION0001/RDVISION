@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { NavLink, useNavigate } from 'react-router-dom';
-
+import Logout from '../auth/logout';
 
 
 
@@ -239,7 +239,7 @@ function Sidenav() {
         <li className="nav-item">
           <NavLink to="/" className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
-            <span className="nav-text">Log Out</span>
+            <span className="nav-text"><Logout/></span>
           </NavLink>
         </li>
       </ul>

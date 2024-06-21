@@ -15,7 +15,7 @@ import Login from './auth/login';
 import Logout from './auth/logout';
 import { AuthProvider } from './auth/AuthContext';
 import PrivateRoute from './PrivateRoute';
-import axiosInstance from './axiosInstance'; // Use the custom Axios instance
+import axiosInstance from './axiosInstance'; 
 
 
 // admin
@@ -102,48 +102,46 @@ function App() {
             <Route exact path="/" element={<Login />} />
             <Route exact path="/logout" element={<Logout />} />
 
+            <Route element={<PrivateRoute />}>
 
 
-            {/* compo */}
-            <Route exact path="/sidenav" element={<Sidenav />} />
+              {/* compo */}
+              <Route exact path="/sidenav" element={<Sidenav />} />
 
-            {/* <Route element={<PrivateRoute />}> */}
-
-
-            {/* admin */}
-            <Route exact path="/admin_index" element={<Index />} />
-            <Route exact path="/admin_invoices" element={<Invoices />} />
-            <Route exact path="/admin_orders" element={<Orders />} />
-            <Route exact path="/admin_sales" element={<Sales />} />
-            <Route exact path="/admin_tickets" element={<Tickets />} />
-            <Route exact path="/admin_users" element={<Users />} />
+              {/* admin */}
+              <Route exact path="/admin_index" element={<Index />} />
+              <Route exact path="/admin_invoices" element={<Invoices />} />
+              <Route exact path="/admin_orders" element={<Orders />} />
+              <Route exact path="/admin_sales" element={<Sales />} />
+              <Route exact path="/admin_tickets" element={<Tickets />} />
+              <Route exact path="/admin_users" element={<Users />} />
 
 
-            {/* super_admin */}
-            <Route exact path="/super_admin_index" element={<Indexs />} />
-            <Route exact path="/super_admin_invoices" element={<Invoicess />} />
-            <Route exact path="/super_admin_orders" element={<Orderss />} />
-            <Route exact path="/super_admin_sales" element={<Saless />} />
-            <Route exact path="/super_admin_tickets" element={<Ticketss />} />
-            <Route exact path="/super_admin_users" element={<Userss />} />
+              {/* super_admin */}
+              <Route exact path="/super_admin_index" element={<Indexs />} />
+              <Route exact path="/super_admin_invoices" element={<Invoicess />} />
+              <Route exact path="/super_admin_orders" element={<Orderss />} />
+              <Route exact path="/super_admin_sales" element={<Saless />} />
+              <Route exact path="/super_admin_tickets" element={<Ticketss />} />
+              <Route exact path="/super_admin_users" element={<Userss />} />
 
-            {/* agent */}
-            <Route exact path="/agent_index" element={<Indexa />} />
-            <Route exact path="/agent_invoices" element={<Invoicesa />} />
-            <Route exact path="/agent_orders" element={<Ordersa />} />
-            <Route exact path="/agent_sales" element={<Salesa />} />
-            <Route exact path="/agent_tickets" element={<Ticketsa />} />
-            <Route exact path="/agent_users" element={<Usersa />} />
+              {/* agent */}
+              <Route exact path="/agent_index" element={<Indexa />} />
+              <Route exact path="/agent_invoices" element={<Invoicesa />} />
+              <Route exact path="/agent_orders" element={<Ordersa />} />
+              <Route exact path="/agent_sales" element={<Salesa />} />
+              <Route exact path="/agent_tickets" element={<Ticketsa />} />
+              <Route exact path="/agent_users" element={<Usersa />} />
 
-            {/* manager */}
-            <Route exact path="/manager_index" element={<Indexm />} />
-            <Route exact path="/manager_invoices" element={<Invoicesm />} />
-            <Route exact path="/manager_orders" element={<Ordersm />} />
-            <Route exact path="/manager_sales" element={<Salesm />} />
-            <Route exact path="/manager_tickets" element={<Ticketsm />} />
-            <Route exact path="/manager_users" element={<Usersm />} />
+              {/* manager */}
+              <Route exact path="/manager_index" element={<Indexm />} />
+              <Route exact path="/manager_invoices" element={<Invoicesm />} />
+              <Route exact path="/manager_orders" element={<Ordersm />} />
+              <Route exact path="/manager_sales" element={<Salesm />} />
+              <Route exact path="/manager_tickets" element={<Ticketsm />} />
+              <Route exact path="/manager_users" element={<Usersm />} />
 
-            {/* </Route> */}
+            </Route>
           </Routes>
         </Router>
       </AuthProvider>

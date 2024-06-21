@@ -57,9 +57,9 @@ function usersm() {
       setApiResponse(response.data);
       toast.success('Tickets assigned successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 6000); 
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 6000); 
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
