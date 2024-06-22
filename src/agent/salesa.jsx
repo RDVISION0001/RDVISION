@@ -169,7 +169,7 @@ function salesa() {
                             >
                               <input type="checkbox" className="" />
                             </th>
-                            <th tabindex="0">Name</th>
+                            <th tabindex="0">Product Name</th>
                             <th tabindex="0">Brand</th>
                             <th tabindex="0">Composition</th>
                             <th tabindex="0">Size</th>
