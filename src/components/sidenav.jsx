@@ -1,26 +1,50 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Logout from '../auth/logout';
-
-
 
 function Sidenav() {
   const { roleName, firstName } = useAuth();
 
-  // const navigate = useNavigate();
+  useEffect(() => {
+    const menuBtn = document.querySelector("#menu-btn");
+    const sidebar = document.querySelector("#sidebar");
+    const container = document.querySelector(".my-container");
 
-  // useEffect(() => {
-  //   if (roleName === 'SuperAdmin') {
-  //     navigate('/super_admin_index');
-  //   } else if (roleName === 'Admin') {
-  //     navigate('/admin_index');
-  //   } else if (roleName === 'Agent') {
-  //     navigate('/agent_index');
-  //   } else if (roleName === 'Manager') {
-  //     navigate('/manager_index');
-  //   }
-  // }, [roleName, navigate]);
+    if (!menuBtn || !sidebar || !container) {
+      console.error('One or more elements are not found in the DOM');
+      return;
+    }
+
+    function checkViewportSize() {
+      if (window.innerWidth < 992) {
+        sidebar.classList.remove("active-nav");
+        container.classList.remove("active-cont");
+      } else {
+        sidebar.classList.add("active-nav");
+        container.classList.add("active-cont");
+      }
+    }
+
+    checkViewportSize();
+
+    const handleMenuClick = () => {
+      sidebar.classList.toggle("active-nav");
+      container.classList.toggle("active-cont");
+    };
+
+    const handleResize = () => {
+      checkViewportSize();
+    };
+
+    menuBtn.addEventListener("click", handleMenuClick);
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      menuBtn.removeEventListener("click", handleMenuClick);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
@@ -119,12 +143,6 @@ function Sidenav() {
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink to="/admin_orders" className="nav-link">
-                <i className="fa-solid fa-money-check-dollar"></i>
-                <span className="nav-text">Orders Status</span>
-              </NavLink>
-            </li>
           </>
         )}
 
@@ -146,12 +164,6 @@ function Sidenav() {
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
-            {/* <li className="nav-item">
-              <NavLink to="/agent_users" className="nav-link">
-                <i className="fa-solid fa-people-group"></i>
-                <span className="nav-text">Users</span>
-              </NavLink>
-            </li> */}
             <li className="nav-item">
               <NavLink to="/agent_tickets" className="nav-link">
                 <i className="fa-solid fa-ticket"></i>
@@ -168,12 +180,6 @@ function Sidenav() {
               <NavLink to="/agent_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/agent_orders" className="nav-link">
-                <i className="fa-solid fa-money-check-dollar"></i>
-                <span className="nav-text">Orders Status</span>
               </NavLink>
             </li>
           </>
@@ -219,12 +225,6 @@ function Sidenav() {
               <NavLink to="/manager_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/manager_orders" className="nav-link">
-                <i className="fa-solid fa-money-check-dollar"></i>
-                <span className="nav-text">Orders Status</span>
               </NavLink>
             </li>
           </>

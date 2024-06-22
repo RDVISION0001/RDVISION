@@ -459,32 +459,24 @@ function indexa() {
                         <table className="table">
                           <thead>
                             <tr>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
                               <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Query Message</th>
-                              <th tabindex="0">Actions</th>
+                              <th tabindex="0">Costomer Name</th>
+                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
                               {data.map((item, index) => (
                                 <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td><span className="text">{item.senderMobile}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td>
-                                    <span className="client-details">
-                                      <h3 className="card-title">{item.queryMcatName}</h3>
-                                    </span>
-                                  </td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderAddress}</span></td>
-                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -527,47 +519,39 @@ function indexa() {
                             <p>Loading...</p>
                           )}
                         </table>
-
                       </div>
                     </div>
+
                     <div
                       className={`tab-pane fade ${activeTab === "ongoing" ? "show active" : ""}`}
                       // className="tab-pane fade"
-                      id="old-tkts-tab-pane"
+                      id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
-                      aria-labelledby="old-tkts-tab"
+                      aria-labelledby="new-arrivals-tkts-tab"
                       tabindex="0"
                     >
                       <div className="followups-table table-responsive">
                         <table className="table">
                           <thead>
                             <tr>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
                               <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Query Message</th>
-                              <th tabindex="0">Actions</th>
+                              <th tabindex="0">Costomer Name</th>
+                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
                               {data.map((item, index) => (
                                 <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td><span className="text">{item.senderMobile}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td>
-                                    <span className="client-details">
-                                      <h3 className="card-title">{item.queryMcatName}</h3>
-                                    </span>
-                                  </td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderAddress}</span></td>
-                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -616,6 +600,7 @@ function indexa() {
                         </table>
                       </div>
                     </div>
+
                     <div
                       className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
                       // className="tab-pane fade"
@@ -628,32 +613,24 @@ function indexa() {
                         <table className="table">
                           <thead>
                             <tr>
+                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Costomer Name</th>
+                              <th tabindex="0">Costomer Number</th>
                               <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Query Message</th>
-                              <th tabindex="0">Actions</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
                               {data.map((item, index) => (
-                                <tr key={index}>
+                                <tr key={index}>           
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td><span className="text">{item.senderMobile}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td>
-                                    <span className="client-details">
-                                      <h3 className="card-title">{item.queryMcatName}</h3>
-                                    </span>
-                                  </td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderAddress}</span></td>
-                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -715,32 +692,24 @@ function indexa() {
                         <table className="table">
                           <thead>
                             <tr>
+                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Costomer Name</th>
+                              <th tabindex="0">Costomer Number</th>
                               <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Query Message</th>
-                              <th tabindex="0">Actions</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
                               {data.map((item, index) => (
                                 <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td><span className="text">{item.senderMobile}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td>
-                                    <span className="client-details">
-                                      <h3 className="card-title">{item.queryMcatName}</h3>
-                                    </span>
-                                  </td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderAddress}</span></td>
-                                  <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="comment">{item.queryMessage}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
