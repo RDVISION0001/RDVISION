@@ -460,8 +460,8 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Costomer Name</th>
-                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -535,8 +535,8 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Costomer Name</th>
-                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -614,8 +614,8 @@ function indexa() {
                           <thead>
                             <tr>
                             <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Costomer Name</th>
-                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -693,8 +693,8 @@ function indexa() {
                           <thead>
                             <tr>
                             <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Costomer Name</th>
-                              <th tabindex="0">Costomer Number</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
