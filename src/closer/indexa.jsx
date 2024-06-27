@@ -190,9 +190,22 @@ function indexa() {
                   <div className="col-md-3">
                     <div className="card">
                       <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
+                        <h3 className="title">Total Tickets</h3>
                         <span className="sales"
-                        >$3,181 <span className="indicators">+55%</span></span
+                        >0 <span className="indicators"></span></span
+                        >
+                      </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
+                        <h3 className="title">In negotation</h3>
+                        <span className="sales"
+                        >0 <span className="indicators">0</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -205,7 +218,7 @@ function indexa() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales"
-                        >$3,181 <span className="indicators">+55%</span></span
+                        >0 <span className="indicators">0</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -216,22 +229,9 @@ function indexa() {
                   <div className="col-md-3">
                     <div className="card">
                       <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
+                        <h3 className="title">Projected Sales</h3>
                         <span className="sales"
-                        >$3,181 <span className="indicators">+55%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales"
-                        >$3,181 <span className="indicators">+55%</span></span
+                        >0 <span className="indicators">0</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -310,7 +310,7 @@ function indexa() {
                     </div>
                     {/* <!-- best departments --> */}
                     <div className="rank-card top-rankers">
-                      <h3 className="heading">Best Selling Department</h3>
+                      <h3 className="heading">Total Login Time</h3>
                       <div className="table-wrapper">
                         <table className="table">
                           <tbody>
@@ -460,10 +460,12 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                             </tr>
                           </thead>
@@ -472,12 +474,15 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td><span className="comment">{item.queryMessage}</span></td>
+                                  <td><span className="comment">{item.subject}<br/></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -552,7 +557,7 @@ function indexa() {
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td><span className="comment">{item.queryMessage}</span></td>
+                                  <td><span className="comment">{item.subject}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -631,7 +636,7 @@ function indexa() {
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td><span className="comment">{item.queryMessage}</span></td>
+                                  <td><span className="comment">{item.subject}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -710,7 +715,7 @@ function indexa() {
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td><span className="comment">{item.queryMessage}</span></td>
+                                  <td><span className="comment">{item.subject}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button

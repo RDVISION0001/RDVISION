@@ -146,8 +146,8 @@ function Sidenav() {
           </>
         )}
 
-        {/* Agent */}
-        {roleName === 'Agent' && (
+        {/* closer */}
+        {roleName === 'Closer' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon">
@@ -159,25 +159,25 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/agent_index" className="nav-link">
+              <NavLink to="/closer_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/agent_tickets" className="nav-link">
+              <NavLink to="/closer_tickets" className="nav-link">
                 <i className="fa-solid fa-ticket"></i>
                 <span className="nav-text">Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/agent_invoices" className="nav-link">
+              <NavLink to="/closer_invoices" className="nav-link">
                 <i className="fa-regular fa-address-card"></i>
                 <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/agent_sales" className="nav-link">
+              <NavLink to="/closer_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>

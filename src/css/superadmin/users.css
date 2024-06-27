@@ -17,6 +17,11 @@ h6 {
   border-color: #123088;
 }
 
+.btn-outline-secondary{
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #818080;
+}
+
 .user-management-page .core-team-section {
   position: relative;
   margin-bottom: 1rem;

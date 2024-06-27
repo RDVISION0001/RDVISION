@@ -1,9 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 ////copmponents////
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
-function ticketsa() {
+import axiosInstance from '../axiosInstance';
+
+
+
+function ticketsa () {
+
+   // Define parameters for each tab
+   const params = {
+    allTickets: {},
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
+  };
+
+  ////actipn modal active //
+  const [activeTab, setActiveTab] = useState("allTickets");
+
+   // Function to handle tab click
+   const handleRowClick = (tabName) => {
+    setActiveTab(tabName);
+    fetchTickets(params[tabName]);
+  };
+
+  ///all tickets////
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus');
+      setData(response.data.dtoList);
+    };
+    fetchData();
+  }, []);
+
+    // Function to fetch tickets based on parameters
+    const fetchTickets = async (params) => {
+      try {
+        const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params });
+        setData(response.data.dtoList);
+      } catch (error) {
+        console.error('Error fetching tickets:', error);
+      }
+    };
+  
+    // Fetch all tickets on component mount
+    useEffect(() => {
+      fetchTickets(params.allTickets);
+    }, []);
+  
+
   return (
     <>
       <div className="superadmin-page">
@@ -67,80 +115,63 @@ function ticketsa() {
               </div>
             </section>
 
-            {/* <!-- followups 2 --> */}
-
-            <section className="followup-table-section py-3">
+            {/* <!-- section 2 --> */}
+            <section className="data-table-bgs_02x24 py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
                   <h3 className="title">All Tickets</h3>
-                  <ul className="nav recent-transactions-tab-header nav-tabs" id="followUp" role="tablist">
-                    <li className="nav-item" role="presentation">
-                      <button className="nav-link active" id="all-tkts-tab" data-bs-toggle="tab" data-bs-target="#all-tkts-tab-pane" type="button" role="tab" aria-controls="all-tkts-tab-pane" aria-selected="true">All Tickets</button>
+                  <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
+                  <li className="nav-item" role="presentation">
+                      <button className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
+                        onClick={() => handleRowClick("allTickets")} id="all-transactions-tab" data-bs-toggle="tab" data-bs-target="#all-transactions-tab-pane" type="button" role="tab" aria-controls="all-transactions-tab-pane" aria-selected="true">All Tickets</button>
                     </li>
                     <li className="nav-item" role="presentation">
-                      <button className="nav-link" id="old-tkts-tab" data-bs-toggle="tab" data-bs-target="#old-tkts-tab-pane" type="button" role="tab" aria-controls="old-tkts-tab-pane" aria-selected="false" tabindex="-1">Ongoing</button>
+                      <button className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
+                        onClick={() => handleRowClick("ongoing")} id="pendings-tab" data-bs-toggle="tab" data-bs-target="#pendings-tab-pane" type="button" role="tab" aria-controls="pendings-tab-pane" aria-selected="false" tabindex="-1">Ongoing</button>
                     </li>
                     <li className="nav-item" role="presentation">
-                      <button className="nav-link" id="new-arrivals-tkts-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tkts-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tkts-tab-pane" aria-selected="false" tabindex="-1">New Tickets</button>
+                      <button className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
+                        onClick={() => handleRowClick("newTickets")} id="new-arrivals-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tab-pane" aria-selected="false" tabindex="-1">New Tickets</button>
                     </li>
                   </ul>
-                  <div className="tab-content recent-transactions-tab-body" id="followUpContent">
-                    <div className="tab-pane fade show active" id="all-tkts-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabindex="0">
-                      <div className="followups-table table-responsive">
+                  <div className="tab-content recent-transactions-tab-body" id="myTabContent">
+                    <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabindex="0">
+                      <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
                             <tr>
-                              <th tabindex="0">Ticket ID</th>
-                              <th tabindex="0">Client Name</th>
-                              <th tabindex="0">Status</th>
-                              <th tabindex="0">Status Comments</th>
-                              <th tabindex="0">Actions</th>
+                              <th className="selection-cell-header" data-row-selection="true">
+                                <input type="checkbox" className="" />
+                              </th>
+                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Query McatName</th>
+                              <th tabindex="0">Sender Company</th>
+                              <th tabindex="0">Sender Name</th>
+                              <th tabindex="0">Sender Mobile</th>
+                              <th tabindex="0">Sender Address</th>
+                              <th tabindex="0">Query Message</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td className="ticket-id"><i className="fa-solid fa-ticket"></i> #12548796</td>
-                              <td>
-                                <span className="client-details">
-                                  <h3 className="card-title">Jenell D. Matney</h3>
-                                  <small><i className="fa-regular fa-clock"></i> <span>today</span></small>
-                                </span>
-                              </td>
-                              <td><span className="badge new">new</span></td>
-                              <td><span className="comment">--</span></td>
-                              <td>
-                                <span className="actions-wrapper">
-                                  <a href="tel:+919918293747" className="btn-action call" title="Get connect on call"><i className="fa-solid fa-phone"></i></a>
-                                  <a href="sms:+150000000?body=Share%20this%20message%20on%20sms" className="btn-action message" title="Get connect on message"><i className="fa-solid fa-message"></i></a>
-                                  <a href="mailto:someone@example.com" className="btn-action email" title="Get connect on email"><i className="fa-solid fa-envelope"></i></a>
-                                  <a href="https://wa.me/919918293747?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project" className="btn-action whatsapp" title="Get connect on whatsapp"><i className="fa-brands fa-whatsapp"></i></a>
-                                </span>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td className="ticket-id"><i className="fa-solid fa-ticket"></i> #12548796</td>
-                              <td>
-                                <span className="client-details">
-                                  <h3 className="card-title">Matney Jenell</h3>
-                                  <small><i className="fa-regular fa-clock"></i> <span>month ago</span></small>
-                                </span>
-                              </td>
-                              <td><span className="badge sale">sale</span></td>
-                              <td><span className="comment">Invoice Raised</span></td>
-                              <td>
-                                <span className="actions-wrapper">
-                                  <a href="tel:+919918293747" className="btn-action call" title="Get connect on call"><i className="fa-solid fa-phone"></i></a>
-                                  <a href="sms:+150000000?body=Share%20this%20message%20on%20sms" className="btn-action message" title="Get connect on message"><i className="fa-solid fa-message"></i></a>
-                                  <a href="mailto:someone@example.com" className="btn-action email" title="Get connect on email"><i className="fa-solid fa-envelope"></i></a>
-                                  <a href="https://wa.me/919918293747?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project" className="btn-action whatsapp" title="Get connect on whatsapp"><i className="fa-brands fa-whatsapp"></i></a>
-                                </span>
-                              </td>
-                            </tr>
+                            {data.map((item) => (
+                              <tr>
+                                <td className="selection-cell">
+                                  <input type="checkbox" className="" />
+                                </td>
+                                <td>{item.uniqueQueryId}</td>
+                                <td>{item.queryMcatName}</td>
+                                <td>{item.senderCompany}</td>
+                                <td>{item.senderName}</td>
+                                <td>{item.senderMobile}</td>
+                                <td>{item.senderAddress}</td>
+                                <td>{item.queryMessage}</td>
+                              </tr>
+                            ))}
                           </tbody>
                         </table>
                       </div>
                     </div>
-                    <div className="tab-pane fade" id="old-tkts-tab-pane" role="tabpanel" aria-labelledby="old-tkts-tab" tabindex="0">
+                    <div className="tab-pane fade" id="pendings-tab-pane" role="tabpanel" aria-labelledby="pendings-tab" tabindex="0">
                       <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
@@ -202,7 +233,7 @@ function ticketsa() {
                         </table>
                       </div>
                     </div>
-                    <div className="tab-pane fade" id="new-arrivals-tkts-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tkts-tab" tabindex="0">
+                    <div className="tab-pane fade" id="new-arrivals-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tab" tabindex="0">
                       <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
@@ -262,6 +293,9 @@ function ticketsa() {
                     </div>
                   </div>
                 </div>
+                {/* <!-- =================================================================================================
+                ======================================================================================================
+              ====================================================================================================== --> */}
               </div>
             </section>
             {/* <!-- -------------- --> */}
