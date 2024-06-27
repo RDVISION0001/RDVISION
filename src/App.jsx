@@ -43,12 +43,12 @@ import Ticketsm from './manager/ticketsm';
 import Usersm from './manager/usersm';
 
 // agent
-import Indexa from './agent/indexa';
-import Invoicesa from './agent/invoicesa';
-import Ordersa from './agent/ordersa';
-import Salesa from './agent/salesa';
-import Ticketsa from './agent/ticketsa';
-import Usersa from './agent/usersa';
+import Indexa from './closer/indexa';
+import Invoicesa from './closer/invoicesa';
+import Ordersa from './closer/ordersa';
+import Salesa from './closer/salesa';
+import Ticketsa from './closer/ticketsa';
+import Usersa from './closer/usersa';
 
 // componenets css
 import './components/css/themedigproX01.css';
@@ -126,12 +126,12 @@ function App() {
               <Route exact path="/super_admin_users" element={<Userss />} />
 
               {/* agent */}
-              <Route exact path="/agent_index" element={<Indexa />} />
-              <Route exact path="/agent_invoices" element={<Invoicesa />} />
-              <Route exact path="/agent_orders" element={<Ordersa />} />
-              <Route exact path="/agent_sales" element={<Salesa />} />
-              <Route exact path="/agent_tickets" element={<Ticketsa />} />
-              <Route exact path="/agent_users" element={<Usersa />} />
+              <Route exact path="/closer_index" element={<Indexa />} />
+              <Route exact path="/closer_invoices" element={<Invoicesa />} />
+              <Route exact path="/closer_orders" element={<Ordersa />} />
+              <Route exact path="/closer_sales" element={<Salesa />} />
+              <Route exact path="/closer_tickets" element={<Ticketsa />} />
+              <Route exact path="/closer_users" element={<Usersa />} />
 
               {/* manager */}
               <Route exact path="/manager_index" element={<Indexm />} />

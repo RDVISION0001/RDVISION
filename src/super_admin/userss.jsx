@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-////copmponents////
+////components////
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
@@ -11,7 +11,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function userss() {
-
 
   ////add member //
   const [show, setShow] = useState(false);
@@ -45,32 +44,20 @@ function userss() {
     try {
       const response = await axiosInstance.post('/user/createUser', formData);
       console.log('Response:', response.data);
-      toast.success('Create user successfully!');
+      toast.success('User created successfully!');
       handleClose();
     } catch (error) {
       console.error('Error:', error);
-      toast.error('User not create');
+      toast.error('User creation failed');
     }
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === 'departmentId' || name === 'teamId' || name === 'roleId') {
-      // If the changed input is departmentId, set the value directly
-      setFormData(prevState => ({
-        ...prevState,
-        departmentId: value,
-        teamId: value,
-        roleId: value
-      }));
-    } else {
-      // For other inputs, update as usual
-      setFormData(prevState => ({
-        ...prevState,
-        [name]: value
-      }));
-    }
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   ////all users///
@@ -84,7 +71,6 @@ function userss() {
     fetchData();
   }, []);
 
-
   ///department////////
   const [department, setDepartment] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
@@ -94,7 +80,6 @@ function userss() {
       const response = await axiosInstance.get('/department/getDepartments');
       setDepartment(response.data.dtoList);
     };
-
     fetchData();
   }, []);
 
@@ -111,14 +96,12 @@ function userss() {
       const response = await axiosInstance.get('/team/getAllTeams');
       setTeam(response.data.dtoList);
     };
-
     fetchData();
   }, []);
 
   const handleSelectTeam = (e) => {
     setSelectedTeam(e.target.value);
   };
-
 
   ///role////////
   const [role, setRole] = useState([]);
@@ -129,14 +112,12 @@ function userss() {
       const response = await axiosInstance.get('/role/getAllRoles');
       setRole(response.data.dtoList);
     };
-
     fetchData();
   }, []);
 
   const handleSelectRole = (e) => {
     setSelectedRole(e.target.value);
   };
-
 
 
   return (
@@ -419,15 +400,17 @@ function userss() {
                     <label for="inputTeam" className="form-label">Team</label>
                     {/* <select id="inputTeam" name="teamId" value={formData.teamId} onChange={handleChange} className="form-select"> */}
                     <select
-                      id="inputTeam"
-                      name="teamId"
-                      value={selectedTeam}
-                      onChange={handleSelectTeam}
                       className="form-select"
+                      id="teamId"
+                      name="teamId"
+                      value={formData.teamId}
+                      onChange={handleChange}
                     >
                       <option value="">Choose...</option>
-                      {team.map(team => (
-                        <option key={team.teamId} value={team.teamId}>{team.teamName}</option>
+                      {team.map((team) => (
+                        <option key={team.teamId} value={team.teamId}>
+                          {team.teamName}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -451,15 +434,17 @@ function userss() {
                     <label for="selectRole" className="form-label">Role</label>
                     {/* <select id="selectRole" name="roleId" value={formData.roleId} onChange={handleChange} className="form-select" > */}
                     <select
-                      id="selectRole"
-                      name="roleId"
-                      value={selectedRole}
-                      onChange={handleSelectRole}
                       className="form-select"
+                      id="roleId"
+                      name="roleId"
+                      value={formData.roleId}
+                      onChange={handleChange}
                     >
                       <option value="">Choose...</option>
-                      {role.map(role => (
-                        <option key={role.roletId} value={role.roleId}>{role.roleName}</option>
+                      {role.map((role) => (
+                        <option key={role.roleId} value={role.roleId}>
+                          {role.roleName}
+                        </option>
                       ))}
                     </select>
                   </div>
