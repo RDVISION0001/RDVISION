@@ -144,10 +144,10 @@ function ticketsa() {
                               <th tabindex="0">Country</th>
                               <th tabIndex="0">Customer Name</th>
                               <th tabIndex="0">Customer Number</th>
-                              <th tabIndex="0">Query ID</th>
+                              <th tabIndex="0">Customer Email</th>
+                              <th tabIndex="0">Ticket ID</th>
                               <th tabIndex="0">Requirement</th>
                               <th tabIndex="0">Product Name</th>
-                              <th tabIndex="0">Customer Email</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -160,10 +160,10 @@ function ticketsa() {
                                 <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
                                 <td>{item.senderMobile}</td>
-                                <td>{item.uniqueQueryId}</td>
-                                <td>{item.queryMessage}</td>
-                                <td>{item.queryProductName}</td>
                                 <td>{item.senderEmail}</td>
+                                <td>{item.uniqueQueryId}</td>
+                                <td>{item.subject}</td>
+                                <td>{item.queryProductName}</td>
                               </tr>
                             ))}
                           </tbody>
