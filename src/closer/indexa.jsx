@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
-////copmponents////
+// Components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
-////auth
+// Authentication context
 import { useAuth } from '../auth/AuthContext';
 
-////highchart///
+// Highcharts
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
+// Toast notification
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -67,16 +68,58 @@ const options = {
 };
 
 function indexa() {
-
   const { userId } = useAuth();
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  //////form data
+  // Form data state
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
-  const [uniqueQueryId, setUniqueQueryId] = useState(null); // Ensure uniqueQueryId is defined
+  const [uniqueQueryId, setUniqueQueryId] = useState(null);
 
+  // Modal state
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = (queryId) => {
+    setUniqueQueryId(queryId);
+    setShow(true);
+  };
+
+  // Active tab state
+  const [activeTab, setActiveTab] = useState("allTickets");
+
+  // Define parameters for each tab
+  const params = {
+    allTickets: { userId },
+    ongoing: { userId, ticketStatus: 'Sale' },
+    newTickets: { userId, ticketStatus: 'New' },
+    followUp: { userId, ticketStatus: 'follow' },
+  };
+
+  // Data state
+  const [data, setData] = useState(null);
+
+  // Fetch data function
+  const fetchData = async (params, page) => {
+    try {
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page }
+      });
+      setData(response.data.dtoList);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // useEffect to fetch data whenever the activeTab or currentPage changes
+  useEffect(() => {
+    fetchData(params[activeTab], currentPage);
+  }, [activeTab, currentPage]);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -87,23 +130,6 @@ function indexa() {
   };
 
   // Handle form submission
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!uniqueQueryId) {
-  //     setError("Unique Query ID is not defined");
-  //     return;
-  //   }
-  //   try {
-  //     const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, formData);
-  //     setResponse(res.data.dtoList);
-  //     handleClose();
-  //     setError(null); 
-  //   } catch (err) {
-  //     setError(err.message); 
-  //     setResponse(null); 
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!uniqueQueryId) {
@@ -126,51 +152,26 @@ function indexa() {
     }
   };
 
-
-  ////action modal //
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = (queryId) => {
-    setUniqueQueryId(queryId);
-    setShow(true);
-  };
-
-
-  ////actipn modal active //
-  const [activeTab, setActiveTab] = useState("allTickets");
-
+  // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
+    setCurrentPage(0); // Reset to first page when changing tabs
+    fetchData(params[tabName], 0); // Fetch data for the new tab
   };
 
-  // Define parameters for each tab
-  const params = {
-    allTickets: { userId },
-    ongoing: { userId, ticketStatus: 'Sale' },
-    newTickets: { userId, ticketStatus: 'New' },
-    followUp: { userId, ticketStatus: 'follow' },
-
-  };
-
-  const [data, setData] = useState(null);
-
-
-  // Function to make the API call
-  const fetchData = async (params) => {
-    try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params });
-      setData(response.data.dtoList);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+  // Handle previous page
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      fetchData(params[activeTab], currentPage - 1);
     }
   };
 
-  // useEffect to fetch data whenever the activeTab changes
-  useEffect(() => {
-    fetchData(params[activeTab]);
-  }, [activeTab]);
-
-
+  // Handle next page
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      fetchData(params[activeTab], currentPage + 1);
+    }
+  };
 
   return (
     <>
@@ -378,7 +379,7 @@ function indexa() {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
-                        onClick={() => setActiveTab("allTickets")}
+                        onClick={() => handleRowClick("allTickets")}
                         // className="nav-link active"
                         id="all-tkts-tab"
                         data-bs-toggle="tab"
@@ -394,7 +395,7 @@ function indexa() {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
-                        onClick={() => setActiveTab("ongoing")}
+                        onClick={() => handleRowClick("ongoing")}
                         // className="nav-link"
                         id="old-tkts-tab"
                         data-bs-toggle="tab"
@@ -411,7 +412,7 @@ function indexa() {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                        onClick={() => setActiveTab("newTickets")}
+                        onClick={() => handleRowClick("newTickets")}
                         // className="nav-link"
                         id="new-arrivals-tkts-tab"
                         data-bs-toggle="tab"
@@ -428,7 +429,7 @@ function indexa() {
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
-                        onClick={() => setActiveTab("followUp")}
+                        onClick={() => handleRowClick("followUp")}
                         // className="nav-link"
                         id="new-arrivals-tkts-tab"
                         data-bs-toggle="tab"
@@ -463,6 +464,7 @@ function indexa() {
                               <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
@@ -477,10 +479,11 @@ function indexa() {
                                   <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
+                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
-                                  <td><span className="comment">{item.subject}<br/></span></td>
+                                  <td><span className="comment">{item.subject}<br /></span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
 
                                   <td>
@@ -542,6 +545,7 @@ function indexa() {
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -554,6 +558,7 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
+                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
@@ -618,9 +623,10 @@ function indexa() {
                         <table className="table">
                           <thead>
                             <tr>
-                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -629,10 +635,11 @@ function indexa() {
                           {data ? (
                             <tbody>
                               {data.map((item, index) => (
-                                <tr key={index}>           
+                                <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
+                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
@@ -697,9 +704,10 @@ function indexa() {
                         <table className="table">
                           <thead>
                             <tr>
-                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
@@ -712,6 +720,7 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
+                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
@@ -764,6 +773,11 @@ function indexa() {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                 </div>
               </div>
             </section>
