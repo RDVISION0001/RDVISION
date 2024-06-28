@@ -204,7 +204,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_users" className="nav-link">
+              <NavLink to="/manager_team" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Team</span>
               </NavLink>

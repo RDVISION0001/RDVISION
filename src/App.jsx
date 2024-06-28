@@ -40,7 +40,7 @@ import Invoicesm from './manager/invoicesm';
 import Ordersm from './manager/ordersm';
 import Salesm from './manager/salesm';
 import Ticketsm from './manager/ticketsm';
-import Usersm from './manager/usersm';
+import Team from './manager/team';
 
 // agent
 import Indexa from './closer/indexa';
@@ -139,7 +139,7 @@ function App() {
               <Route exact path="/manager_orders" element={<Ordersm />} />
               <Route exact path="/manager_sales" element={<Salesm />} />
               <Route exact path="/manager_tickets" element={<Ticketsm />} />
-              <Route exact path="/manager_users" element={<Usersm />} />
+              <Route exact path="/manager_team" element={<Team />} />
 
             </Route>
           </Routes>

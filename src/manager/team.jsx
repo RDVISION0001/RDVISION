@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
-function usersm() {
+function team() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -511,4 +511,4 @@ function usersm() {
   )
 }
 
-export default usersm
+export default team;
