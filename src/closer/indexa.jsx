@@ -192,7 +192,7 @@ function indexa() {
                       <div className="div-top">
                         <h3 className="title">Total Tickets</h3>
                         <span className="sales"
-                        >0 <span className="indicators"></span></span
+                        >0<span className="indicators">0%</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -205,7 +205,7 @@ function indexa() {
                       <div className="div-top">
                         <h3 className="title">In negotation</h3>
                         <span className="sales"
-                        >0 <span className="indicators">0</span></span
+                        >0<span className="indicators">0%</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -218,7 +218,7 @@ function indexa() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales"
-                        >0 <span className="indicators">0</span></span
+                        >0<span className="indicators">0%</span></span
                         >
                       </div>
                       <div className="icon-wrapper">
@@ -231,7 +231,7 @@ function indexa() {
                       <div className="div-top">
                         <h3 className="title">Projected Sales</h3>
                         <span className="sales"
-                        >0 <span className="indicators">0</span></span
+                        >0<span className="indicators">0%</span></span
                         >
                       </div>
                       <div className="icon-wrapper">

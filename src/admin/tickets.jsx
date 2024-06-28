@@ -3,37 +3,35 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
-
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function tickets() {
-
-  // Define parameters for each tab
   const params = {
     allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
   };
-  
 
-  ////actipn modal active //
   const [activeTab, setActiveTab] = useState("allTickets");
+  const [apiResponse, setApiResponse] = useState(null);
+  const [selectedTickets, setSelectedTickets] = useState([]);
+  const [show, setShow] = useState(false);
+  const [team, setTeam] = useState([]);
+  const [selectedTeam, setSelectedTeam] = useState('');
+  const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-  // Function to handle tab click
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
-    fetchTickets(params[tabName]);
+    setCurrentPage(0);
+    fetchTickets(params[tabName], 0);
   };
 
-  // State for API response////
-  const [apiResponse, setApiResponse] = useState(null);
-
-  // State for selected tickets////
-  const [selectedTickets, setSelectedTickets] = useState([]);
-
-
-  // Function to handle ticket selection
   const handleTicketSelect = (e, id) => {
     const isChecked = e.target.checked;
     if (isChecked) {
@@ -43,150 +41,83 @@ function tickets() {
     }
   };
 
-  // Function to send POST request
   const sendPostRequest = async () => {
     try {
-      const payload = selectedTickets; 
-
+      const payload = selectedTickets;
       const config = {
         headers: {
           // 'teamId': parseInt(selectedTeam)
         }
       };
-
-      // Construct the URL with the ticketId
       const url = `/third_party_api/ticket/assignToTeam/${selectedTeam}`;
       const response = await axiosInstance.post(url, payload, config);
       setApiResponse(response.data);
       toast.success('Tickets assigned successfully!');
-      handleClose(); 
+      handleClose();
       setTimeout(() => {
         window.location.reload();
       }, 6000);
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
-
     }
   };
 
-  // State for modal visibility
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  ///team////////
-  const [team, setTeam] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState('');
-
-  // Fetch teams on component mount
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosInstance.get('/team/getAllTeams');
       setTeam(response.data.dtoList);
     };
-
     fetchData();
   }, []);
 
-
-  // Handle team selection
   const handleSelectTeam = (e) => {
     setSelectedTeam(e.target.value);
   };
 
-
-  // State for tickets
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus');
-      setData(response.data.dtoList);
-    };
-    fetchData();
-  }, []);
-
-
-  // Function to fetch tickets based on parameters
-  const fetchTickets = async (params) => {
+  const fetchTickets = async (params, page) => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page }
+      });
       setData(response.data.dtoList);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Error fetching tickets:', error);
     }
   };
 
-  // Fetch all tickets on component mount
   useEffect(() => {
-    fetchTickets(params.allTickets);
+    fetchTickets(params.allTickets, 0);
   }, []);
 
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      fetchTickets(params[activeTab], currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      fetchTickets(params[activeTab], currentPage + 1);
+    }
+  };
 
   return (
     <>
       <div className="admin-page tickets-page">
-        {/* <!-- Side-Nav --> */}
         <Sidenav />
-        {/* <!-- Main Wrapper --> */}
         <div className="my-container main-content-block2658 active-cont">
-          {/* <!-- Top Nav --> */}
           <Topnav />
-          {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
-            {/* <!-- Section one --> */}
             <section className="sadmin-top-section">
               <div className="container-fluid">
                 <div className="row g-3">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
+                  {/* Cards here */}
                 </div>
               </div>
             </section>
-            {/* <!-- Filter Section --> */}
             <section className="filter-section">
               <div className="container-fluid">
                 <div className="row">
@@ -200,45 +131,12 @@ function tickets() {
                   </div>
                   <div className="col-md-7">
                     <div className="filter-wrapper d-flex gap-3">
-                      {/* <!-- Department filter --> */}
-                      <div className="btn-group department">
-                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
-                        <ul className="dropdown-menu">
-                          <li><a className="dropdown-item" href="#">Action</a></li>
-                          <li><a className="dropdown-item" href="#">Another action</a></li>
-                          <li><a className="dropdown-item" href="#">Something else here</a></li>
-                          <li><hr className="dropdown-divider" /></li>
-                          <li><a className="dropdown-item" href="#">Separated link</a></li>
-                        </ul>
-                      </div>
-                      {/* <!-- Date filter --> */}
-                      <div className="btn-group date">
-                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
-                        <ul className="dropdown-menu">
-                          <li><a className="dropdown-item" href="#">Action</a></li>
-                          <li><a className="dropdown-item" href="#">Another action</a></li>
-                          <li><a className="dropdown-item" href="#">Something else here</a></li>
-                          <li><hr className="dropdown-divider" /></li>
-                          <li><a className="dropdown-item" href="#">Separated link</a></li>
-                        </ul>
-                      </div>
-                      {/* <!-- Order Status filter --> */}
-                      <div className="btn-group order-status">
-                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
-                        <ul className="dropdown-menu">
-                          <li><a className="dropdown-item" href="#">Action</a></li>
-                          <li><a className="dropdown-item" href="#">Another action</a></li>
-                          <li><a className="dropdown-item" href="#">Something else here</a></li>
-                          <li><hr className="dropdown-divider" /></li>
-                          <li><a className="dropdown-item" href="#">Separated link</a></li>
-                        </ul>
-                      </div>
+                      {/* Filters here */}
                     </div>
                   </div>
                 </div>
               </div>
             </section>
-            {/* <!-- section 2 --> */}
             <section className="data-table-bgs_02x24 py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
@@ -253,15 +151,15 @@ function tickets() {
                     </li>
                     <li className="nav-item" role="presentation">
                       <button className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
-                        onClick={() => handleRowClick("ongoing")} id="pendings-tab" data-bs-toggle="tab" data-bs-target="#pendings-tab-pane" type="button" role="tab" aria-controls="pendings-tab-pane" aria-selected="false" tabindex="-1">Ongoing</button>
+                        onClick={() => handleRowClick("ongoing")} id="pendings-tab" data-bs-toggle="tab" data-bs-target="#pendings-tab-pane" type="button" role="tab" aria-controls="pendings-tab-pane" aria-selected="false" tabIndex="-1">Ongoing</button>
                     </li>
                     <li className="nav-item" role="presentation">
                       <button className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                        onClick={() => handleRowClick("newTickets")} id="new-arrivals-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tab-pane" aria-selected="false" tabindex="-1">New Tickets</button>
+                        onClick={() => handleRowClick("newTickets")} id="new-arrivals-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tab-pane" aria-selected="false" tabIndex="-1">New Tickets</button>
                     </li>
                   </ul>
                   <div className="tab-content recent-transactions-tab-body" id="myTabContent">
-                    <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabindex="0">
+                    <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
                       <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
@@ -269,18 +167,18 @@ function tickets() {
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
                               </th>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Query Message</th>
+                              <th tabIndex="0">Query ID</th>
+                              <th tabIndex="0">Query McatName</th>
+                              <th tabIndex="0">Sender Company</th>
+                              <th tabIndex="0">Sender Name</th>
+                              <th tabIndex="0">Sender Mobile</th>
+                              <th tabIndex="0">Sender Address</th>
+                              <th tabIndex="0">Query Message</th>
                             </tr>
                           </thead>
                           <tbody>
                             {data.map((item) => (
-                              <tr>
+                              <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
                                     type="checkbox"
@@ -301,8 +199,8 @@ function tickets() {
                         </table>
                       </div>
                     </div>
-                    {/* <!-- pending tab --> */}
-                    <div className="tab-pane fade" id="pendings-tab-pane" role="tabpanel" aria-labelledby="pendings-tab" tabindex="0">
+                    {/* Pending tab */}
+                    <div className="tab-pane fade" id="pendings-tab-pane" role="tabpanel" aria-labelledby="pendings-tab" tabIndex="0">
                       <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
@@ -310,18 +208,18 @@ function tickets() {
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
                               </th>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Query Message</th>
+                              <th tabIndex="0">Query ID</th>
+                              <th tabIndex="0">Query McatName</th>
+                              <th tabIndex="0">Sender Company</th>
+                              <th tabIndex="0">Sender Name</th>
+                              <th tabIndex="0">Sender Mobile</th>
+                              <th tabIndex="0">Sender Address</th>
+                              <th tabIndex="0">Query Message</th>
                             </tr>
                           </thead>
                           <tbody>
                             {data.map((item) => (
-                              <tr>
+                              <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
                                     type="checkbox"
@@ -342,8 +240,8 @@ function tickets() {
                         </table>
                       </div>
                     </div>
-                    {/* <!-- new tab --> */}
-                    <div className="tab-pane fade" id="new-arrivals-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tab" tabindex="0">
+                    {/* New tab */}
+                    <div className="tab-pane fade" id="new-arrivals-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tab" tabIndex="0">
                       <div className="tickets-table table-responsive">
                         <table className="table">
                           <thead>
@@ -351,18 +249,19 @@ function tickets() {
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
                               </th>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Query Message</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabIndex="0">Customer Name</th>
+                              <th tabIndex="0">Customer Number</th>
+                              <th tabIndex="0">Query ID</th>
+                              <th tabIndex="0">Requirement</th>
+                              <th tabIndex="0">Product Name</th>
+                              <th tabIndex="0">Customer Email</th>
                             </tr>
                           </thead>
                           <tbody>
                             {data.map((item) => (
-                              <tr>
+                              <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
                                     type="checkbox"
@@ -370,13 +269,14 @@ function tickets() {
                                     onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                   />
                                 </td>
-                                <td>{item.uniqueQueryId}</td>
-                                <td>{item.queryMcatName}</td>
-                                <td>{item.senderCompany}</td>
+                                <td>{item.queryTime}</td>
+                                <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
                                 <td>{item.senderMobile}</td>
-                                <td>{item.senderAddress}</td>
+                                <td>{item.uniqueQueryId}</td>
                                 <td>{item.queryMessage}</td>
+                                <td>{item.queryProductName}</td>
+                                <td>{item.senderEmail}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -384,96 +284,49 @@ function tickets() {
                       </div>
                     </div>
                   </div>
+                </div>
+                <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                 </div>
               </div>
             </section>
-            {/* <!-- -------------- --> */}
           </div>
         </div>
       </div>
 
-      {/* <!-- Assign Ticket Modal --> */}
-      <Modal show={show} onHide={handleClose} id="assignTicketModal" tabindex="-1" aria-labelledby="assignTicketModalLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header border-0">
-              <h1 className="modal-title fs-5 w-100 text-center" id="assignTicketModalLabel">Assign Ticket</h1>
-              <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Assign Tickets to Team</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="form-group">
+              <label htmlFor="teamSelect">Select Team</label>
+              <select className="form-control" id="teamSelect" onChange={handleSelectTeam} value={selectedTeam}>
+                <option value="">Choose...</option>
+                {team.map((t) => (
+                  <option key={t.teamId} value={t.teamId}>{t.teamName}</option>
+                ))}
+              </select>
             </div>
-            <div className="modal-body">
-              <form action="#">
-                <div className="row g-3">
-                  <div className="col-6">
-                    <label for="department" className="form-label">Choose Department</label>
-                    <select name="department" className="form-select" id="department">
-                      {/* Options for departments */}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label for="team" className="form-label">Choose Team</label>
-                    <select
-                      id="inputTeam"
-                      name="teamId"
-                      value={selectedTeam}
-                      onChange={handleSelectTeam}
-                      className="form-select"
-                    >
-                      <option value="">Choose Team</option>
-                      {team.map(team => (
-                        <option key={team.teamId} value={team.teamId}>{team.teamName}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label for="Role" className="form-label">Choose Role</label>
-                    <select name="Role" className="form-select" id="Role">
-                      {/* Options for roles */}
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer justify-content-center border-0">
-              <button type="button" className="btn btn-secondary" onClick={handleClose} data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary" onClick={sendPostRequest}>Save changes</button>
-            </div>
-          </div>
-        </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={sendPostRequest}>
+            Assign Tickets
+          </Button>
+        </Modal.Footer>
       </Modal>
 
-      {/* <!-- Modal --> */}
-      <div className="modal ticket-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content">
-            <div className="modal-body">
-              <div className="row">
-                <div className="col-4">
-                  <div className="heading-area">
-                    <div className="vertical-write">
-                      <h2 className="title">Jenell D. Matney</h2>
-                      <p className="ticket-id"><i className="fa-solid fa-ticket"></i> TKTID:MEDEQ089N</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-8">
-                  <div className="main-content-area">
-                    <div className="contact-info-row">
-                      <a href="" className="contact-info phone"><i className="fa-solid fa-phone"></i> +91 9918293747</a>
-                      <a className="contact-info email" href="#"><i className="fa-solid fa-envelope-open-text"></i> example@email.com</a>
-                    </div>
-                    <div className="button-grp">
-                      <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="button" className="btn btn-primary">Save changes</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ToastContainer position="top-right" />
     </>
-  )
+  );
 }
+
 
 export default tickets
