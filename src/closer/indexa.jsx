@@ -73,6 +73,7 @@ function indexa() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10); 
 
   // Form data state
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
@@ -93,9 +94,9 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
+    allTickets: { userId},
     ongoing: { userId, ticketStatus: 'Sale' },
-    newTickets: { userId, ticketStatus: 'New' },
+    newTickets: { ticketStatus: 'New' },
     followUp: { userId, ticketStatus: 'follow' },
   };
 
@@ -103,10 +104,10 @@ function indexa() {
   const [data, setData] = useState(null);
 
   // Fetch data function
-  const fetchData = async (params, page) => {
+  const fetchData = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-        params: { ...params, page }
+        params: { ...params, page, element: perPage }
       });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
@@ -116,10 +117,10 @@ function indexa() {
     }
   };
 
-  // useEffect to fetch data whenever the activeTab or currentPage changes
+  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
-    fetchData(params[activeTab], currentPage);
-  }, [activeTab, currentPage]);
+    fetchData(params[activeTab], currentPage, itemsPerPage);
+  }, [activeTab, currentPage, itemsPerPage]);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -133,7 +134,7 @@ function indexa() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!uniqueQueryId) {
-      setError("Unique Query ID is not defined");
+      setError('Unique Query ID is not defined');
       return;
     }
     try {
@@ -156,22 +157,29 @@ function indexa() {
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0); // Reset to first page when changing tabs
-    fetchData(params[tabName], 0); // Fetch data for the new tab
+    fetchData(params[tabName], 0, itemsPerPage); // Fetch data for the new tab
   };
 
   // Handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
-      fetchData(params[activeTab], currentPage - 1);
+      fetchData(params[activeTab], currentPage - 1, itemsPerPage);
     }
   };
 
   // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
-      fetchData(params[activeTab], currentPage + 1);
+      fetchData(params[activeTab], currentPage + 1, itemsPerPage);
     }
   };
+
+  // Function to set items per page
+  const handleItemsPerPageChange = (perPage) => {
+    setItemsPerPage(perPage);
+    setCurrentPage(0); 
+  };
+
 
   return (
     <>
@@ -778,6 +786,14 @@ function indexa() {
                   <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                   <span>Page {currentPage + 1} of {totalPages}</span>
                   <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+                  <span>Items per page:</span>{' '}
+                  <select value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                  </select>
                 </div>
               </div>
             </section>
