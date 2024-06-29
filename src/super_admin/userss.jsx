@@ -12,6 +12,10 @@ import 'react-toastify/dist/ReactToastify.css';
 
 function userss() {
 
+  ///pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
   ////add member //
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -46,6 +50,9 @@ function userss() {
       console.log('Response:', response.data);
       toast.success('User created successfully!');
       handleClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       console.error('Error:', error);
       toast.error('User creation failed');
@@ -63,24 +70,47 @@ function userss() {
   ////all users///
   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get('/user/getAllUsers');
+  const fetchData = async (page) => {
+    try {
+      const response = await axiosInstance.get('/user/getAllUsers', { params: { page } });
       setData(response.data.dtoList);
-    };
-    fetchData();
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(0);
   }, []);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      fetchData(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      fetchData(currentPage + 1);
+    }
+  };
 
   ///department////////
   const [department, setDepartment] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get('/department/getDepartments');
-      setDepartment(response.data.dtoList);
+    const fetchDepartments = async () => {
+      try {
+        const response = await axiosInstance.get('/department/getDepartments');
+        setDepartment(response.data.dtoList);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
     };
-    fetchData();
+    fetchDepartments();
   }, []);
 
   const handleSelectDepart = (e) => {
@@ -92,11 +122,15 @@ function userss() {
   const [selectedTeam, setSelectedTeam] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get('/team/getAllTeams');
-      setTeam(response.data.dtoList);
+    const fetchTeams = async () => {
+      try {
+        const response = await axiosInstance.get('/team/getAllTeams');
+        setTeam(response.data.dtoList);
+      } catch (error) {
+        console.error('Error fetching teams:', error);
+      }
     };
-    fetchData();
+    fetchTeams();
   }, []);
 
   const handleSelectTeam = (e) => {
@@ -108,17 +142,20 @@ function userss() {
   const [selectedRole, setSelectedRole] = useState('');
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await axiosInstance.get('/role/getAllRoles');
-      setRole(response.data.dtoList);
+    const fetchRoles = async () => {
+      try {
+        const response = await axiosInstance.get('/role/getAllRoles');
+        setRole(response.data.dtoList);
+      } catch (error) {
+        console.error('Error fetching roles:', error);
+      }
     };
-    fetchData();
+    fetchRoles();
   }, []);
 
   const handleSelectRole = (e) => {
     setSelectedRole(e.target.value);
   };
-
 
   return (
     <>
@@ -213,8 +250,8 @@ function userss() {
                             </th>
                             <th tabindex="0">Profile</th>
                             <th tabindex="0">User Name</th>
-                            <th tabindex="0">department</th>
-                            <th tabindex="0">post</th>
+                            <th tabindex="0">Department</th>
+                            <th tabindex="0">Designation</th>
                             <th tabindex="0">Team</th>
                             <th tabindex="0">IP Assigned</th>
                             <th tabindex="0">Action</th>
@@ -232,9 +269,9 @@ function userss() {
                                 </div>
                               </td>
                               <td>{item.firstName} {item.lastName}</td>
-                              <td>{item.departmentId}</td>
-                              <td>{item.roleId}</td>
-                              <td><span className="status">DigV Sales</span></td>
+                              <td>{item.departmentDto?.deptName}</td>
+                              <td>{item.roleDto?.roleName}</td>
+                              <td>{item.teamDto?.teamName}</td>
                               <td>{item.systemIp}</td>
                               <td className="action">
                                 <Button className="btn btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
@@ -336,8 +373,12 @@ function userss() {
                       </table>
                     </div>
                   </div>
-
                   {/* <!--  --> */}
+                </div>
+                <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                 </div>
               </div>
             </section>

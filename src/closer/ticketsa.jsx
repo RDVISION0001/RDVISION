@@ -4,7 +4,13 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import axiosInstance from '../axiosInstance';
 
+// Authentication context
+import { useAuth } from '../auth/AuthContext';
+
 function ticketsa() {
+
+  const { userId } = useAuth();
+
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -27,7 +33,7 @@ function ticketsa() {
   // Function to fetch tickets based on parameters and page number
   const fetchTickets = async (params, page) => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, page } });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, userId, } });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
