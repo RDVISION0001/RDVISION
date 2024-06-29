@@ -376,7 +376,7 @@ function indexa() {
                     id="followUp"
                     role="tablist"
                   >
-                    <li className="nav-item" role="presentation">
+                    {/* <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
                         onClick={() => handleRowClick("allTickets")}
@@ -391,8 +391,8 @@ function indexa() {
                       >
                         All Tickets
                       </button>
-                    </li>
-                    <li className="nav-item" role="presentation">
+                    </li> */}
+                    {/* <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
                         onClick={() => handleRowClick("ongoing")}
@@ -408,7 +408,7 @@ function indexa() {
                       >
                         Ongoing
                       </button>
-                    </li>
+                    </li> */}
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
@@ -426,7 +426,7 @@ function indexa() {
                         New Tickets
                       </button>
                     </li>
-                    <li className="nav-item" role="presentation">
+                    {/* <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
                         onClick={() => handleRowClick("followUp")}
@@ -442,7 +442,7 @@ function indexa() {
                       >
                         Follow-up
                       </button>
-                    </li>
+                    </li> */}
                   </ul>
                   <div
                     className="tab-content recent-transactions-tab-body"
@@ -465,7 +465,7 @@ function indexa() {
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>

@@ -16,13 +16,18 @@ function team() {
     newTickets: { ticketStatus: 'New' },
   };
 
+  ///pagination
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
   // Action modal active
   const [activeTab, setActiveTab] = useState('allTickets');
 
   // Function to handle tab click
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
-    fetchTickets(params[tabName]);
+    setCurrentPage(0);
+    fetchTickets(params[tabName], 0);
   };
 
   // Post assign
@@ -57,9 +62,9 @@ function team() {
       setApiResponse(response.data);
       toast.success('Tickets assigned successfully!');
       handleClose();
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 6000); 
+      setTimeout(() => {
+        window.location.reload();
+      }, 6000); 
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
@@ -104,10 +109,14 @@ function team() {
   }, []);
 
   // Function to fetch tickets based on parameters
-  const fetchTickets = async (params) => {
+    const fetchTickets = async (params, page) => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page }
+      });
       setData(response.data.dtoList);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error('Error fetching tickets:', error);
     }
@@ -115,8 +124,20 @@ function team() {
 
   // Fetch all tickets on component mount
   useEffect(() => {
-    fetchTickets(params.allTickets);
+    fetchTickets(params.allTickets, 0);
   }, []);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      fetchTickets(params[activeTab], currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      fetchTickets(params[activeTab], currentPage + 1);
+    }
+  };
 
 
   return (
@@ -420,6 +441,11 @@ function team() {
                     </div>
                   </div>
                 </div>
+                <div className="pagination-controls">
+                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <span>Page {currentPage + 1} of {totalPages}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                </div>
               </div>
             </section>
             {/* <!-- -------------- --> */}
@@ -428,52 +454,37 @@ function team() {
       </div>
 
       {/* <!-- Assign Ticket Modal --> */}
-      <Modal show={show} onHide={handleClose} id="assignTicketModal" tabindex="-1" aria-labelledby="assignTicketModalLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header border-0">
-              <h1 className="modal-title fs-5 w-100 text-center" id="assignTicketModalLabel">Assign Ticket</h1>
-              <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <Modal show={show} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Assign Tickets to User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="form-group">
+              <label htmlFor="teamSelect">Select User</label>
+              <select
+                id="inputTeam"
+                name="userId"
+                value={selectedUser}
+                onChange={handleSelectTeam}
+                className="form-select"
+              >
+                <option value="">Choose User</option>
+                {user.map(user => (
+                  <option key={user.userId} value={user.userId}>{user.firstName} {user.lastName}</option>
+                ))}
+              </select>
             </div>
-            <div className="modal-body">
-              <form action="#">
-                <div className="row g-3">
-                  <div className="col-6">
-                    <label for="department" className="form-label">Choose Department</label>
-                    <select name="department" className="form-select" id="department">
-                      {/* Options for departments */}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label for="user" className="form-label">Choose User</label>
-                    <select
-                      id="inputTeam"
-                      name="userId"
-                      value={selectedUser}
-                      onChange={handleSelectTeam}
-                      className="form-select"
-                    >
-                      <option value="">Choose User</option>
-                      {user.map(user => (
-                        <option key={user.userId} value={user.userId}>{user.firstName} {user.lastName}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="col-6">
-                    <label for="Role" className="form-label">Choose Role</label>
-                    <select name="Role" className="form-select" id="Role">
-                      {/* Options for roles */}
-                    </select>
-                  </div>
-                </div>
-              </form>
-            </div>
-            <div className="modal-footer justify-content-center border-0">
-              <button type="button" className="btn btn-secondary" onClick={handleClose} data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary" onClick={sendPostRequest}>Save changes</button>
-            </div>
-          </div>
-        </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={sendPostRequest}>
+            Assign Tickets
+          </Button>
+        </Modal.Footer>
       </Modal>
 
       {/* <!-- Modal --> */}
