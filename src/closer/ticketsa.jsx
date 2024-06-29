@@ -13,9 +13,9 @@ function ticketsa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
+    allTickets: {userId},
+    ongoing: { userId, ticketStatus: 'Sale' },
+    newTickets: {ticketStatus: 'New' },
   };
 
   // State variables
@@ -33,7 +33,7 @@ function ticketsa() {
   // Function to fetch tickets based on parameters and page number
   const fetchTickets = async (params, page) => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, userId, } });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, page } });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);

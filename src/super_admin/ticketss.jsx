@@ -161,7 +161,7 @@ function ticketss() {
                                 <td>{item.senderName}</td>
                                 <td>{item.senderMobile}</td>
                                 <td>{item.uniqueQueryId}</td>
-                                <td>{item.queryMessage}</td>
+                                <td>{item.subject}</td>
                                 <td>{item.queryProductName}</td>
                                 <td>{item.senderEmail}</td>
                               </tr>
