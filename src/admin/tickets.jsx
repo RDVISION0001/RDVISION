@@ -167,13 +167,14 @@ function tickets() {
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
                               </th>
-                              <th tabIndex="0">Query ID</th>
-                              <th tabIndex="0">Query McatName</th>
-                              <th tabIndex="0">Sender Company</th>
-                              <th tabIndex="0">Sender Name</th>
-                              <th tabIndex="0">Sender Mobile</th>
-                              <th tabIndex="0">Sender Address</th>
-                              <th tabIndex="0">Query Message</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabIndex="0">Customer Name</th>
+                              <th tabIndex="0">Customer Number</th>
+                              <th tabIndex="0">Customer Email</th>
+                              <th tabIndex="0">Ticket ID</th>
+                              <th tabIndex="0">Requirement</th>
+                              <th tabIndex="0">Product Name</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -186,13 +187,14 @@ function tickets() {
                                     onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                   />
                                 </td>
-                                <td>{item.uniqueQueryId}</td>
-                                <td>{item.queryMcatName}</td>
-                                <td>{item.senderCompany}</td>
+                                <td>{item.queryTime}</td>
+                                <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
                                 <td>{item.senderMobile}</td>
-                                <td>{item.senderAddress}</td>
-                                <td>{item.queryMessage}</td>
+                                <td>{item.senderEmail}</td>
+                                <td>{item.uniqueQueryId}</td>
+                                <td>{item.subject}</td>
+                                <td>{item.queryProductName}</td>
                               </tr>
                             ))}
                           </tbody>
