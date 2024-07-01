@@ -78,7 +78,7 @@ function indexx() {
                                         <div className="card">
                                             <div className="div-top">
                                                 <h3 className="title">Total Sales</h3>
-                                                <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                                                <span className="sales">0<span className="indicators">0%</span></span>
                                             </div>
                                             <div className="icon-wrapper">
                                                 <i className="fa-solid fa-wallet"></i>
@@ -89,7 +89,7 @@ function indexx() {
                                         <div className="card">
                                             <div className="div-top">
                                                 <h3 className="title">Total Sales</h3>
-                                                <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                                                <span className="sales">0<span className="indicators">0%</span></span>
                                             </div>
                                             <div className="icon-wrapper">
                                                 <i className="fa-solid fa-wallet"></i>
@@ -100,7 +100,7 @@ function indexx() {
                                         <div className="card">
                                             <div className="div-top">
                                                 <h3 className="title">Total Sales</h3>
-                                                <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                                                <span className="sales">0<span className="indicators">0%</span></span>
                                             </div>
                                             <div className="icon-wrapper">
                                                 <i className="fa-solid fa-wallet"></i>
@@ -111,7 +111,7 @@ function indexx() {
                                         <div className="card">
                                             <div className="div-top">
                                                 <h3 className="title">Total Sales</h3>
-                                                <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                                                <span className="sales">0<span className="indicators">0%</span></span>
                                             </div>
                                             <div className="icon-wrapper">
                                                 <i className="fa-solid fa-wallet"></i>

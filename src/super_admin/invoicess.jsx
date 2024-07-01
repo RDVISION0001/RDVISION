@@ -24,8 +24,8 @@ function invoicess() {
                     <div class="card">
                       <div class="div-top">
                         <h3 class="title">Total Sales</h3>
-                        <span class="sales">$3,181 <span class="indicators">+55%</span></span>
-                      </div>
+                        <span className="sales">0<span className="indicators">0%</span></span>
+                        </div>
                       <div class="icon-wrapper">
                         <i class="fa-solid fa-wallet"></i>
                       </div>
@@ -35,8 +35,8 @@ function invoicess() {
                     <div class="card">
                       <div class="div-top">
                         <h3 class="title">Total Sales</h3>
-                        <span class="sales">$3,181 <span class="indicators">+55%</span></span>
-                      </div>
+                        <span className="sales">0<span className="indicators">0%</span></span>
+                        </div>
                       <div class="icon-wrapper">
                         <i class="fa-solid fa-wallet"></i>
                       </div>
@@ -46,8 +46,8 @@ function invoicess() {
                     <div class="card">
                       <div class="div-top">
                         <h3 class="title">Total Sales</h3>
-                        <span class="sales">$3,181 <span class="indicators">+55%</span></span>
-                      </div>
+                        <span className="sales">0<span className="indicators">0%</span></span>
+                        </div>
                       <div class="icon-wrapper">
                         <i class="fa-solid fa-wallet"></i>
                       </div>
@@ -57,8 +57,8 @@ function invoicess() {
                     <div class="card">
                       <div class="div-top">
                         <h3 class="title">Total Sales</h3>
-                        <span class="sales">$3,181 <span class="indicators">+55%</span></span>
-                      </div>
+                        <span className="sales">0<span className="indicators">0%</span></span>
+                        </div>
                       <div class="icon-wrapper">
                         <i class="fa-solid fa-wallet"></i>
                       </div>

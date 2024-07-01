@@ -73,7 +73,7 @@ function indexa() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10); 
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Form data state
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
@@ -177,7 +177,7 @@ function indexa() {
   // Function to set items per page
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
-    setCurrentPage(0); 
+    setCurrentPage(0);
   };
 
 
@@ -551,19 +551,23 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
+
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
@@ -571,6 +575,8 @@ function indexa() {
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
                                   <td><span className="comment">{item.subject}</span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -632,11 +638,13 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                             </tr>
                           </thead>
@@ -645,6 +653,7 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
@@ -652,6 +661,8 @@ function indexa() {
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
                                   <td><span className="comment">{item.subject}</span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -713,11 +724,13 @@ function indexa() {
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Query ID</th>
+                              <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                             </tr>
                           </thead>
@@ -726,6 +739,7 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
@@ -733,6 +747,7 @@ function indexa() {
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
                                   <td><span className="comment">{item.subject}</span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
