@@ -187,3 +187,13 @@ button:focus-visible {
     font-size: 0.8em;
   }
 }
+
+
+/* pagination */
+.pagination-controls{
+  padding: 1%;
+}
+
+.next_prev{
+  background-color: #4FD1C5;
+}

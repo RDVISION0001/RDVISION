@@ -798,12 +798,12 @@ function indexa() {
                   </div>
                 </div>
                 <div className="pagination-controls">
-                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                   <span>Page {currentPage + 1} of {totalPages}</span>
-                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                  <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}> Next</button>
 
-                  <span>Items per page:</span>{' '}
-                  <select value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                  <span> Items per page:</span>{' '}
+                  <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="15">15</option>
