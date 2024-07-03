@@ -19,7 +19,7 @@ function team() {
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  
+
   // Action modal active
   const [activeTab, setActiveTab] = useState('allTickets');
 
@@ -64,7 +64,7 @@ function team() {
       handleClose();
       setTimeout(() => {
         window.location.reload();
-      }, 6000); 
+      }, 6000);
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
@@ -109,7 +109,7 @@ function team() {
   }, []);
 
   // Function to fetch tickets based on parameters
-    const fetchTickets = async (params, page) => {
+  const fetchTickets = async (params, page) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
         params: { ...params, page }
@@ -160,7 +160,7 @@ function team() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales">0<span className="indicators">0%</span></span>
-                        </div>
+                      </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
                       </div>
@@ -171,7 +171,7 @@ function team() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales">0<span className="indicators">0%</span></span>
-                        </div>
+                      </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
                       </div>
@@ -182,7 +182,7 @@ function team() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales">0<span className="indicators">0%</span></span>
-                        </div>
+                      </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
                       </div>
@@ -193,7 +193,7 @@ function team() {
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
                         <span className="sales">0<span className="indicators">0%</span></span>
-                        </div>
+                      </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
                       </div>
@@ -285,13 +285,14 @@ function team() {
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
                               </th>
-                              <th tabindex="0">Query ID</th>
-                              <th tabindex="0">Query McatName</th>
-                              <th tabindex="0">Sender Company</th>
-                              <th tabindex="0">Sender Name</th>
-                              <th tabindex="0">Sender Mobile</th>
-                              <th tabindex="0">Sender Address</th>
-                              <th tabindex="0">Query Message</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabIndex="0">Customer Name</th>
+                              <th tabIndex="0">Customer Number</th>
+                              <th tabIndex="0">Customer Email</th>
+                              <th tabIndex="0">Ticket ID</th>
+                              <th tabIndex="0">Requirement</th>
+                              <th tabIndex="0">Product Name</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -304,13 +305,14 @@ function team() {
                                     onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                   />
                                 </td>
-                                <td>{item.uniqueQueryId}</td>
-                                <td>{item.queryMcatName}</td>
-                                <td>{item.senderCompany}</td>
+                                <td>{item.queryTime}</td>
+                                <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
                                 <td>{item.senderMobile}</td>
-                                <td>{item.senderAddress}</td>
-                                <td>{item.queryMessage}</td>
+                                <td>{item.senderEmail}</td>
+                                <td>{item.uniqueQueryId}</td>
+                                <td>{item.subject}</td>
+                                <td>{item.queryProductName}</td>
                               </tr>
                             ))}
                           </tbody>
