@@ -89,6 +89,14 @@ function indexa() {
     setShow(true);
   };
 
+  // Modal state for send price and suscription mail
+  const [on, setOn] = useState(false);
+  const handleOff = () => setOn(false);
+  const handleOn = (queryId) => {
+    setUniqueQueryId(queryId);
+    setOn(true);
+  };
+
   // Active tab state
   const [activeTab, setActiveTab] = useState("allTickets");
 
@@ -516,11 +524,13 @@ function indexa() {
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
-                                      <a
-                                        href="mailto:someone@example.com"
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
                                         className="btn-action email"
                                         title="Get connect on email"
-                                      ><i className="fa-solid fa-envelope"></i></a>
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
                                       <a
                                         href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
                                         className="btn-action whatsapp"
@@ -687,12 +697,13 @@ function indexa() {
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i
                                       ></a>
-                                      <a
-                                        href="mailto:someone@example.com"
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
                                         className="btn-action email"
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
-                                      ></a>
+                                      ></Button>
                                       <a
                                         href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
                                         className="btn-action whatsapp"
@@ -815,7 +826,7 @@ function indexa() {
             {/* <!-- -------------- -->
 
             <!-- ------------------------------------------------------------
-            --------------------- Followup Ticket Modal ---------------------
+            --------------------- Call Status Ticket Modal ---------------------
           -------------------------------------------------------------- --> */}
             <Modal show={show} onHide={handleClose}
               class="modal assign-ticket-modal fade"
@@ -878,6 +889,56 @@ function indexa() {
                 </form>
               </Modal.Body>
             </Modal>
+
+            {/* <!-- -------------- -->
+            <!-- ------------------------------------------------------------
+            --------------------- seed price and mail Modal ---------------------
+          -------------------------------------------------------------- --> */}
+
+            <Modal show={on} onHide={handleOff}
+              class="modal assign-ticket-modal fade"
+              id="followUpModal"
+              tabindex="-1"
+              aria-labelledby="followUpModalLabel"
+              aria-hidden="true">
+              <Modal.Header closeButton>
+                <h1
+                  class="modal-title fs-5 w-100 text-center"
+                  id="followUpModalLabel"
+                >
+                  Call Status
+                </h1>
+              </Modal.Header>
+              <Modal.Body>
+                <form >
+                  <div className="mb-3">
+                    <label htmlFor="status" className="form-label">Status</label>
+                    <select
+                      type="text"
+                      className="form-select"
+                      id="status"
+                      name="ticketStatus"
+                    >
+                      <option >Select Options</option>
+                      <option value="Sale">Send Price List</option>
+                      <option value="New">Send Subscription Mail</option>
+                    </select>
+                  </div>
+                  <div class="modal-footer justify-content-center border-0">
+                    <button type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                      onClick={handleOff}>
+                      Close
+                    </button>
+                    <button class="btn btn-primary" type="submit">
+                      Send
+                    </button>
+                  </div>
+                </form>
+              </Modal.Body>
+            </Modal>
+
           </div>
         </div >
       </div >
