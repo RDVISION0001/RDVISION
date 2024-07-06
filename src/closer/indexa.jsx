@@ -17,6 +17,10 @@ import HighchartsReact from 'highcharts-react-official'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+ //clipborad copy
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+
 const options = {
 
   chart: {
@@ -70,6 +74,10 @@ const options = {
 function indexa() {
   const { userId } = useAuth();
 
+  //clipborad copy
+  const [copied, setCopied] = useState(false);
+
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -102,7 +110,7 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId},
+    allTickets: { userId },
     ongoing: { userId, ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
     followUp: { userId, ticketStatus: 'follow' },
@@ -494,7 +502,14 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                     <button>Click to Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
@@ -579,7 +594,14 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                     <button>Click to Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
@@ -665,8 +687,14 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderEmail}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                     <button>Click to Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
@@ -752,8 +780,14 @@ function indexa() {
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
-                                  <td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderEmail}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                     <button>Click to Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
