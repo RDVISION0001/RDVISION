@@ -7,15 +7,20 @@ import axiosInstance from '../axiosInstance';
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
 
+//copy to cliipboard
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+
+
 function ticketsa() {
 
   const { userId } = useAuth();
 
   // Define parameters for each tab
   const params = {
-    allTickets: {userId},
+    allTickets: { userId },
     ongoing: { userId, ticketStatus: 'Sale' },
-    newTickets: {ticketStatus: 'New' },
+    newTickets: { ticketStatus: 'New' },
   };
 
   // State variables
@@ -23,6 +28,9 @@ function ticketsa() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+    //clipborad copy
+    const [copied, setCopied] = useState(false);
 
   // Function to handle tab click
   const handleRowClick = (tabName) => {
@@ -165,7 +173,14 @@ function ticketsa() {
                                 <td>{item.queryTime}</td>
                                 <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
-                                <td>{item.senderMobile}</td>
+                                <td> <td>
+                                  <CopyToClipboard
+                                    text={item.senderMobile}
+                                    onCopy={() => setCopied(true)}
+                                  >
+                                    <button>Click to Copy</button>
+                                  </CopyToClipboard>
+                                </td><span className="text">{item.senderMobile}</span></td>
                                 <td>{item.senderEmail}</td>
                                 <td>{item.uniqueQueryId}</td>
                                 <td>{item.subject}</td>

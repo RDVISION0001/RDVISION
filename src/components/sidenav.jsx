@@ -170,7 +170,7 @@ function Sidenav() {
                 <span className="nav-text">Tickets</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink to="/closer_invoices" className="nav-link">
                 <i className="fa-regular fa-address-card"></i>
                 <span className="nav-text">Invoices</span>
@@ -181,7 +181,7 @@ function Sidenav() {
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
-            </li>
+            </li> */}
           </>
         )}
 
