@@ -9,6 +9,9 @@ import 'react-toastify/dist/ReactToastify.css';
 ///compo//
 import Sidenav from './components/sidenav';
 
+// careers
+import Jobpost from './careers/jobpost';
+
 // auth
 import './auth/login.css';
 import Login from './auth/login';
@@ -54,6 +57,8 @@ import Usersa from './closer/usersa';
 import './components/css/themedigproX01.css';
 import './components/css/themedigproX01.scss';
 
+// careers
+import './careers/jobpost.css'
 
 // css/////////////////
 import './admin/css/admin.css';
@@ -62,8 +67,8 @@ import './admin/css/admin.scss';
 import './css/Sidebar/sidebar.css';
 import './css/Sidebar/sidebar.scss';
 
-import './css/Agent/dashAgent.css';
-import './css/Agent/dashAgent.scss';
+import './css/closer/dashAgent.css';
+import './css/closer/dashAgent.scss';
 
 import './css/dashboard/dashboard.css';
 import './css/dashboard/dashboard.scss';
@@ -101,6 +106,10 @@ function App() {
             {/* auth */}
             <Route exact path="/" element={<Login />} />
             <Route exact path="/logout" element={<Logout />} />
+
+            {/* careers */}
+            <Route exact path="/careers_jobpost" element={<Jobpost />} />
+
 
             <Route element={<PrivateRoute />}>
 
