@@ -50,6 +50,12 @@ function ticketsa() {
     }
   };
 
+ ////masking mobile number
+ const maskMobileNumber = (number) => {
+  if (number.length < 4) return number;
+  return number.slice(0, -4) + 'XXXX';
+};
+
   // Fetch all tickets on component mount
   useEffect(() => {
     fetchTickets(params.allTickets, 0);
@@ -178,9 +184,9 @@ function ticketsa() {
                                     text={item.senderMobile}
                                     onCopy={() => setCopied(true)}
                                   >
-                                    <button>Click to Copy</button>
+                                    <button>Copy</button>
                                   </CopyToClipboard>
-                                </td><span className="text">{item.senderMobile}</span></td>
+                                </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
                                 <td>{item.senderEmail}</td>
                                 <td>{item.uniqueQueryId}</td>
                                 <td>{item.subject}</td>
@@ -265,9 +271,9 @@ function ticketsa() {
                     </div>
                   </div>
                   <div className="pagination-controls">
-                    <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                    <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                     <span>{currentPage + 1} of {totalPages}</span>
-                    <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                    <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                   </div>
                 </div>
               </div>

@@ -133,6 +133,13 @@ function indexa() {
     }
   };
 
+
+////masking mobile number
+  const maskMobileNumber = (number) => {
+    if (number.length < 4) return number;
+    return number.slice(0, -4) + 'XXXX';
+  };
+
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
@@ -172,8 +179,8 @@ function indexa() {
   // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
-    setCurrentPage(0); // Reset to first page when changing tabs
-    fetchData(params[tabName], 0, itemsPerPage); // Fetch data for the new tab
+    setCurrentPage(0); 
+    fetchData(params[tabName], 0, itemsPerPage); 
   };
 
   // Handle previous page
@@ -507,9 +514,9 @@ function indexa() {
                                       text={item.senderMobile}
                                       onCopy={() => setCopied(true)}
                                     >
-                                     <button>Click to Copy</button>
+                                     <button>Copy</button>
                                     </CopyToClipboard>
-                                  </td><span className="text">{item.senderMobile}</span></td>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
@@ -599,7 +606,7 @@ function indexa() {
                                       text={item.senderMobile}
                                       onCopy={() => setCopied(true)}
                                     >
-                                     <button>Click to Copy</button>
+                                     <button>Copy</button>
                                     </CopyToClipboard>
                                   </td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
@@ -692,9 +699,9 @@ function indexa() {
                                       text={item.senderMobile}
                                       onCopy={() => setCopied(true)}
                                     >
-                                     <button>Click to Copy</button>
+                                     <button>Copy</button>
                                     </CopyToClipboard>
-                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
                                     <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
@@ -785,7 +792,7 @@ function indexa() {
                                       text={item.senderMobile}
                                       onCopy={() => setCopied(true)}
                                     >
-                                     <button>Click to Copy</button>
+                                     <button>Copy</button>
                                     </CopyToClipboard>
                                   </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
                                   <td className="ticket-id">
