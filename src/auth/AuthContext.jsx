@@ -10,12 +10,16 @@ export const AuthProvider = ({ children }) => {
   const [roleName, setRoleName] = useState('');
   const [userId, setUserId] = useState('');
   const [firstName, setFirstName] = useState(''); 
+  const [lastName, setLastName] = useState(''); 
+
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedRoleName = localStorage.getItem('roleName');
     const storedUserId = localStorage.getItem('userId');
     const storedFirstName = localStorage.getItem('firstName'); 
+    const storedLastName = localStorage.getItem('lastName'); 
+
 
     if (token) {
       setIsAuthenticated(true);
@@ -35,6 +39,11 @@ export const AuthProvider = ({ children }) => {
       setFirstName(storedFirstName); 
       console.log('First Name:', storedFirstName);
     }
+
+    if (storedLastName) {
+      setLastName(storedLastName); 
+      console.log('Last Name:', storedLastName)
+    }
   }, []);
 
   const login = async (email, password) => {
@@ -46,11 +55,13 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('roleName', user.roleDto.roleName);
         localStorage.setItem('userId', user.userId);
         localStorage.setItem('firstName', user.firstName); 
+        localStorage.setItem('lastName', user.lastName); 
         setIsAuthenticated(true);
         setRoleName(user.roleDto.roleName);
         setUserId(user.userId);
         setFirstName(user.firstName);
-        console.log(firstName);
+        setLastName(user.lastName);
+        console.log(user.lastName);
         toast.success('Login successfully!');
         return true;
       } else {
@@ -78,7 +89,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, login, logout }}>
       {children}
     </AuthContext.Provider>
 

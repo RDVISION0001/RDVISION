@@ -83,7 +83,7 @@ function team() {
   // Fetch users on component 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axiosInstance.get('/user/getAllUsers', {
+      const response = await axiosInstance.get('/user/dropdown', {
         params: { roleId: 4 }
       });
       setUser(response.data.dtoList);

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import Logout from '../auth/logout';
 
 function Sidenav() {
-  const { roleName, firstName } = useAuth();
+  const { roleName, firstName, lastName } = useAuth();
 
   useEffect(() => {
     const menuBtn = document.querySelector("#menu-btn");
@@ -58,7 +58,7 @@ function Sidenav() {
                 <i className="fa-solid fa-display"></i>
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName}
+                {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
               </a>
             </li>
@@ -109,7 +109,7 @@ function Sidenav() {
                 <i className="fa-solid fa-display"></i>
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName}
+                {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
               </a>
             </li>
@@ -154,7 +154,7 @@ function Sidenav() {
                 <i className="fa-solid fa-display"></i>
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName}
+                {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
               </a>
             </li>
@@ -193,7 +193,7 @@ function Sidenav() {
                 <i className="fa-solid fa-display"></i>
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName}
+                {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
               </a>
             </li>
