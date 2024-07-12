@@ -26,22 +26,30 @@ function ticketsa() {
   // State variables
   const [activeTab, setActiveTab] = useState("allTickets");
   const [data, setData] = useState([]);
+
+  // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
 
-    //clipborad copy
-    const [copied, setCopied] = useState(false);
+  //clipborad copy
+  const [copied, setCopied] = useState(false);
 
-  // Function to handle tab click
-  const handleRowClick = (tabName) => {
-    setActiveTab(tabName);
-    fetchTickets(params[tabName], 0);
-  };
+ // Handle clicking on tab rows
+ const handleRowClick = (tabName) => {
+  setActiveTab(tabName);
+  setCurrentPage(0);
+  fetchTickets(params[tabName], 0, itemsPerPage);
+};
+
 
   // Function to fetch tickets based on parameters and page number
-  const fetchTickets = async (params, page) => {
+  const fetchTickets = async (params, page, perPage)  => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, page } });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page, size: perPage }
+      });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
@@ -50,28 +58,57 @@ function ticketsa() {
     }
   };
 
- ////masking mobile number
- const maskMobileNumber = (number) => {
-  if (number.length < 4) return number;
-  return number.slice(0, -4) + 'XXXX';
-};
-
-  // Fetch all tickets on component mount
-  useEffect(() => {
-    fetchTickets(params.allTickets, 0);
-  }, []);
-
-  // Pagination controls
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      fetchTickets(params[activeTab], currentPage - 1);
-    }
+  ////masking mobile number
+  const maskMobileNumber = (number) => {
+    if (number.length < 4) return number;
+    return number.slice(0, -4) + 'XXXX';
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      fetchTickets(params[activeTab], currentPage + 1);
+  
+// useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
+useEffect(() => {
+  fetchTickets(params[activeTab], currentPage, itemsPerPage);
+}, [activeTab, currentPage, itemsPerPage]);
+  
+
+ // Handle previous page
+ const handlePreviousPage = () => {
+  if (currentPage > 0) {
+    setCurrentPage(currentPage - 1);
+  }
+};
+
+// Handle next page
+const handleNextPage = () => {
+  if (currentPage < totalPages - 1) {
+    setCurrentPage(currentPage + 1);
+  }
+};
+  
+   // Function to set items per page
+   const handleItemsPerPageChange = (perPage) => {
+    setItemsPerPage(perPage);
+    setCurrentPage(0);
+  };
+
+  // Function to generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 9;
+    const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+
+    let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
+    let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(endPage - maxPagesToShow + 1, 0);
     }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
   };
 
   return (
@@ -272,8 +309,25 @@ function ticketsa() {
                   </div>
                   <div className="pagination-controls">
                     <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                    <span>{currentPage + 1} of {totalPages}</span>
+                    {generatePageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                      >
+                        {page + 1}
+                      </button>
+                    ))}
                     <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+                    <span> Items per page:</span>{' '}
+                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                    </select>
                   </div>
                 </div>
               </div>
