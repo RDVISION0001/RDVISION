@@ -31,21 +31,21 @@ function ticketsa() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  
+
 
   //clipborad copy
   const [copied, setCopied] = useState(false);
 
- // Handle clicking on tab rows
- const handleRowClick = (tabName) => {
-  setActiveTab(tabName);
-  setCurrentPage(0);
-  fetchTickets(params[tabName], 0, itemsPerPage);
-};
+  // Handle clicking on tab rows
+  const handleRowClick = (tabName) => {
+    setActiveTab(tabName);
+    setCurrentPage(0);
+    fetchTickets(params[tabName], 0, itemsPerPage);
+  };
 
 
   // Function to fetch tickets based on parameters and page number
-  const fetchTickets = async (params, page, perPage)  => {
+  const fetchTickets = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
         params: { ...params, page, size: perPage }
@@ -64,29 +64,36 @@ function ticketsa() {
     return number.slice(0, -4) + 'XXXX';
   };
 
-  
-// useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
-useEffect(() => {
-  fetchTickets(params[activeTab], currentPage, itemsPerPage);
-}, [activeTab, currentPage, itemsPerPage]);
-  
+  ////masking email
+  const maskEmail = (email) => {
+    const [user, domain] = email.split('@');
+    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+    return `${maskedUser}@${domain}`;
+  };
 
- // Handle previous page
- const handlePreviousPage = () => {
-  if (currentPage > 0) {
-    setCurrentPage(currentPage - 1);
-  }
-};
 
-// Handle next page
-const handleNextPage = () => {
-  if (currentPage < totalPages - 1) {
-    setCurrentPage(currentPage + 1);
-  }
-};
-  
-   // Function to set items per page
-   const handleItemsPerPageChange = (perPage) => {
+  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
+  useEffect(() => {
+    fetchTickets(params[activeTab], currentPage, itemsPerPage);
+  }, [activeTab, currentPage, itemsPerPage]);
+
+
+  // Handle previous page
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Handle next page
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Function to set items per page
+  const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
     setCurrentPage(0);
   };
@@ -202,9 +209,9 @@ const handleNextPage = () => {
                               <th tabIndex="0">Customer Name</th>
                               <th tabIndex="0">Customer Number</th>
                               <th tabIndex="0">Customer Email</th>
-                              <th tabIndex="0">Ticket ID</th>
                               <th tabIndex="0">Requirement</th>
                               <th tabIndex="0">Product Name</th>
+                              <th tabIndex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -224,10 +231,19 @@ const handleNextPage = () => {
                                     <button>Copy</button>
                                   </CopyToClipboard>
                                 </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
-                                <td>{item.senderEmail}</td>
-                                <td>{item.uniqueQueryId}</td>
+
+                                <td> <td>
+                                  <CopyToClipboard
+                                    text={item.senderEmail}
+                                    onCopy={() => setCopied(true)}
+                                  >
+                                    <button>Copy</button>
+                                  </CopyToClipboard>
+                                </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
                                 <td>{item.subject}</td>
                                 <td>{item.queryProductName}</td>
+                                <td>{item.uniqueQueryId}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -327,6 +343,7 @@ const handleNextPage = () => {
                       <option value="15">15</option>
                       <option value="20">20</option>
                       <option value="50">50</option>
+                      <option value="100">100</option>
                     </select>
                   </div>
                 </div>

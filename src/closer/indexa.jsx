@@ -140,6 +140,13 @@ function indexa() {
     return number.slice(0, -4) + 'XXXX';
   };
 
+  ////masking email
+  const maskEmail = (email) => {
+    const [user, domain] = email.split('@');
+    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+    return `${maskedUser}@${domain}`;
+  };
+
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
@@ -426,7 +433,7 @@ function indexa() {
                     id="followUp"
                     role="tablist"
                   >
-                    {/* <li className="nav-item" role="presentation">
+                    <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
                         onClick={() => handleRowClick("allTickets")}
@@ -441,7 +448,7 @@ function indexa() {
                       >
                         All Tickets
                       </button>
-                    </li> */}
+                    </li>
                     {/* <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
@@ -515,10 +522,11 @@ function indexa() {
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -536,13 +544,29 @@ function indexa() {
                                       <button>Copy</button>
                                     </CopyToClipboard>
                                   </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
-                                  <td><span className="text">{item.senderEmail}</span></td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} > 
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Dropdown link
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
                                   <td><span className="comment">{item.subject}<br /></span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
-
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -579,6 +603,9 @@ function indexa() {
                                       ><i className="fa-brands fa-whatsapp"></i></a>
                                     </span>
                                   </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -606,10 +633,11 @@ function indexa() {
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -629,9 +657,6 @@ function indexa() {
                                     </CopyToClipboard>
                                   </td><span className="text">{item.senderMobile}</span></td>
                                   <td><span className="text">{item.senderEmail}</span></td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
                                   <td><span className="comment">{item.subject}</span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
 
@@ -673,6 +698,9 @@ function indexa() {
                                       ></a>
                                     </span>
                                   </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
                                 </tr>
                               ))}
                             </tbody>
@@ -700,10 +728,11 @@ function indexa() {
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -720,10 +749,28 @@ function indexa() {
                                     >
                                       <button>Copy</button>
                                     </CopyToClipboard>
-                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} > 
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Dropdown link
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
                                   <td><span className="comment">{item.subject}</span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
 
@@ -870,7 +917,7 @@ function indexa() {
                 <div className="pagination-controls">
                   <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                   {generatePageNumbers().map((page) => (
-                    <button 
+                    <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
                       className={`next_prev ${page === currentPage ? 'active' : ''}`}
@@ -887,6 +934,7 @@ function indexa() {
                     <option value="15">15</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
+                    <option value="100">100</option>
                   </select>
                 </div>
               </div>
