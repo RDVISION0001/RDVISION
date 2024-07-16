@@ -110,7 +110,7 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
+    allTickets: {},
     ongoing: { userId, ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
     followUp: { userId, ticketStatus: 'follow' },
@@ -147,6 +147,19 @@ function indexa() {
     return `${maskedUser}@${domain}`;
   };
 
+/////ticket status color
+  const getColorByStatus = (ticketstatus) => {
+    if (ticketstatus === 'New') {
+      return 'red';
+    } else if (ticketstatus === 'Sale') {
+      return 'green';
+    } else if (ticketstatus === 'Intrested') {
+      return 'yellow';
+    } else {
+      return 'white';
+    }
+  };
+
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
@@ -176,6 +189,9 @@ function indexa() {
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -554,9 +570,10 @@ function indexa() {
                                     </CopyToClipboard>
                                   </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
-                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} > 
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Dropdown link
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" 
+                                    style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
                                     </a>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                       <li><a className="dropdown-item danger" >Action</a></li>
@@ -760,9 +777,9 @@ function indexa() {
                                     </CopyToClipboard>
                                   </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
-                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} > 
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
                                     <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                      Dropdown link
+                                      {item.ticketstatus}
                                     </a>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                       <li><a className="dropdown-item danger" >Action</a></li>
@@ -811,6 +828,9 @@ function indexa() {
                                       ><i className="fa-brands fa-whatsapp"></i
                                       ></a>
                                     </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
                                   </td>
                                 </tr>
                               ))}
@@ -974,6 +994,11 @@ function indexa() {
                       <option value="Sale">Sale</option>
                       <option value="New">New</option>
                       <option value="Follow">Follow</option>
+                      <option value="Intrested">Intrested</option>
+                      <option value="Not_Intrested">Not Intrested</option>
+                      <option value="Wrong_Number">Wrong Number</option>
+                      <option value="Place_with_other">Place with other</option>
+                      <option value="Call_Back">Call Back</option>
                     </select>
                   </div>
                   <div class="col-12">
