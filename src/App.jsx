@@ -37,13 +37,13 @@ import Saless from './super_admin/saless';
 import Ticketss from './super_admin/ticketss';
 import Userss from './super_admin/userss';
 
-// manager
-import Indexm from './manager/indexm';
-import Invoicesm from './manager/invoicesm';
-import Ordersm from './manager/ordersm';
-import Salesm from './manager/salesm';
-import Ticketsm from './manager/ticketsm';
-import Team from './manager/team';
+// captain/manager
+import Indexm from './captain/indexm';
+import Invoicesm from './captain/invoicesm';
+import Ordersm from './captain/ordersm';
+import Salesm from './captain/salesm';
+import Ticketsm from './captain/ticketsm';
+import Team from './captain/team';
 
 // agent
 import Indexa from './closer/indexa';
@@ -142,13 +142,13 @@ function App() {
               <Route exact path="/closer_tickets" element={<Ticketsa />} />
               <Route exact path="/closer_users" element={<Usersa />} />
 
-              {/* manager */}
-              <Route exact path="/manager_index" element={<Indexm />} />
-              <Route exact path="/manager_invoices" element={<Invoicesm />} />
-              <Route exact path="/manager_orders" element={<Ordersm />} />
-              <Route exact path="/manager_sales" element={<Salesm />} />
-              <Route exact path="/manager_tickets" element={<Ticketsm />} />
-              <Route exact path="/manager_team" element={<Team />} />
+              {/*captain /manager */}
+              <Route exact path="/captain_index" element={<Indexm />} />
+              <Route exact path="/captain_invoices" element={<Invoicesm />} />
+              <Route exact path="/captain_orders" element={<Ordersm />} />
+              <Route exact path="/captain_sales" element={<Salesm />} />
+              <Route exact path="/captain_tickets" element={<Ticketsm />} />
+              <Route exact path="/captain_team" element={<Team />} />
 
             </Route>
           </Routes>

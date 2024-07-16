@@ -185,7 +185,7 @@ function Sidenav() {
           </>
         )}
 
-        {/* Manager */}
+        {/* captain/Manager */}
         {roleName === 'Manager' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
@@ -198,31 +198,31 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_index" className="nav-link">
+              <NavLink to="/captain_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_team" className="nav-link">
+              <NavLink to="/captain_team" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Team</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_tickets" className="nav-link">
+              <NavLink to="/captain_tickets" className="nav-link">
                 <i className="fa-solid fa-ticket"></i>
                 <span className="nav-text">Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_invoices" className="nav-link">
+              <NavLink to="/captain_invoices" className="nav-link">
                 <i className="fa-regular fa-address-card"></i>
                 <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/manager_sales" className="nav-link">
+              <NavLink to="/captain_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
