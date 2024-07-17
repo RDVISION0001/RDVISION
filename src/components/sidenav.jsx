@@ -170,13 +170,13 @@ function Sidenav() {
                 <span className="nav-text">Tickets</span>
               </NavLink>
             </li>
-            {/* <li className="nav-item">
+            <li className="nav-item">
               <NavLink to="/closer_invoices" className="nav-link">
                 <i className="fa-regular fa-address-card"></i>
                 <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink to="/closer_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
@@ -227,6 +227,40 @@ function Sidenav() {
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
             </li>
+          </>
+        )}
+
+        {/*senior_supervisor*/}
+        {roleName === 'SeniorSuperVisor' && (
+          <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon">
+                <i className="fa-solid fa-display"></i>
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName} {lastName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/senior_supervisor_index" className="nav-link">
+                <i className="fa-solid fa-chalkboard fa-fw"></i>
+                <span className="nav-text">Dashboard</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/senior_supervisor_tickets" className="nav-link">
+                <i className="fa-solid fa-ticket"></i>
+                <span className="nav-text">Tickets</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/senior_supervisor_invoices" className="nav-link">
+                <i className="fa-regular fa-address-card"></i>
+                <span className="nav-text">Invoices</span>
+              </NavLink>
+            </li>
+          
           </>
         )}
 

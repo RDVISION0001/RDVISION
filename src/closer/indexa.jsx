@@ -17,7 +17,7 @@ import HighchartsReact from 'highcharts-react-official'
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-//clipborad copy
+// Clipboard copy
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 
@@ -74,7 +74,7 @@ const options = {
 function indexa() {
   const { userId } = useAuth();
 
-  //clipborad copy
+  // Clipboard copy
   const [copied, setCopied] = useState(false);
 
 
@@ -111,7 +111,7 @@ function indexa() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: { userId, ticketStatus: 'Sale' },
+    ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
     followUp: { userId, ticketStatus: 'follow' },
   };
@@ -133,32 +133,32 @@ function indexa() {
     }
   };
 
-
-  ////masking mobile number
+  // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
     return number.slice(0, -4) + 'XXXX';
   };
 
-  ////masking email
+  // Masking email
   const maskEmail = (email) => {
     const [user, domain] = email.split('@');
     const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
     return `${maskedUser}@${domain}`;
   };
 
-/////ticket status color
-  const getColorByStatus = (ticketstatus) => {
-    if (ticketstatus === 'New') {
-      return 'red';
-    } else if (ticketstatus === 'Sale') {
-      return 'green';
-    } else if (ticketstatus === 'Intrested') {
-      return 'yellow';
-    } else {
-      return 'white';
-    }
+  // Ticket status color
+  const getColorByStatus = (ticketStatus) => {
+    const colors = {
+      'New': 'dodgerblue',
+      'Sale': 'green',
+      'Follow': 'blue',
+      'Interested': 'yellow',
+      'Not_Interested': 'red',
+      'Wrong_Number': 'gray'
+    };
+    return colors[ticketStatus] || 'white';
   };
+
 
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
@@ -260,60 +260,60 @@ function indexa() {
             {/* <!-- Section one --> */}
             <section className="sadmin-top-section">
               <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
+                  <div className="row">
+                    <div className="col-md-3">
+                      <div className="card">
+                        <div className="div-top">
                         <h3 className="title">Total Tickets</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
+                          <span className="sales"
+                          >0<span className="indicators">0%</span></span
+                          >
+                        </div>
+                        <div className="icon-wrapper">
+                          <i className="fa-solid fa-wallet"></i>
+                        </div>
                       </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="card">
+                        <div className="div-top">
+                          <h3 className="title">In negotation</h3>
+                          <span className="sales"
+                          >0<span className="indicators">0%</span></span
+                          >
+                        </div>
+                        <div className="icon-wrapper">
+                          <i className="fa-solid fa-wallet"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="card">
+                        <div className="div-top">
+                          <h3 className="title">Total Sales</h3>
+                          <span className="sales"
+                          >0<span className="indicators">0%</span></span
+                          >
+                        </div>
+                        <div className="icon-wrapper">
+                          <i className="fa-solid fa-wallet"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col-md-3">
+                      <div className="card">
+                        <div className="div-top">
+                          <h3 className="title">Projected Sales</h3>
+                          <span className="sales"
+                          >0<span className="indicators">0%</span></span
+                          >
+                        </div>
+                        <div className="icon-wrapper">
+                          <i className="fa-solid fa-wallet"></i>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">In negotation</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Projected Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </section>
             {/* <!-- graphs and ranking --> */}
@@ -465,7 +465,7 @@ function indexa() {
                         All Tickets
                       </button>
                     </li>
-                    {/* <li className="nav-item" role="presentation">
+                    <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
                         onClick={() => handleRowClick("ongoing")}
@@ -479,9 +479,9 @@ function indexa() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        Ongoing
+                        Deal / Negotiation
                       </button>
-                    </li> */}
+                    </li>
                     <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
@@ -571,8 +571,8 @@ function indexa() {
                                   </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
                                   <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false" 
-                                    style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                       {item.ticketstatus}
                                     </a>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -642,7 +642,7 @@ function indexa() {
                       tabindex="0"
                     >
                       <div className="followups-table table-responsive">
-                        <table className="table">
+                      <table className="table">
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
@@ -672,9 +672,30 @@ function indexa() {
                                     >
                                       <button>Copy</button>
                                     </CopyToClipboard>
-                                  </td><span className="text">{item.senderMobile}</span></td>
-                                  <td><span className="text">{item.senderEmail}</span></td>
-                                  <td><span className="comment">{item.subject}</span></td>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
+                                  <td><span className="comment">{item.subject}<br /></span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
 
                                   <td>
@@ -693,26 +714,24 @@ function indexa() {
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i
-                                      ></a>
+                                      ><i className="fa-solid fa-phone"></i></a>
                                       <a
                                         href="sms:+150000000?body=Share%20this%20message%20on%20sms"
                                         className="btn-action message"
                                         title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i
-                                      ></a>
-                                      <a
-                                        href="mailto:someone@example.com"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
                                         className="btn-action email"
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
-                                      ></a>
+                                      ></Button>
                                       <a
                                         href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
-                                      ><i className="fa-brands fa-whatsapp"></i
-                                      ></a>
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
                                     </span>
                                   </td>
                                   <td className="ticket-id">
@@ -737,7 +756,7 @@ function indexa() {
                       tabindex="0"
                     >
                       <div className="followups-table table-responsive">
-                        <table className="table">
+                      <table className="table">
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
@@ -778,7 +797,8 @@ function indexa() {
                                   </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
                                   <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                       {item.ticketstatus}
                                     </a>
                                     <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -788,9 +808,8 @@ function indexa() {
                                     </ul>
                                   </div>
 
-                                  <td><span className="comment">{item.subject}</span></td>
+                                  <td><span className="comment">{item.subject}<br /></span></td>
                                   <td><span className="text">{item.queryProductName}</span></td>
-
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -807,16 +826,15 @@ function indexa() {
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i
-                                      ></a>
+                                      ><i className="fa-solid fa-phone"></i></a>
                                       <a
                                         href="sms:+150000000?body=Share%20this%20message%20on%20sms"
                                         className="btn-action message"
                                         title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i
-                                      ></a>
+                                      ><i className="fa-solid fa-message"></i></a>
                                       <Button
                                         onClick={handleOn}
+                                        // href="mailto:someone@example.com"
                                         className="btn-action email"
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
@@ -825,8 +843,7 @@ function indexa() {
                                         href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
-                                      ><i className="fa-brands fa-whatsapp"></i
-                                      ></a>
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
                                     </span>
                                   </td>
                                   <td className="ticket-id">
@@ -994,8 +1011,8 @@ function indexa() {
                       <option value="Sale">Sale</option>
                       <option value="New">New</option>
                       <option value="Follow">Follow</option>
-                      <option value="Intrested">Intrested</option>
-                      <option value="Not_Intrested">Not Intrested</option>
+                      <option value="Interested">Interested</option>
+                      <option value="Not_Interested">Not Interested</option>
                       <option value="Wrong_Number">Wrong Number</option>
                       <option value="Place_with_other">Place with other</option>
                       <option value="Call_Back">Call Back</option>
