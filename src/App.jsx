@@ -37,7 +37,7 @@ import Saless from './super_admin/saless';
 import Ticketss from './super_admin/ticketss';
 import Userss from './super_admin/userss';
 
-// captain/manager
+// captain/old name manager
 import Indexm from './captain/indexm';
 import Invoicesm from './captain/invoicesm';
 import Ordersm from './captain/ordersm';
@@ -45,13 +45,19 @@ import Salesm from './captain/salesm';
 import Ticketsm from './captain/ticketsm';
 import Team from './captain/team';
 
-// agent
+// closer/old name agent
 import Indexa from './closer/indexa';
 import Invoicesa from './closer/invoicesa';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
 import Ticketsa from './closer/ticketsa';
 import Usersa from './closer/usersa';
+
+// senior_supervisor 
+import Indexss from './senior_supervisor/indexss';
+import Ticketsss from './senior_supervisor/ticketsss';
+import Invoicesss from './senior_supervisor/invoicesss';
+
 
 // componenets css
 import './components/css/themedigproX01.css';
@@ -142,13 +148,10 @@ function App() {
               <Route exact path="/closer_tickets" element={<Ticketsa />} />
               <Route exact path="/closer_users" element={<Usersa />} />
 
-              {/*captain /manager */}
-              <Route exact path="/captain_index" element={<Indexm />} />
-              <Route exact path="/captain_invoices" element={<Invoicesm />} />
-              <Route exact path="/captain_orders" element={<Ordersm />} />
-              <Route exact path="/captain_sales" element={<Salesm />} />
-              <Route exact path="/captain_tickets" element={<Ticketsm />} />
-              <Route exact path="/captain_team" element={<Team />} />
+              {/*senior supervisor*/}
+              <Route exact path="/senior_supervisor_index" element={<Indexss />} />
+              <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
+              <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
 
             </Route>
           </Routes>
