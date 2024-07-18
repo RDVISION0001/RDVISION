@@ -390,8 +390,8 @@ function indexa() {
                               </tr>
                             </tbody>
                           </table>
-                           ) : (
-                            <p>Loading...</p>
+                        ) : (
+                          <p>Loading...</p>
                         )}
                       </div>
                     </div>
@@ -530,21 +530,20 @@ function indexa() {
                       aria-labelledby="all-transactions-tab"
                       tabindex="0"
                     >
-                      <div className="followups-table table-responsive">
+                      <div className="followups-table table-responsive table-height">
                         <table className="table">
-                          <thead>
-                            <tr>
-                              <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Country</th>
-                              <th tabindex="0">Customer Name</th> 
-                              <th tabindex="0">Customer Number</th>
-                              <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Status</th>
-                              <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
-                              <th tabindex="0">Action</th>
-                              <th tabindex="0">Ticket ID</th>
-                            </tr>
+                          <thead className="sticky-header">
+                            <th tabindex="0">Date/Time</th>
+                            <th tabindex="0">Country</th>
+                            <th tabindex="0">Customer Name</th>
+                            <th tabindex="0">Customer Number</th>
+                            <th tabindex="0">Customer Email</th>
+                            <th tabindex="0">Status</th>
+                            <th tabindex="0">Requirement</th>
+                            <th tabindex="0">Product Name</th>
+                            <th tabindex="0">Action</th>
+                            <th tabindex="0">Ticket ID</th>
+
                           </thead>
                           {data ? (
                             <tbody>
@@ -644,7 +643,7 @@ function indexa() {
                     >
                       <div className="followups-table table-responsive">
                         <table className="table">
-                          <thead>
+                          <thead className="sticky-header">
                             <tr>
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
@@ -756,9 +755,9 @@ function indexa() {
                       aria-labelledby="new-arrivals-tkts-tab"
                       tabindex="0"
                     >
-                      <div className="followups-table table-responsive">
+                      <div className="followups-table table-responsive table-height">
                         <table className="table">
-                          <thead>
+                          <thead className="sticky-header">
                             <tr>
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
@@ -868,9 +867,9 @@ function indexa() {
                       aria-labelledby="new-arrivals-tkts-tab"
                       tabindex="0"
                     >
-                      <div className="followups-table table-responsive">
+                      <div className="followups-table table-responsive table-height">
                         <table className="table">
-                          <thead>
+                          <thead className="sticky-header">
                             <tr>
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>

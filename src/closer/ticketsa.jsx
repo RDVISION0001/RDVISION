@@ -197,9 +197,9 @@ function ticketsa() {
                   </ul>
                   <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                     <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
-                      <div className="tickets-table table-responsive">
+                      <div className="followups-table table-responsive table-height">
                         <table className="table">
-                          <thead>
+                          <thead className="sticky-header">
                             <tr>
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />

@@ -28,6 +28,8 @@ import Orders from './admin/orders';
 import Sales from './admin/sales';
 import Tickets from './admin/tickets';
 import Users from './admin/users';
+import Upload_tickets from './admin/upload_tickets';
+
 
 // super_admin
 import Indexs from './super_admin/indexs';
@@ -131,6 +133,7 @@ function App() {
               <Route exact path="/admin_sales" element={<Sales />} />
               <Route exact path="/admin_tickets" element={<Tickets />} />
               <Route exact path="/admin_users" element={<Users />} />
+              <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
 
               {/* super_admin */}
               <Route exact path="/super_admin_index" element={<Indexs />} />

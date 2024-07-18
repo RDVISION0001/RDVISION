@@ -3,3 +3,14 @@
   --bs-btn-color: #f8f9fa;
   --bs-btn-hover-color: #818080;
 }
+
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.table-height{
+  max-height: 900px;
+  overflow-y: auto;
+
+}

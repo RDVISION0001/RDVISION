@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { Modal, Button } from "react-bootstrap";
+import axiosInstance from '../axiosInstance';
+import axios from 'axios';
 
-////copmponents////
+// Components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+
+// Authentication context
+import { useAuth } from '../auth/AuthContext';
+
+// Toast notification
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Clipboard copy
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
 
 ////highchart///
 import Highcharts from 'highcharts'
@@ -15,7 +29,7 @@ const options = {
   },
   title: false,
   credits: {
-    text: "ram",
+    text: "CEO: Digvijay Singh",
     href: "",
   },
 
@@ -59,6 +73,196 @@ const options = {
 };
 
 function indexss() {
+  const { userId } = useAuth();
+
+  // Clipboard copy
+  const [copied, setCopied] = useState(false);
+
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // Form data state
+  const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
+  const [uniqueQueryId, setUniqueQueryId] = useState(null);
+
+  // Modal state
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = (queryId) => {
+    setUniqueQueryId(queryId);
+    setShow(true);
+  };
+
+  // Modal state for send price and subscription mail
+  const [on, setOn] = useState(false);
+  const handleOff = () => setOn(false);
+  const handleOn = (queryId) => {
+    setUniqueQueryId(queryId);
+    setOn(true);
+  };
+
+  // Active tab state
+  const [activeTab, setActiveTab] = useState("allTickets");
+
+  // Define parameters for each tab
+  const params = {
+    allTickets: {},
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
+    followUp: { userId, ticketStatus: 'follow' },
+  };
+
+  // Data state
+  const [data, setData] = useState(null);
+
+  // Fetch data function
+  const fetchData = async (params, page, perPage) => {
+    try {
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page, size: perPage }
+      });
+      setData(response.data.dtoList);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  // Masking mobile number
+  const maskMobileNumber = (number) => {
+    if (number.length < 4) return number;
+    return number.slice(0, -4) + 'XXXX';
+  };
+
+  // Masking email
+  const maskEmail = (email) => {
+    const [user, domain] = email.split('@');
+    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+    return `${maskedUser}@${domain}`;
+  };
+
+  // Ticket status color
+  const getColorByStatus = (ticketStatus) => {
+    const colors = {
+      'New': 'dodgerblue',
+      'Sale': 'green',
+      'Follow': 'blue',
+      'Interested': 'orange',
+      'Not_Interested': 'red',
+      'Wrong_Number': 'gray'
+    };
+    return colors[ticketStatus] || 'white';
+  };
+
+  ///timezone api
+  const [timezoneData, setTimezoneData] = useState(null);
+
+  useEffect(() => {
+    const fetchTimezoneData = async () => {
+      try {
+        const response = await axios.get('http://worldtimeapi.org/api/timezone/Asia/Kolkata');
+        setTimezoneData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchTimezoneData();
+  },[]);
+
+
+  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
+  useEffect(() => {
+    fetchData(params[activeTab], currentPage, itemsPerPage);
+  }, [activeTab, currentPage, itemsPerPage]);
+
+  // Handle form input changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!uniqueQueryId) {
+      setError('Unique Query ID is not defined');
+      return;
+    }
+    try {
+      const params = {
+        ticketStatus: formData.ticketStatus,
+        comment: formData.comment,
+      };
+      const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
+      setResponse(res.data.dtoList);
+      toast.success('Update successfully!');
+      handleClose();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+      setResponse(null);
+    }
+  };
+
+  // Handle clicking on tab rows
+  const handleRowClick = (tabName) => {
+    setActiveTab(tabName);
+    setCurrentPage(0);
+    fetchData(params[tabName], 0, itemsPerPage);
+  };
+
+  // Handle previous page
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Handle next page
+  const handleNextPage = () => {
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Function to set items per page
+  const handleItemsPerPageChange = (perPage) => {
+    setItemsPerPage(perPage);
+    setCurrentPage(0);
+  };
+
+  // Function to generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 9;
+    const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+
+    let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
+    let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(endPage - maxPagesToShow + 1, 0);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
+
   return (
     <>
       <div className="superadmin-page">
@@ -77,9 +281,23 @@ function indexss() {
                   <div className="col-md-3">
                     <div className="card">
                       <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-
+                        <h3 className="title">Total Tickets</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
+                      </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
+                        <h3 className="title">In negotation</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
                       </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
@@ -90,8 +308,9 @@ function indexss() {
                     <div className="card">
                       <div className="div-top">
                         <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
                       </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
@@ -101,21 +320,10 @@ function indexss() {
                   <div className="col-md-3">
                     <div className="card">
                       <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-
+                        <h3 className="title">Projected Sales</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
                       </div>
                       <div className="icon-wrapper">
                         <i className="fa-solid fa-wallet"></i>
@@ -144,42 +352,47 @@ function indexss() {
                   </div>
                   <div className="col-md-4">
                     <div className="rank-card top-rankers">
-                      <h3 className="heading">Best Selling Teams</h3>
+                      <h3 className="heading"> Best Selling Teams</h3>
                       <div className="table-wrapper">
-                        <table className="table">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        {timezoneData ? (
+                          <table className="table">
+                            <tbody>
+                              <h5 className="text-center">{timezoneData.datetime}</h5>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        ) : (
+                          <p>Loading...</p>
+                        )}
                       </div>
                     </div>
                     {/* <!-- best departments --> */}
@@ -227,461 +440,669 @@ function indexss() {
               </div>
             </section>
 
-            {/* <!-- section 2 --> */}
-            <section className="data-table-bgs_02x24 py-3">
+            {/* <!-- Tabbed Ticket Table --> */}
+            <section className="followup-table-section py-3">
               <div className="container-fluid">
-                <div className="table-wrapper">
-                  <h3 className="title">Recent Transactions</h3>
+                <div className="table-wrapper tabbed-table">
+                  <h3 className="title">All Tickets (Agent)</h3>
                   <ul
                     className="nav recent-transactions-tab-header nav-tabs"
-                    id="myTab"
+                    id="followUp"
                     role="tablist"
                   >
                     <li className="nav-item" role="presentation">
                       <button
-                        className="nav-link active"
-                        id="all-transactions-tab"
+                        className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
+                        onClick={() => handleRowClick("allTickets")}
+                        // className="nav-link active"
+                        id="all-tkts-tab"
                         data-bs-toggle="tab"
-                        data-bs-target="#all-transactions-tab-pane"
+                        data-bs-target="#all-tkts-tab-pane"
                         type="button"
                         role="tab"
-                        aria-controls="all-transactions-tab-pane"
+                        aria-controls="all-tkts-tab-pane"
                         aria-selected="true"
                       >
-                        All Transactions
+                        All Tickets
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
-                        className="nav-link"
-                        id="pendings-tab"
+                        className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
+                        onClick={() => handleRowClick("ongoing")}
+                        // className="nav-link"
+                        id="old-tkts-tab"
                         data-bs-toggle="tab"
-                        data-bs-target="#pendings-tab-pane"
+                        data-bs-target="#old-tkts-tab-pane"
                         type="button"
                         role="tab"
-                        aria-controls="pendings-tab-pane"
+                        aria-controls="old-tkts-tab-pane"
                         aria-selected="false"
+                        tabindex="-1"
                       >
-                        Pending
+                        Deal / Negotiation
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
                       <button
-                        className="nav-link"
-                        id="new-arrivals-tab"
+                        className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
+                        onClick={() => handleRowClick("newTickets")}
+                        // className="nav-link"
+                        id="new-arrivals-tkts-tab"
                         data-bs-toggle="tab"
-                        data-bs-target="#new-arrivals-tab-pane"
+                        data-bs-target="#new-arrivals-tkts-tab-pane"
                         type="button"
                         role="tab"
-                        aria-controls="new-arrivals-tab-pane"
+                        aria-controls="new-arrivals-tkts-tab-pane"
                         aria-selected="false"
+                        tabindex="-1"
                       >
-                        New Raises
+                        New Tickets
                       </button>
                     </li>
+                    {/* <li className="nav-item" role="presentation">
+                      <button
+                        className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
+                        onClick={() => handleRowClick("followUp")}
+                        // className="nav-link"
+                        id="new-arrivals-tkts-tab"
+                        data-bs-toggle="tab"
+                        data-bs-target="#new-arrivals-tkts-tab-pane"
+                        type="button"
+                        role="tab"
+                        aria-controls="new-arrivals-tkts-tab-pane"
+                        aria-selected="false"
+                        tabindex="-1"
+                      >
+                        Follow-up
+                      </button>
+                    </li> */}
                   </ul>
                   <div
                     className="tab-content recent-transactions-tab-body"
-                    id="myTabContent"
+                    id="followUpContent"
                   >
                     <div
-                      className="tab-pane fade show active"
-                      id="all-transactions-tab-pane"
+                      className={`tab-pane fade ${activeTab === "allTickets" ? "show active" : ""}`}
+                      // className="tab-pane fade show active"
+                      id="all-tkts-tab-pane"
                       role="tabpanel"
                       aria-labelledby="all-transactions-tab"
                       tabindex="0"
                     >
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th
-                              className="selection-cell-header"
-                              data-row-selection="true"
-                            >
-                              <input type="checkbox" className="" />
-                            </th>
-                            <th tabindex="0">Name</th>
-                            <th tabindex="0">Ticket ID</th>
-                            <th tabindex="0">Type/Status</th>
-                            <th tabindex="0">Contact</th>
-                            <th tabindex="0">Email</th>
-                            <th tabindex="0">Description/Comment</th>
+                      <div className="followups-table table-responsive table-height">
+                        <table className="table">
+                          <thead className="sticky-header">
+                            <th tabindex="0">Date/Time</th>
+                            <th tabindex="0">Country</th>
+                            <th tabindex="0">Customer Name</th>
+                            <th tabindex="0">Customer Number</th>
+                            <th tabindex="0">Customer Email</th>
+                            <th tabindex="0">Status</th>
+                            <th tabindex="0">Requirement</th>
+                            <th tabindex="0">Product Name</th>
                             <th tabindex="0">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status new">new</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status sale">sale</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                            <th tabindex="0">Ticket ID</th>
+
+                          </thead>
+                          {data ? (
+                            <tbody>
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
+                                  <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
+                                        onClick={() => handleShow(item.uniqueQueryId)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action other"
+                                        title="Write Status"
+                                      >
+                                        <i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                      <a
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i></a>
+                                      <a
+                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
+                                      <a
+                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
+                                    </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
                     </div>
+
                     <div
-                      className="tab-pane fade"
-                      id="pendings-tab-pane"
+                      className={`tab-pane fade ${activeTab === "ongoing" ? "show active" : ""}`}
+                      // className="tab-pane fade"
+                      id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
-                      aria-labelledby="pendings-tab"
+                      aria-labelledby="new-arrivals-tkts-tab"
                       tabindex="0"
                     >
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th
-                              className="selection-cell-header"
-                              data-row-selection="true"
-                            >
-                              <input type="checkbox" className="" />
-                            </th>
-                            <th tabindex="0">Name</th>
-                            <th tabindex="0">Ticket ID</th>
-                            <th tabindex="0">Type/Status</th>
-                            <th tabindex="0">Contact</th>
-                            <th tabindex="0">Email</th>
-                            <th tabindex="0">Description/Comment</th>
-                            <th tabindex="0">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status new">new</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status sale">sale</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="followups-table table-responsive">
+                        <table className="table">
+                          <thead className="sticky-header">
+                            <tr>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Status</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
+                              <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
+                            </tr>
+                          </thead>
+                          {data ? (
+                            <tbody>
+
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
+                                  <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
+                                        onClick={() => handleShow(item.uniqueQueryId)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action other"
+                                        title="Write Status"
+                                      >
+                                        <i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                      <a
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i></a>
+                                      <a
+                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
+                                      <a
+                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
+                                    </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
                     </div>
+
                     <div
-                      className="tab-pane fade"
-                      id="new-arrivals-tab-pane"
+                      className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
+                      // className="tab-pane fade"
+                      id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
-                      aria-labelledby="new-arrivals-tab"
+                      aria-labelledby="new-arrivals-tkts-tab"
                       tabindex="0"
                     >
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th
-                              className="selection-cell-header"
-                              data-row-selection="true"
-                            >
-                              <input type="checkbox" className="" />
-                            </th>
-                            <th tabindex="0">Name</th>
-                            <th tabindex="0">Ticket ID</th>
-                            <th tabindex="0">Type/Status</th>
-                            <th tabindex="0">Contact</th>
-                            <th tabindex="0">Email</th>
-                            <th tabindex="0">Description/Comment</th>
-                            <th tabindex="0">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status new">new</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status sale">sale</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="selection-cell">
-                              <input type="checkbox" className="" />
-                            </td>
-                            <td>John Skrew</td>
-                            <td>#12548796</td>
-                            <td><span className="status">old</span></td>
-                            <td>+91 XXXXXXXX 90</td>
-                            <td>****@gmail.com</td>
-                            <td>Lorem ipsum dolor sit amet....</td>
-                            <td className="action">
-                              <button
-                                className="btn btn-outline-secondary"
-                                data-bs-toggle="modal"
-                                data-bs-target="#exampleModal"
-                              >
-                                View
-                              </button>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                      <div className="followups-table table-responsive table-height">
+                        <table className="table">
+                          <thead className="sticky-header">
+                            <tr>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Status</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
+                              <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
+                            </tr>
+                          </thead>
+                          {data ? (
+                            <tbody>
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
+
+                                  <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
+                                        onClick={() => handleShow(item.uniqueQueryId)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action other"
+                                        title="Write Status"
+                                      >
+                                        <i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                      <a
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i></a>
+                                      <a
+                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
+                                      <a
+                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
+                                    </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`tab-pane fade ${activeTab === "followUp" ? "show active" : ""}`}
+                      // className="tab-pane fade"
+                      id="new-arrivals-tkts-tab-pane"
+                      role="tabpanel"
+                      aria-labelledby="new-arrivals-tkts-tab"
+                      tabindex="0"
+                    >
+                      <div className="followups-table table-responsive table-height">
+                        <table className="table">
+                          <thead className="sticky-header">
+                            <tr>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
+                              <th tabindex="0">Action</th>
+                            </tr>
+                          </thead>
+                          {data ? (
+                            <tbody>
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                  <td><span className="comment">{item.subject}</span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
+                                        onClick={() => handleShow(item.uniqueQueryId)}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action other"
+                                        title="Write Status"
+                                      >
+                                        <i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                      <a
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i
+                                      ></a>
+                                      <a
+                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i
+                                      ></a>
+                                      <a
+                                        href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></a>
+                                      <a
+                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i
+                                      ></a>
+                                    </span>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="pagination-controls">
+                  <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  {generatePageNumbers().map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                    >
+                      {page + 1}
+                    </button>
+                  ))}
+                  <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+                  <span> Items per page:</span>{' '}
+                  <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </div>
               </div>
             </section>
-            {/* <!-- -------------- --> */}
+            {/* <!-- -------------- -->
+
+            <!-- ------------------------------------------------------------
+            --------------------- Call Status Ticket Modal ---------------------
+          -------------------------------------------------------------- --> */}
+            <Modal show={show} onHide={handleClose}
+              class="modal assign-ticket-modal fade"
+              id="followUpModal"
+              tabindex="-1"
+              aria-labelledby="followUpModalLabel"
+              aria-hidden="true">
+              <Modal.Header closeButton>
+                <h1
+                  class="modal-title fs-5 w-100 text-center"
+                  id="followUpModalLabel"
+                >
+                  Call Status
+                </h1>
+              </Modal.Header>
+              <Modal.Body>
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label htmlFor="status" className="form-label">Status</label>
+                    <select
+                      type="text"
+                      className="form-select"
+                      id="status"
+                      name="ticketStatus"
+                      value={formData.ticketStatus}
+                      onChange={handleChange}
+                    >
+                      <option >Choose Call-Status</option>
+                      <option value="Sale">Sale</option>
+                      <option value="New">New</option>
+                      <option value="Follow">Follow</option>
+                      <option value="Interested">Interested</option>
+                      <option value="Not_Interested">Not Interested</option>
+                      <option value="Wrong_Number">Wrong Number</option>
+                      <option value="Place_with_other">Place with other</option>
+                      <option value="Call_Back">Call Back</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label for="Comment" class="form-label">Comment</label>
+                    <textarea
+                      rows="4"
+                      class="form-control"
+                      placeholder="Call Status in words"
+                      className="form-control"
+                      id="comment"
+                      name="comment"
+                      value={formData.comment}
+                      onChange={handleChange}
+                    ></textarea>
+                  </div>
+                  {error && <p className="text-danger">{error}</p>}
+                  <div class="modal-footer justify-content-center border-0">
+
+                    <button type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                      onClick={handleClose}>
+                      Close
+                    </button>
+                    <button class="btn btn-primary" type="submit">
+                      Save Changes
+                    </button>
+                  </div>
+                </form>
+              </Modal.Body>
+            </Modal>
+
+            {/* <!-- -------------- -->
+            <!-- ------------------------------------------------------------
+            --------------------- seed price and mail Modal ---------------------
+          -------------------------------------------------------------- --> */}
+
+            <Modal show={on} onHide={handleOff}
+              class="modal assign-ticket-modal fade"
+              id="followUpModal"
+              tabindex="-1"
+              aria-labelledby="followUpModalLabel"
+              aria-hidden="true">
+              <Modal.Header closeButton>
+                <h1
+                  class="modal-title fs-5 w-100 text-center"
+                  id="followUpModalLabel"
+                >
+                  Call Status
+                </h1>
+              </Modal.Header>
+              <Modal.Body>
+                <form >
+                  <div className="mb-3">
+                    <label htmlFor="status" className="form-label">Status</label>
+                    <select
+                      type="text"
+                      className="form-select"
+                      id="status"
+                      name="ticketStatus"
+                    >
+                      <option >Select Options</option>
+                      <option value="Sale">Send Price List</option>
+                      <option value="New">Send Subscription Mail</option>
+                    </select>
+                  </div>
+                  <div class="modal-footer justify-content-center border-0">
+                    <button type="button"
+                      class="btn btn-secondary"
+                      data-bs-dismiss="modal"
+                      onClick={handleOff}>
+                      Close
+                    </button>
+                    <button class="btn btn-primary" type="submit">
+                      Send
+                    </button>
+                  </div>
+                </form>
+              </Modal.Body>
+            </Modal>
+
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
       {/* <!-- Modal --> */}
-      <div
+      < div
         className="modal ticket-modal fade"
         id="exampleModal"
         tabindex="-1"
@@ -731,9 +1152,10 @@ function indexss() {
             </div>
           </div>
         </div>
-      </div>
+      </div >
     </>
   )
 }
+
 
 export default indexss
