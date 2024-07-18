@@ -42,8 +42,9 @@ import Indexm from './captain/indexm';
 import Invoicesm from './captain/invoicesm';
 import Ordersm from './captain/ordersm';
 import Salesm from './captain/salesm';
-import Ticketsm from './captain/ticketsm';
 import Team from './captain/team';
+import Ticketsm from './captain/ticketsm';
+
 
 // closer/old name agent
 import Indexa from './closer/indexa';
@@ -131,7 +132,6 @@ function App() {
               <Route exact path="/admin_tickets" element={<Tickets />} />
               <Route exact path="/admin_users" element={<Users />} />
 
-
               {/* super_admin */}
               <Route exact path="/super_admin_index" element={<Indexs />} />
               <Route exact path="/super_admin_invoices" element={<Invoicess />} />
@@ -140,7 +140,16 @@ function App() {
               <Route exact path="/super_admin_tickets" element={<Ticketss />} />
               <Route exact path="/super_admin_users" element={<Userss />} />
 
-              {/* agent */}
+              {/* caption manager*/}
+              <Route exact path="/captain_index" element={<Indexm />} />
+              <Route exact path="/captain_invoices" element={<Invoicesm />} />
+              <Route exact path="/captain_orders" element={<Ordersm />} />
+              <Route exact path="/captain_sales" element={<Salesm />} />
+              <Route exact path="/captain_team" element={<Team />} />
+              <Route exact path="/captain_tickets" element={<Ticketsm />} />
+
+
+              {/* closer/agent */}
               <Route exact path="/closer_index" element={<Indexa />} />
               <Route exact path="/closer_invoices" element={<Invoicesa />} />
               <Route exact path="/closer_orders" element={<Ordersa />} />

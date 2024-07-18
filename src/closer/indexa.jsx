@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
+import axios from 'axios';
 
 // Components
 import Topnav from '../components/topnav';
@@ -8,10 +9,6 @@ import Sidenav from '../components/sidenav';
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
-
-// Highcharts
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official'
 
 // Toast notification
 import { toast, ToastContainer } from 'react-toastify';
@@ -21,6 +18,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 
+////highchart///
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
+
 const options = {
 
   chart: {
@@ -28,7 +29,7 @@ const options = {
   },
   title: false,
   credits: {
-    text: "ram",
+    text: "CEO: Digvijay Singh",
     href: "",
   },
 
@@ -152,12 +153,28 @@ function indexa() {
       'New': 'dodgerblue',
       'Sale': 'green',
       'Follow': 'blue',
-      'Interested': 'yellow',
+      'Interested': 'orange',
       'Not_Interested': 'red',
       'Wrong_Number': 'gray'
     };
     return colors[ticketStatus] || 'white';
   };
+
+  ///timezone api
+  const [timezoneData, setTimezoneData] = useState(null);
+
+  useEffect(() => {
+    const fetchTimezoneData = async () => {
+      try {
+        const response = await axios.get('http://worldtimeapi.org/api/timezone/Asia/Kolkata');
+        setTimezoneData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchTimezoneData();
+  },[]);
 
 
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
@@ -260,60 +277,60 @@ function indexa() {
             {/* <!-- Section one --> */}
             <section className="sadmin-top-section">
               <div className="container-fluid">
-                  <div className="row">
-                    <div className="col-md-3">
-                      <div className="card">
-                        <div className="div-top">
+                <div className="row">
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
                         <h3 className="title">Total Tickets</h3>
-                          <span className="sales"
-                          >0<span className="indicators">0%</span></span
-                          >
-                        </div>
-                        <div className="icon-wrapper">
-                          <i className="fa-solid fa-wallet"></i>
-                        </div>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
                       </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="card">
-                        <div className="div-top">
-                          <h3 className="title">In negotation</h3>
-                          <span className="sales"
-                          >0<span className="indicators">0%</span></span
-                          >
-                        </div>
-                        <div className="icon-wrapper">
-                          <i className="fa-solid fa-wallet"></i>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="card">
-                        <div className="div-top">
-                          <h3 className="title">Total Sales</h3>
-                          <span className="sales"
-                          >0<span className="indicators">0%</span></span
-                          >
-                        </div>
-                        <div className="icon-wrapper">
-                          <i className="fa-solid fa-wallet"></i>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-3">
-                      <div className="card">
-                        <div className="div-top">
-                          <h3 className="title">Projected Sales</h3>
-                          <span className="sales"
-                          >0<span className="indicators">0%</span></span
-                          >
-                        </div>
-                        <div className="icon-wrapper">
-                          <i className="fa-solid fa-wallet"></i>
-                        </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
                       </div>
                     </div>
                   </div>
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
+                        <h3 className="title">In negotation</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
+                      </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
+                        <h3 className="title">Total Sales</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
+                      </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3">
+                    <div className="card">
+                      <div className="div-top">
+                        <h3 className="title">Projected Sales</h3>
+                        <span className="sales"
+                        >0<span className="indicators">0%</span></span
+                        >
+                      </div>
+                      <div className="icon-wrapper">
+                        <i className="fa-solid fa-wallet"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
             {/* <!-- graphs and ranking --> */}
@@ -323,79 +340,71 @@ function indexa() {
                   <div className="col-md-8">
                     <div className="graph-wrapper">
                       <h3 className="title">Weekly Report</h3>
-                      <div
-                        id="map-container"
-                        className="highchart-wrapper"
-                      // style="width: 100%; height: 100%; min-height: 555px"
-                      ></div>
+                      {/* <div id="map-container" className="highchart-wrapper" style="width: 100%; height: 100%; min-height: 555px"></div> */}
+                      <div id="map-container" className="highchart-wrapper" style={{ width: "180px", height: "180px" }} ></div>
+                      <div>
+                        <HighchartsReact
+                          highcharts={Highcharts}
+                          options={options}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="col-md-4">
                     <div className="rank-card top-rankers">
-                      <h3 className="heading">Best Selling Teams</h3>
+                      <h3 className="heading"> Best Selling Teams</h3>
                       <div className="table-wrapper">
-                        <table className="table">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
-                                </div>
-                              </td>
-                              <td>Flotsam</td>
-                              <td>40k+ sales</td>
-                              <td>$1.4m revenue</td>
-                            </tr>
-                          </tbody>
-                        </table>
+                        {timezoneData ? (
+                          <table className="table">
+                            <tbody>
+                              <h5 className="text-center">{timezoneData.datetime}</h5>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                              <tr>
+                                <td>
+                                  <div className="profile-wrapper">
+                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                  </div>
+                                </td>
+                                <td>Flotsam</td>
+                                <td>40k+ sales</td>
+                                <td>$1.4m revenue</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                           ) : (
+                            <p>Loading...</p>
+                        )}
                       </div>
                     </div>
                     {/* <!-- best departments --> */}
                     <div className="rank-card top-rankers">
-                      <h3 className="heading">Total Login Time</h3>
+                      <h3 className="heading">Best Selling Department</h3>
                       <div className="table-wrapper">
                         <table className="table">
                           <tbody>
                             <tr>
                               <td>
                                 <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
                                 </div>
                               </td>
                               <td>Flotsam</td>
@@ -405,11 +414,7 @@ function indexa() {
                             <tr>
                               <td>
                                 <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
                                 </div>
                               </td>
                               <td>Flotsam</td>
@@ -419,11 +424,7 @@ function indexa() {
                             <tr>
                               <td>
                                 <div className="profile-wrapper">
-                                  <img
-                                    src="../img/profiles/profile1.png"
-                                    alt="profile"
-                                    className="img-fluid"
-                                  />
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
                                 </div>
                               </td>
                               <td>Flotsam</td>
@@ -535,7 +536,7 @@ function indexa() {
                             <tr>
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
-                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Name</th> 
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
@@ -642,7 +643,7 @@ function indexa() {
                       tabindex="0"
                     >
                       <div className="followups-table table-responsive">
-                      <table className="table">
+                        <table className="table">
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
@@ -756,7 +757,7 @@ function indexa() {
                       tabindex="0"
                     >
                       <div className="followups-table table-responsive">
-                      <table className="table">
+                        <table className="table">
                           <thead>
                             <tr>
                               <th tabindex="0">Date/Time</th>
