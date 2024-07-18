@@ -186,7 +186,7 @@ function Sidenav() {
         )}
 
         {/* captain/Manager */}
-        {roleName === 'Manager' && (
+        {roleName === 'Captain' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon">
