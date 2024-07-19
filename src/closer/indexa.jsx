@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
-import axios from 'axios';
+
 
 // Components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+import Worktime from '../components/worktime';
+
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -159,22 +161,6 @@ function indexa() {
     };
     return colors[ticketStatus] || 'white';
   };
-
-  ///timezone api
-  const [timezoneData, setTimezoneData] = useState(null);
-
-  useEffect(() => {
-    const fetchTimezoneData = async () => {
-      try {
-        const response = await axios.get('http://worldtimeapi.org/api/timezone/Asia/Kolkata');
-        setTimezoneData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchTimezoneData();
-  },[]);
 
 
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
@@ -333,6 +319,8 @@ function indexa() {
                 </div>
               </div>
             </section>
+            {/* <!-- user-profile --> */}
+            <Worktime />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
@@ -354,45 +342,40 @@ function indexa() {
                     <div className="rank-card top-rankers">
                       <h3 className="heading"> Best Selling Teams</h3>
                       <div className="table-wrapper">
-                        {timezoneData ? (
-                          <table className="table">
-                            <tbody>
-                              <h5 className="text-center">{timezoneData.datetime}</h5>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        ) : (
-                          <p>Loading...</p>
-                        )}
+                        <table className="table">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     {/* <!-- best departments --> */}
@@ -533,17 +516,18 @@ function indexa() {
                       <div className="followups-table table-responsive table-height">
                         <table className="table">
                           <thead className="sticky-header">
-                            <th tabindex="0">Date/Time</th>
-                            <th tabindex="0">Country</th>
-                            <th tabindex="0">Customer Name</th>
-                            <th tabindex="0">Customer Number</th>
-                            <th tabindex="0">Customer Email</th>
-                            <th tabindex="0">Status</th>
-                            <th tabindex="0">Requirement</th>
-                            <th tabindex="0">Product Name</th>
-                            <th tabindex="0">Action</th>
-                            <th tabindex="0">Ticket ID</th>
-
+                            <tr>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Status</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
+                              <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
+                            </tr>
                           </thead>
                           {data ? (
                             <tbody>

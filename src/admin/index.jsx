@@ -4,6 +4,7 @@ import { render } from 'react-dom'
 ////copmponents////
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+import Worktime from '../components/worktime';
 
 
 ////highchart///
@@ -125,34 +126,7 @@ function index() {
               </div>
             </section>
             {/* <!-- user-profile --> */}
-            <section className="user-details-section mt-5">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-7 flex-v-center">
-                    <div className="profile-card-wrapper">
-                      <div className="img-wrapper">
-                        <img src="../assets/img/thumb-img.png" className="img-fluid" alt="profile-image" />
-                      </div>
-                      <div className="content-block">
-                        <h3 className="title">Rober Downy Jr.</h3>
-                        <p className="sub-title">Admins | Department Name</p>
-                        <span className="ip"><i className="fa-solid fa-desktop"></i> 10.135.30.41</span>
-                        <a href="#" className="btn btn-break">Take Break</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-5 flex-v-center justify-content-center">
-                    <div className="coundown-timer">
-                      <div id="workTimer" style={{ width: "180px", height: "180px" }}></div>
-                      <div className="timing-wrapper">
-                        <p><span className="work-timer">08:05:02</span> | <span className="break-timer">00:05:02</span></p>
-                        <small>Working Hours | Break</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <Worktime />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">

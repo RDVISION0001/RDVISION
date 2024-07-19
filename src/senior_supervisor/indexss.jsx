@@ -6,6 +6,8 @@ import axios from 'axios';
 // Components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+import Worktime from '../components/worktime';
+
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -333,6 +335,8 @@ function indexss() {
                 </div>
               </div>
             </section>
+           {/* <!-- user-profile --> */}
+           <Worktime />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
@@ -533,6 +537,7 @@ function indexss() {
                       <div className="followups-table table-responsive table-height">
                         <table className="table">
                           <thead className="sticky-header">
+                            <tr>
                             <th tabindex="0">Date/Time</th>
                             <th tabindex="0">Country</th>
                             <th tabindex="0">Customer Name</th>
@@ -543,7 +548,7 @@ function indexss() {
                             <th tabindex="0">Product Name</th>
                             <th tabindex="0">Action</th>
                             <th tabindex="0">Ticket ID</th>
-
+                            </tr>
                           </thead>
                           {data ? (
                             <tbody>

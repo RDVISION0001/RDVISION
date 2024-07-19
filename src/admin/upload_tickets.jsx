@@ -129,7 +129,7 @@ function upload_tickets() {
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
                   <div className="heading-wrapper">
-                    <h3 className="title">Uplod Tickets File</h3>
+                    <h3 className="title">Upload Tickets File</h3>
                   </div>
                   <input type="file" class="form-control" id="customFile" />
                 </div>
