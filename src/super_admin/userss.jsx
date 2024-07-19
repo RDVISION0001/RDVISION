@@ -275,7 +275,7 @@ function userss() {
                               <td>{item.systemIp}</td>
                               <td className="action">
                                 <Button className="btn btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
-                                <button type="button" class="btn btn-danger col-sm-6">Delete</button>
+                                <button type="button" class="btn btn-danger mx-sm-3">Delete</button>
                               </td>
                             </tr>
                           ))}

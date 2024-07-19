@@ -3,6 +3,8 @@ import React from 'react'
 ////copmponents////
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+import Worktime from '../components/worktime';
+
 
 ////highchart///
 import Highcharts from 'highcharts'
@@ -125,6 +127,8 @@ function indexm() {
                 </div>
               </div>
             </section>
+            {/* <!-- user-profile --> */}
+            <Worktime />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
