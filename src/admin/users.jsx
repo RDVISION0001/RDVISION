@@ -238,6 +238,18 @@ function  users() {
                       <button className="nav-link" id="nav-new-users-tab" data-bs-toggle="tab" data-bs-target="#nav-new-users" type="button" role="tab" aria-controls="nav-new-users" aria-selected="false">New Users</button>
                       <button className="nav-link" id="nav-restricted-tab" data-bs-toggle="tab" data-bs-target="#nav-restricted" type="button" role="tab" aria-controls="nav-restricted" aria-selected="false">Restricted Users</button>
                     </div>
+                    <div className="search-wrapper">
+                      <input
+                        type="text"
+                        name="search-user"
+                        id="searchUsers"
+                        className="form-control"
+                        placeholder="Search Department or Name..."
+                      />
+                      <div class="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
                   </nav>
                   <div className="tab-content recent-transactions-tab-body" id="nav-tabContent">
                     <div className="tab-pane table-responsive all-users-tab fade show active" id="nav-all-users" role="tabpanel" aria-labelledby="nav-all-users-tab" tabindex="0">

@@ -146,7 +146,7 @@ function invoicesa() {
       const fetchAddressDetails = async () => {
         try {
           const response = await axiosInstance.get(`/address/getAddress/${selectedTicketId}`);
-          setaAddressDat(response.data.dto);
+          setAddressData(response.data.dto);
         } catch (err) {
           console.error('Error fetching address details:', err);
         }
@@ -156,7 +156,7 @@ function invoicesa() {
     }
   }, [selectedTicketId]);
 
-  const [addressData, setaAddressDat] = useState({
+  const [addressData, setAddressData] = useState({
     houseNumber: '',
     landmark: '',
     city: '',
@@ -168,7 +168,7 @@ function invoicesa() {
   const [response, setResponse] = useState(null);
 
   const handleshipChange = (e) => {
-    setaAddressDat({
+    setAddressData({
       ...addressData,
       [e.target.name]: e.target.value
     });
