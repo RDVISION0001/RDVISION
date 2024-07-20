@@ -75,10 +75,17 @@ function login() {
                 </div>
                 <div className="col-lg-6 d-flex align-items-center gradient-custom-2">
                   <div className="text-white px-3 py-4 p-md-5 mx-md-4">
-                    <h4 className="mb-4">We are more than just a company</h4>
-                    <p className="small mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-                      exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <h4 className="mb-4">Welcome to RD Vision CRM</h4>
+                    <p className="small mb-0"> Your gateway to enhanced customer
+                      relationships and business success. Our platform is designed to
+                      provide you with all the tools you need to manage your customer
+                      interactions efficiently and effectively. From daily insights to
+                      keep you updated with the latest information, to comprehensive customer
+                      profiles that ensure you provide the most personalized service possible,
+                      we've got you covered. Our integrated task manager helps you stay on top of
+                      your to-do list,ensuring you never miss a follow-up or important deadline.
+                      Additionally, our robust reporting tools offer detailed analytics to track your
+                      progress and make informed decisions that drive your business forward.</p>
                   </div>
                 </div>
               </div>

@@ -116,7 +116,7 @@ function indexa() {
     allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
-    followUp: { userId, ticketStatus: 'follow' },
+    followUp: { ticketStatus: 'follow' },
   };
 
   // Data state
@@ -483,7 +483,7 @@ function indexa() {
                         New Tickets
                       </button>
                     </li>
-                    {/* <li className="nav-item" role="presentation">
+                    <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
                         onClick={() => handleRowClick("followUp")}
@@ -499,7 +499,7 @@ function indexa() {
                       >
                         Follow-up
                       </button>
-                    </li> */}
+                    </li>
                   </ul>
                   <div
                     className="tab-content recent-transactions-tab-body"
@@ -570,15 +570,6 @@ function indexa() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
                                       <a
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -586,7 +577,7 @@ function indexa() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i></a>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -598,7 +589,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -684,15 +675,6 @@ function indexa() {
 
                                   <td>
                                     <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
                                       <a
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -700,7 +682,7 @@ function indexa() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i></a>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                       href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -712,7 +694,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -796,15 +778,7 @@ function indexa() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
+
                                       <a
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -812,7 +786,7 @@ function indexa() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i></a>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        hhref={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -824,7 +798,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                       href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -855,78 +829,90 @@ function indexa() {
                         <table className="table">
                           <thead className="sticky-header">
                             <tr>
-                              <th tabindex="0">Date/Time</th>
+                            <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
-                            <tbody>
-                              {data.map((item, index) => (
-                                <tr key={index}>
-                                  <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td> <td>
-                                    <CopyToClipboard
-                                      text={item.senderMobile}
-                                      onCopy={() => setCopied(true)}
-                                    >
-                                      <button>Copy</button>
-                                    </CopyToClipboard>
-                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
-                                  <td><span className="comment">{item.subject}</span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
-                                  <td>
-                                    <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action call"
-                                        title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i
-                                      ></a>
-                                      <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
-                                        className="btn-action message"
-                                        title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i
-                                      ></a>
-                                      <a
-                                        href="mailto:someone@example.com"
-                                        className="btn-action email"
-                                        title="Get connect on email"
-                                      ><i className="fa-solid fa-envelope"></i
-                                      ></a>
-                                      <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
-                                        className="btn-action whatsapp"
-                                        title="Get connect on whatsapp"
-                                      ><i className="fa-brands fa-whatsapp"></i
-                                      ></a>
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
+                           <tbody>
+                           {data.map((item, index) => (
+                             <tr key={index}>
+                               <td><span className="text">{item.queryTime}</span></td>
+                               <td><span className="text">{item.senderCountryIso}</span></td>
+                               <td><span className="text">{item.senderName}</span></td>
+                               <td> <td>
+                                 <CopyToClipboard
+                                   text={item.senderMobile}
+                                   onCopy={() => setCopied(true)}
+                                 >
+                                   <button>Copy</button>
+                                 </CopyToClipboard>
+                               </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                               <td> <td>
+                                 <CopyToClipboard
+                                   text={item.senderEmail}
+                                   onCopy={() => setCopied(true)}
+                                 >
+                                   <button>Copy</button>
+                                 </CopyToClipboard>
+                               </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                               <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                 <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                   style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                   {item.ticketstatus}
+                                 </a>
+                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                   <li><a className="dropdown-item danger" >Action</a></li>
+                                   <li><a className="dropdown-item" >Another action</a></li>
+                                   <li><a className="dropdown-item" >Something else here</a></li>
+                                 </ul>
+                               </div>
+
+                               <td><span className="comment">{item.subject}<br /></span></td>
+                               <td><span className="text">{item.queryProductName}</span></td>
+                               <td>
+                                 <span className="actions-wrapper">
+                                   <a
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#followUpModal"
+                                     className="btn-action call"
+                                     title="Get connect on call"
+                                   ><i className="fa-solid fa-phone"></i></a>
+                                   <a
+                                     hhref={`sms:${item.mobileNumber}`}
+                                     className="btn-action message"
+                                     title="Get connect on message"
+                                   ><i className="fa-solid fa-message"></i></a>
+                                   <Button
+                                     onClick={handleOn}
+                                     // href="mailto:someone@example.com"
+                                     className="btn-action email"
+                                     title="Get connect on email"
+                                   ><i className="fa-solid fa-envelope"></i
+                                   ></Button>
+                                   <a
+                                    href={`https://wa.me/${item.mobileNumber}`}
+                                     className="btn-action whatsapp"
+                                     title="Get connect on whatsapp"
+                                   ><i className="fa-brands fa-whatsapp"></i></a>
+                                 </span>
+                               </td>
+                               <td className="ticket-id">
+                                 <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                               </td>
+                             </tr>
+                           ))}
+                         </tbody>
                           ) : (
                             <p>Loading...</p>
                           )}

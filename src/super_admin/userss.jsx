@@ -16,6 +16,11 @@ function userss() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  ///delete users
+  const [users, setUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   ////add member //
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -43,6 +48,32 @@ function userss() {
     userStatus: 0,
   });
 
+
+  // Handle delete user
+  const handleDelete = async () => {
+    if (selectedUserId) {
+      try {
+        await axiosInstance.post(`/user/deleteUser/${selectedUserId}`);
+        setShowDeleteModal(false); // Close modal
+        setUsers(users.filter(user => user.userId !== selectedUserId)); // Remove user from list
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
+
+  const openDeleteModal = (userId) => {
+    setSelectedUserId(userId);
+    setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setSelectedUserId(null);
+    setShowDeleteModal(false);
+  };
+
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -250,6 +281,8 @@ function userss() {
                             </th>
                             <th tabindex="0">Profile</th>
                             <th tabindex="0">User Name</th>
+                            <th tabindex="0">Eamil</th>
+                            <th tabindex="0">Mobile</th>
                             <th tabindex="0">Department</th>
                             <th tabindex="0">Designation</th>
                             <th tabindex="0">Team</th>
@@ -269,13 +302,15 @@ function userss() {
                                 </div>
                               </td>
                               <td>{item.firstName} {item.lastName}</td>
+                              <td>{item.email}</td>
+                              <td>{item.phoneNumber}</td>
                               <td>{item.departmentDto?.deptName}</td>
                               <td>{item.roleDto?.roleName}</td>
                               <td>{item.teamDto?.teamName}</td>
                               <td>{item.systemIp}</td>
                               <td className="action">
                                 <Button className="btn btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
-                                <button type="button" class="btn btn-danger mx-sm-3">Delete</button>
+                                <button type="button" class="btn btn-danger mx-sm-3" onClick={() => openDeleteModal(item.userId)}>Delete</button>
                               </td>
                             </tr>
                           ))}
@@ -510,6 +545,19 @@ function userss() {
           </div>
         </div>
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={closeDeleteModal}>
+        <Modal.Header closeButton>
+          <h3>Confirm Deletion</h3>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this user?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeDeleteModal}>Cancel</Button>
+          <Button variant="danger" onClick={handleDelete}>Delete</Button>
+        </Modal.Footer>
+      </Modal>
+
 
       {/* <!-- User Management Modal --> */}
       <Modal show={view} onHide={handleOff} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
