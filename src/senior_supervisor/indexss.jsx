@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
-import axios from 'axios';
+
 
 // Components
 import Topnav from '../components/topnav';
@@ -108,6 +108,14 @@ function indexss() {
     setOn(true);
   };
 
+  // Modal for ticket popup
+  const [view, setView] = useState(false);
+  const handleCloses = () => setView(false);
+  const handleView = (queryId) => {
+    setUniqueQueryId(queryId);
+    setView(true);
+  };
+
   // Active tab state
   const [activeTab, setActiveTab] = useState("allTickets");
 
@@ -116,7 +124,7 @@ function indexss() {
     allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
-    followUp: { userId, ticketStatus: 'follow' },
+    followUp: { ticketStatus: 'follow' },
   };
 
   // Data state
@@ -162,21 +170,20 @@ function indexss() {
     return colors[ticketStatus] || 'white';
   };
 
-  ///timezone api
-  const [timezoneData, setTimezoneData] = useState(null);
+  //follow up date and time option
+  const [showFollowUpDate, setShowFollowUpDate] = useState(false);
 
-  useEffect(() => {
-    const fetchTimezoneData = async () => {
-      try {
-        const response = await axios.get('http://worldtimeapi.org/api/timezone/Asia/Kolkata');
-        setTimezoneData(response.data);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  const handleStatusChange = (event) => {
+    handleChange(event);
+    if (event.target.value === "Follow") {
+      setShowFollowUpDate(true);
+    } else {
+      setShowFollowUpDate(false);
+    }
+  };
 
-    fetchTimezoneData();
-  },[]);
+  //country flage
+  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
 
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
@@ -335,8 +342,8 @@ function indexss() {
                 </div>
               </div>
             </section>
-           {/* <!-- user-profile --> */}
-           <Worktime />
+            {/* <!-- user-profile --> */}
+            <Worktime />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
@@ -358,45 +365,40 @@ function indexss() {
                     <div className="rank-card top-rankers">
                       <h3 className="heading"> Best Selling Teams</h3>
                       <div className="table-wrapper">
-                        {timezoneData ? (
-                          <table className="table">
-                            <tbody>
-                              <h5 className="text-center">{timezoneData.datetime}</h5>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="profile-wrapper">
-                                    <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                                  </div>
-                                </td>
-                                <td>Flotsam</td>
-                                <td>40k+ sales</td>
-                                <td>$1.4m revenue</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        ) : (
-                          <p>Loading...</p>
-                        )}
+                        <table className="table">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <div className="profile-wrapper">
+                                  <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
+                                </div>
+                              </td>
+                              <td>Flotsam</td>
+                              <td>40k+ sales</td>
+                              <td>$1.4m revenue</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                     {/* <!-- best departments --> */}
@@ -484,7 +486,7 @@ function indexss() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        Deal / Negotiation
+                        Sale
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
@@ -504,7 +506,7 @@ function indexss() {
                         New Tickets
                       </button>
                     </li>
-                    {/* <li className="nav-item" role="presentation">
+                    <li className="nav-item" role="presentation">
                       <button
                         className={`nav-link ${activeTab === "followUp" ? "active" : ""}`}
                         onClick={() => handleRowClick("followUp")}
@@ -520,7 +522,7 @@ function indexss() {
                       >
                         Follow-up
                       </button>
-                    </li> */}
+                    </li>
                   </ul>
                   <div
                     className="tab-content recent-transactions-tab-body"
@@ -538,16 +540,16 @@ function indexss() {
                         <table className="table">
                           <thead className="sticky-header">
                             <tr>
-                            <th tabindex="0">Date/Time</th>
-                            <th tabindex="0">Country</th>
-                            <th tabindex="0">Customer Name</th>
-                            <th tabindex="0">Customer Number</th>
-                            <th tabindex="0">Customer Email</th>
-                            <th tabindex="0">Status</th>
-                            <th tabindex="0">Requirement</th>
-                            <th tabindex="0">Product Name</th>
-                            <th tabindex="0">Action</th>
-                            <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Status</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Product Name</th>
+                              <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -555,7 +557,7 @@ function indexss() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -592,22 +594,15 @@ function indexss() {
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -619,7 +614,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -668,7 +663,7 @@ function indexss() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -705,23 +700,16 @@ function indexss() {
 
                                   <td>
                                     <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
+                                    <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                       href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -733,7 +721,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                        href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -781,7 +769,7 @@ function indexss() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -817,23 +805,16 @@ function indexss() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
+                                    <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
+                                        hhref={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -845,7 +826,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
+                                       href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -876,15 +857,16 @@ function indexss() {
                         <table className="table">
                           <thead className="sticky-header">
                             <tr>
-                              <th tabindex="0">Date/Time</th>
+                            <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Ticket ID</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -892,7 +874,7 @@ function indexss() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -901,53 +883,66 @@ function indexss() {
                                     >
                                       <button>Copy</button>
                                     </CopyToClipboard>
-                                  </td><span className="text">{item.senderMobile}</span></td>                                  <td><span className="text">{item.senderEmail}</span></td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
-                                  <td><span className="comment">{item.subject}</span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
-                                  <td>
-                                    <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => handleShow(item.uniqueQueryId)}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action other"
-                                        title="Write Status"
-                                      >
-                                        <i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                               <td> <td>
+                                 <CopyToClipboard
+                                   text={item.senderEmail}
+                                   onCopy={() => setCopied(true)}
+                                 >
+                                   <button>Copy</button>
+                                 </CopyToClipboard>
+                               </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
+                               <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                 <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                   style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                   {item.ticketstatus}
+                                 </a>
+                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                   <li><a className="dropdown-item danger" >Action</a></li>
+                                   <li><a className="dropdown-item" >Another action</a></li>
+                                   <li><a className="dropdown-item" >Something else here</a></li>
+                                 </ul>
+                               </div>
+
+                               <td><span className="comment">{item.subject}<br /></span></td>
+                               <td><span className="text">{item.queryProductName}</span></td>
+                               <td>
+                                 <span className="actions-wrapper">
+                                 <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i
-                                      ></a>
-                                      <a
-                                        href="sms:+150000000?body=Share%20this%20message%20on%20sms"
-                                        className="btn-action message"
-                                        title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i
-                                      ></a>
-                                      <a
-                                        href="mailto:someone@example.com"
-                                        className="btn-action email"
-                                        title="Get connect on email"
-                                      ><i className="fa-solid fa-envelope"></i
-                                      ></a>
-                                      <a
-                                        href="https://wa.me/9795189922?text=Hi%20I'm%20Interested%20to%20connect%20with%20you%20for%20my%20project"
-                                        className="btn-action whatsapp"
-                                        title="Get connect on whatsapp"
-                                      ><i className="fa-brands fa-whatsapp"></i
-                                      ></a>
-                                    </span>
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
+                                   <a
+                                     hhref={`sms:${item.mobileNumber}`}
+                                     className="btn-action message"
+                                     title="Get connect on message"
+                                   ><i className="fa-solid fa-message"></i></a>
+                                   <Button
+                                     onClick={handleOn}
+                                     // href="mailto:someone@example.com"
+                                     className="btn-action email"
+                                     title="Get connect on email"
+                                   ><i className="fa-solid fa-envelope"></i
+                                   ></Button>
+                                   <a
+                                    href={`https://wa.me/${item.mobileNumber}`}
+                                     className="btn-action whatsapp"
+                                     title="Get connect on whatsapp"
+                                   ><i className="fa-brands fa-whatsapp"></i></a>
+                                 </span>
+                               </td>
+                               <td className="ticket-id">
+                                 <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                               </td>
+                             </tr>
+                           ))}
+                         </tbody>
                           ) : (
                             <p>Loading...</p>
                           )}
@@ -986,17 +981,9 @@ function indexss() {
             <!-- ------------------------------------------------------------
             --------------------- Call Status Ticket Modal ---------------------
           -------------------------------------------------------------- --> */}
-            <Modal show={show} onHide={handleClose}
-              class="modal assign-ticket-modal fade"
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true">
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
               <Modal.Header closeButton>
-                <h1
-                  class="modal-title fs-5 w-100 text-center"
-                  id="followUpModalLabel"
-                >
+                <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
                   Call Status
                 </h1>
               </Modal.Header>
@@ -1005,14 +992,13 @@ function indexss() {
                   <div className="mb-3">
                     <label htmlFor="status" className="form-label">Status</label>
                     <select
-                      type="text"
                       className="form-select"
                       id="status"
                       name="ticketStatus"
                       value={formData.ticketStatus}
-                      onChange={handleChange}
+                      onChange={handleStatusChange}
                     >
-                      <option >Choose Call-Status</option>
+                      <option>Choose Call-Status</option>
                       <option value="Sale">Sale</option>
                       <option value="New">New</option>
                       <option value="Follow">Follow</option>
@@ -1023,13 +1009,25 @@ function indexss() {
                       <option value="Call_Back">Call Back</option>
                     </select>
                   </div>
-                  <div class="col-12">
-                    <label for="Comment" class="form-label">Comment</label>
+                  {showFollowUpDate && (
+                    <div className="mb-3">
+                      <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
+                      <input
+                        type="datetime-local"
+                        className="form-control"
+                        id="followUpDateTime"
+                        name="followUpDateTime"
+                        value={formData.followUpDateTime}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  )}
+                  <div className="col-12">
+                    <label htmlFor="comment" className="form-label">Comment</label>
                     <textarea
                       rows="4"
-                      class="form-control"
-                      placeholder="Call Status in words"
                       className="form-control"
+                      placeholder="Call Status in words"
                       id="comment"
                       name="comment"
                       value={formData.comment}
@@ -1037,15 +1035,11 @@ function indexss() {
                     ></textarea>
                   </div>
                   {error && <p className="text-danger">{error}</p>}
-                  <div class="modal-footer justify-content-center border-0">
-
-                    <button type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                      onClick={handleClose}>
+                  <div className="modal-footer justify-content-center border-0">
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
                       Close
                     </button>
-                    <button class="btn btn-primary" type="submit">
+                    <button className="btn btn-primary" type="submit">
                       Save Changes
                     </button>
                   </div>
@@ -1106,8 +1100,9 @@ function indexss() {
         </div >
       </div >
 
-      {/* <!-- Modal --> */}
-      < div
+      {/* <!-- Modal ticket popup --> */}
+      < Modal
+        show={view} onHide={handleCloses}
         className="modal ticket-modal fade"
         id="exampleModal"
         tabindex="-1"
@@ -1115,7 +1110,7 @@ function indexss() {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content">
+          <div className="ticket-content-spacing">
             <div className="modal-body">
               <div className="row">
                 <div className="col-4">
@@ -1130,37 +1125,42 @@ function indexss() {
                 </div>
                 <div className="col-8">
                   <div className="main-content-area">
-                    <div className="contact-info-row">
-                      <a href="" className="contact-info phone"
-                      ><i className="fa-solid fa-phone"></i> +91 9918293747</a
-                      >
-                      <a className="contact-info email" href="#"
-                      ><i className="fa-solid fa-envelope-open-text"></i>
-                        example@email.com</a
-                      >
-                    </div>
-                    <div className="button-grp">
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Close
-                      </button>
-                      <button type="button" className="btn btn-primary">
-                        Save changes
-                      </button>
-                    </div>
+                    <form>
+                      <div className="mb-3">
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked />
+                          <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
+                        </div>
+                      </div>
+                      <div className="col-12">
+                        <label htmlFor="comment" className="form-label">Comment</label>
+                        <textarea
+                          rows="4"
+                          className="form-control"
+                          placeholder="Call Status in words"
+                          id="comment"
+                          name="comment"
+                        ></textarea>
+                      </div>
+                      <div className="modal-footer justify-content-center border-0">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloses}>
+                          Close
+                        </button>
+                        <button className="btn btn-primary" type="submit">
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div >
+      </Modal>
     </>
   )
 }
-
 
 export default indexss

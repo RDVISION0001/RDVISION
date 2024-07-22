@@ -647,9 +647,9 @@ a {
   border: 1px solid #f7f7f7;
 }
 
-.ticket-modal .modal-content {
+ .ticket-modal .modal-content {
   background-color: transparent;
-  background-image: url("../../img/ticket.svg");
+  background-image: url("../generalcss/ticket.svg") !important;
   background-position: center;
   background-size: 100%;
   border: none !important;
@@ -657,7 +657,10 @@ a {
   padding: 2rem 1rem;
   border-radius: 0;
 }
+
 .ticket-modal .modal-content .heading-area .vertical-write {
+  padding-bottom: 30px;
+  padding-left: 278px;
   writing-mode: vertical-rl;
   rotate: 180deg;
   text-align: center;
