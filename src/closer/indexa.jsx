@@ -108,6 +108,14 @@ function indexa() {
     setOn(true);
   };
 
+  // Modal for ticket popup
+  const [view, setView] = useState(false);
+  const handleCloses = () => setView(false);
+  const handleView = (queryId) => {
+    setUniqueQueryId(queryId);
+    setView(true);
+  };
+
   // Active tab state
   const [activeTab, setActiveTab] = useState("allTickets");
 
@@ -161,6 +169,21 @@ function indexa() {
     };
     return colors[ticketStatus] || 'white';
   };
+
+  //follow up date and time option
+  const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+
+  const handleStatusChange = (event) => {
+    handleChange(event);
+    if (event.target.value === "Follow") {
+      setShowFollowUpDate(true);
+    } else {
+      setShowFollowUpDate(false);
+    }
+  };
+
+  //country flage
+  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
 
   // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
@@ -463,7 +486,7 @@ function indexa() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        Deal / Negotiation
+                        Sale
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
@@ -534,7 +557,7 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -570,12 +593,14 @@ function indexa() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                      <a
+                                      <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
                                         href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
@@ -638,7 +663,7 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -675,12 +700,14 @@ function indexa() {
 
                                   <td>
                                     <span className="actions-wrapper">
-                                      <a
+                                    <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
                                        href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
@@ -742,7 +769,7 @@ function indexa() {
                               {data.map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
-                                  <td><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                                   <td><span className="text">{item.senderName}</span></td>
                                   <td> <td>
                                     <CopyToClipboard
@@ -778,13 +805,14 @@ function indexa() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-
-                                      <a
+                                    <Button
+                                        onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
                                         className="btn-action call"
                                         title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i></a>
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                       <a
                                         hhref={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
@@ -842,20 +870,20 @@ function indexa() {
                             </tr>
                           </thead>
                           {data ? (
-                           <tbody>
-                           {data.map((item, index) => (
-                             <tr key={index}>
-                               <td><span className="text">{item.queryTime}</span></td>
-                               <td><span className="text">{item.senderCountryIso}</span></td>
-                               <td><span className="text">{item.senderName}</span></td>
-                               <td> <td>
-                                 <CopyToClipboard
-                                   text={item.senderMobile}
-                                   onCopy={() => setCopied(true)}
-                                 >
-                                   <button>Copy</button>
-                                 </CopyToClipboard>
-                               </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+                            <tbody>
+                              {data.map((item, index) => (
+                                <tr key={index}>
+                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                                  <td><span className="text">{item.senderName}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderMobile}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
 
                                <td> <td>
                                  <CopyToClipboard
@@ -882,12 +910,14 @@ function indexa() {
                                <td><span className="text">{item.queryProductName}</span></td>
                                <td>
                                  <span className="actions-wrapper">
-                                   <a
-                                     data-bs-toggle="modal"
-                                     data-bs-target="#followUpModal"
-                                     className="btn-action call"
-                                     title="Get connect on call"
-                                   ><i className="fa-solid fa-phone"></i></a>
+                                 <Button
+                                        onClick={handleView}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#followUpModal"
+                                        className="btn-action call"
+                                        title="Get connect on call"
+                                      ><i className="fa-solid fa-phone"></i>
+                                      </Button>
                                    <a
                                      hhref={`sms:${item.mobileNumber}`}
                                      className="btn-action message"
@@ -951,17 +981,9 @@ function indexa() {
             <!-- ------------------------------------------------------------
             --------------------- Call Status Ticket Modal ---------------------
           -------------------------------------------------------------- --> */}
-            <Modal show={show} onHide={handleClose}
-              class="modal assign-ticket-modal fade"
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true">
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
               <Modal.Header closeButton>
-                <h1
-                  class="modal-title fs-5 w-100 text-center"
-                  id="followUpModalLabel"
-                >
+                <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
                   Call Status
                 </h1>
               </Modal.Header>
@@ -970,14 +992,13 @@ function indexa() {
                   <div className="mb-3">
                     <label htmlFor="status" className="form-label">Status</label>
                     <select
-                      type="text"
                       className="form-select"
                       id="status"
                       name="ticketStatus"
                       value={formData.ticketStatus}
-                      onChange={handleChange}
+                      onChange={handleStatusChange}
                     >
-                      <option >Choose Call-Status</option>
+                      <option>Choose Call-Status</option>
                       <option value="Sale">Sale</option>
                       <option value="New">New</option>
                       <option value="Follow">Follow</option>
@@ -988,13 +1009,25 @@ function indexa() {
                       <option value="Call_Back">Call Back</option>
                     </select>
                   </div>
-                  <div class="col-12">
-                    <label for="Comment" class="form-label">Comment</label>
+                  {showFollowUpDate && (
+                    <div className="mb-3">
+                      <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
+                      <input
+                        type="datetime-local"
+                        className="form-control"
+                        id="followUpDateTime"
+                        name="followUpDateTime"
+                        value={formData.followUpDateTime}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  )}
+                  <div className="col-12">
+                    <label htmlFor="comment" className="form-label">Comment</label>
                     <textarea
                       rows="4"
-                      class="form-control"
-                      placeholder="Call Status in words"
                       className="form-control"
+                      placeholder="Call Status in words"
                       id="comment"
                       name="comment"
                       value={formData.comment}
@@ -1002,15 +1035,11 @@ function indexa() {
                     ></textarea>
                   </div>
                   {error && <p className="text-danger">{error}</p>}
-                  <div class="modal-footer justify-content-center border-0">
-
-                    <button type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                      onClick={handleClose}>
+                  <div className="modal-footer justify-content-center border-0">
+                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
                       Close
                     </button>
-                    <button class="btn btn-primary" type="submit">
+                    <button className="btn btn-primary" type="submit">
                       Save Changes
                     </button>
                   </div>
@@ -1071,8 +1100,9 @@ function indexa() {
         </div >
       </div >
 
-      {/* <!-- Modal --> */}
-      < div
+      {/* <!-- Modal ticket popup --> */}
+      < Modal
+        show={view} onHide={handleCloses}
         className="modal ticket-modal fade"
         id="exampleModal"
         tabindex="-1"
@@ -1080,7 +1110,7 @@ function indexa() {
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
-          <div className="modal-content">
+          <div className="ticket-content-spacing">
             <div className="modal-body">
               <div className="row">
                 <div className="col-4">
@@ -1095,34 +1125,40 @@ function indexa() {
                 </div>
                 <div className="col-8">
                   <div className="main-content-area">
-                    <div className="contact-info-row">
-                      <a href="" className="contact-info phone"
-                      ><i className="fa-solid fa-phone"></i> +91 9918293747</a
-                      >
-                      <a className="contact-info email" href="#"
-                      ><i className="fa-solid fa-envelope-open-text"></i>
-                        example@email.com</a
-                      >
-                    </div>
-                    <div className="button-grp">
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Close
-                      </button>
-                      <button type="button" className="btn btn-primary">
-                        Save changes
-                      </button>
-                    </div>
+                    <form>
+                      <div className="mb-3">
+                        <div class="form-check form-switch">
+                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked />
+                          <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
+                        </div>
+                      </div>
+                      <div className="col-12">
+                        <label htmlFor="comment" className="form-label">Comment</label>
+                        <textarea
+                          rows="4"
+                          className="form-control"
+                          placeholder="Call Status in words"
+                          id="comment"
+                          name="comment"
+                        ></textarea>
+                      </div>
+                      <div className="modal-footer justify-content-center border-0">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloses}>
+                          Close
+                        </button>
+                        <button className="btn btn-primary" type="submit">
+                          Save Changes
+                        </button>
+                      </div>
+                    </form>
+
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div >
+      </Modal>
     </>
   )
 }
