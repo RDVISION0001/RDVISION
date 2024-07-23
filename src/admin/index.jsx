@@ -18,7 +18,7 @@ const options = {
   },
   title: false,
   credits: {
-    text: "ram",
+    text: "CEO : Digvijay Singh",
     href: "",
   },
 

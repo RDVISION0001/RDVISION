@@ -450,7 +450,7 @@ function indexa() {
             <section className="followup-table-section py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
-                  <h3 className="title">All Tickets (Agent)</h3>
+                  <h3 className="title">All Tickets (Agent)<span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
                   <ul
                     className="nav recent-transactions-tab-header nav-tabs"
                     id="followUp"
@@ -885,32 +885,32 @@ function indexa() {
                                     </CopyToClipboard>
                                   </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
 
-                               <td> <td>
-                                 <CopyToClipboard
-                                   text={item.senderEmail}
-                                   onCopy={() => setCopied(true)}
-                                 >
-                                   <button>Copy</button>
-                                 </CopyToClipboard>
-                               </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
-                               <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
-                                 <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                   style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                   {item.ticketstatus}
-                                 </a>
-                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                   <li><a className="dropdown-item danger" >Action</a></li>
-                                   <li><a className="dropdown-item" >Another action</a></li>
-                                   <li><a className="dropdown-item" >Something else here</a></li>
-                                 </ul>
-                               </div>
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
 
-                               <td><span className="comment">{item.subject}<br /></span></td>
-                               <td><span className="text">{item.queryProductName}</span></td>
-                               <td>
-                                 <span className="actions-wrapper">
-                                 <Button
+                                  <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -918,31 +918,31 @@ function indexa() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
-                                   <a
-                                     hhref={`sms:${item.mobileNumber}`}
-                                     className="btn-action message"
-                                     title="Get connect on message"
-                                   ><i className="fa-solid fa-message"></i></a>
-                                   <Button
-                                     onClick={handleOn}
-                                     // href="mailto:someone@example.com"
-                                     className="btn-action email"
-                                     title="Get connect on email"
-                                   ><i className="fa-solid fa-envelope"></i
-                                   ></Button>
-                                   <a
-                                    href={`https://wa.me/${item.mobileNumber}`}
-                                     className="btn-action whatsapp"
-                                     title="Get connect on whatsapp"
-                                   ><i className="fa-brands fa-whatsapp"></i></a>
-                                 </span>
-                               </td>
-                               <td className="ticket-id">
-                                 <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                               </td>
-                             </tr>
-                           ))}
-                         </tbody>
+                                      <a
+                                        hhref={`sms:${item.mobileNumber}`}
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
+                                      <a
+                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
+                                    </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
                           ) : (
                             <p>Loading...</p>
                           )}
@@ -1124,13 +1124,30 @@ function indexa() {
                   </div>
                 </div>
                 <div className="col-8">
+                  <div
+                    class="contact-info-row d-flex align-items-center justify-content-between"
+                  >
+                    <a href="" class="contact-info phone"
+                    ><i class="fa-solid fa-phone"></i> +91 9918293747</a
+                    >
+                    <a class="contact-info email" href="#"
+                    ><i class="fa-solid fa-envelope-open-text"></i>
+                      example@email.com</a
+                    >
+                  </div>
                   <div className="main-content-area">
                     <form>
-                      <div className="mb-3">
-                        <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked />
-                          <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-                        </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                          Default checkbox
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                        <label class="form-check-label" for="flexCheckChecked">
+                          Checked checkbox
+                        </label>
                       </div>
                       <div className="col-12">
                         <label htmlFor="comment" className="form-label">Comment</label>

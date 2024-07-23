@@ -180,12 +180,12 @@ function invoicesa() {
     setError(null);
     try {
       const response = await axiosInstance.post('/address/createAddress', {
-        houseNumber: String(addressData.houseNumber),
-        landmark: String(addressData.landmark),
-        city: String(addressData.city),
-        zipCode: String(addressData.zipCode),
-        state: String(addressData.state),
-        country: String(addressData.country),
+        houseNumber: String(addressData ? addressData.houseNumber : ""),
+        landmark: String(addressData ? addressData.landmark : ""),
+        city: String(addressData ? addressData.city : ""),
+        zipCode: String(addressData ? addressData.zipCode : ""),
+        state: String(addressData ? addressData.state : ""),
+        country: String(addressData ? addressData.country : ""),
         ticketId: String(selectedTicketId)
       });
       setResponse(response.data);
@@ -374,12 +374,12 @@ function invoicesa() {
                                           {orderDetails.productOrders && orderDetails.productOrders.map((productOrder, index) => (
                                             productOrder.product && productOrder.product[0] ? (
                                               <tr key={index}>
-                                                <td>{productOrder.product[0].name}</td>
-                                                <td>{productOrder.product[0].brand}</td>
-                                                <td>{productOrder.product[0].composition}</td>
-                                                <td>{productOrder.product[0].packagingSize}</td>
-                                                <td>{productOrder.product[0].pillsQty}</td>
-                                                <td>{productOrder.product[0].price}</td>
+                                                <td>{productOrder?.product[0].name}</td>
+                                                <td>{productOrder?.product[0].brand}</td>
+                                                <td>{productOrder?.product[0].composition}</td>
+                                                <td>{productOrder?.product[0].packagingSize}</td>
+                                                <td>{productOrder?.product[0].pillsQty}</td>
+                                                <td>{productOrder?.product[0].price}</td>
                                               </tr>
                                             ) : (
                                               <tr key={index}>
@@ -427,7 +427,7 @@ function invoicesa() {
                                           <label for="hNo" className="form-label">House No./ Street</label>
                                           <input
                                             name="houseNumber"
-                                            value={addressData.houseNumber}
+                                            value={addressData ? addressData.houseNumber : ""}
                                             onChange={handleshipChange}
                                             id="hNo"
                                             className="form-control"
@@ -438,7 +438,7 @@ function invoicesa() {
                                           <input
                                             type="text"
                                             name="landmark"
-                                            value={addressData.landmark}
+                                            value={addressData ? addressData.landmark : ""}
                                             onChange={handleshipChange}
                                             id="hNo"
                                             className="form-control"
@@ -449,7 +449,7 @@ function invoicesa() {
                                           <input
                                             type="text"
                                             name="city"
-                                            value={addressData.city}
+                                            value={addressData ? addressData.city : ""}
                                             onChange={handleshipChange}
                                             id="city"
                                             className="form-control"
@@ -460,7 +460,7 @@ function invoicesa() {
                                           <input
                                             type="text"
                                             name="zipCode"
-                                            value={addressData.zipCode}
+                                            value={addressData ? addressData.zipCode : ""}
                                             onChange={handleshipChange}
                                             id="zipCode"
                                             className="form-control"
@@ -471,7 +471,7 @@ function invoicesa() {
                                           <input
                                             type="text"
                                             name="state"
-                                            value={addressData.state}
+                                            value={addressData ? addressData.state : ""}
                                             onChange={handleshipChange}
                                             id="state"
                                             className="form-control"
@@ -482,7 +482,7 @@ function invoicesa() {
                                           <input
                                             type="text"
                                             name="country"
-                                            value={addressData.country}
+                                            value={addressData ? addressData.country : ""}
                                             onChange={handleshipChange}
                                             id="country"
                                             className="form-control"
@@ -516,7 +516,6 @@ function invoicesa() {
                               </h2>
                               <div id="paymentDetails" className="accordion-collapse collapse show" data-bs-parent="#accordionAddressDetails">
                                 <div className="accordion-body">
-                                  <p className="text text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
                                   <div className="btns-group d-flex gap-3 justify-content-center mt-4">
                                     <a href="#" className="btn btn-primary">Check Status</a>
                                     <a variant="primary" onClick={handleSendInvoice} className="btn btn-warning">Send Invoice</a>
@@ -537,193 +536,6 @@ function invoicesa() {
                                 </div>
                               </div>
                             </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* <!-- tab two  --> */}
-                      <div className="tab-pane fade show" id="v-pills-ticket2" role="tabpanel" aria-labelledby="v-pills-ticket2-tab" tabindex="0">
-                        <div className="order-cards-details-wrapper-main">
-                          <div className="order-details-card">
-                            <div className="header">
-                              <p className="title">TKTID:MEDEQ089N</p>
-                              <p className="date">03 Mar 2023</p>
-                            </div>
-                            <div className="card">
-                              <div className="thumb-wrapper">
-                                <img src="../img/thumb-img.png" alt="thumb-image" className="img-fluid" />
-                              </div>
-                              <div className="content-wrapper">
-                                <h3 className="title">Lorem ipsum dolor, sit amet !</h3>
-                                <div className="contact-wrapper">
-                                  <div className="contact-item"><i className="fa-solid fa-phone"></i> +91 0000 000 000</div>
-                                  <div className="contact-item">
-                                    <i className="fa-solid fa-envelope-open-text"></i>
-                                    example@email.com
-                                  </div>
-                                </div>
-                                <div className="address-items mt-2">
-                                  <small>Billing Address</small>
-                                  <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
-                                </div>
-                                <div className="address-items">
-                                  <small>Delivery Address</small>
-                                  <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          {/* <!-- ticket details ends here --> */}
-                          <div className="accordion status-wrappers" id="accordionExample">
-                            <div className="accordion-item">
-                              <h2 className="accordion-header">
-                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
-                              </h2>
-                              <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                  <div className="order-lists">
-                                    <div className="items-wrapper">
-                                      <div className="list-item header">
-                                        <p className="title">Product Name</p>
-                                        <p className="cost">$38.67</p>
-                                      </div>
-                                      <div className="list-item otr-list">
-                                        <p className="item">Qty : <span>1</span></p>
-                                        <p className="item">Size : <span>XL</span></p>
-                                        <p className="item">Color : <span>Blue</span></p>
-                                      </div>
-                                    </div>
-                                    <div className="total">
-                                      <p>Total</p>
-                                      <p>$123.5</p>
-                                    </div>
-                                    <div className="add-more-products-wrapper">
-                                      <a data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</a>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* <!-- order items details ends here --> */}
-                            <div className="accordion-item payment">
-                              <h2 className="accordion-header">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                  <span>Sales/Invoice Details asadsds</span>
-                                  <span className="status-icon pending">
-                                    {/* <!-- change status from pending to success when payment done and make the second i enable and first one to disable--> */}
-                                    <i className="fa-solid fa-hourglass-end"></i>
-                                    <i className="fa-solid fa-check"></i>
-                                  </span>
-                                </button>
-                              </h2>
-                              <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                  <div className="billing-form">
-                                    <div className="accordion" id="accordionAddressDetails">
-                                      <div className="accordion-item shipping-details-item">
-                                        <h2 className="accordion-header">
-                                          <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#shippingDetils" aria-expanded="true" aria-controls="shippingDetils">Shipping Details</button>
-                                        </h2>
-                                        <div id="shippingDetils" className="accordion-collapse collapse show" data-bs-parent="#accordionAddressDetails">
-                                          <div className="accordion-body">
-                                            <form action="#">
-                                              <div className="row g-3">
-                                                <div className="col-12">
-                                                  <label for="name" className="form-label">Shiping To :</label>
-                                                  <input type="text" id="name" className="form-control" placeholder="Eg. Jane Kapoor" />
-                                                </div>
-                                                <div className="col-12">
-                                                  <h3 className="fieldset-heading">Shipping Address</h3>
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="hNo" className="form-label">House No./ Street</label>
-                                                  <input type="text" id="hNo" className="form-control" placeholder="Ex. 73923" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="hNo" className="form-label">Landmark</label>
-                                                  <input type="text" id="hNo" className="form-control" placeholder="Eg. Near EV Charging Point" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="city" className="form-label">City</label>
-                                                  <input type="text" id="city" className="form-control" placeholder="Eg. Varanasi" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="zipCode" className="form-label">Zip Code</label>
-                                                  <input type="text" id="zipCode" className="form-control" placeholder="Eg. 000000" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="state" className="form-label">State</label>
-                                                  <input type="text" id="state" className="form-control" placeholder="Eg. Delhi" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="country" className="form-label">Country</label>
-                                                  <input type="text" id="country" className="form-control" placeholder="Eg. India" />
-                                                </div>
-                                                <div className="col-12">
-                                                  <input type="checkbox" id="checkSame" className="form-check-inline" />
-                                                  <label for="checkSame" className="form-label checkSame-Address">Billing address is same as shipping</label>
-                                                </div>
-                                                <div className="col-12">
-                                                  <button className="btn btn-primary w-100">Submit Address</button>
-                                                </div>
-                                              </div>
-                                            </form>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="accordion-item billing-details-item mt-3">
-                                        <h2 className="accordion-header">
-                                          <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#billingDetils" aria-expanded="false" aria-controls="billingDetils">Billing Details</button>
-                                        </h2>
-                                        <div id="billingDetils" className="accordion-collapse collapse" data-bs-parent="#accordionAddressDetails">
-                                          <div className="accordion-body">
-                                            <form action="#">
-                                              <div className="row g-3">
-                                                <div className="col-12">
-                                                  <label for="name" className="form-label">Shiping To :</label>
-                                                  <input type="text" id="name" className="form-control" placeholder="Eg. Jane Kapoor" />
-                                                </div>
-                                                <div className="col-12">
-                                                  <h3 className="fieldset-heading">Shipping Address</h3>
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="hNo" className="form-label">House No./ Street</label>
-                                                  <input type="text" id="hNo" className="form-control" placeholder="Ex. 73923" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="hNo" className="form-label">Landmark</label>
-                                                  <input type="text" id="hNo" className="form-control" placeholder="Eg. Near EV Charging Point" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="city" className="form-label">City</label>
-                                                  <input type="text" id="city" className="form-control" placeholder="Eg. Varanasi" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="zipCode" className="form-label">Zip Code</label>
-                                                  <input type="text" id="zipCode" className="form-control" placeholder="Eg. 000000" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="state" className="form-label">State</label>
-                                                  <input type="text" id="state" className="form-control" placeholder="Eg. Delhi" />
-                                                </div>
-                                                <div className="col-6">
-                                                  <label for="country" className="form-label">Country</label>
-                                                  <input type="text" id="country" className="form-control" placeholder="Eg. India" />
-                                                </div>
-                                                <div className="col-12">
-                                                  <button className="btn btn-primary w-100">Submit Address</button>
-                                                </div>
-                                              </div>
-                                            </form>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* <!-- payment details ends here  --> */}
                             <div className="accordion-item order-status-wrapper">
                               <h2 className="accordion-header">
                                 <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
@@ -731,155 +543,7 @@ function invoicesa() {
                                   <span className="status-name"> Preparing </span>
                                 </button>
                               </h2>
-                              <div id="collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                  <div className="status-list-view-wrapper">
-                                    <ul className="status-list">
-                                      <li className="status-item success">
-                                        <h3 className="title">Order Dispatched</h3>
-                                        <small>10:35AM From Lucknow, India</small>
-                                      </li>
-                                      <li className="status-item pending">
-                                        <h3 className="title">At Custom Clearance</h3>
-                                        <small>02 Mar 2024 From Origin, India</small>
-                                      </li>
-                                      <li className="status-item blocked">
-                                        <h3 className="title">On the Way Via Sea Way</h3>
-                                        <small>02 Mar 2024 From Origin, India</small>
-                                      </li>
-                                    </ul>
-                                  </div>
-                                  <div className="row">
-                                    <div className="form-group px-3 offset-1 col-7">
-                                      <select name="orderStatus" id="order-status-select" className="form-select">
-                                        <option value="0">Change Order Status</option>
-                                        <option value="0">Preparing</option>
-                                        <option value="0">Out From Origin</option>
-                                        <option value="0">At Origin Custom Office</option>
-                                        <option value="0">On the Sea Way</option>
-                                        <option value="0" className="text-danger">Order Lossed</option>
-                                        <option value="0">At Desitination Custom</option>
-                                      </select>
-                                      {/* <!-- it only apperace when the order is at delivered status --> */}
-                                      <div className="col-12 d-flex gap-3 mt-2">
-                                        <input type="checkbox" name="reference-ticket" id="reference-ticket-gen" />
-                                        <label for="reference-ticket-gen" className="form-label">Generate Reference Token For Future Order</label>
-                                      </div>
-                                    </div>
-                                    <div className="col-4">
-                                      <button className="btn btn-primary">Update Status</button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      {/* <!-- another ticket starts here  --> */}
-                      <div className="tab-pane fade show" id="v-pills-ticket3" role="tabpanel" aria-labelledby="v-pills-ticket3-tab" tabindex="0">
-                        <div className="order-cards-details-wrapper-main">
-                          <div className="order-details-card">
-                            <div className="header">
-                              <p className="title">TKTID:MEDEQ089N</p>
-                              <p className="date">03 Mar 2023</p>
-                            </div>
-                            <div className="card">
-                              <div className="thumb-wrapper">
-                                <img src="../img/thumb-img.png" alt="thumb-image" className="img-fluid" />
-                              </div>
-                              <div className="content-wrapper">
-                                <h3 className="title">Lorem ipsum dolor, sit amet !</h3>
-                                <div className="contact-wrapper">
-                                  <div className="contact-item"><i className="fa-solid fa-phone"></i> +91 0000 000 000</div>
-                                  <div className="contact-item">
-                                    <i className="fa-solid fa-envelope-open-text"></i>
-                                    example@email.com
-                                  </div>
-                                </div>
-                                <div className="address-items mt-2">
-                                  <small>Billing Address</small>
-                                  <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
-                                </div>
-                                <div className="address-items">
-                                  <small>Delivery Address</small>
-                                  <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          {/* <!-- ticket details ends here --> */}
-                          <div className="accordion status-wrappers" id="accordionExample">
-                            <div className="accordion-item">
-                              <h2 className="accordion-header">
-                                <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
-                              </h2>
-                              <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                  <div className="order-lists">
-                                    <div className="items-wrapper">
-                                      <div className="list-item header">
-                                        <p className="title">Product Name</p>
-                                        <p className="cost">$38.67</p>
-                                      </div>
-                                      <div className="list-item otr-list">
-                                        <p className="item">Qty : <span>1</span></p>
-                                        <p className="item">Size : <span>XL</span></p>
-                                        <p className="item">Color : <span>Blue</span></p>
-                                      </div>
-                                    </div>
-                                    <div className="total">
-                                      <p>Total</p>
-                                      <p>$123.5</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* <!-- order items details ends here --> */}
-                            <div className="accordion-item payment">
-                              <h2 className="accordion-header">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                  <span>Payment Details</span>
-                                  <span className="status-icon pending">
-                                    {/* <!-- change status from pending to success when payment done and make the second i enable and first one to disable--> */}
-                                    <i className="fa-solid fa-hourglass-end"></i>
-                                    <i className="fa-solid fa-check"></i>
-                                  </span>
-                                </button>
-                              </h2>
-                              <div id="collapseTwo" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                  <p className="text text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                                  <div className="btns-group d-flex gap-3 justify-content-center mt-4">
-                                    <a href="#" className="btn btn-primary">Check Status</a>
-                                    <a href="#" className="btn btn-warning">Send Invoice</a>
-                                    <a href="#" className="btn btn-success">Mark As Paid</a>
-                                    <a href="#" className="btn btn-danger">Mark As Hold</a>
-                                  </div>
-                                  {/* <!-- ------------- reason for hold --------- --> */}
-
-                                  <div className="form-hold p-3">
-                                    <form action="">
-                                      <div className="form-group mb-3">
-                                        <label className="form-label" for="holdReason">Define Reason</label>
-                                        <textarea name="holdReason" id="holdReason" cols="20" rows="5" className="form-control" placeholder="Reason to hold the order or invoice......"></textarea>
-                                      </div>
-                                      <a href="#" className="btn btn-danger">Hold Now</a>
-                                    </form>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            {/* <!-- payment details ends here  --> */}
-                            <div className="accordion-item order-status-wrapper">
-                              <h2 className="accordion-header">
-                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                  <span>Order Status</span>
-                                  <span className="status-name"> Preparing </span>
-                                </button>
-                              </h2>
-                              <div id="collapseThree" className="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                              <div id="collapseThree" className="accordion-button collapsed show" data-bs-parent="#accordionExample">
                                 <div className="accordion-body">
                                   <div className="status-list-view-wrapper">
                                     <ul className="status-list">
@@ -1060,10 +724,10 @@ function invoicesa() {
                 </div>
               </form>
             </div>
-
           </div>
         </div>
       </Modal>
+
       {/* <!-- Modal --> */}
       <div className="modal ticket-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered modal-lg">
