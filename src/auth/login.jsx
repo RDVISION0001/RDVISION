@@ -3,25 +3,48 @@ import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './login.css'
+import axios from 'axios';
+import axiosInstance from '../axiosInstance';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 function login() {
   const [email, setEmail] = useState('');
+  const [otpSent, setOtpSent] = useState(false)
   const [password, setPassword] = useState('');
+  const [logInOtp, setOtp] = useState();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false)
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(email, password, logInOtp);
       navigate('/sidenav');
     } catch (error) {
       setError('Login failed');
     }
   };
+  const passwordWrong=()=>toast("Password is incorrect")
+  const otpHasSent=()=> toast.success('OTP has been sent to your email!');
+  const sendOtp = async () => {
+    setLoading(true)
+    try {
+      const response = await axiosInstance.post('/auth/generateOtp', { email, password })
+      setOtpSent(true)
+      otpHasSent()
+    } catch (err) {
+      passwordWrong()
+      setLoading(false)
+    }
+    setLoading(false)
+
+  }
 
   return (
     <section className="h-100 gradient-form" >
@@ -58,11 +81,17 @@ function login() {
                         <label className="form-label" for="form2Example22">Password</label>
                       </div>
 
-                      <div className="text-center pt-1 mb-5 pb-1">
-                        <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
-                          type="submit"> Login</button>
-                        {/* <a className="text-muted" href="#!">Forgot password?</a> */}
-                      </div>
+                      {otpSent ? <div data-mdb-input-init className="form-outline mb-4">
+                        <input type="password"
+                          value={logInOtp}
+                          onChange={(e) => setOtp(e.target.value)}
+                          id="form2Example23" className="form-control"
+                          placeholder="********" />
+                        <label className="form-label" for="form2Example22">Enter Otp</label>
+                      </div> : null}
+                      
+
+
                       {/* 
                       <div className="d-flex align-items-center justify-content-center pb-4">
                         <p className="mb-0 me-2">Don't have an account?</p>
@@ -70,6 +99,15 @@ function login() {
                       </div> */}
 
                     </form>
+                    <div className="text-center pt-1 mb-5 pb-1">
+                      {
+                        otpSent ? <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
+                          onClick={handleSubmit}> Login</button> : loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> :
+                          <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
+                            onClick={sendOtp}> Request Otp</button>
+                      }
+                      {/* <a className="text-muted" href="#!">Forgot password?</a> */}
+                    </div>
 
                   </div>
                 </div>

@@ -46,9 +46,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (email, password,logInOtp) => {
     try {
-      const response = await axiosInstance.post('/auth/login', { email, password });
+      const response = await axiosInstance.post('/auth/login', { email, password,logInOtp });
       if (response.status === 200) {
         const { jwtToken, user } = response.data;
         localStorage.setItem('token', jwtToken);
