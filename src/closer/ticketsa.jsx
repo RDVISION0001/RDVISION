@@ -232,7 +232,7 @@ function ticketsa() {
             <section className="data-table-bgs_02x24 py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
-                  <h3 className="title">All Tickets</h3>
+                  <h3 className="title">All Tickets <span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
                   <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
                       <button className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
