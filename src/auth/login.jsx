@@ -100,14 +100,12 @@ function login() {
 
                     </form>
                     <div className="text-center pt-1 mb-5 pb-1">
-                    <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
-                          onClick={handleSubmit}> Login</button>
-                      {/* {
+                      {
                         otpSent ? <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                           onClick={handleSubmit}> Login</button> : loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> :
                           <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                             onClick={sendOtp}> Request Otp</button>
-                      } */}
+                      }
                       {/* <a className="text-muted" href="#!">Forgot password?</a> */}
                     </div>
 
