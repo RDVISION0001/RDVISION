@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
 import './login.css'
 import axios from 'axios';
 import axiosInstance from '../axiosInstance';
@@ -81,6 +81,10 @@ function login() {
                         <label className="form-label" for="form2Example22">Password</label>
                       </div>
 
+                      {/* <div className='custom-navlink'><NavLink className="" to="/forgot_password">
+                        Forgot Password
+                      </NavLink></div> */}
+
                       {otpSent ? <div data-mdb-input-init className="form-outline mb-4">
                         <input type="password"
                           value={logInOtp}
@@ -106,8 +110,11 @@ function login() {
                           <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                             onClick={sendOtp}> Request Otp</button>
                       }
-                      {/* <a className="text-muted" href="#!">Forgot password?</a> */}
+                    
                     </div>
+                    <div className='custom-navlink'><NavLink className="" to="/forgot_password">
+                        Forgot Password
+                      </NavLink></div>
 
                   </div>
                 </div>

@@ -18,7 +18,9 @@ import Login from './auth/login';
 import Logout from './auth/logout';
 import { AuthProvider } from './auth/AuthContext';
 import PrivateRoute from './PrivateRoute';
-import axiosInstance from './axiosInstance'; 
+import Forgetpassword from './auth/forgotpassword';
+
+
 
 
 // admin
@@ -115,6 +117,9 @@ function App() {
             {/* auth */}
             <Route exact path="/" element={<Login />} />
             <Route exact path="/logout" element={<Logout />} />
+            <Route exact path="/forgot_password" element={<Forgetpassword />} />
+
+
 
             {/* careers */}
             <Route exact path="/careers_jobpost" element={<Jobpost />} />
