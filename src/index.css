@@ -211,3 +211,15 @@ button:focus-visible {
 @keyframes l13{ 
   100%{transform: rotate(1turn)}
 }
+
+/* //forget password*/
+.custom-navlink {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  text-align: center;
+}
+
+.custom-navlink:hover {
+  color: lightblue;
+}
