@@ -602,7 +602,7 @@ function indexa() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        href={`sms:${item.mobileNumber}`}
+                                        href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -614,7 +614,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -709,7 +709,7 @@ function indexa() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                       href={`sms:${item.mobileNumber}`}
+                                       href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -721,7 +721,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -814,7 +814,7 @@ function indexa() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        hhref={`sms:${item.mobileNumber}`}
+                                        hhref={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -826,7 +826,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                       href={`https://wa.me/${item.mobileNumber}`}
+                                       href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -919,7 +919,7 @@ function indexa() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        hhref={`sms:${item.mobileNumber}`}
+                                        hhref={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -931,7 +931,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>

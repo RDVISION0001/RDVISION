@@ -46,7 +46,7 @@ import Indexm from './captain/indexm';
 import Invoicesm from './captain/invoicesm';
 import Ordersm from './captain/ordersm';
 import Salesm from './captain/salesm';
-import Team from './captain/team';
+import ToCloser from './captain/toCloser';
 import Ticketsm from './captain/ticketsm';
 
 
@@ -62,6 +62,8 @@ import Usersa from './closer/usersa';
 import Indexss from './senior_supervisor/indexss';
 import Ticketsss from './senior_supervisor/ticketsss';
 import Invoicesss from './senior_supervisor/invoicesss';
+import ToCaptain from './senior_supervisor/toCaptain';
+
 
 
 // componenets css
@@ -153,7 +155,7 @@ function App() {
               <Route exact path="/captain_invoices" element={<Invoicesm />} />
               <Route exact path="/captain_orders" element={<Ordersm />} />
               <Route exact path="/captain_sales" element={<Salesm />} />
-              <Route exact path="/captain_team" element={<Team />} />
+              <Route exact path="/captain_to_closer" element={<ToCloser />} />
               <Route exact path="/captain_tickets" element={<Ticketsm />} />
 
 
@@ -169,6 +171,7 @@ function App() {
               <Route exact path="/senior_supervisor_index" element={<Indexss />} />
               <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
               <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
+              <Route exact path="/senior_supervisor_to_captain" element={<ToCaptain />} />
 
             </Route>
           </Routes>

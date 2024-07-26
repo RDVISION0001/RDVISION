@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 
-function team() {
+function toCaptain() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -260,7 +260,7 @@ function team() {
                 <div className="table-wrapper tabbed-table">
                   <div className="heading-wrapper">
                     <h3 className="title">All Tickets</h3>
-                    <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal">Assign Ticket</Button>
+                    <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal">Assign to Captain</Button>
                   </div>
                   <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
@@ -458,7 +458,7 @@ function team() {
       {/* <!-- Assign Ticket Modal --> */}
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Assign Tickets to User</Modal.Title>
+          <Modal.Title>Tickets Assign to Closer</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form>
@@ -523,5 +523,4 @@ function team() {
     </>
   )
 }
-
-export default team;
+export default toCaptain;
