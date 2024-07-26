@@ -210,9 +210,9 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/captain_team" className="nav-link">
+              <NavLink to="/captain_to_closer" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
-                <span className="nav-text">Team</span>
+                <span className="nav-text">To Closer</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -252,6 +252,12 @@ function Sidenav() {
               <NavLink to="/senior_supervisor_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/senior_supervisor_to_captain" className="nav-link">
+                <i className="fa-solid fa-user"></i>
+                <span className="nav-text">To Captain</span>
               </NavLink>
             </li>
             <li className="nav-item">
