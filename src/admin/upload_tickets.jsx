@@ -54,9 +54,7 @@ function upload_tickets() {
       setApiResponse(response.data);
       toast.success('Tickets assigned successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 6000);
+     fetchTickets()
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');

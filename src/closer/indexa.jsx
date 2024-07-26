@@ -8,6 +8,8 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Worktime from '../components/worktime';
 
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -121,14 +123,17 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    allTickets: {userId},
+    ongoing: {userId, ticketStatus: 'Sale' },
+    newTickets: {userId, ticketStatus: 'New' },
+    followUp: {userId, ticketStatus: 'follow' },
   };
 
   // Data state
   const [data, setData] = useState(null);
+
+  // State for notifications
+  const [newNotifications, setNewNotifications] = useState(0);
 
   // Fetch data function
   const fetchData = async (params, page, perPage) => {
@@ -139,9 +144,23 @@ function indexa() {
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
+
+      // Update notification count based on totalElement
+      if (params.ticketStatus === 'New') {
+        const newCount = response.data.totalElement;
+        if (newCount > newNotifications) {
+          playNotificationSound();
+        }
+        setNewNotifications(newCount);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  };
+
+  const playNotificationSound = () => {
+    const audio = new Audio(R2ZWYCP);
+    audio.play();
   };
 
   // Masking mobile number
@@ -150,14 +169,12 @@ function indexa() {
     return number.slice(0, -4) + 'XXXX';
   };
 
-  // Masking email
   const maskEmail = (email) => {
     const [user, domain] = email.split('@');
     const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
     return `${maskedUser}@${domain}`;
   };
 
-  // Ticket status color
   const getColorByStatus = (ticketStatus) => {
     const colors = {
       'New': 'dodgerblue',
@@ -170,7 +187,6 @@ function indexa() {
     return colors[ticketStatus] || 'white';
   };
 
-  //follow up date and time option
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
 
   const handleStatusChange = (event) => {
@@ -182,16 +198,12 @@ function indexa() {
     }
   };
 
-  //country flage
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
-
-  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
   }, [activeTab, currentPage, itemsPerPage]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -199,7 +211,6 @@ function indexa() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!uniqueQueryId) {
@@ -215,9 +226,7 @@ function indexa() {
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      fetchData()
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -225,34 +234,29 @@ function indexa() {
     }
   };
 
-  // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
     fetchData(params[tabName], 0, itemsPerPage);
   };
 
-  // Handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  // Function to set items per page
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
     setCurrentPage(0);
   };
 
-  // Function to generate page numbers
   const generatePageNumbers = () => {
     const pageNumbers = [];
     const maxPagesToShow = 9;
@@ -504,6 +508,7 @@ function indexa() {
                         tabindex="-1"
                       >
                         New Tickets
+                        <i class="fa-solid fa-bell fa-2xl" style={{color: "#f90606"}}>{newNotifications}</i>
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">

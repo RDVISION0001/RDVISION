@@ -81,9 +81,7 @@ function userss() {
       console.log('Response:', response.data);
       toast.success('User created successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      fetchData()
     } catch (error) {
       console.error('Error:', error);
       toast.error('User creation failed');

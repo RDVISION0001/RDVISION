@@ -50,9 +50,7 @@ function  users() {
       console.log('Response:', response.data);
       toast.success('User created successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 3000);
+      fetchData()
     } catch (error) {
       console.error('Error:', error);
       toast.error('User creation failed');
@@ -389,9 +387,9 @@ function  users() {
                   {/* <!--  --> */}
                 </div>
                 <div className="pagination-controls">
-                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  <button className='next_prev' onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                   <span>Page {currentPage + 1} of {totalPages}</span>
-                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                  <button className='next_prev' onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                 </div>
               </div>
             </section>

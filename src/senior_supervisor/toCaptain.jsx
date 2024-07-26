@@ -60,11 +60,9 @@ function toCaptain() {
       const url = `/third_party_api/ticket/assignToUser/${selectedUser}`;
       const response = await axiosInstance.post(url, payload, config);
       setApiResponse(response.data);
-      toast.success('Tickets assigned successfully!');
+      toast.success('Tickets assigned to captain successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 6000);
+      fetchTickets()
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
@@ -74,7 +72,14 @@ function toCaptain() {
   // State for modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    if(selectedTickets.length>0){
+        setShow(true)
+    }else{
+        toast.info("Please select at least One Ticket")
+    }
+}
+
 
   // Users
   const [user, setUser] = useState([]);
@@ -84,7 +89,7 @@ function toCaptain() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axiosInstance.get('/user/dropdown', {
-        params: { roleId: 4 }
+        params: { roleId: 3 }
       });
       setUser(response.data.dtoList);
     };
@@ -296,8 +301,8 @@ function toCaptain() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
-                              <tr>
+                            {data.map((item,index) => (
+                              <tr key={index}>
                                 <td className="selection-cell">
                                   <input
                                     type="checkbox"
@@ -458,12 +463,12 @@ function toCaptain() {
       {/* <!-- Assign Ticket Modal --> */}
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Tickets Assign to Closer</Modal.Title>
+          <Modal.Title>Tickets Assign to Captain</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <form>
             <div className="form-group">
-              <label htmlFor="teamSelect">Select User</label>
+              <label htmlFor="teamSelect">Select Captain</label>
               <select
                 id="inputTeam"
                 name="userId"
@@ -471,7 +476,7 @@ function toCaptain() {
                 onChange={handleSelectTeam}
                 className="form-select"
               >
-                <option value="">Choose User</option>
+                <option value="">Choose Captain</option>
                 {user.map(user => (
                   <option key={user.userId} value={user.userId}>{user.firstName} {user.lastName}</option>
                 ))}
@@ -483,7 +488,7 @@ function toCaptain() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={sendPostRequest}>
+          <Button  variant="primary" onClick={sendPostRequest}>
             Assign Tickets
           </Button>
         </Modal.Footer>
