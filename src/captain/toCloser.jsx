@@ -46,7 +46,11 @@ function toCloser() {
       setSelectedTickets(selectedTickets.filter(ticketId => ticketId !== id));
     }
   };
-
+ //Short Method
+ const [shortValue, setShortValue] = useState("")
+ const handleShortDataValue = (e) => {
+   setShortValue(e.target.value)
+ }
   // Function to send POST request
   const sendPostRequest = async () => {
     try {
@@ -231,7 +235,7 @@ function toCloser() {
                 <div className="row">
                   <div className="col-md-5">
                     <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." />
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}  />
                       <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
@@ -319,7 +323,12 @@ function toCloser() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item) => (
                               <tr>
                                 <td className="selection-cell">
                                   <input

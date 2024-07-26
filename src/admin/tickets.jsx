@@ -25,7 +25,11 @@ function tickets() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+ //Short Method
+ const [shortValue, setShortValue] = useState("")
+ const handleShortDataValue = (e) => {
+   setShortValue(e.target.value)
+ }
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
@@ -121,7 +125,7 @@ function tickets() {
                 <div className="row">
                   <div className="col-md-5">
                     <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." />
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
                       <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
@@ -176,7 +180,12 @@ function tickets() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
@@ -218,7 +227,12 @@ function tickets() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
@@ -260,7 +274,12 @@ function tickets() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input

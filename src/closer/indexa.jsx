@@ -89,7 +89,7 @@ function indexa() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Form data state
-  const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
+  const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime:'' });
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [uniqueQueryId, setUniqueQueryId] = useState(null);
@@ -123,10 +123,10 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {userId},
-    ongoing: {userId, ticketStatus: 'Sale' },
-    newTickets: {userId, ticketStatus: 'New' },
-    followUp: {userId, ticketStatus: 'follow' },
+    allTickets: { userId },
+    ongoing: { userId, ticketStatus: 'Sale' },
+    newTickets: {ticketStatus: 'New' },
+    followUp: { userId, ticketStatus: 'follow' },
   };
 
   // Data state
@@ -162,7 +162,11 @@ function indexa() {
     const audio = new Audio(R2ZWYCP);
     audio.play();
   };
-
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
@@ -221,6 +225,7 @@ function indexa() {
       const params = {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
+        followUpDateTime: formData.followUpDateTime,
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -275,7 +280,7 @@ function indexa() {
 
     return pageNumbers;
   };
-
+  console.log("Short Data Value", shortValue)
   return (
     <>
       <div className="superadmin-page">
@@ -449,7 +454,58 @@ function indexa() {
                 </div>
               </div>
             </section>
-
+            {/* //Filter input */}
+            <section class="filter-section">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="filter-wrapper d-flex gap-3">
+                      {/* <!-- Department filter --> */}
+                      <div class="btn-group department">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Date filter --> */}
+                      <div class="btn-group date">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Order Status filter --> */}
+                      <div class="btn-group order-status">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
             {/* <!-- Tabbed Ticket Table --> */}
             <section className="followup-table-section py-3">
               <div className="container-fluid">
@@ -508,7 +564,7 @@ function indexa() {
                         tabindex="-1"
                       >
                         New Tickets
-                        <i class="fa-solid fa-bell fa-2xl" style={{color: "#f90606"}}>{newNotifications}</i>
+                        <i class="fa-solid fa-bell fa-2xl" style={{ color: "#f90606" }}>{newNotifications}</i>
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
@@ -559,7 +615,12 @@ function indexa() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -665,7 +726,12 @@ function indexa() {
                           {data ? (
                             <tbody>
 
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -705,7 +771,7 @@ function indexa() {
 
                                   <td>
                                     <span className="actions-wrapper">
-                                    <Button
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -714,7 +780,7 @@ function indexa() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                       href={`sms:${item.senderMobile}`}
+                                        href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -771,7 +837,12 @@ function indexa() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -810,7 +881,7 @@ function indexa() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                    <Button
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -831,7 +902,7 @@ function indexa() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                       href={`https://wa.me/${item.senderMobile}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -862,7 +933,7 @@ function indexa() {
                         <table className="table">
                           <thead className="sticky-header">
                             <tr>
-                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
@@ -876,7 +947,12 @@ function indexa() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>

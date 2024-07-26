@@ -24,12 +24,19 @@ function toEveryone() {
     const [totalPages, setTotalPages] = useState(0);
     const [seletedUserType, setSelectedUserType] = useState(0)
     const [user, setUser] = useState([])
-    const [selectedUserOfSelectedUserType,setSelectedUserOfSelectedUserType]=useState(0)
+    const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
     const handleClose = () => setShow(false);
+
+    //Short Method
+    const [shortValue, setShortValue] = useState("")
+    const handleShortDataValue = (e) => {
+        setShortValue(e.target.value)
+    }
+
     const handleShow = () => {
-        if(selectedTickets.length>0){
+        if (selectedTickets.length > 0) {
             setShow(true)
-        }else{
+        } else {
             toast.info("Please select at least One Ticket")
         }
     }
@@ -60,10 +67,10 @@ function toEveryone() {
             const url = `/third_party_api/ticket/assignToUser/${selectedUserOfSelectedUserType}`;
             const response = await axiosInstance.post(url, payload, config);
             setApiResponse(response.data);
-            console.log("Response is :",response.data)
+            console.log("Response is :", response.data)
             toast.success('Tickets assigned successfully!');
             handleClose();
-            
+
             fetchTickets()
         } catch (error) {
             console.error('Error:', error);
@@ -125,10 +132,10 @@ function toEveryone() {
             fetchTickets(params[activeTab], currentPage + 1);
         }
     };
-    const disableTcket=()=>{
-       return  selectedTickets.length===0?"disabled":""
+    const disableTcket = () => {
+        return selectedTickets.length === 0 ? "disabled" : ""
     }
-    
+
     return (
         <>
             <div className="admin-page tickets-page">
@@ -206,7 +213,7 @@ function toEveryone() {
                                 <div className="row">
                                     <div className="col-md-5">
                                         <div className="search-wrapper">
-                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." />
+                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}/>
                                             <div className="search-icon">
                                                 <i className="fa-solid fa-magnifying-glass"></i>
                                             </div>
@@ -261,7 +268,12 @@ function toEveryone() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {data.map((item) => (
+                                                        {data.filter(
+                                                            (item) =>
+                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                                                        ).map((item) => (
                                                             <tr key={item.uniqueQueryId}>
                                                                 <td className="selection-cell">
                                                                     <input
@@ -303,7 +315,12 @@ function toEveryone() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {data.map((item) => (
+                                                        {data.filter(
+                                                            (item) =>
+                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                                                        ).map((item) => (
                                                             <tr key={item.uniqueQueryId}>
                                                                 <td className="selection-cell">
                                                                     <input
@@ -345,7 +362,12 @@ function toEveryone() {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {data.map((item) => (
+                                                        {data.filter(
+                                                            (item) =>
+                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                                                        ).map((item) => (
                                                             <tr key={item.uniqueQueryId}>
                                                                 <td className="selection-cell">
                                                                     <input
@@ -400,7 +422,7 @@ function toEveryone() {
                             <select className="form-control" id="teamSelect" onChange={handleSelectUserOfSelectedUserType} value={selectedUserOfSelectedUserType}>
                                 <option value="">Choose...</option>
                                 {user.map((t) => (
-                                    <option key={t.userId} value={t.userId}>{t.firstName+" "+t.lastName}</option>
+                                    <option key={t.userId} value={t.userId}>{t.firstName + " " + t.lastName}</option>
                                 ))}
                             </select>
                         </div>

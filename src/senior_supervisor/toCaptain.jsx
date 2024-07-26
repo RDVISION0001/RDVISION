@@ -56,6 +56,7 @@ function toCaptain() {
         }
       };
 
+
       // Construct the URL with the ticketId
       const url = `/third_party_api/ticket/assignToUser/${selectedUser}`;
       const response = await axiosInstance.post(url, payload, config);
@@ -68,7 +69,11 @@ function toCaptain() {
       toast.error('Failed to assign tickets.');
     }
   };
-
+ //Short Method
+ const [shortValue, setShortValue] = useState("")
+ const handleShortDataValue = (e) => {
+     setShortValue(e.target.value)
+ }
   // State for modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -213,7 +218,7 @@ function toCaptain() {
                 <div className="row">
                   <div className="col-md-5">
                     <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." />
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
                       <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
@@ -301,7 +306,12 @@ function toCaptain() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item,index) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item,index) => (
                               <tr key={index}>
                                 <td className="selection-cell">
                                   <input

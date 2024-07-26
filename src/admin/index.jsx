@@ -126,7 +126,12 @@ function index() {
     newTickets: { ticketStatus: 'New' },
     followUp: { ticketStatus: 'follow' },
   };
-
+ //Short Method
+ const [shortValue, setShortValue] = useState("")
+ const handleShortDataValue = (e) => {
+   setShortValue(e.target.value)
+ }
+ 
   // Data state
   const [data, setData] = useState(null);
 
