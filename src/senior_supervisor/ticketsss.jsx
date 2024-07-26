@@ -43,7 +43,11 @@ function ticketsss() {
     fetchTickets(params[tabName], 0, itemsPerPage);
   };
 
-
+ //Short Method
+ const [shortValue, setShortValue] = useState("")
+ const handleShortDataValue = (e) => {
+     setShortValue(e.target.value)
+ }
   // Function to fetch tickets based on parameters and page number
   const fetchTickets = async (params, page, perPage) => {
     try {
@@ -175,7 +179,58 @@ function ticketsss() {
                 </div>
               </div>
             </section>
-
+  {/* <!-- Filter Section --> */}
+  <section className="filter-section">
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-md-5">
+                    <div className="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-7">
+                    <div className="filter-wrapper d-flex gap-3">
+                      {/* <!-- Department filter --> */}
+                      <div className="btn-group department">
+                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
+                        <ul className="dropdown-menu">
+                          <li><a className="dropdown-item" href="#">Action</a></li>
+                          <li><a className="dropdown-item" href="#">Another action</a></li>
+                          <li><a className="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr className="dropdown-divider" /></li>
+                          <li><a className="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Date filter --> */}
+                      <div className="btn-group date">
+                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
+                        <ul className="dropdown-menu">
+                          <li><a className="dropdown-item" href="#">Action</a></li>
+                          <li><a className="dropdown-item" href="#">Another action</a></li>
+                          <li><a className="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr className="dropdown-divider" /></li>
+                          <li><a className="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Order Status filter --> */}
+                      <div className="btn-group order-status">
+                        <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
+                        <ul className="dropdown-menu">
+                          <li><a className="dropdown-item" href="#">Action</a></li>
+                          <li><a className="dropdown-item" href="#">Another action</a></li>
+                          <li><a className="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr className="dropdown-divider" /></li>
+                          <li><a className="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
             {/* <!-- section 2 --> */}
             <section className="data-table-bgs_02x24 py-3">
               <div className="container-fluid">
@@ -215,7 +270,12 @@ function ticketsss() {
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input type="checkbox" className="" />

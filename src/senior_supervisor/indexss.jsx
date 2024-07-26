@@ -215,14 +215,18 @@ function indexss() {
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
-     fetchData()
+      fetchData()
       setError(null);
     } catch (err) {
       setError(err.message);
       setResponse(null);
     }
   };
-
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+      setShortValue(e.target.value)
+  }
   // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
@@ -443,7 +447,25 @@ function indexss() {
                 </div>
               </div>
             </section>
-
+            <section className="filter-section">
+                            <div className="container-fluid">
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <div className="search-wrapper">
+                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}/>
+                                            <div className="search-icon">
+                                                <i className="fa-solid fa-magnifying-glass"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-7">
+                                        <div className="filter-wrapper d-flex gap-3">
+                                            {/* Filters here */}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
             {/* <!-- Tabbed Ticket Table --> */}
             <section className="followup-table-section py-3">
               <div className="container-fluid">
@@ -552,7 +574,12 @@ function indexss() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -658,7 +685,12 @@ function indexss() {
                           {data ? (
                             <tbody>
 
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -698,7 +730,7 @@ function indexss() {
 
                                   <td>
                                     <span className="actions-wrapper">
-                                    <Button
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -707,7 +739,7 @@ function indexss() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                       href={`sms:${item.mobileNumber}`}
+                                        href={`sms:${item.mobileNumber}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -764,7 +796,12 @@ function indexss() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -803,7 +840,7 @@ function indexss() {
                                   <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
-                                    <Button
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -824,7 +861,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                       href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.mobileNumber}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -855,7 +892,7 @@ function indexss() {
                         <table className="table">
                           <thead className="sticky-header">
                             <tr>
-                            <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
                               <th tabindex="0">Customer Name</th>
                               <th tabindex="0">Customer Number</th>
@@ -869,7 +906,12 @@ function indexss() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -883,32 +925,32 @@ function indexss() {
                                     </CopyToClipboard>
                                   </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
 
-                               <td> <td>
-                                 <CopyToClipboard
-                                   text={item.senderEmail}
-                                   onCopy={() => setCopied(true)}
-                                 >
-                                   <button>Copy</button>
-                                 </CopyToClipboard>
-                               </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+                                  <td> <td>
+                                    <CopyToClipboard
+                                      text={item.senderEmail}
+                                      onCopy={() => setCopied(true)}
+                                    >
+                                      <button>Copy</button>
+                                    </CopyToClipboard>
+                                  </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
-                               <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
-                                 <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                   style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                   {item.ticketstatus}
-                                 </a>
-                                 <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                   <li><a className="dropdown-item danger" >Action</a></li>
-                                   <li><a className="dropdown-item" >Another action</a></li>
-                                   <li><a className="dropdown-item" >Something else here</a></li>
-                                 </ul>
-                               </div>
+                                  <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                      {item.ticketstatus}
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                      <li><a className="dropdown-item danger" >Action</a></li>
+                                      <li><a className="dropdown-item" >Another action</a></li>
+                                      <li><a className="dropdown-item" >Something else here</a></li>
+                                    </ul>
+                                  </div>
 
-                               <td><span className="comment">{item.subject}<br /></span></td>
-                               <td><span className="text">{item.queryProductName}</span></td>
-                               <td>
-                                 <span className="actions-wrapper">
-                                 <Button
+                                  <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="text">{item.queryProductName}</span></td>
+                                  <td>
+                                    <span className="actions-wrapper">
+                                      <Button
                                         onClick={handleView}
                                         data-bs-toggle="modal"
                                         data-bs-target="#followUpModal"
@@ -916,31 +958,31 @@ function indexss() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
-                                   <a
-                                     hhref={`sms:${item.mobileNumber}`}
-                                     className="btn-action message"
-                                     title="Get connect on message"
-                                   ><i className="fa-solid fa-message"></i></a>
-                                   <Button
-                                     onClick={handleOn}
-                                     // href="mailto:someone@example.com"
-                                     className="btn-action email"
-                                     title="Get connect on email"
-                                   ><i className="fa-solid fa-envelope"></i
-                                   ></Button>
-                                   <a
-                                    href={`https://wa.me/${item.mobileNumber}`}
-                                     className="btn-action whatsapp"
-                                     title="Get connect on whatsapp"
-                                   ><i className="fa-brands fa-whatsapp"></i></a>
-                                 </span>
-                               </td>
-                               <td className="ticket-id">
-                                 <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                               </td>
-                             </tr>
-                           ))}
-                         </tbody>
+                                      <a
+                                        hhref={`sms:${item.mobileNumber}`}
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
+                                      <Button
+                                        onClick={handleOn}
+                                        // href="mailto:someone@example.com"
+                                        className="btn-action email"
+                                        title="Get connect on email"
+                                      ><i className="fa-solid fa-envelope"></i
+                                      ></Button>
+                                      <a
+                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        className="btn-action whatsapp"
+                                        title="Get connect on whatsapp"
+                                      ><i className="fa-brands fa-whatsapp"></i></a>
+                                    </span>
+                                  </td>
+                                  <td className="ticket-id">
+                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
                           ) : (
                             <p>Loading...</p>
                           )}
