@@ -19,6 +19,7 @@ function toCloser() {
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage,setItemsPerPage]=useState(10)
 
   // Action modal active
   const [activeTab, setActiveTab] = useState('allTickets');
@@ -27,7 +28,7 @@ function toCloser() {
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
-    fetchTickets(params[tabName], 0);
+    fetchTickets(params[tabName], 0,itemsPerPage);
   };
 
   // Post assign
@@ -62,9 +63,7 @@ function toCloser() {
       setApiResponse(response.data);
       toast.success('Tickets assigned successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 6000);
+      fetchTickets()
     } catch (error) {
       console.error('Error:', error);
       toast.error('Failed to assign tickets.');
@@ -109,10 +108,10 @@ function toCloser() {
   }, []);
 
   // Function to fetch tickets based on parameters
-  const fetchTickets = async (params, page) => {
+  const fetchTickets = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-        params: { ...params, page }
+        params: { ...params, page , size: perPage}
       });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
@@ -124,8 +123,8 @@ function toCloser() {
 
   // Fetch all tickets on component mount
   useEffect(() => {
-    fetchTickets(params.allTickets, 0);
-  }, []);
+    fetchTickets(params[activeTab], currentPage, itemsPerPage);
+  }, [activeTab, currentPage, itemsPerPage]);
 
   const handlePreviousPage = () => {
     if (currentPage > 0) {
@@ -137,8 +136,32 @@ function toCloser() {
     if (currentPage < totalPages - 1) {
       fetchTickets(params[activeTab], currentPage + 1);
     }
+  
+  };
+  const handleItemsPerPageChange = (perPage) => {
+    setItemsPerPage(perPage);
+    setCurrentPage(0);
   };
 
+  // Function to generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 9;
+    const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+
+    let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
+    let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(endPage - maxPagesToShow + 1, 0);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <>
@@ -444,9 +467,26 @@ function toCloser() {
                   </div>
                 </div>
                 <div className="pagination-controls">
-                  <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                  <span>Page {currentPage + 1} of {totalPages}</span>
-                  <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                  <button className='next_prev' onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  {generatePageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                      >
+                        {page + 1}
+                      </button>
+                    ))}
+                  <button className='next_prev' onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                  <span> Items per page:</span>{' '}
+                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
                 </div>
               </div>
             </section>

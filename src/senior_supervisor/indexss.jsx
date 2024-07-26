@@ -215,9 +215,7 @@ function indexss() {
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+     fetchData()
       setError(null);
     } catch (err) {
       setError(err.message);

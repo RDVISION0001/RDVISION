@@ -120,6 +120,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink to="/admin_to_everyone" className="nav-link">
+              <i className="fa-solid fa-user"></i>
+                <span className="nav-text">To Everyone</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink to="/admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
