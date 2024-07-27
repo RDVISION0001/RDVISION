@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
+
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
+import Cardinfo from '../components/cardinfo';
+
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -113,13 +116,8 @@ function tickets() {
         <div className="my-container main-content-block2658 active-cont">
           <Topnav />
           <div className="container-fluid mt-3">
-            <section className="sadmin-top-section">
-              <div className="container-fluid">
-                <div className="row g-3">
-                  {/* Cards here */}
-                </div>
-              </div>
-            </section>
+             {/* <!-- Section one --> */}
+             <Cardinfo />
             <section className="filter-section">
               <div className="container-fluid">
                 <div className="row">
