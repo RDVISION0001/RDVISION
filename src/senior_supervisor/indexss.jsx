@@ -7,6 +7,8 @@ import axiosInstance from '../axiosInstance';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Worktime from '../components/worktime';
+import Cardinfo from '../components/cardinfo';
+
 
 
 // Authentication context
@@ -286,64 +288,7 @@ function indexss() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <section className="sadmin-top-section">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Tickets</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">In negotation</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Projected Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <Cardinfo />
             {/* <!-- user-profile --> */}
             <Worktime />
             {/* <!-- graphs and ranking --> */}

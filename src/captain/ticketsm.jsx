@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import axiosInstance from '../axiosInstance';
+import Cardinfo from '../components/cardinfo';
+
 
 function ticketsm() {
   // Define parameters for each tab
@@ -65,56 +67,8 @@ function ticketsm() {
         <div className="my-container main-content-block2658 tickets-page active-cont">
           <Topnav />
           <div className="container-fluid mt-3">
-            <section className="sadmin-top-section">
-              <div className="container-fluid">
-                <div className="row g-3">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">0<span className="indicators">0%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            {/* <!-- Section one --> */}
+            <Cardinfo />
             {/* //Filter input */}
             <section class="filter-section">
               <div class="container-fluid">

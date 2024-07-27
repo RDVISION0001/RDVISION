@@ -7,6 +7,7 @@ import axiosInstance from '../axiosInstance';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Worktime from '../components/worktime';
+import Cardinfo from '../components/cardinfo';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 
@@ -89,7 +90,7 @@ function indexa() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Form data state
-  const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime:'' });
+  const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [uniqueQueryId, setUniqueQueryId] = useState(null);
@@ -293,64 +294,7 @@ function indexa() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <section className="sadmin-top-section">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Tickets</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">In negotation</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Projected Sales</h3>
-                        <span className="sales"
-                        >0<span className="indicators">0%</span></span
-                        >
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            <Cardinfo/>
             {/* <!-- user-profile --> */}
             <Worktime />
             {/* <!-- graphs and ranking --> */}
@@ -563,8 +507,8 @@ function indexa() {
                         aria-selected="false"
                         tabindex="-1"
                       >
+                        <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span>
                         New Tickets
-                        <i class="fa-solid fa-bell fa-2xl" style={{ color: "#f90606" }}>{newNotifications}</i>
                       </button>
                     </li>
                     <li className="nav-item" role="presentation">
