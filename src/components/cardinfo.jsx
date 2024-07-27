@@ -20,7 +20,7 @@ const CardInfo = () => {
         const TotalTickets = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                    params: {userId }
+                    params: {}
                 });
                 const totalTickets = response.data.totalElement;
                 setData(prevData => ({ ...prevData, totalTickets }));
@@ -34,7 +34,7 @@ const CardInfo = () => {
         const TotalSale = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                    params: {userId, ticketStatus: 'Sale' }
+                    params: { ticketStatus: 'Sale' }
                 });
                 const totalSale = response.data.totalElement;
                 setData(prevData => ({ ...prevData, totalSale }));
@@ -48,7 +48,7 @@ const CardInfo = () => {
         const TotalNew = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                    params: {userId, ticketStatus: 'New' }
+                    params: { ticketStatus: 'New' }
                 });
                 const totalNew = response.data.totalElement;
                 setData(prevData => ({ ...prevData, totalNew }));
@@ -62,7 +62,7 @@ const CardInfo = () => {
          const TotalFollow = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                    params: {userId, ticketStatus: 'Follow' }
+                    params: { ticketStatus: 'Follow' }
                 });
                 const totalFollow = response.data.totalElement;
                 setData(prevData => ({ ...prevData, totalFollow }));

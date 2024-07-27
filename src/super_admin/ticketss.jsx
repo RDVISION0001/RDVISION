@@ -6,7 +6,21 @@ import Cardinfo from '../components/cardinfo';
 
 import axiosInstance from '../axiosInstance';
 
+// Authentication context
+import { useAuth } from '../auth/AuthContext';
+
+//copy to cliipboard
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+
+
+
 function ticketss() {
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
+  const { userId } = useAuth();
+
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -17,19 +31,30 @@ function ticketss() {
   // State variables
   const [activeTab, setActiveTab] = useState("allTickets");
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
 
-  // Function to handle tab click
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+
+  //clipborad copy
+  const [copied, setCopied] = useState(false);
+
+  // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
-    fetchTickets(params[tabName], 0);
+    setCurrentPage(0);
+    fetchTickets(params[tabName], 0, itemsPerPage);
   };
 
+
   // Function to fetch tickets based on parameters and page number
-  const fetchTickets = async (params, page) => {
+  const fetchTickets = async (params, page, perPage) => {
     try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', { params: { ...params, page } });
+      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+        params: { ...params, page, size: perPage }
+      });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
@@ -38,24 +63,66 @@ function ticketss() {
     }
   };
 
-  // Fetch all tickets on component mount
-  useEffect(() => {
-    fetchTickets(params.allTickets, 0);
-  }, []);
+  ////masking mobile number
+  const maskMobileNumber = (number) => {
+    if (number.length < 4) return number;
+    return number.slice(0, -4) + 'XXXX';
+  };
 
-  // Pagination controls
+  ////masking email
+  const maskEmail = (email) => {
+    const [user, domain] = email.split('@');
+    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+    return `${maskedUser}@${domain}`;
+  };
+
+
+  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
+  useEffect(() => {
+    fetchTickets(params[activeTab], currentPage, itemsPerPage);
+  }, [activeTab, currentPage, itemsPerPage]);
+
+
+  // Handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
-      fetchTickets(params[activeTab], currentPage - 1);
+      setCurrentPage(currentPage - 1);
     }
   };
 
+  // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
-      fetchTickets(params[activeTab], currentPage + 1);
+      setCurrentPage(currentPage + 1);
     }
   };
 
+  // Function to set items per page
+  const handleItemsPerPageChange = (perPage) => {
+    setItemsPerPage(perPage);
+    setCurrentPage(0);
+  };
+
+  // Function to generate page numbers
+  const generatePageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 9;
+    const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+
+    let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
+    let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
+
+    if (endPage - startPage < maxPagesToShow - 1) {
+      startPage = Math.max(endPage - maxPagesToShow + 1, 0);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return pageNumbers;
+  };
+  
   return (
     <>
       <div className="superadmin-page">
@@ -63,13 +130,66 @@ function ticketss() {
         <div className="my-container main-content-block2658 tickets-page active-cont">
           <Topnav />
           <div className="container-fluid mt-3">
-           {/* <!-- Section one --> */}
-           <Cardinfo />
+            {/* <!-- Section one --> */}
+            <Cardinfo />
+            {/* <!-- Filter Section --> */}
+            <section class="filter-section">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="filter-wrapper d-flex gap-3">
+                      {/* <!-- Department filter --> */}
+                      <div class="btn-group department">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Date filter --> */}
+                      <div class="btn-group date">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Order Status filter --> */}
+                      <div class="btn-group order-status">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
             {/* <!-- section 2 --> */}
             <section className="data-table-bgs_02x24 py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
-                  <h3 className="title">All Tickets</h3>
+                  <h3 className="title">All Tickets <span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
                   <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
                     <li className="nav-item" role="presentation">
                       <button className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
@@ -86,9 +206,9 @@ function ticketss() {
                   </ul>
                   <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                     <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
-                      <div className="tickets-table table-responsive">
+                      <div className="followups-table table-responsive table-height">
                         <table className="table">
-                          <thead>
+                          <thead className="sticky-header">
                             <tr>
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
@@ -98,13 +218,17 @@ function ticketss() {
                               <th tabIndex="0">Customer Name</th>
                               <th tabIndex="0">Customer Number</th>
                               <th tabIndex="0">Customer Email</th>
-                              <th tabIndex="0">Ticket ID</th>
                               <th tabIndex="0">Requirement</th>
-                              <th tabIndex="0">Product Name</th>
+                              <th tabIndex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.filter(
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input type="checkbox" className="" />
@@ -112,11 +236,26 @@ function ticketss() {
                                 <td>{item.queryTime}</td>
                                 <td>{item.senderCountryIso}</td>
                                 <td>{item.senderName}</td>
-                                <td>{item.senderMobile}</td>
-                                <td>{item.senderEmail}</td>
-                                <td>{item.uniqueQueryId}</td>
+                                <td> <td>
+                                  <CopyToClipboard
+                                    text={item.senderMobile}
+                                    onCopy={() => setCopied(true)}
+                                  >
+                                    <button>Copy</button>
+                                  </CopyToClipboard>
+                                </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
+
+                                <td> <td>
+                                  <CopyToClipboard
+                                    text={item.senderEmail}
+                                    onCopy={() => setCopied(true)}
+                                  >
+                                    <button>Copy</button>
+                                  </CopyToClipboard>
+                                </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+
                                 <td>{item.subject}</td>
-                                <td>{item.queryProductName}</td>
+                                <td>{item.uniqueQueryId}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -197,9 +336,27 @@ function ticketss() {
                     </div>
                   </div>
                   <div className="pagination-controls">
-                    <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                    <span>{currentPage + 1} of {totalPages}</span>
-                    <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                    <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                    {generatePageNumbers().map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                      >
+                        {page + 1}
+                      </button>
+                    ))}
+                    <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+                    <span> Items per page:</span>{' '}
+                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="15">15</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -211,6 +368,4 @@ function ticketss() {
   );
 }
 
-
-
-export default ticketss
+export default ticketss;

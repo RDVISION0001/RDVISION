@@ -8,6 +8,8 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -31,7 +33,7 @@ const options = {
   },
   title: false,
   credits: {
-    text: "CEO : Digvijay Singh",
+    text: "CEO: Digvijay Singh",
     href: "",
   },
 
@@ -87,7 +89,7 @@ function index() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Form data state
-  const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
+  const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [uniqueQueryId, setUniqueQueryId] = useState(null);
@@ -122,18 +124,16 @@ function index() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    ongoing: {ticketStatus: 'Sale' },
+    newTickets: {ticketStatus: 'New' },
+    followUp: {  ticketStatus: 'follow' },
   };
- //Short Method
- const [shortValue, setShortValue] = useState("")
- const handleShortDataValue = (e) => {
-   setShortValue(e.target.value)
- }
- 
+
   // Data state
   const [data, setData] = useState(null);
+
+  // State for notifications
+  const [newNotifications, setNewNotifications] = useState(0);
 
   // Fetch data function
   const fetchData = async (params, page, perPage) => {
@@ -144,25 +144,41 @@ function index() {
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
+
+      // Update notification count based on totalElement
+      if (params.ticketStatus === 'New') {
+        const newCount = response.data.totalElement;
+        if (newCount > newNotifications) {
+          playNotificationSound();
+        }
+        setNewNotifications(newCount);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
+  const playNotificationSound = () => {
+    const audio = new Audio(R2ZWYCP);
+    audio.play();
+  };
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
     return number.slice(0, -4) + 'XXXX';
   };
 
-  // Masking email
   const maskEmail = (email) => {
     const [user, domain] = email.split('@');
     const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
     return `${maskedUser}@${domain}`;
   };
 
-  // Ticket status color
   const getColorByStatus = (ticketStatus) => {
     const colors = {
       'New': 'dodgerblue',
@@ -175,7 +191,6 @@ function index() {
     return colors[ticketStatus] || 'white';
   };
 
-  //follow up date and time option
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
 
   const handleStatusChange = (event) => {
@@ -187,16 +202,12 @@ function index() {
     }
   };
 
-  //country flage
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
-
-  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
   }, [activeTab, currentPage, itemsPerPage]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -204,7 +215,6 @@ function index() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!uniqueQueryId) {
@@ -215,12 +225,13 @@ function index() {
       const params = {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
+        followUpDateTime: formData.followUpDateTime,
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
-     fetchData();
+      fetchData()
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -228,34 +239,29 @@ function index() {
     }
   };
 
-  // Handle clicking on tab rows
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
     fetchData(params[tabName], 0, itemsPerPage);
   };
 
-  // Handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  // Function to set items per page
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
     setCurrentPage(0);
   };
 
-  // Function to generate page numbers
   const generatePageNumbers = () => {
     const pageNumbers = [];
     const maxPagesToShow = 9;
@@ -274,7 +280,7 @@ function index() {
 
     return pageNumbers;
   };
-
+  console.log("Short Data Value", shortValue)
   return (
     <>
       <div className="superadmin-page">
@@ -287,7 +293,7 @@ function index() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <Cardinfo />
+            <Cardinfo/>
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
@@ -389,7 +395,58 @@ function index() {
                 </div>
               </div>
             </section>
-
+            {/* //Filter input */}
+            <section class="filter-section">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="filter-wrapper d-flex gap-3">
+                      {/* <!-- Department filter --> */}
+                      <div class="btn-group department">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Date filter --> */}
+                      <div class="btn-group date">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Order Status filter --> */}
+                      <div class="btn-group order-status">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
             {/* <!-- Tabbed Ticket Table --> */}
             <section className="followup-table-section py-3">
               <div className="container-fluid">
@@ -447,6 +504,7 @@ function index() {
                         aria-selected="false"
                         tabindex="-1"
                       >
+                        <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span>
                         New Tickets
                       </button>
                     </li>
@@ -491,14 +549,18 @@ function index() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -534,7 +596,6 @@ function index() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -545,10 +606,11 @@ function index() {
                                         title="Get connect on call"
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
-                                      <a href={`sms:8604275934?body=Your%20custom%20message%20here`} class="btn-action message" title="Get connect on message">
-                                        <i class="fa-solid fa-message"></i>
-                                      </a>
-
+                                      <a
+                                        href={`sms:${item.senderMobile}`}
+                                        className="btn-action message"
+                                        title="Get connect on message"
+                                      ><i className="fa-solid fa-message"></i></a>
                                       <Button
                                         onClick={handleOn}
                                         // href="mailto:someone@example.com"
@@ -556,13 +618,11 @@ function index() {
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
-                                      <a target='_blank'
-                                        href={`https://wa.me/${item.senderMobile.split('-')[1]}?text=Your%20custom%20message%20here`}
+                                      <a
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
-
-
                                     </span>
                                   </td>
                                   <td className="ticket-id">
@@ -597,7 +657,6 @@ function index() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -605,7 +664,12 @@ function index() {
                           {data ? (
                             <tbody>
 
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -641,8 +705,6 @@ function index() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
-
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -654,7 +716,7 @@ function index() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        href={`sms:${item.mobileNumber}`}
+                                        href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -665,8 +727,8 @@ function index() {
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
-                                      <a target='_blank'
-                                        href={`https://wa.me/${item.senderMobile.split('-')[1]}?text=Your%20custom%20message%20here`}
+                                      <a
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -704,14 +766,18 @@ function index() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -747,7 +813,7 @@ function index() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -770,8 +836,8 @@ function index() {
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
-                                      <a target='_blank'
-                                        href={`https://wa.me/${item.senderMobile.split('-')[1]}?text=Your%20custom%20message%20here`}
+                                      <a
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -809,14 +875,18 @@ function index() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.map((item, index) => (
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).map((item, index) => (
                                 <tr key={index}>
                                   <td><span className="text">{item.queryTime}</span></td>
                                   <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -852,7 +922,6 @@ function index() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -875,8 +944,8 @@ function index() {
                                         title="Get connect on email"
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
-                                      <a target='_blank'
-                                        href={`https://wa.me/${item.senderMobile.split('-')[1]}?text=Your%20custom%20message%20here`}
+                                      <a
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
