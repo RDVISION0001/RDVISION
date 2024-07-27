@@ -20,8 +20,8 @@ function ticketsss() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
-    ongoing: { userId, ticketStatus: 'Sale' },
+    allTickets: { },
+    ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
   };
 

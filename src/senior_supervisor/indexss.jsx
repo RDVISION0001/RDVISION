@@ -9,6 +9,7 @@ import Sidenav from '../components/sidenav';
 import Worktime from '../components/worktime';
 import Cardinfo from '../components/cardinfo';
 
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 
 
 // Authentication context
@@ -89,7 +90,7 @@ function indexss() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Form data state
-  const [formData, setFormData] = useState({ ticketStatus: '', comment: '' });
+  const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [uniqueQueryId, setUniqueQueryId] = useState(null);
@@ -124,13 +125,16 @@ function indexss() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    ongoing: {ticketStatus: 'Sale' },
+    newTickets: {ticketStatus: 'New' },
+    followUp: {  ticketStatus: 'follow' },
   };
 
   // Data state
   const [data, setData] = useState(null);
+
+  // State for notifications
+  const [newNotifications, setNewNotifications] = useState(0);
 
   // Fetch data function
   const fetchData = async (params, page, perPage) => {
@@ -141,25 +145,41 @@ function indexss() {
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
+
+      // Update notification count based on totalElement
+      if (params.ticketStatus === 'New') {
+        const newCount = response.data.totalElement;
+        if (newCount > newNotifications) {
+          playNotificationSound();
+        }
+        setNewNotifications(newCount);
+      }
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
 
+  const playNotificationSound = () => {
+    const audio = new Audio(R2ZWYCP);
+    audio.play();
+  };
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
     return number.slice(0, -4) + 'XXXX';
   };
 
-  // Masking email
   const maskEmail = (email) => {
     const [user, domain] = email.split('@');
     const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
     return `${maskedUser}@${domain}`;
   };
 
-  // Ticket status color
   const getColorByStatus = (ticketStatus) => {
     const colors = {
       'New': 'dodgerblue',
@@ -172,7 +192,6 @@ function indexss() {
     return colors[ticketStatus] || 'white';
   };
 
-  //follow up date and time option
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
 
   const handleStatusChange = (event) => {
@@ -184,16 +203,12 @@ function indexss() {
     }
   };
 
-  //country flage
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
-
-  // useEffect to fetch data whenever the activeTab, currentPage, or itemsPerPage changes
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
   }, [activeTab, currentPage, itemsPerPage]);
 
-  // Handle form input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -201,7 +216,6 @@ function indexss() {
     });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!uniqueQueryId) {
@@ -212,6 +226,7 @@ function indexss() {
       const params = {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
+        followUpDateTime: formData.followUpDateTime,
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -224,39 +239,30 @@ function indexss() {
       setResponse(null);
     }
   };
-  //Short Method
-  const [shortValue, setShortValue] = useState("")
-  const handleShortDataValue = (e) => {
-      setShortValue(e.target.value)
-  }
-  // Handle clicking on tab rows
+
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
     fetchData(params[tabName], 0, itemsPerPage);
   };
 
-  // Handle previous page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
 
-  // Handle next page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  // Function to set items per page
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
     setCurrentPage(0);
   };
 
-  // Function to generate page numbers
   const generatePageNumbers = () => {
     const pageNumbers = [];
     const maxPagesToShow = 9;
@@ -275,7 +281,7 @@ function indexss() {
 
     return pageNumbers;
   };
-
+  console.log("Short Data Value", shortValue)
   return (
     <>
       <div className="superadmin-page">
@@ -288,7 +294,7 @@ function indexss() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <Cardinfo />
+            <Cardinfo/>
             {/* <!-- user-profile --> */}
             <Worktime />
             {/* <!-- graphs and ranking --> */}
@@ -392,30 +398,63 @@ function indexss() {
                 </div>
               </div>
             </section>
-            <section className="filter-section">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col-md-5">
-                                        <div className="search-wrapper">
-                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}/>
-                                            <div className="search-icon">
-                                                <i className="fa-solid fa-magnifying-glass"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-7">
-                                        <div className="filter-wrapper d-flex gap-3">
-                                            {/* Filters here */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
+            {/* //Filter input */}
+            <section class="filter-section">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div class="search-icon">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-7">
+                    <div class="filter-wrapper d-flex gap-3">
+                      {/* <!-- Department filter --> */}
+                      <div class="btn-group department">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Date filter --> */}
+                      <div class="btn-group date">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                      {/* <!-- Order Status filter --> */}
+                      <div class="btn-group order-status">
+                        <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
+                        <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="#">Action</a></li>
+                          <li><a class="dropdown-item" href="#">Another action</a></li>
+                          <li><a class="dropdown-item" href="#">Something else here</a></li>
+                          <li><hr class="dropdown-divider" /></li>
+                          <li><a class="dropdown-item" href="#">Separated link</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
             {/* <!-- Tabbed Ticket Table --> */}
             <section className="followup-table-section py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
-                  <h3 className="title">All Tickets (Agent)</h3>
+                  <h3 className="title">All Tickets (Agent)<span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
                   <ul
                     className="nav recent-transactions-tab-header nav-tabs"
                     id="followUp"
@@ -468,6 +507,7 @@ function indexss() {
                         aria-selected="false"
                         tabindex="-1"
                       >
+                        <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span>
                         New Tickets
                       </button>
                     </li>
@@ -512,7 +552,6 @@ function indexss() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -560,7 +599,6 @@ function indexss() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -572,7 +610,7 @@ function indexss() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        href={`sms:${item.mobileNumber}`}
+                                        href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -584,7 +622,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -622,7 +660,6 @@ function indexss() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -671,8 +708,6 @@ function indexss() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
-
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -684,7 +719,7 @@ function indexss() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        href={`sms:${item.mobileNumber}`}
+                                        href={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -696,7 +731,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -734,7 +769,6 @@ function indexss() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -782,7 +816,7 @@ function indexss() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -794,7 +828,7 @@ function indexss() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        hhref={`sms:${item.mobileNumber}`}
+                                        hhref={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -806,7 +840,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -844,7 +878,6 @@ function indexss() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -892,7 +925,6 @@ function indexss() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -904,7 +936,7 @@ function indexss() {
                                       ><i className="fa-solid fa-phone"></i>
                                       </Button>
                                       <a
-                                        hhref={`sms:${item.mobileNumber}`}
+                                        hhref={`sms:${item.senderMobile}`}
                                         className="btn-action message"
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
@@ -916,7 +948,7 @@ function indexss() {
                                       ><i className="fa-solid fa-envelope"></i
                                       ></Button>
                                       <a
-                                        href={`https://wa.me/${item.mobileNumber}`}
+                                        href={`https://wa.me/${item.senderMobile}`}
                                         className="btn-action whatsapp"
                                         title="Get connect on whatsapp"
                                       ><i className="fa-brands fa-whatsapp"></i></a>
@@ -1109,13 +1141,30 @@ function indexss() {
                   </div>
                 </div>
                 <div className="col-8">
+                  <div
+                    class="contact-info-row d-flex align-items-center justify-content-between"
+                  >
+                    <a href="" class="contact-info phone"
+                    ><i class="fa-solid fa-phone"></i> +91 9918293747</a
+                    >
+                    <a class="contact-info email" href="#"
+                    ><i class="fa-solid fa-envelope-open-text"></i>
+                      example@email.com</a
+                    >
+                  </div>
                   <div className="main-content-area">
                     <form>
-                      <div className="mb-3">
-                        <div class="form-check form-switch">
-                          <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked />
-                          <label class="form-check-label" for="flexSwitchCheckChecked">Checked switch checkbox input</label>
-                        </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                        <label class="form-check-label" for="flexCheckDefault">
+                          Default checkbox
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                        <label class="form-check-label" for="flexCheckChecked">
+                          Checked checkbox
+                        </label>
                       </div>
                       <div className="col-12">
                         <label htmlFor="comment" className="form-label">Comment</label>
