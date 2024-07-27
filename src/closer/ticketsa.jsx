@@ -23,8 +23,8 @@ function ticketsa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
-    ongoing: { userId, ticketStatus: 'Sale' },
+    allTickets: {},
+    ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
   };
 
@@ -219,7 +219,6 @@ function ticketsa() {
                               <th tabIndex="0">Customer Number</th>
                               <th tabIndex="0">Customer Email</th>
                               <th tabIndex="0">Requirement</th>
-                              <th tabIndex="0">Product Name</th>
                               <th tabIndex="0">Ticket ID</th>
                             </tr>
                           </thead>
@@ -256,7 +255,6 @@ function ticketsa() {
                                 </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
                                 <td>{item.subject}</td>
-                                <td>{item.queryProductName}</td>
                                 <td>{item.uniqueQueryId}</td>
                               </tr>
                             ))}

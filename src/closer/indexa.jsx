@@ -124,10 +124,10 @@ function indexa() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
-    ongoing: { userId, ticketStatus: 'Sale' },
+    allTickets: {},
+    ongoing: {ticketStatus: 'Sale' },
     newTickets: {ticketStatus: 'New' },
-    followUp: { userId, ticketStatus: 'follow' },
+    followUp: {  ticketStatus: 'follow' },
   };
 
   // Data state
@@ -552,7 +552,6 @@ function indexa() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -600,7 +599,6 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -662,7 +660,6 @@ function indexa() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -711,8 +708,6 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
-
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -774,7 +769,6 @@ function indexa() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -822,7 +816,7 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
+
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -884,7 +878,6 @@ function indexa() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Product Name</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -932,7 +925,6 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="text">{item.queryProductName}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
