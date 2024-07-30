@@ -35,7 +35,7 @@ function invoicesa() {
       try {
         const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
           params: {
-            userId,
+            // userId,
             ticketStatus: 'Sale'
           }
         });

@@ -588,11 +588,6 @@ function index() {
                                       style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                       {item.ticketstatus}
                                     </a>
-                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                      <li><a className="dropdown-item danger" >Action</a></li>
-                                      <li><a className="dropdown-item" >Another action</a></li>
-                                      <li><a className="dropdown-item" >Something else here</a></li>
-                                    </ul>
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
