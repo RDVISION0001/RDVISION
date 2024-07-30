@@ -31,7 +31,9 @@ import Sales from './admin/sales';
 import Tickets from './admin/tickets';
 import Users from './admin/users';
 import Upload_tickets from './admin/upload_tickets';
-import ToEveryone from './admin/toEveryone'
+import ToEveryone from './admin/toEveryone';
+import Upload_products from './admin/upload_products'
+
 
 
 // super_admin
@@ -141,8 +143,10 @@ function App() {
               <Route exact path="/admin_sales" element={<Sales />} />
               <Route exact path="/admin_tickets" element={<Tickets />} />
               <Route exact path="/admin_users" element={<Users />} />
-              <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
               <Route exact path="/admin_to_everyone" element={<ToEveryone/>}/>
+              <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
+              <Route exact path="/admin_upload_products" element={<Upload_products/>}/>
+
 
               {/* super_admin */}
               <Route exact path="/super_admin_index" element={<Indexs />} />

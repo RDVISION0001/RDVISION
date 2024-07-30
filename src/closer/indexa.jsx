@@ -24,57 +24,25 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 
 ////highchart///
-import Highcharts from 'highcharts'
+import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
 
 const options = {
-
-  chart: {
-    type: 'column'
-  },
+  chart: { type: 'column' },
   title: false,
-  credits: {
-    text: "CEO: Digvijay Singh",
-    href: "",
-  },
-
+  credits: { text: "CEO: Digvijay Singh", href: "" },
   xAxis: {
     categories: ['A', 'B', 'C', 'D', 'E', '5'],
     crosshair: true,
-    accessibility: {
-      description: 'Countries'
-    }
+    accessibility: { description: 'Countries' }
   },
-
-  yAxis: {
-    min: 0,
-    title: {
-      text: 'Values'
-    }
-  },
-
-  tooltip: {
-    valueSuffix: ' (1000 MT)'
-  },
-
-  plotOptions: {
-    column: {
-      pointPadding: 0.2,
-      borderWidth: 0
-    }
-  },
-
+  yAxis: { min: 0, title: { text: 'Values' } },
+  tooltip: { valueSuffix: ' (1000 MT)' },
+  plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } },
   series: [
-    {
-      name: 'Approach',
-      data: [406292, 260000, 107000, 68300, 27500, 14500]
-    },
-    {
-      name: 'Sale',
-      data: [51086, 136000, 5500, 141000, 107180, 77000]
-    }
+    { name: 'Approach', data: [406292, 260000, 107000, 68300, 27500, 14500] },
+    { name: 'Sale', data: [51086, 136000, 5500, 141000, 107180, 77000] }
   ]
-
 };
 
 function indexa() {
@@ -97,30 +65,27 @@ function indexa() {
 
   // Modal state
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = (queryId) => {
-    setUniqueQueryId(queryId);
-    setShow(true);
-  };
-
-  // Modal state for send price and subscription mail
+  const [email, setEmail] = useState({ id: "", name: "", email: "", mobile: "" });
+  const [productsList, setProductsList] = useState([]);
   const [on, setOn] = useState(false);
-  const handleOff = () => setOn(false);
-  const handleOn = (queryId) => {
-    setUniqueQueryId(queryId);
-    setOn(true);
-  };
-
-  // Modal for ticket popup
+  const [senderNameForEmail, setSenderNameForEmail] = useState("");
+  const [senderEmailFormail, setSenderEmailForMail] = useState("");
+  const [senderMobile, setSenderMobile] = useState("");
   const [view, setView] = useState(false);
-  const handleCloses = () => setView(false);
-  const handleView = (queryId) => {
-    setUniqueQueryId(queryId);
-    setView(true);
-  };
-
-  // Active tab state
   const [activeTab, setActiveTab] = useState("allTickets");
+  const [data, setData] = useState(null);
+  const [newNotifications, setNewNotifications] = useState(0);
+  const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+
+  const [productArray, setProductArray] = useState([]);
+  const [emailData, setEmailData] = useState({
+    ticketId: "",
+    name: "",
+    email: "",
+    mobile: "",
+    productList: []
+  });
+ 
 
   // Define parameters for each tab
   const params = {
@@ -130,13 +95,28 @@ function indexa() {
     followUp: {  ticketStatus: 'follow' },
   };
 
-  // Data state
-  const [data, setData] = useState(null);
+  const handleClose = () => setShow(false);
+  const handleShow = (queryId) => {
+    setUniqueQueryId(queryId);
+    setShow(true);
+  };
 
-  // State for notifications
-  const [newNotifications, setNewNotifications] = useState(0);
+  const handleOff = () => setOn(false);
+  const handleOn = (queryId, senderName, email, mobile, product) => {
+    setUniqueQueryId(queryId);
+    setSenderNameForEmail(senderName);
+    setSenderEmailForMail(email);
+    setSenderMobile(mobile);
+    setProductArray(prevArray => [...prevArray, product]);
+    setOn(true);
+  };
 
-  // Fetch data function
+  const handleCloses = () => setView(false);
+  const handleView = (queryId) => {
+    setUniqueQueryId(queryId);
+    setView(true);
+  };
+
   const fetchData = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
@@ -174,6 +154,51 @@ function indexa() {
     return number.slice(0, -4) + 'XXXX';
   };
 
+  const fetchProducts = async () => {
+    const response = await axiosInstance.get("product/getAllProducts");
+    setProductsList(response.data.dtoList);
+  };
+
+  const handleSelectProduct = (e) => {
+    const selectedProduct = e.target.value;
+
+    if (productArray.includes(selectedProduct)) {
+      toast.error("Product is already Added");
+    } else {
+      setProductArray(prevArray => {
+        const updatedArray = [...prevArray, selectedProduct];
+        setEmailData(prevEmailData => ({
+          ...prevEmailData,
+          name: senderNameForEmail,
+          email: senderEmailFormail,
+          ticketId: uniqueQueryId,
+          mobile: senderMobile,
+          productList: updatedArray
+        }));
+        return updatedArray;
+      });
+      toast.success("Product added");
+    }
+  };
+
+  const fetchDataForEmail = async () => {
+    const url = 'email/sendmail';
+    const data = {
+      name: senderNameForEmail,
+      email: senderEmailFormail,
+      ticketId: uniqueQueryId,
+      mobile: senderMobile,
+      productList: productArray
+    };
+
+    try {
+      const response = await axiosInstance.post(url, data);
+      console.log('Data fetched successfully:', response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
   const maskEmail = (email) => {
     const [user, domain] = email.split('@');
     const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
@@ -192,8 +217,6 @@ function indexa() {
     return colors[ticketStatus] || 'white';
   };
 
-  const [showFollowUpDate, setShowFollowUpDate] = useState(false);
-
   const handleStatusChange = (event) => {
     handleChange(event);
     if (event.target.value === "Follow") {
@@ -208,6 +231,10 @@ function indexa() {
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
   }, [activeTab, currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({
@@ -232,7 +259,7 @@ function indexa() {
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
-      fetchData()
+      fetchData(params[activeTab], currentPage, itemsPerPage);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -281,7 +308,18 @@ function indexa() {
 
     return pageNumbers;
   };
-  console.log("Short Data Value", shortValue)
+
+  const handleSendEmail = async (e) => {
+    e.preventDefault();
+    try {
+      await fetchDataForEmail();
+      toast.success("Email sent successfully");
+    } catch (error) {
+      toast.error("Error sending email");
+    }
+  };
+  
+
   return (
     <>
       <div className="superadmin-page">
@@ -615,7 +653,7 @@ function indexa() {
                                         title="Get connect on message"
                                       ><i className="fa-solid fa-message"></i></a>
                                       <Button
-                                        onClick={handleOn}
+                                        onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.queryProductName)}
                                         // href="mailto:someone@example.com"
                                         className="btn-action email"
                                         title="Get connect on email"
@@ -1069,49 +1107,71 @@ function indexa() {
             --------------------- seed price and mail Modal ---------------------
           -------------------------------------------------------------- --> */}
 
-            <Modal show={on} onHide={handleOff}
-              class="modal assign-ticket-modal fade"
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true">
-              <Modal.Header closeButton>
-                <h1
-                  class="modal-title fs-5 w-100 text-center"
-                  id="followUpModalLabel"
-                >
-                  Call Status
-                </h1>
-              </Modal.Header>
-              <Modal.Body>
-                <form >
-                  <div className="mb-3">
-                    <label htmlFor="status" className="form-label">Status</label>
-                    <select
-                      type="text"
-                      className="form-select"
-                      id="status"
-                      name="ticketStatus"
-                    >
-                      <option >Select Options</option>
-                      <option value="Sale">Send Price List</option>
-                      <option value="New">Send Subscription Mail</option>
-                    </select>
+          <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+          <Modal.Header closeButton>
+            <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
+              Call Status
+            </h1>
+          </Modal.Header>
+          <Modal.Body>
+            <form>
+              <div className="container mt-4">
+                <div className="row justify-content-center">
+                  <div className="col-lg-6">
+                    <div className="card shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title text-center mb-4">User Detail</h5>
+                        <div className="user-info">
+                          <div><strong>Name:</strong> {senderNameForEmail}</div>
+                          <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
+                          <div><strong>Email:</strong> {senderEmailFormail}</div>
+                          <div><strong>Mobile Number:</strong> {senderMobile}</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="modal-footer justify-content-center border-0">
-                    <button type="button"
-                      class="btn btn-secondary"
-                      data-bs-dismiss="modal"
-                      onClick={handleOff}>
-                      Close
-                    </button>
-                    <button class="btn btn-primary" type="submit">
-                      Send
-                    </button>
+      
+                  <div className="col-lg-6 mt-4 mt-lg-0">
+                    <div className="card shadow-sm">
+                      <div className="card-body">
+                        <h5 className="card-title text-center mb-4">Product Details</h5>
+                        <div className="user-info d-flex flex-wrap">
+                          {productArray.map((product, index) => (
+                            <React.Fragment key={index}>
+                              <div>{product}</div>
+                              {index !== productArray.length - 1 && <div className="comma">,</div>}
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </form>
-              </Modal.Body>
-            </Modal>
+                </div>
+              </div>
+      
+              <div className="container mt-4">
+                <div className="row justify-content-center">
+                  <div className="col-md-8">
+                    <div className="d-flex align-items-center justify-content-center p-3">
+                      <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
+                      <select className="form-select" onChange={handleSelectProduct}>
+                        <option value="">Select products</option>
+                        {productsList.map((product, index) => (
+                          <option key={index} value={product.name}>{product.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+              <div className="modal-footer justify-content-center border-0">
+                <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
+                <Button variant="primary" onClick={handleSendEmail}>Send</Button>
+              </div>
+            </form>
+          </Modal.Body>
+        </Modal>
 
           </div>
         </div >

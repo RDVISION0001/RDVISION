@@ -144,6 +144,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink to="/admin_upload_products" className="nav-link">
+              <i class="fa-solid fa-file"></i>
+                <span className="nav-text">Upload Products</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink to="/admin_invoices" className="nav-link">
                 <i className="fa-regular fa-address-card"></i>
                 <span className="nav-text">Invoices</span>
@@ -289,7 +295,7 @@ function Sidenav() {
           </NavLink>
         </li> */}
         <li className="nav-item">
-          <NavLink to="/" className="nav-link">
+          <NavLink  className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
             <span className="nav-text"><Logout/></span>
           </NavLink>
