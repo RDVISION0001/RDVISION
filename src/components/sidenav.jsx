@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import Logout from '../auth/logout';
 
 function Sidenav() {
@@ -295,10 +295,10 @@ function Sidenav() {
           </NavLink>
         </li> */}
         <li className="nav-item">
-          <NavLink  className="nav-link">
+          <Link className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
-            <span className="nav-text"><Logout/></span>
-          </NavLink>
+            <span className="nav-text cursor-pointer"><Logout/></span>
+          </Link>
         </li>
       </ul>
       <div className="userIP-wrapper">
