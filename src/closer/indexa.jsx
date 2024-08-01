@@ -85,14 +85,14 @@ function indexa() {
     mobile: "",
     productList: []
   });
- 
+
 
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: {ticketStatus: 'Sale' },
-    newTickets: {ticketStatus: 'New' },
-    followUp: {  ticketStatus: 'follow' },
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
+    followUp: { ticketStatus: 'follow' },
   };
 
   const handleClose = () => setShow(false);
@@ -239,7 +239,7 @@ function indexa() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
@@ -254,6 +254,7 @@ function indexa() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
+        userId,
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -318,7 +319,7 @@ function indexa() {
       toast.error("Error sending email");
     }
   };
-  
+
 
   return (
     <>
@@ -332,7 +333,7 @@ function indexa() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <Cardinfo/>
+            <Cardinfo />
             {/* <!-- user-profile --> */}
             <Worktime />
             {/* <!-- graphs and ranking --> */}
@@ -916,6 +917,7 @@ function indexa() {
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
                               <th tabindex="0">Requirement</th>
+                              <th tabindex="0">follow/DateTime</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -963,6 +965,7 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
+                                  <td><span className="comment">{item.followUpDateTime}<br /></span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
@@ -1107,71 +1110,71 @@ function indexa() {
             --------------------- seed price and mail Modal ---------------------
           -------------------------------------------------------------- --> */}
 
-          <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-          <Modal.Header closeButton>
-            <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-              Call Status
-            </h1>
-          </Modal.Header>
-          <Modal.Body>
-            <form>
-              <div className="container mt-4">
-                <div className="row justify-content-center">
-                  <div className="col-lg-6">
-                    <div className="card shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title text-center mb-4">User Detail</h5>
-                        <div className="user-info">
-                          <div><strong>Name:</strong> {senderNameForEmail}</div>
-                          <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
-                          <div><strong>Email:</strong> {senderEmailFormail}</div>
-                          <div><strong>Mobile Number:</strong> {senderMobile}</div>
+            <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+              <Modal.Header closeButton>
+                <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
+                  Call Status
+                </h1>
+              </Modal.Header>
+              <Modal.Body>
+                <form>
+                  <div className="container mt-4">
+                    <div className="row justify-content-center">
+                      <div className="col-lg-6">
+                        <div className="card shadow-sm">
+                          <div className="card-body">
+                            <h5 className="card-title text-center mb-4">User Detail</h5>
+                            <div className="user-info">
+                              <div><strong>Name:</strong> {senderNameForEmail}</div>
+                              <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
+                              <div><strong>Email:</strong> {senderEmailFormail}</div>
+                              <div><strong>Mobile Number:</strong> {senderMobile}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-lg-6 mt-4 mt-lg-0">
+                        <div className="card shadow-sm">
+                          <div className="card-body">
+                            <h5 className="card-title text-center mb-4">Product Details</h5>
+                            <div className="user-info d-flex flex-wrap">
+                              {productArray.map((product, index) => (
+                                <React.Fragment key={index}>
+                                  <div>{product}</div>
+                                  {index !== productArray.length - 1 && <div className="comma">,</div>}
+                                </React.Fragment>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-      
-                  <div className="col-lg-6 mt-4 mt-lg-0">
-                    <div className="card shadow-sm">
-                      <div className="card-body">
-                        <h5 className="card-title text-center mb-4">Product Details</h5>
-                        <div className="user-info d-flex flex-wrap">
-                          {productArray.map((product, index) => (
-                            <React.Fragment key={index}>
-                              <div>{product}</div>
-                              {index !== productArray.length - 1 && <div className="comma">,</div>}
-                            </React.Fragment>
-                          ))}
+
+                  <div className="container mt-4">
+                    <div className="row justify-content-center">
+                      <div className="col-md-8">
+                        <div className="d-flex align-items-center justify-content-center p-3">
+                          <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
+                          <select className="form-select" onChange={handleSelectProduct}>
+                            <option value="">Select products</option>
+                            {productsList.map((product, index) => (
+                              <option key={index} value={product.name}>{product.name}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-      
-              <div className="container mt-4">
-                <div className="row justify-content-center">
-                  <div className="col-md-8">
-                    <div className="d-flex align-items-center justify-content-center p-3">
-                      <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
-                      <select className="form-select" onChange={handleSelectProduct}>
-                        <option value="">Select products</option>
-                        {productsList.map((product, index) => (
-                          <option key={index} value={product.name}>{product.name}</option>
-                        ))}
-                      </select>
-                    </div>
+
+                  <div className="modal-footer justify-content-center border-0">
+                    <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
+                    <Button variant="primary" onClick={handleSendEmail}>Send</Button>
                   </div>
-                </div>
-              </div>
-      
-              <div className="modal-footer justify-content-center border-0">
-                <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
-                <Button variant="primary" onClick={handleSendEmail}>Send</Button>
-              </div>
-            </form>
-          </Modal.Body>
-        </Modal>
+                </form>
+              </Modal.Body>
+            </Modal>
 
           </div>
         </div >

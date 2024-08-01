@@ -10,7 +10,9 @@ export const AuthProvider = ({ children }) => {
   const [roleName, setRoleName] = useState('');
   const [userId, setUserId] = useState('');
   const [firstName, setFirstName] = useState(''); 
-  const [lastName, setLastName] = useState(''); 
+  const [lastName, setLastName] = useState('');
+  const [attendanceId, setAttendanceId] = useState(''); 
+
 
 
   useEffect(() => {
@@ -19,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     const storedUserId = localStorage.getItem('userId');
     const storedFirstName = localStorage.getItem('firstName'); 
     const storedLastName = localStorage.getItem('lastName'); 
+    const storedAttendanceId = localStorage.getItem('attendanceId'); 
 
 
     if (token) {
@@ -44,18 +47,26 @@ export const AuthProvider = ({ children }) => {
       setLastName(storedLastName); 
       console.log('Last Name:', storedLastName)
     }
+
+    if (storedLastName) {
+      setAttendanceId(storedAttendanceId); 
+      console.log('Attendance Id:', storedAttendanceId)
+    }
   }, []);
 
   const login = async (email, password,logInOtp) => {
     try {
       const response = await axiosInstance.post('/auth/login', { email, password,logInOtp });
       if (response.status === 200) {
-        const { jwtToken, user } = response.data;
+        const { jwtToken, user,  attendanceId } = response.data;
         localStorage.setItem('token', jwtToken);
         localStorage.setItem('roleName', user.roleDto.roleName);
         localStorage.setItem('userId', user.userId);
         localStorage.setItem('firstName', user.firstName); 
         localStorage.setItem('lastName', user.lastName); 
+        localStorage.setItem('attendanceId', attendanceId); 
+
+        
         setIsAuthenticated(true);
         setRoleName(user.roleDto.roleName);
         setUserId(user.userId);
@@ -81,15 +92,19 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('roleName');
     localStorage.removeItem('userId');
     localStorage.removeItem('firstName'); 
+    localStorage.removeItem('attendanceId'); 
+
     setIsAuthenticated(false);
     setRoleName('');
     setUserId('');
     setFirstName(''); 
+    setAttendanceId(''); 
+
     toast.info('Logged out successfully');
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, login, logout }}>
       {children}
     </AuthContext.Provider>
 
