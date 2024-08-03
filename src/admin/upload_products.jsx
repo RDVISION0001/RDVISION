@@ -93,7 +93,7 @@ function UploadProducts() {
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
                   <div className="heading-wrapper">
-                    <h3 className="title">Upload Products File</h3>
+                    <h3 className="title">Upload Products File##</h3>
                   </div>
                   <div className="d-flex align-items-center mb-3">
                     <input
