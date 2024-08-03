@@ -1,61 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
-import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function upload_products() {
-
+function UploadProducts() {
   const [activeTab, setActiveTab] = useState("allTickets");
   const [show, setShow] = useState(false);
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  //loader
-  const [loading,setLoading]=useState(false)
-  const [dataToSave, setDataToSave] = useState({
-    csvStringData: ""
-  });
+  const [loading, setLoading] = useState(false);
+  const [dataToSave, setDataToSave] = useState({ csvStringData: "" });
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const handleRowClick = (tabName) => {
-    setActiveTab(tabName);
-    setCurrentPage(0);
-    fetchTickets(params[tabName], 0);
-  };
-  const handleSelectTeam = (e) => {
-    setSelectedTeam(e.target.value);
-  };
-  const handlePreviousPage = () => {
-    if (currentPage > 0) {
-      fetchTickets(params[activeTab], currentPage - 1);
+  // Fetching products
+  const fetchProducts = async () => {
+    try {
+      const response = await axiosInstance.get("product/getAllProducts");
+      if (response.data.success.status === "200") {
+        setData(response.data.dtoList);
+      } else {
+        toast.error("Failed to fetch products.");
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Failed to fetch products.");
     }
   };
-  const handleNextPage = () => {
-    if (currentPage < totalPages - 1) {
-      fetchTickets(params[activeTab], currentPage + 1);
-    }
-  };
-  useEffect(()=>{
-fetchProducts()
-  },[])
 
-  //fetching products 
-  const fetchProducts=async ()=>{
-    const response=await axiosInstance.get("product/getAllProducts")
-    console.log(response.data)
-  }
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (event) => {
       const text = event.target.result;
-      console.log(text)
       setDataToSave(prevState => ({
         ...prevState,
         csvStringData: text
@@ -74,28 +57,31 @@ fetchProducts()
     }
   };
 
-  //Handle upload CSV Data To Database
+  // Handle upload CSV Data To Database
   const handleUploadDataToDB = async () => {
-  try{
-    if(dataToSave.csvStringData.length>0){
-        setLoading(true)
-        const response = await axiosInstance.post("product/uploadproductscsv", dataToSave)
-        console.log("Response is ",response.data)
-       if(response.data==="CSV products uploaded successfully"){
-        toast.info("Succesfully uploaded")
-        setLoading(false)
-       }else{
-        toast.error("Somthing went wrong Try Agaijn !")
-        setLoading(false)
-       }
-      }else{
-        toast.info("Please Check if file selected ")
+    try {
+      if (dataToSave.csvStringData.length > 0) {
+        setLoading(true);
+        const response = await axiosInstance.post("product/uploadproductscsv", dataToSave);
+        console.log("Response is ", response.data);
+        if (response.data.success.status === "200") {
+          toast.info("Successfully uploaded");
+          setLoading(false);
+          fetchProducts(); // Fetch updated products
+        } else {
+          toast.error("Something went wrong. Try again!");
+          setLoading(false);
+        }
+      } else {
+        toast.info("Please check if file is selected.");
       }
-  }catch(err){
-    console.log("ERROR IS ",err)
-  }
-   
-  }
+    } catch (err) {
+      console.log("ERROR IS ", err);
+      toast.error("An error occurred while uploading the data.");
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="admin-page tickets-page">
@@ -117,17 +103,22 @@ fetchProducts()
                       id="customFile"
                       onChange={handleFileUpload}
                     />
-                  
-                    {loading?<div className='w-25 btn ml-3 rounded'><div className='loader '></div></div>:<button
-                      className="btn btn-primary ml-3 rounded"
-                      style={{ flex: '0 0 25%' }}
-                      onClick={handleUploadDataToDB}
-                    >
-                      Upload Products
-                    </button>}
-                  </div>
 
-                </div>
+                    {loading ? (
+                      <div className='w-25 btn ml-3 rounded'>
+                        <div className='loader'></div>
+                      </div>
+                    ) : (
+                      <button
+                        className="btn btn-primary ml-3 rounded"
+                        style={{ flex: '0 0 25%' }}
+                        onClick={handleUploadDataToDB}
+                      >
+                        Upload Products
+                      </button>
+                    )}
+                  </div>
+                </div>    
               </div>
             </section>
             <section className="filter-section">
@@ -149,22 +140,7 @@ fetchProducts()
                 <div className="table-wrapper tabbed-table">
                   <div className="heading-wrapper">
                     <h3 className="title">All Tickets</h3>
-                    <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal">Hii</Button>
                   </div>
-                  <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
-                    <li className="nav-item" role="presentation">
-                      <button className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
-                        onClick={() => handleRowClick("allTickets")} id="all-transactions-tab" data-bs-toggle="tab" data-bs-target="#all-transactions-tab-pane" type="button" role="tab" aria-controls="all-transactions-tab-pane" aria-selected="true">All Tickets</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                      <button className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
-                        onClick={() => handleRowClick("ongoing")} id="pendings-tab" data-bs-toggle="tab" data-bs-target="#pendings-tab-pane" type="button" role="tab" aria-controls="pendings-tab-pane" aria-selected="false" tabIndex="-1">Ongoing</button>
-                    </li>
-                    <li className="nav-item" role="presentation">
-                      <button className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                        onClick={() => handleRowClick("newTickets")} id="new-arrivals-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tab-pane" aria-selected="false" tabIndex="-1">New Tickets</button>
-                    </li>
-                  </ul>
                   <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                     <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
                       <div className="tickets-table table-responsive">
@@ -175,31 +151,34 @@ fetchProducts()
                                 <input type="checkbox" className="" />
                               </th>
                               <th tabIndex="0">Product Name</th>
-                              <th tabIndex="0">image</th>
-                              <th tabIndex="0">composition</th>
-                              <th tabIndex="0">brand</th>
-                              <th tabIndex="0">treatment</th>
-                              <th tabIndex="0">packagingSize</th>
-                              <th tabIndex="0">form</th>
+                              <th tabIndex="0">Image</th>
+                              <th tabIndex="0">Composition</th>
+                              <th tabIndex="0">Brand</th>
+                              <th tabIndex="0">Treatment</th>
+                              <th tabIndex="0">Size</th>
+                              <th tabIndex="0">Form</th>
                               <th tabIndex="0">Pills Quantity</th>
                               <th tabIndex="0">Price</th>
+                              {/* <th tabIndex="0">Link</th> */}
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((data,index)=>(
-                              <tr>
-                              <td className="selection-cell">
-                                <input type="checkbox" />
-                              </td>
-                              <td>{data.firstName+" "+data.lastName}</td>
-                              <td>{data.senderCountryIso}</td>
-                              <td>{data.mobileNumber}</td>
-                              <td>{data.senderAddress}</td>
-                              <td>{data.productEnquiry}</td>
-                              <td>{data.email}</td>
-                              <td>{data.email}</td>
-                              <td>{data.email}</td>
-                            </tr>
+                            {data.map((item, index) => (
+                              <tr key={item.productId}>
+                                <td className="selection-cell">
+                                  <input type="checkbox" />
+                                </td>
+                                <td>{item.name}</td>
+                                <td>{item.image ? <img src={item.image} alt={item.name} /> : "N/A"}</td>
+                                <td>{item.composition}</td>
+                                <td>{item.brand}</td>
+                                <td>{item.treatment}</td>
+                                <td>{item.packagingSize}</td>
+                                <td>{item.form}</td>
+                                <td>{item.pillsQty}</td>
+                                <td>{item.price}</td>
+                                {/* <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td> */}
+                              </tr>
                             ))}
                           </tbody>
                         </table>
@@ -212,7 +191,9 @@ fetchProducts()
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }
-export default upload_products;
+
+export default UploadProducts;
