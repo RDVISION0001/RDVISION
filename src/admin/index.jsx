@@ -223,6 +223,7 @@ function index() {
     }
     try {
       const params = {
+        userId,
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
