@@ -281,7 +281,9 @@ function indexss() {
 
     return pageNumbers;
   };
-  console.log("Short Data Value", shortValue)
+
+
+  
   return (
     <>
       <div className="superadmin-page">

@@ -4,11 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 import axiosInstance from '../axiosInstance';
+
+
 const logout = () => {
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     attendanceId: localStorage.getItem("attendanceId"),
-    logoutReason:""
+    logoutReason: ""
   })
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -17,24 +19,24 @@ const logout = () => {
   const handleStatusChange = (e) => {
     setFormData({
       ...formData,
-      logoutReason:e.target.value
+      logoutReason: e.target.value
     })
 
   }
 
   const handleSubmit = async () => {
-   
-   if(formData.logoutReason.length>0){
-    const response =await axiosInstance.post("attendance/logout",formData)
-    console.log(response)
- if(response.status===200){
-  console.log("Ethar to aya hi nhi ")
-  logout()
-  navigate("/")
- }
-   }else{
-    toast.info("Please select a reason")
-   }
+
+    if (formData.logoutReason.length > 0) {
+      const response = await axiosInstance.post("attendance/logout", formData)
+      console.log(response)
+      if (response.status === 200) {
+        console.log("Ethar to aya hi nhi ")
+        logout()
+        navigate("/")
+      }
+    } else {
+      toast.info("Please select a reason")
+    }
   }
   const { logout } = useAuth();
   const navigate = useNavigate()

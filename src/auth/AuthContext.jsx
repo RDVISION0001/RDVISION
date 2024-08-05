@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       console.log('Last Name:', storedLastName)
     }
 
-    if (storedLastName) {
+    if (storedAttendanceId) {
       setAttendanceId(storedAttendanceId); 
       console.log('Attendance Id:', storedAttendanceId)
     }
