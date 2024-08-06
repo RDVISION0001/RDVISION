@@ -6,8 +6,10 @@ import axiosInstance from '../axiosInstance';
 // Components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
-import Worktime from '../components/worktime';
 import Cardinfo from '../components/cardinfo';
+
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 
@@ -125,9 +127,9 @@ function indexss() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: {ticketStatus: 'Sale' },
-    newTickets: {ticketStatus: 'New' },
-    followUp: {  ticketStatus: 'follow' },
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
+    followUp: { ticketStatus: 'follow' },
   };
 
   // Data state
@@ -168,6 +170,41 @@ function indexss() {
   const handleShortDataValue = (e) => {
     setShortValue(e.target.value)
   }
+
+  //websocket for notification
+  useEffect(() => {
+    const socket = new SockJS('https://rdvision.online/ws');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      debug: (str) => {
+        console.log("Message string is " < str);
+
+      },
+      onConnect: () => {
+        console.log('Connected');
+        stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
+          const newProduct = JSON.parse(message.body);
+          console.log("Message received", newProduct)
+          playNotificationSound()
+          setData((prevProducts) => [newProduct, ...prevProducts]);
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+    });
+
+    stompClient.activate();
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate();
+      }
+    };
+  }, []);
+
+
   // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
@@ -187,7 +224,8 @@ function indexss() {
       'Follow': 'blue',
       'Interested': 'orange',
       'Not_Interested': 'red',
-      'Wrong_Number': 'gray'
+      'Wrong_Number': 'gray',
+      'Not_Pickup': 'lightblue'
     };
     return colors[ticketStatus] || 'white';
   };
@@ -224,6 +262,7 @@ function indexss() {
     }
     try {
       const params = {
+        userId,
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
@@ -283,7 +322,7 @@ function indexss() {
   };
 
 
-  
+
   return (
     <>
       <div className="superadmin-page">
@@ -296,9 +335,7 @@ function indexss() {
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
-            <Cardinfo/>
-            {/* <!-- user-profile --> */}
-            <Worktime />
+            <Cardinfo />
             {/* <!-- graphs and ranking --> */}
             <section className="map-and-rankings">
               <div className="container-fluid">
@@ -509,7 +546,8 @@ function indexss() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span>
+                        {/* <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                        <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                         New Tickets
                       </button>
                     </li>
@@ -593,11 +631,6 @@ function indexss() {
                                       style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                       {item.ticketstatus}
                                     </a>
-                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                      <li><a className="dropdown-item danger" >Action</a></li>
-                                      <li><a className="dropdown-item" >Another action</a></li>
-                                      <li><a className="dropdown-item" >Something else here</a></li>
-                                    </ul>
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
@@ -879,6 +912,8 @@ function indexss() {
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
+                              <th tabindex="0">Follow D/T</th>
+                              <th tabindex="0">Comment</th>
                               <th tabindex="0">Requirement</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
@@ -925,7 +960,8 @@ function indexss() {
                                       <li><a className="dropdown-item" >Something else here</a></li>
                                     </ul>
                                   </div>
-
+                                  <td><span className="text">{item.followUpDateTime}</span></td>
+                                  <td><span className="text">{item.comment}</span></td>
                                   <td><span className="comment">{item.subject}<br /></span></td>
                                   <td>
                                     <span className="actions-wrapper">
@@ -1026,6 +1062,7 @@ function indexss() {
                       <option value="Wrong_Number">Wrong Number</option>
                       <option value="Place_with_other">Place with other</option>
                       <option value="Call_Back">Call Back</option>
+                      <option value="Not_Pickup">Not Pickup</option>
                     </select>
                   </div>
                   {showFollowUpDate && (
@@ -1198,5 +1235,6 @@ function indexss() {
     </>
   )
 }
+
 
 export default indexss

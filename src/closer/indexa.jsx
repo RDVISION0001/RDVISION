@@ -9,6 +9,9 @@ import Sidenav from '../components/sidenav';
 import Worktime from '../components/worktime';
 import Cardinfo from '../components/cardinfo';
 
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 
 
@@ -143,11 +146,49 @@ function indexa() {
     const audio = new Audio(R2ZWYCP);
     audio.play();
   };
+
   //Short Method
   const [shortValue, setShortValue] = useState("")
   const handleShortDataValue = (e) => {
     setShortValue(e.target.value)
   }
+
+  //websocket for notification
+  useEffect(() => {
+    const socket = new SockJS('https://rdvision.online/ws');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      debug: (str) => {
+        console.log("Message string is " < str);
+
+      },
+      onConnect: () => {
+        console.log('Connected');
+        stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
+          const newProduct = JSON.parse(message.body);
+          console.log("Message received", newProduct)
+          playNotificationSound()
+          setData((prevProducts) => [newProduct, ...prevProducts]);
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+    });
+
+    stompClient.activate();
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate();
+      }
+    };
+  }, []);
+
+
+
+
   // Masking mobile number
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
@@ -212,7 +253,8 @@ function indexa() {
       'Follow': 'blue',
       'Interested': 'orange',
       'Not_Interested': 'red',
-      'Wrong_Number': 'gray'
+      'Wrong_Number': 'gray',
+      'Not_Pickup': 'lightblue'
     };
     return colors[ticketStatus] || 'white';
   };
@@ -251,6 +293,7 @@ function indexa() {
     }
     try {
       const params = {
+        userId,
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
@@ -546,7 +589,8 @@ function indexa() {
                         aria-selected="false"
                         tabindex="-1"
                       >
-                        <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span>
+                        {/* <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                        <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                         New Tickets
                       </button>
                     </li>
@@ -899,7 +943,7 @@ function indexa() {
                     </div>
 
                     <div
-                      className={`tab-pane fade ${activeTab === "followUp" ? "show active" : ""}`}
+                    className={`tab-pane fade ${activeTab === "followUp" ? "show active" : ""}`}
                       // className="tab-pane fade"
                       id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
@@ -916,8 +960,9 @@ function indexa() {
                               <th tabindex="0">Customer Number</th>
                               <th tabindex="0">Customer Email</th>
                               <th tabindex="0">Status</th>
+                              <th tabindex="0">Follow D/T</th>
+                              <th tabindex="0">Comment</th>
                               <th tabindex="0">Requirement</th>
-                              <th tabindex="0">follow/DateTime</th>
                               <th tabindex="0">Action</th>
                               <th tabindex="0">Ticket ID</th>
                             </tr>
@@ -965,7 +1010,8 @@ function indexa() {
                                   </div>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>
-                                  <td><span className="comment">{item.followUpDateTime}<br /></span></td>
+                                  <td><span className="text">{item.followUpDateTime}</span></td>
+                                  <td><span className="text">{item.comment}</span></td>
                                   <td>
                                     <span className="actions-wrapper">
                                       <Button
