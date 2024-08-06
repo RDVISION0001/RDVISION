@@ -224,7 +224,8 @@ useEffect(() => {
       'Follow': 'blue',
       'Interested': 'orange',
       'Not_Interested': 'red',
-      'Wrong_Number': 'gray'
+      'Wrong_Number': 'gray',
+      'Not_Pickup':'lightblue'
     };
     return colors[ticketStatus] || 'white';
   };
@@ -1061,6 +1062,7 @@ useEffect(() => {
                       <option value="Wrong_Number">Wrong Number</option>
                       <option value="Place_with_other">Place with other</option>
                       <option value="Call_Back">Call Back</option>
+                      <option value="Not_Pickup">Not Pickup</option>
                     </select>
                   </div>
                   {showFollowUpDate && (
