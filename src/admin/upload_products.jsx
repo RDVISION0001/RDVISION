@@ -5,7 +5,7 @@ import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function UploadProducts() {
+function uploadProducts() {
   const [activeTab, setActiveTab] = useState("allTickets");
   const [show, setShow] = useState(false);
   const [data, setData] = useState([]);
@@ -13,13 +13,18 @@ function UploadProducts() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [dataToSave, setDataToSave] = useState({ csvStringData: "" });
+  const [searchQuery, setSearchQuery] = useState("");
+  const itemsPerPage = 10;
 
   // Fetching products
-  const fetchProducts = async () => {
+  const fetchProducts = async (page = 0, query = "") => {
     try {
-      const response = await axiosInstance.get("product/getAllProducts");
+      const response = await axiosInstance.get("product/getAllProducts", {
+        params: { page, query }
+      });
       if (response.data.success.status === "200") {
         setData(response.data.dtoList);
+        setTotalPages(response.data.totalPages);
       } else {
         toast.error("Failed to fetch products.");
       }
@@ -30,8 +35,8 @@ function UploadProducts() {
   };
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    fetchProducts(currentPage, searchQuery);
+  }, [currentPage, searchQuery]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -64,7 +69,7 @@ function UploadProducts() {
         setLoading(true);
         const response = await axiosInstance.post("product/uploadproductscsv", dataToSave);
         console.log("Response is ", response.data);
-        if (response.data.success.status === "200") {
+        if (response.data === "CSV products uploaded successfully") {
           toast.info("Successfully uploaded");
           setLoading(false);
           fetchProducts(); // Fetch updated products
@@ -76,10 +81,18 @@ function UploadProducts() {
         toast.info("Please check if file is selected.");
       }
     } catch (err) {
-      console.log("ERROR IS ", err);
       toast.error("An error occurred while uploading the data.");
       setLoading(false);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(0);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -126,7 +139,15 @@ function UploadProducts() {
                 <div className="row">
                   <div className="col-md-5">
                     <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." />
+                      <input
+                        type="text"
+                        name="search-user"
+                        id="searchUsers"
+                        className="form-control"
+                        placeholder="Search Department or Name..."
+                        value={searchQuery}
+                        onChange={handleSearchChange}
+                      />
                       <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
@@ -159,11 +180,11 @@ function UploadProducts() {
                               <th tabIndex="0">Form</th>
                               <th tabIndex="0">Pills Quantity</th>
                               <th tabIndex="0">Price</th>
-                              {/* <th tabIndex="0">Link</th> */}
+                              <th tabIndex="0">Purchase Link</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item, index) => (
+                            {data.map((item) => (
                               <tr key={item.productId}>
                                 <td className="selection-cell">
                                   <input type="checkbox" />
@@ -177,11 +198,22 @@ function UploadProducts() {
                                 <td>{item.form}</td>
                                 <td>{item.pillsQty}</td>
                                 <td>{item.price}</td>
-                                {/* <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td> */}
+                                <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
+                      </div>
+                      <div className="pagination-wrapper">
+                        {Array.from({ length: totalPages }, (_, index) => (
+                          <button
+                            key={index}
+                            className={`btn ${currentPage === index ? 'btn-primary' : 'btn-secondary'}`}
+                            onClick={() => handlePageChange(index)}
+                          >
+                            {index + 1}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -196,4 +228,4 @@ function UploadProducts() {
   );
 }
 
-export default UploadProducts;
+export default uploadProducts;
