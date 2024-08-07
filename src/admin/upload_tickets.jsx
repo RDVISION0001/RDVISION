@@ -209,11 +209,11 @@ function upload_tickets() {
                             <tbody>
                               {data.map((item, index) => (
                                 <tr key={index}>
-                                  <td><span className="text">{item.queryTime}</span></td>
+                                  <td><span className="text">{item.uploadDate[2]}-{item.uploadDate[1]}-{item.uploadDate[0]}/{item.queryTime.split(".")[0]}</span></td>
                                   <td><span className="text">{item.senderCountryIso}</span></td>
-                                  <td><span className="text">{item.firstName}</span></td>
+                                  <td><span className="text">{item.firstName} {item.lastName}</span></td>
                                   <td><span className="text">{item.mobileNumber}</span></td>
-                                  <td><span className="text">{item.senderEmailAlt}</span></td>
+                                  <td><span className="text">{item.email}</span></td>
                                   <td><span className="text">{item.ticketstatus}</span></td>
 
                                   <td><span className="comment">{item.subject}<br /></span></td>

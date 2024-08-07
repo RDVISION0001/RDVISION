@@ -9,8 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 ///compo//
 import Sidenav from './components/sidenav';
 
-// careers
-import Jobpost from './careers/jobpost';
+
 
 // auth
 import './auth/login.css';
@@ -55,6 +54,7 @@ import Ticketsm from './captain/ticketsm';
 
 // closer/old name agent
 import Indexa from './closer/indexa';
+import Upticket from './closer/upticket';
 import Invoicesa from './closer/invoicesa';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
@@ -73,8 +73,7 @@ import ToCaptain from './senior_supervisor/toCaptain';
 import './components/css/themedigproX01.css';
 import './components/css/themedigproX01.scss';
 
-// careers
-import './careers/jobpost.css'
+
 
 // css/////////////////
 import './admin/css/admin.css';
@@ -124,12 +123,6 @@ function App() {
             <Route exact path="/logout" element={<Logout />} />
             <Route exact path="/forgot_password" element={<Forgetpassword />} />
 
-
-
-            {/* careers */}
-            <Route exact path="/careers_jobpost" element={<Jobpost />} />
-
-
             <Route element={<PrivateRoute />}>
 
 
@@ -167,6 +160,7 @@ function App() {
 
               {/* closer/agent */}
               <Route exact path="/closer_index" element={<Indexa />} />
+              <Route exact path="/closer_upload_tickets" element={<Upticket />} />
               <Route exact path="/closer_invoices" element={<Invoicesa />} />
               <Route exact path="/closer_orders" element={<Ordersa />} />
               <Route exact path="/closer_sales" element={<Salesa />} />

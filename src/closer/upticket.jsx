@@ -8,7 +8,8 @@ import Worktime from '../components/worktime';
 
 
 //pages
-import Live_tickets from '../pages/live_tickets';
+import Uploaded_tickets from '../pages/uploaded_tickets';
+
 
 
 function indexa() {
@@ -26,23 +27,22 @@ function indexa() {
 
           <div className="container-fluid mt-3">
             <Cardinfo />
-            </div>
+          </div>
 
-            <div className="container-fluid mt-3">
-              <Worktime />
-            </div>
+          <div className="container-fluid mt-3">
+            <Worktime />
+          </div>
 
 
-            <div className="container-fluid mt-3">
-              <Live_tickets />
-            </div>
+          <div className="container-fluid mt-3">
+            <Uploaded_tickets />
+          </div>
 
-          
-        </div>
-      </div>
-    </>
-  );
+        </div >
+        </div >
+      </>
+      );
 }
 
 
-export default indexa
+      export default indexa
