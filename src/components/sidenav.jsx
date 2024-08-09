@@ -3,7 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { Link, NavLink } from 'react-router-dom';
 import Logout from '../auth/logout';
 
-function Sidenav() {
+function sidenav() {
   const { roleName, firstName, lastName } = useAuth();
 
   useEffect(() => {
@@ -315,4 +315,4 @@ function Sidenav() {
   );
 }
 
-export default Sidenav;
+export default sidenav;
