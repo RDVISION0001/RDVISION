@@ -4,6 +4,7 @@ import { Link, NavLink } from 'react-router-dom';
 import Logout from '../auth/logout';
 
 function sidenav() {
+  ///
   const { roleName, firstName, lastName } = useAuth();
 
   useEffect(() => {
@@ -121,13 +122,13 @@ function sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_tickets" className="nav-link">
-              <i class="fa fa-upload" aria-hidden="true"></i>
+                <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_to_everyone" className="nav-link">
-              <i className="fa-solid fa-user"></i>
+                <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Everyone</span>
               </NavLink>
             </li>
@@ -145,7 +146,7 @@ function sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_products" className="nav-link">
-              <i class="fa-solid fa-file"></i>
+                <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Upload Products</span>
               </NavLink>
             </li>
@@ -184,7 +185,7 @@ function sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/closer_upload_tickets" className="nav-link">
-              <i class="fa fa-upload" aria-hidden="true"></i>
+                <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
@@ -290,7 +291,7 @@ function sidenav() {
                 <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
-          
+
           </>
         )}
 
@@ -303,7 +304,7 @@ function sidenav() {
         <li className="nav-item">
           <Link className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
-            <span className="nav-text cursor-pointer"><Logout/></span>
+            <span className="nav-text cursor-pointer"><Logout /></span>
           </Link>
         </li>
       </ul>
