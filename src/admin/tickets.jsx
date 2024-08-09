@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
-import Cardinfo from '../components/cardinfo';
+import Topnav from '../Components/topnav';
+import Sidenav from '../Components/sidenav';
+import Cardinfo from '../Components/cardinfo';
 
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';

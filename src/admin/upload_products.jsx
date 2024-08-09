@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+import Topnav from '../Components/topnav';
+import Sidenav from '../Components/sidenav';
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

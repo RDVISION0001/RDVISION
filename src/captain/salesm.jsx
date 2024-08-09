@@ -1,7 +1,7 @@
 import React from 'react';
 ////copmponents////
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+import Topnav from '../Components/topnav';
+import Sidenav from '../Components/sidenav';
 
 function salesm() {
 
