@@ -29,7 +29,7 @@ import HighchartsReact from 'highcharts-react-official'
 const options = {
   chart: { type: 'column' },
   title: false,
-  credits: { text: "CEO: Digvijay Singh", href: "" },
+  credits: { text: "CEO: Anuj pratap Singh", href: "https://wa.me/7080906913" },
   xAxis: {
     categories: ['A', 'B', 'C', 'D', 'E', '5'],
     crosshair: true,
@@ -292,7 +292,6 @@ function uploaded_tickets() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
-        userId,
       };
       const res = await axiosInstance.post(`/upload/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);

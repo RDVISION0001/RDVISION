@@ -4,7 +4,9 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
+import TaskProgress from '../components/TaskProgress';
 import Worktime from '../components/worktime';
+import Chart from '../components/chart';
 
 
 //pages
@@ -26,18 +28,26 @@ function indexa() {
 
           <div className="container-fluid mt-3">
             <Cardinfo />
-            </div>
+          </div>
 
-            <div className="container-fluid mt-3">
-              <Worktime />
-            </div>
+          <div className="container-fluid mt-3">
+            <TaskProgress />
+          </div>
+
+          <div className="container-fluid mt-3">
+            <Worktime />
+          </div>
+
+          <div className="container-fluid mt-3">
+            <Chart />
+          </div>
 
 
-            <div className="container-fluid mt-3">
-              <Live_tickets />
-            </div>
+          <div className="container-fluid mt-3">
+            <Live_tickets />
+          </div>
 
-          
+
         </div>
       </div>
     </>
