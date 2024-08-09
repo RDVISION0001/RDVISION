@@ -1,0 +1,66 @@
+/* ProgressBar.css */
+
+.progress-wrapper {
+    display: flex; /* Align progress bars horizontally */
+    justify-content: space-between; /* Distribute space between progress bars */
+    width: 100%;
+    box-sizing: border-box;
+    gap: 20px; /* Space between progress bars */
+    padding: 20px;
+}
+
+.progress-container {
+    flex: 1; /* Allow progress bars to expand equally */
+    border: 1px solid #ddd; /* Border around the progress bar */
+    padding: 12px; /* Padding inside the border */
+    border-radius: 4px; /* Reduced border-radius */
+    background-color: #f9f9f9; /* Light background color */
+    min-width: 0; /* Prevent overflow */
+}
+
+.progress-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.progress-container label {
+    font-weight: bold;
+    font-size: 0.9rem; /* Slightly smaller font size */
+}
+
+.progress-bar-background {
+    background-color: #c0c0c0; /* Darker gray for better visibility */
+    border-radius: 4px; /* Reduced border-radius */
+    overflow: hidden;
+    height: 8px; /* Thinner height */
+    width: 100%;
+    margin-top: 4px; /* Adjust spacing between label and progress bar */
+}
+
+.progress-bar-fill {
+    height: 100%;
+    transition: width 0.5s ease-in-out; /* Smooth transition */
+}
+
+.progress-text {
+    font-size: 0.8rem; /* Slightly smaller font size */
+    color: #333; /* Color for text */
+    padding-left: 10px; /* Padding for separation from progress bar */
+}
+
+.progress-text span.max-value {
+    color: #777; /* Lighter color for the max value */
+}
+
+.progress-bar-fill.sales {
+    background-color: #4caf50; /* Green for Total Sales Progress */
+}
+
+.progress-bar-fill.follow-up {
+    background-color: #f44336; /* Red for Follow-Up Progress */
+}
+
+.progress-bar-fill.new-tickets {
+    background-color: #ffeb3b; /* Yellow for New Tickets */
+}

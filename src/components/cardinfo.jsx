@@ -30,7 +30,7 @@ const CardInfo = () => {
         };
 
 
-         //total sale tickets
+        //total sale tickets
         const TotalSale = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
@@ -44,7 +44,7 @@ const CardInfo = () => {
         };
 
 
-          //total new tickets
+        //total new tickets
         const TotalNew = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
@@ -58,8 +58,8 @@ const CardInfo = () => {
         };
 
 
-         //total sale tickets
-         const TotalFollow = async () => {
+        //total sale tickets
+        const TotalFollow = async () => {
             try {
                 const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
                     params: { ticketStatus: 'Follow' }
@@ -114,7 +114,7 @@ const CardInfo = () => {
                                 <div className="div-top">
                                     <h3 className="title">Total New</h3>
                                     <span className="sales">
-                                    {data.totalNew}<span className="indicators"></span>
+                                        {data.totalNew}<span className="indicators"></span>
                                     </span>
                                 </div>
                                 <div className="icon-wrapper">
@@ -127,7 +127,7 @@ const CardInfo = () => {
                                 <div className="div-top">
                                     <h3 className="title">Total Follow-up</h3>
                                     <span className="sales">
-                                    {data.totalFollow}<span className="indicators"></span>
+                                        {data.totalFollow}<span className="indicators"></span>
                                     </span>
                                 </div>
                                 <div className="icon-wrapper">
