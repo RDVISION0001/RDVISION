@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+import Topnav from '../Components/topnav';
+import Sidenav from '../Components/sidenav';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';

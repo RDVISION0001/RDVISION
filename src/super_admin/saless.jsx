@@ -1,6 +1,6 @@
 import React from 'react'
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+import Topnav from '../Components/topnav';
+import Sidenav from '../Components/sidenav';
 
 
 function saless() {
