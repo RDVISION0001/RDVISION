@@ -5,8 +5,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Components
-import Topnav from '../Components/topnav';
-import Sidenav from '../Components/sidenav';
+import Topnav from '../Components/Topnav';
+import Sidenav from '../Components/Sidenav';
 
 function toCaptain() {
   // Define parameters for each tab

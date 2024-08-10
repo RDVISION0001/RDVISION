@@ -1,6 +1,6 @@
 import React from 'react';
 
-function  topnav() {
+function  Topnav() {
   return (
     <>
       <nav className="navbar top-navbar navbar-light bg-white container-fluid">
@@ -24,4 +24,4 @@ function  topnav() {
 
 
 
-export default topnav;
+export default Topnav;

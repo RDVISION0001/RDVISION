@@ -1,8 +1,8 @@
 import React from 'react';
 
 ////copmponents////
-import Topnav from '../Components/topnav';
-import Sidenav from '../Components/sidenav';
+import Topnav from '../Components/Topnav';
+import Sidenav from '../Components/Sidenav';
 
 function invoicesm() {
   return (

@@ -1,9 +1,9 @@
 import React from 'react';
 
 //Components
-import Topnav from '../Components/topnav';
-import Sidenav from '../Components/sidenav';
-import Cardinfo from '../Components/cardinfo';
+import Topnav from '../Components/Topnav';
+import Sidenav from '../Components/Sidenav';
+import Cardinfo from '../Components/Cardinfo';
 
 
 //pages

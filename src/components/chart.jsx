@@ -7,7 +7,7 @@ import HighchartsReact from 'highcharts-react-official';
 const options = {
     chart: { type: 'column' },
     title: false,
-    credits: { text: "CEO: Anuj pratap Singh", href: "https://wa.me/7080906913" },
+    credits: { text: "CEO: Digvijay Singh", href: "" },
     xAxis: {
         categories: ['A', 'B', 'C', 'D', 'E', '5'],
         crosshair: true,
