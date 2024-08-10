@@ -1,6 +1,8 @@
-import React from 'react'
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
+import React from 'react';
+
+//compo
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
 
 
 function orderss() {
