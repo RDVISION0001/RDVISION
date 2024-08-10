@@ -7,7 +7,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 ///compo//
-import Sidenav from './Components/Sidenav';
+import Sidenav from '../src/Components/Sidenav';
+
 
 
 // auth
