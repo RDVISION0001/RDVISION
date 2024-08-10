@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-////copmponents////
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
+//// Components ////
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
 
 import axiosInstance from '../axiosInstance';
 

@@ -5,8 +5,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // Components
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
 
 function toCloser() {
   // Define parameters for each tab

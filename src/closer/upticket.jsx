@@ -1,14 +1,14 @@
 import React from 'react';
 
-//Components
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
-import Cardinfo from '../Components/Cardinfo';
-import Worktime from '../Components/Worktime';
+//components
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
+import Cardinfo from '../components/cardinfo';
+import Worktime from '../components/worktime';
 
 
 //pages
-import Uploaded_tickets from '../Pages/uploaded_tickets';
+import Uploaded_tickets from '../pages/uploaded_tickets';
 
 
 

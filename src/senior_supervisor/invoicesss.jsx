@@ -3,8 +3,8 @@ import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
 //// Components ////
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

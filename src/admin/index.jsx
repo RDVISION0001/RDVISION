@@ -1,13 +1,13 @@
 import React from 'react';
 
-//Components
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
-import Cardinfo from '../Components/Cardinfo';
+//components
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
+import Cardinfo from '../components/cardinfo';
 
 
 //pages
-import Live_tickets from '../Pages/live_tickets';
+import Live_tickets from '../pages/live_tickets';
 
 
 function index() {

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 // Components
-import Topnav from '../Components/Topnav';
-import Sidenav from '../Components/Sidenav';
+import Topnav from '../components/topnav';
+import Sidenav from '../components/sidenav';
+import Cardinfo from '../components/cardinfo';
+
 import axiosInstance from '../axiosInstance';
-import Cardinfo from '../Components/Cardinfo';
+
 
 
 function ticketsm() {
