@@ -4,7 +4,7 @@ import axiosInstance from '../axiosInstance';
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
 
-const CardInfo = () => {
+const Cardinfo = () => {
     const { userId } = useAuth();
     const [data, setData] = useState({
         totalTickets: 0,
@@ -142,4 +142,4 @@ const CardInfo = () => {
     );
 };
 
-export default CardInfo;
+export default Cardinfo;

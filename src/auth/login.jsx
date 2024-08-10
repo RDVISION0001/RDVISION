@@ -25,7 +25,7 @@ function login() {
     e.preventDefault();
     try {
       await login(email, password, logInOtp);
-      navigate('/sidenav');
+      navigate('/Sidenav');
     } catch (error) {
       setError('Login failed');
     }

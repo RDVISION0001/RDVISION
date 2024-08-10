@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import profile1 from '../assets/img/profiles/profile1.png'
 
 
-function worktime() {
+function Worktime() {
   const [time, setTime] = useState(() => {
     const savedTime = localStorage.getItem('timerTime');
     return savedTime ? Number(savedTime) : 12 * 60 * 60;
@@ -94,4 +94,4 @@ function worktime() {
     )
 }
 
-export default worktime
+export default Worktime

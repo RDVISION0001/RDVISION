@@ -27,7 +27,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official'
 
 const options = {
-  chart: { type: 'column' },
+  Chart: { type: 'column' },
   title: false,
   credits: { text: "CEO: Anuj pratap Singh", href: "https://wa.me/7080906913" },
   xAxis: {
