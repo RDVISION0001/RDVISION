@@ -5,8 +5,8 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
-import Worktime from '../components/worktime';
-import Chart from '../components/chart';
+// import Worktime from '../components/worktime';
+// import Chart from '../components/chart';
 
 
 //pages
@@ -34,13 +34,13 @@ function indexa() {
             <TaskProgress />
           </div>
 
-          <div className="container-fluid mt-3">
+          {/* <div className="container-fluid mt-3">
             <Worktime />
           </div>
 
           <div className="container-fluid mt-3">
             <Chart />
-          </div>
+          </div> */}
 
 
           <div className="container-fluid mt-3">

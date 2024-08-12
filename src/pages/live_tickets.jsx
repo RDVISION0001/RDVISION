@@ -330,6 +330,7 @@ function live_tickets() {
     e.preventDefault();
     try {
       await fetchDataForEmail();
+      handleOff()
       toast.success("Email sent successfully");
     } catch (error) {
       toast.error("Error sending email");
@@ -998,6 +999,7 @@ function live_tickets() {
                 name="comment"
                 value={formData.comment}
                 onChange={handleChange}
+                required
               ></textarea>
             </div>
             {error && <p className="text-danger">{error}</p>}

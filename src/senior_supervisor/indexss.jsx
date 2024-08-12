@@ -4,7 +4,7 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
-import Worktime from '../components/worktime';
+// import Worktime from '../components/worktime';
 
 
 //pages
@@ -28,9 +28,9 @@ function indexss() {
             <Cardinfo />
           </div>
 
-          <div className="container-fluid mt-3">
+          {/* <div className="container-fluid mt-3">
             <Worktime />
-          </div>
+          </div> */}
 
 
           <div className="container-fluid mt-3">
