@@ -59,6 +59,7 @@ import Usersa from './closer/usersa';
 
 // senior_supervisor 
 import Indexss from './senior_supervisor/indexss';
+import Uptickets from './senior_supervisor/uptickets';
 import Ticketsss from './senior_supervisor/ticketsss';
 import Invoicesss from './senior_supervisor/invoicesss';
 import Tocaptain from './senior_supervisor/toCaptain';
@@ -163,6 +164,7 @@ function App() {
 
               {/*Senior supervisor*/}
               <Route exact path="/senior_supervisor_index" element={<Indexss />} />
+              <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
               <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
               <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
               <Route exact path="/senior_supervisor_to_captain" element={<Tocaptain />} />

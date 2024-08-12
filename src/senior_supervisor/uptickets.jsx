@@ -12,7 +12,7 @@ import Uploaded_tickets from '../pages/uploaded_tickets';
 
 
 
-function upticket() {
+function uptickets() {
 
 
   return (
@@ -35,7 +35,7 @@ function upticket() {
 
 
           <div className="container-fluid mt-3">
-            <Uploaded_tickets />
+          <Uploaded_tickets />
           </div>
 
         </div >
@@ -45,4 +45,4 @@ function upticket() {
 }
 
 
-      export default upticket
+      export default uptickets

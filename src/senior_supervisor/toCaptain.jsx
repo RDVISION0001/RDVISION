@@ -46,6 +46,19 @@ function toCaptain() {
     }
   };
 
+  //hnadling multiple selection
+  const handleMultipleTicketSelection = (e) => {
+    const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
+    if (checked) {
+      let newSelectedTickets = [...selectedTickets]; // Start with the current state
+      for (let i = 0; i < data.length; i++) {
+        newSelectedTickets.push(data[i].uniqueQueryId); // Add the new elements
+      }
+      setSelectedTickets(newSelectedTickets); // Update the state once with the new array
+    } else {
+      setSelectedTickets([]); // Reset to an empty array
+    }
+  };
   // Function to send POST request
   const sendPostRequest = async () => {
     try {
@@ -69,21 +82,21 @@ function toCaptain() {
       toast.error('Failed to assign tickets.');
     }
   };
- //Short Method
- const [shortValue, setShortValue] = useState("")
- const handleShortDataValue = (e) => {
-     setShortValue(e.target.value)
- }
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   // State for modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => {
-    if(selectedTickets.length>0){
-        setShow(true)
-    }else{
-        toast.info("Please select at least One Ticket")
+    if (selectedTickets.length > 0) {
+      setShow(true)
+    } else {
+      toast.info("Please select at least One Ticket")
     }
-}
+  }
 
 
   // Users
@@ -293,7 +306,7 @@ function toCaptain() {
                           <thead>
                             <tr>
                               <th className="selection-cell-header" data-row-selection="true">
-                                <input type="checkbox" className="" />
+                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                               </th>
                               <th tabindex="0">Date/Time</th>
                               <th tabindex="0">Country</th>
@@ -307,11 +320,11 @@ function toCaptain() {
                           </thead>
                           <tbody>
                             {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).map((item,index) => (
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item, index) => (
                               <tr key={index}>
                                 <td className="selection-cell">
                                   <input
@@ -340,9 +353,9 @@ function toCaptain() {
                         <table className="table">
                           <thead>
                             <tr>
-                              <th className="selection-cell-header" data-row-selection="true">
-                                <input type="checkbox" className="" />
-                              </th>
+                            <th className="selection-cell-header" data-row-selection="true">
+                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
+                        </th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Client Name</th>
                               <th tabindex="0">Query Type</th>
@@ -403,9 +416,9 @@ function toCaptain() {
                         <table className="table">
                           <thead>
                             <tr>
-                              <th className="selection-cell-header" data-row-selection="true">
-                                <input type="checkbox" className="" />
-                              </th>
+                            <th className="selection-cell-header" data-row-selection="true">
+                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
+                        </th>
                               <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Client Name</th>
                               <th tabindex="0">Category/Department</th>
@@ -498,7 +511,7 @@ function toCaptain() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button  variant="primary" onClick={sendPostRequest}>
+          <Button variant="primary" onClick={sendPostRequest}>
             Assign Tickets
           </Button>
         </Modal.Footer>

@@ -49,12 +49,27 @@ function toEveryone() {
         fetchTickets(params[tabName], 0);
     };
 
+    //handle select tickets
     const handleTicketSelect = (e, id) => {
         const isChecked = e.target.checked;
         if (isChecked) {
             setSelectedTickets([...selectedTickets, id]);
         } else {
             setSelectedTickets(selectedTickets.filter(ticketId => ticketId !== id));
+        }
+    };
+
+    //hnadling multiple selection
+    const handleMultipleTicketSelection = (e) => {
+        const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
+        if (checked) {
+            let newSelectedTickets = [...selectedTickets]; // Start with the current state
+            for (let i = 0; i < data.length; i++) {
+                newSelectedTickets.push(data[i].uniqueQueryId); // Add the new elements
+            }
+            setSelectedTickets(newSelectedTickets); // Update the state once with the new array
+        } else {
+            setSelectedTickets([]); // Reset to an empty array
         }
     };
 
@@ -215,7 +230,7 @@ function toEveryone() {
                                 <div className="row">
                                     <div className="col-md-5">
                                         <div className="search-wrapper">
-                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}/>
+                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
                                             <div className="search-icon">
                                                 <i className="fa-solid fa-magnifying-glass"></i>
                                             </div>
@@ -257,7 +272,7 @@ function toEveryone() {
                                                     <thead>
                                                         <tr>
                                                             <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" />
+                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                                                             </th>
                                                             <th tabindex="0">Date/Time</th>
                                                             <th tabindex="0">Country</th>
@@ -305,7 +320,7 @@ function toEveryone() {
                                                     <thead>
                                                         <tr>
                                                             <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" />
+                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                                                             </th>
                                                             <th tabIndex="0">Query ID</th>
                                                             <th tabIndex="0">Query McatName</th>
@@ -351,7 +366,7 @@ function toEveryone() {
                                                     <thead>
                                                         <tr>
                                                             <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" />
+                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                                                             </th>
                                                             <th tabindex="0">Date/Time</th>
                                                             <th tabindex="0">Country</th>
