@@ -185,7 +185,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/closer_upload_tickets" className="nav-link">
               <i class="fa fa-upload" aria-hidden="true"></i>
-                <span className="nav-text">Upload Tickets</span>
+                <span className="nav-text">Uploaded Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -276,6 +276,12 @@ function Sidenav() {
               <NavLink to="/senior_supervisor_to_captain" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Captain</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/senior_supervisor_upload_tickets" className="nav-link">
+              <i class="fa fa-upload" aria-hidden="true"></i>
+                <span className="nav-text">Uploaded Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
