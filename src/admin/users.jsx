@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
+// Authentication context
+import { useAuth } from '../auth/AuthContext';
+
+import profile2 from '../assets/img/profiles/profile2.png'
+
+
 //components
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
@@ -10,7 +16,10 @@ import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function  users() {
+function users() {
+
+
+  const { userId } = useAuth();
 
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -21,9 +30,49 @@ function  users() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  //user managmeant
   const [view, setView] = useState(false);
   const handleOff = () => setView(false);
   const handleView = () => setView(true);
+
+  //taraget assign
+  const [white, setWhite] = useState(false);
+  const handleBlack = () => setWhite(false);
+  const handleWhite = () => setWhite(true);
+
+  //assign target
+  const [taskData, setTaskData] = useState({
+    taskDesc: "",
+    assignedToRoleId: 0,
+    assignedBy: userId,
+    saleTask: 0
+  })
+
+  const handleTargetChange = (e) => {
+    setTaskData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+
+  }
+
+  //assign target
+  const handleAddTask = async (e) => {
+    e.preventDefault()
+    console.log("Adding task target")
+    try {
+      const response = await axiosInstance.post('/users_task/addTask', taskData);
+      console.log('Task added successfully:', response.data);
+      handleBlack()
+      // Reset form fields
+      // taskDesc('');
+      // assignedToRoleId('');
+      // saleTask('');
+    } catch (error) {
+
+      console.error('Error adding task:', error);
+    }
+  };
 
   const [formData, setFormData] = useState({
     userId: 0,
@@ -155,6 +204,8 @@ function  users() {
     setSelectedRole(e.target.value);
   };
 
+
+
   return (
     <>
       <div className="superadmin-page">
@@ -170,57 +221,25 @@ function  users() {
               <div className="container-fluid">
                 <div className="section-header">
                   <h2 className="title">Teams</h2>
-                  <Button className="btn btn-primary" onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addUser">Add New Member</Button>
+                  <Button className="btn btn-primary" onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addUser">Add New User</Button>
                 </div>
-                <div className="row g-3">
-                  <div className="col-lg-3 col-md-6">
-                    <div className="user-team-card">
-                      <div className="profile-thumb">
-                        <img src="../img/profiles/profile2.png" alt="profile-img" className="img-fluid" />
+                <div className='d-flex flex-wrap'>
+                  {
+                    data.map((item) => (
+                      <div className="col-lg-3 col-md-6">
+                        <div className="user-team-card">
+                          <div className="profile-thumb">
+                            <img src={profile2} alt="profile-img" className="img-fluid" />
+                          </div>
+                          <div className="content-area">
+                            <h3 className="title">{item.firstName} {item.lastName}</h3>
+                            <p className="sub-title">Department : <strong>{item.departmentDto?.roleName}</strong></p>
+                            <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="content-area">
-                        <h3 className="title">Dig Vijay</h3>
-                        <p className="sub-title">Department : <strong>Admin's Head</strong></p>
-                        <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-3 col-md-6">
-                    <div className="user-team-card">
-                      <div className="profile-thumb">
-                        <img src="../img/profiles/profile2.png" alt="profile-img" className="img-fluid" />
-                      </div>
-                      <div className="content-area">
-                        <h3 className="title">Dig Vijay</h3>
-                        <p className="sub-title">Department : <strong>Sale's Head</strong></p>
-                        <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-3 col-md-6">
-                    <div className="user-team-card">
-                      <div className="profile-thumb">
-                        <img src="../img/profiles/profile2.png" alt="profile-img" className="img-fluid" />
-                      </div>
-                      <div className="content-area">
-                        <h3 className="title">Dig Vijay</h3>
-                        <p className="sub-title">Department : <strong>HR's Head</strong></p>
-                        <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-lg-3 col-md-6">
-                    <div className="user-team-card">
-                      <div className="profile-thumb">
-                        <img src="../img/profiles/profile2.png" alt="profile-img" className="img-fluid" />
-                      </div>
-                      <div className="content-area">
-                        <h3 className="title">Dig Vijay</h3>
-                        <p className="sub-title">Department : <strong>Marketing's Head</strong></p>
-                        <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
-                      </div>
-                    </div>
-                  </div>
+                    ))
+                  }
                 </div>
               </div>
             </section>
@@ -229,24 +248,12 @@ function  users() {
             <section className="user-table-section py-3">
               <div className="container-fluid">
                 <div className="table-wrapper tabbed-table">
-                  <h3 className="title">Users Table</h3>
+                  <h3 className="title">Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h3>
                   <nav className="recent-transactions-tab-header">
                     <div className="nav nav-item nav-tabs" id="nav-tab" role="tablist">
                       <button className="nav-link active" id="nav-all-users-tab" data-bs-toggle="tab" data-bs-target="#nav-all-users" type="button" role="tab" aria-controls="nav-all-users" aria-selected="true">All Users</button>
                       <button className="nav-link" id="nav-new-users-tab" data-bs-toggle="tab" data-bs-target="#nav-new-users" type="button" role="tab" aria-controls="nav-new-users" aria-selected="false">New Users</button>
                       <button className="nav-link" id="nav-restricted-tab" data-bs-toggle="tab" data-bs-target="#nav-restricted" type="button" role="tab" aria-controls="nav-restricted" aria-selected="false">Restricted Users</button>
-                    </div>
-                    <div className="search-wrapper">
-                      <input
-                        type="text"
-                        name="search-user"
-                        id="searchUsers"
-                        className="form-control"
-                        placeholder="Search Department or Name..."
-                      />
-                      <div class="search-icon">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                      </div>
                     </div>
                   </nav>
                   <div className="tab-content recent-transactions-tab-body" id="nav-tabContent">
@@ -573,9 +580,54 @@ function  users() {
 
                   <div className="col-12 mt-5 text-center">
                     <div className="button-grp">
-                      <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" className="btn btn-secondary" onClick={handleOff} data-bs-dismiss="modal">Close</button>
                       <span className="button-space"></span> {/* Placeholder for space */}
                       <button type="submit" className="btn btn-warning">Hold</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+
+      {/* <!-- Target assign --> */}
+      <Modal show={white} onHide={handleBlack} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered modal-lg">
+          <div className="modal-content">
+            <div className="modal-body">
+              <div className="heading-area text-center">
+                <h2 className="title">Target Assign</h2>
+              </div>
+              <div className="main-content-area">
+                <form className="row g-3" onSubmit={handleAddTask}>
+                  <div className="col-md-6">
+                    <label for="inputDepartment" className="form-label">Select User Type</label>
+                    <select id="inputDepartment" name='assignedToRoleId' value={taskData.assignedToRoleId} onChange={handleTargetChange}
+                      className="form-select">
+                      <option selected>Choose...</option>
+                      <option value="5">Senior Supervisor</option>
+                      <option value="3">Captain</option>
+                      <option value="4">Closer</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6">
+                    <label for="fname" className="form-label">Target</label>
+                    <input type="number" name='saleTask' value={taskData.saleTask} onChange={handleTargetChange}
+                      className="form-control" placeholder="Target" id="fname" />
+                  </div>
+                  <div className="col-md-6">
+                    <label for="fname" className="form-label">Description</label>
+                    <textarea type="text" name='taskDesc' value={taskData.taskDesc} onChange={handleTargetChange}
+                      className="form-control" placeholder="Description" id="fname" />
+                  </div>
+                  <div className="col-12 mt-5 text-center">
+                    <div className="button-grp">
+                      <button type="button" className="btn btn-secondary" onClick={handleBlack} data-bs-dismiss="modal">Close</button>
+                      <span className="button-space"></span> {/* Placeholder for space */}
+                      <button type="submit" className="btn btn-warning">Assign</button>
                     </div>
                   </div>
                 </form>

@@ -4,6 +4,8 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
+import FloatingButton from '../components/FloatingButton';
+
 
 
 //pages
@@ -25,6 +27,10 @@ function indexs() {
 
           <div className="container-fluid mt-3">
             <Cardinfo />
+          </div>
+
+          <div>
+            <FloatingButton />
           </div>
 
           <div className="container-fluid mt-3">

@@ -65,8 +65,8 @@ function uploaded_tickets() {
 
   // handling ticket selection
   const [selectedTickets, setSelectedTickets] = useState([]);
-   // Function to handle ticket selection
-   const handleTicketSelect = (e, id) => {
+  // Function to handle ticket selection
+  const handleTicketSelect = (e, id) => {
     const isChecked = e.target.checked;
     if (isChecked) {
       setSelectedTickets([...selectedTickets, id]);
@@ -88,8 +88,8 @@ function uploaded_tickets() {
       setSelectedTickets([]); // Reset to an empty array
     }
   };
-  
-  
+
+
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -362,7 +362,7 @@ function uploaded_tickets() {
     }
   };
 
-console.log("selected tickets",selectedTickets)
+  console.log("selected tickets", selectedTickets)
   return (
     <>
       {/* //Filter input */}
@@ -514,7 +514,7 @@ console.log("selected tickets",selectedTickets)
                     <thead className="sticky-header">
                       <tr>
                         <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
+                          <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                         </th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
@@ -632,8 +632,8 @@ console.log("selected tickets",selectedTickets)
                     <thead className="sticky-header">
                       <tr>
                         <th className="selection-cell-header" data-row-selection="true">
-                        <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
-                      </th>
+                          <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
+                        </th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -751,7 +751,7 @@ console.log("selected tickets",selectedTickets)
                     <thead className="sticky-header">
                       <tr>
                         <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
+                          <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                         </th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
@@ -870,7 +870,7 @@ console.log("selected tickets",selectedTickets)
                     <thead className="sticky-header">
                       <tr>
                         <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
+                          <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                         </th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
@@ -1061,6 +1061,7 @@ console.log("selected tickets",selectedTickets)
                 name="comment"
                 value={formData.comment}
                 onChange={handleChange}
+                required
               ></textarea>
             </div>
             {error && <p className="text-danger">{error}</p>}
