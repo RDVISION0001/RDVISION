@@ -7,6 +7,7 @@ import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
 // import Worktime from '../components/worktime';
 // import Chart from '../components/chart';
+import FloatingButton from '../components/FloatingButton';
 
 
 //pages
@@ -28,6 +29,10 @@ function indexa() {
 
           <div className="container-fluid mt-3">
             <Cardinfo />
+          </div>
+
+          <div>
+            <FloatingButton />
           </div>
 
           <div className="container-fluid mt-3">
