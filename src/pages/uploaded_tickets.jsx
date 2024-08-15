@@ -1035,6 +1035,8 @@ function uploaded_tickets() {
                 <option value="Wrong_Number">Wrong Number</option>
                 <option value="Place_with_other">Place with other</option>
                 <option value="Call_Back">Call Back</option>
+                <option value="Not_Pickup">Not Pickup</option>
+
               </select>
             </div>
             {showFollowUpDate && (
