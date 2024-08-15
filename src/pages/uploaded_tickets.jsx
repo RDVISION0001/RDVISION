@@ -105,9 +105,9 @@ function uploaded_tickets() {
   };
 
   const handleOff = () => setOn(false);
-  const handleOn = (queryId, senderName, email, mobile, product) => {
+  const handleOn = (queryId, firstName, email, mobile, product) => {
     setUniqueQueryId(queryId);
-    setSenderNameForEmail(senderName);
+    setSenderNameForEmail(firstName);
     setemailForMail(email);
     setmobileNumber(mobile);
     setProductArray(prevArray => [...prevArray, product]);
@@ -187,12 +187,16 @@ function uploaded_tickets() {
   }, []);
 
 
-
-
   // Masking mobile number
   const maskMobileNumber = (mobileNumber) => {
-    if (mobileNumber ? mobileNumber.length : "" < 4) return mobileNumber;
     return mobileNumber.slice(0, -4) + 'XXXX';
+  };
+
+  // Masking email
+  const maskEmail = (email) => {
+    const [name, domain] = email.split('@');
+    const maskedName = name[0] + '*'.repeat(Math.max(name.length - 2, 0)) + name.slice(-1);
+    return `${maskedName}@${domain}`;
   };
 
   const fetchProducts = async () => {
@@ -238,12 +242,6 @@ function uploaded_tickets() {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
-
-  const maskEmail = (email) => {
-    const [user, domain] = email ? email.split('@') : "";
-    const maskedUser = user ? user.length : "" > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
-    return `${maskedUser}@${domain}`;
   };
 
   const getColorByStatus = (ticketStatus) => {
@@ -362,7 +360,8 @@ function uploaded_tickets() {
     }
   };
 
-  console.log("selected tickets", selectedTickets)
+
+
   return (
     <>
       {/* //Filter input */}
@@ -533,7 +532,7 @@ function uploaded_tickets() {
                           (item) =>
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
                             <td className="selection-cell">
@@ -593,7 +592,7 @@ function uploaded_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.email, item.mobileNumber, item.queryProductName)}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.firstName, item.email, item.mobileNumber, item.queryProductName)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -652,7 +651,7 @@ function uploaded_tickets() {
                           (item) =>
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
                             <td className="selection-cell">
@@ -770,7 +769,7 @@ function uploaded_tickets() {
                           (item) =>
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
                             <td className="selection-cell">
@@ -891,7 +890,7 @@ function uploaded_tickets() {
                           (item) =>
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
                             <td className="selection-cell">
