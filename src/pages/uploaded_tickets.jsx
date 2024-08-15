@@ -568,14 +568,8 @@ function uploaded_tickets() {
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a className="dropdown-item danger" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                              </ul>
                             </div>
-
-                            <td><span className="comment">{item.subject}<br /></span></td>
+                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
                                 <Button
@@ -687,14 +681,9 @@ function uploaded_tickets() {
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a className="dropdown-item danger" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                              </ul>
                             </div>
 
-                            <td><span className="comment">{item.subject}<br /></span></td>
+                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
                                 <Button
@@ -805,14 +794,8 @@ function uploaded_tickets() {
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a className="dropdown-item danger" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                              </ul>
                             </div>
-
-                            <td><span className="comment">{item.subject}<br /></span></td>
+                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
 
                             <td>
                               <span className="actions-wrapper">
@@ -877,9 +860,9 @@ function uploaded_tickets() {
                         <th tabindex="0">Customer Number</th>
                         <th tabindex="0">Customer Email</th>
                         <th tabindex="0">Status</th>
+                        <th tabindex="0">Requirement</th>
                         <th tabindex="0">Follow D/T</th>
                         <th tabindex="0">Comment</th>
-                        <th tabindex="0">Requirement</th>
                         <th tabindex="0">Action</th>
                         <th tabindex="0">Ticket ID</th>
                       </tr>
@@ -926,16 +909,12 @@ function uploaded_tickets() {
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a className="dropdown-item danger" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                              </ul>
                             </div>
 
-                            <td><span className="comment">{item.subject}<br /></span></td>
+                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td><span className="text">{item.followUpDateTime}</span></td>
                             <td><span className="text">{item.comment}</span></td>
+
                             <td>
                               <span className="actions-wrapper">
                                 <Button
