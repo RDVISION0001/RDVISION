@@ -420,7 +420,7 @@ function uploaded_tickets() {
       <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
-            <h3 className="title">All Tickets (Agent)<span class="d-flex justify-content-end">hello</span></h3>
+            <h3 className="title">All Tickets (Agent)</h3>
             <ul
               className="nav recent-transactions-tab-header nav-tabs"
               id="followUp"
@@ -912,7 +912,7 @@ function uploaded_tickets() {
                             </div>
 
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
-                            <td><span className="text">{item.followUpDateTime}</span></td>
+                            <td><span className="text">{(`${item.followUpDateTime}`).split(",")[2]}-{(`${item.followUpDateTime}`).split(",")[1]}-{(`${item.followUpDateTime}`).split(",")[0]}/{(`${item.followUpDateTime}`).split(",")[3]}:{(`${item.followUpDateTime}`).split(",")[4]}</span></td>
                             <td><span className="text">{item.comment}</span></td>
 
                             <td>
