@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../auth/AuthContext';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Logout from '../auth/logout';
 
 function Sidenav() {
@@ -45,6 +45,24 @@ function Sidenav() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  ///
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const loginTime = localStorage.getItem('loginTime');
+      if (loginTime) {
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - loginTime;
+        if (timeDiff >= 12 * 60 * 60 * 1000) { // 10000 ms = 10 seconds
+          logout();
+          navigate("/");
+          clearInterval(interval); // Stop checking after logging out
+        }
+      }
+    }, 1000);
+  })
 
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
@@ -121,13 +139,13 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/admin_to_everyone" className="nav-link">
-              <i className="fa-solid fa-user"></i>
+                <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Everyone</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_tickets" className="nav-link">
-              <i class="fa fa-upload" aria-hidden="true"></i>
+                <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
@@ -145,7 +163,7 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_products" className="nav-link">
-              <i class="fa-solid fa-file"></i>
+                <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Upload Products</span>
               </NavLink>
             </li>
@@ -184,7 +202,7 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/closer_upload_tickets" className="nav-link">
-              <i class="fa fa-upload" aria-hidden="true"></i>
+                <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Uploaded Tickets</span>
               </NavLink>
             </li>
@@ -280,7 +298,7 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/senior_supervisor_upload_tickets" className="nav-link">
-              <i class="fa fa-upload" aria-hidden="true"></i>
+                <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Uploaded Tickets</span>
               </NavLink>
             </li>
@@ -296,7 +314,7 @@ function Sidenav() {
                 <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
-          
+
           </>
         )}
 
@@ -309,7 +327,7 @@ function Sidenav() {
         <li className="nav-item">
           <Link className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
-            <span className="nav-text cursor-pointer"><Logout/></span>
+            <span className="nav-text cursor-pointer"><Logout /></span>
           </Link>
         </li>
       </ul>

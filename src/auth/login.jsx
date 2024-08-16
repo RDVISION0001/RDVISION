@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
@@ -19,19 +18,41 @@ function login() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false)
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
+  const handleKeyDown = (event) => {
+    handleKeyDownEnter(event)
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
 
+  const handleKeyDownEnter = (event) => {
+    if (event.key === 'Enter') {
+      sendOtp()
+    }
+  };
+  const handleKeyDownEnterLogin = (event) => {
+    if (event.key === 'Enter') {
+      handleSubmit(event)
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     try {
       await login(email, password, logInOtp);
       navigate('/Sidenav');
     } catch (error) {
       setError('Login failed');
+      setLoading(false)
     }
+    setLoading(false)
   };
-  const passwordWrong=()=>toast("Password is incorrect")
-  const otpHasSent=()=> toast.success('OTP has been sent to your email!');
+  const passwordWrong = () => toast("Password is incorrect")
+  const otpHasSent = () => toast.success('OTP has been sent to your email!');
   const sendOtp = async () => {
     setLoading(true)
     try {
@@ -45,7 +66,7 @@ function login() {
     setLoading(false)
 
   }
-
+  console.log(isCapsLockOn ? "Caps Lock is on" : "caps lock if off")
   return (
     <section className="h-100 gradient-form" >
       <div className="container py-5 h-100">
@@ -75,10 +96,17 @@ function login() {
                       <div data-mdb-input-init className="form-outline mb-4">
                         <input type="password"
                           value={password}
+                          onKeyDown={handleKeyDown}
                           onChange={(e) => setPassword(e.target.value)}
                           id="form2Example22" className="form-control"
                           placeholder="********" />
-                        <label className="form-label" for="form2Example22">Password</label>
+                        <div className="d-flex justify-content-between align-items-center">
+                          <label className="form-label" htmlFor="form2Example22">Password</label>
+                          {isCapsLockOn ? <label className="text-danger fw-bold" style={{ fontSize: '0.875rem' }}>
+                            Caps Lock is ON
+                          </label> : ""}
+                        </div>
+
                       </div>
 
                       {/* <div className='custom-navlink'><NavLink className="" to="/forgot_password">
@@ -90,10 +118,11 @@ function login() {
                           value={logInOtp}
                           onChange={(e) => setOtp(e.target.value)}
                           id="form2Example23" className="form-control"
+                          onKeyDown={handleKeyDownEnterLogin}
                           placeholder="********" />
                         <label className="form-label" for="form2Example22">Enter Otp</label>
                       </div> : null}
-                      
+
 
 
                       {/* 
@@ -105,16 +134,16 @@ function login() {
                     </form>
                     <div className="text-center pt-1 mb-5 pb-1">
                       {
-                        otpSent ? <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
+                        otpSent ? loading?<div className='d-flex justify-content-center'><div className='loader '></div></div>:<button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                           onClick={handleSubmit}> Login</button> : loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> :
                           <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                             onClick={sendOtp}> Request Otp</button>
                       }
-                    
+
                     </div>
                     <div className='custom-navlink'><NavLink className="" to="/forgot_password">
-                        Forgot Password
-                      </NavLink></div>
+                      Forgot Password
+                    </NavLink></div>
 
                   </div>
                 </div>

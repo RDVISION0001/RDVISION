@@ -65,6 +65,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('firstName', user.firstName); 
         localStorage.setItem('lastName', user.lastName); 
         localStorage.setItem('attendanceId', attendanceId); 
+        localStorage.setItem("loginTime",new Date().getTime())
 
         
         setIsAuthenticated(true);
