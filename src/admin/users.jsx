@@ -205,6 +205,20 @@ function users() {
   };
 
 
+  // Function to handle enable/disable user
+  const handleEnableDisableUser = async (userId) => {
+    try {
+      const response = await axiosInstance.post(`/user/deleteUser/${userId}`);
+      console.log('User status updated:', response.data);
+      toast.success('User status updated successfully!');
+      fetchData(currentPage); // Refresh the user list
+    } catch (error) {
+      console.error('Error updating user status:', error);
+      toast.error('Failed to update user status');
+    }
+  };
+
+
 
   return (
     <>
@@ -225,16 +239,15 @@ function users() {
                 </div>
                 <div className='d-flex flex-wrap'>
                   {
-                    data.map((item) => (
-                      <div className="col-lg-3 col-md-6">
-                        <div className="user-team-card">
+                    data.map((item, index) => (
+                      <div key={index} className="col-lg-3 col-md-6">
+                        <div className="user-team-card p-3 m-2"> {/* Added padding and margin */}
                           <div className="profile-thumb">
                             <img src={profile2} alt="profile-img" className="img-fluid" />
                           </div>
                           <div className="content-area">
                             <h3 className="title">{item.firstName} {item.lastName}</h3>
-                            <p className="sub-title">Department : <strong>{item.departmentDto?.roleName}</strong></p>
-                            <span className="other-info">IP Series : <mark>10.132.30.41</mark></span>
+                            <p className="sub-title">Designation: <strong>{item.roleDto?.roleName}</strong></p>
                           </div>
                         </div>
                       </div>
@@ -243,7 +256,6 @@ function users() {
                 </div>
               </div>
             </section>
-
             {/* <!-- User Table --> */}
             <section className="user-table-section py-3">
               <div className="container-fluid">
@@ -291,8 +303,12 @@ function users() {
                               <td>{item.teamDto?.teamName}</td>
                               <td>{item.systemIp}</td>
                               <td className="action">
-                                <Button className="btn btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
-                                <button type="button" class="btn btn-danger mx-sm-3">Delete</button>
+                                <Button className="btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
+                                <Button className={`mx-sm-3 ${item.userStatus === 'F' ? 'btn-danger' : 'btn-success'}`}
+                                  onClick={() => handleEnableDisableUser(item.userId)}
+                                >
+                                  {item.userStatus === 'F' ? 'Disable' : 'Enable'}
+                                </Button>
                               </td>
                             </tr>
                           ))}
