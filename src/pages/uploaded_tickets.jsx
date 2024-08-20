@@ -53,7 +53,10 @@ function uploaded_tickets() {
   const [data, setData] = useState(null);
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
-
+  const [isOpendAssign, setIsOpnnedAssign] = useState(false)
+  const [seletedUserType, setSelectedUserType] = useState(0)
+  const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
+  const [user, setUser] = useState([])
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
     ticketId: "",
@@ -77,6 +80,7 @@ function uploaded_tickets() {
 
   //hnadling multiple selection
   const handleMultipleTicketSelection = (e) => {
+    setSelectedTickets([])
     const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
     if (checked) {
       let newSelectedTickets = [...selectedTickets]; // Start with the current state
@@ -89,7 +93,16 @@ function uploaded_tickets() {
     }
   };
 
-
+  //selecting user type
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axiosInstance.get('/user/dropdown', {
+        params: { roleId: seletedUserType }
+      });
+      setUser(response.data.dtoList);
+    };
+    fetchData();
+  }, [seletedUserType]);
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -98,7 +111,10 @@ function uploaded_tickets() {
     followUp: { ticketStatus: 'follow' },
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+    setIsOpnnedAssign(false)
+  };
   const handleShow = (queryId) => {
     setUniqueQueryId(queryId);
     setShow(true);
@@ -314,18 +330,21 @@ function uploaded_tickets() {
     fetchData(params[tabName], 0, itemsPerPage);
   };
 
+  //handle Previous Page
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
     }
   };
 
+  //handle handle Next Page
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
 
+  //handle Items Per Page Change
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
     setCurrentPage(0);
@@ -360,6 +379,43 @@ function uploaded_tickets() {
     }
   };
 
+  // assign handling 
+
+  const handleOpenAssignTicket = () => {
+    if (selectedTickets.length > 0) {
+      setIsOpnnedAssign(true)
+    } else {
+      toast.info("Please select at least One Ticket")
+    }
+  }
+
+  const handleSelectUserType = (e) => {
+    setSelectedUserType(e.target.value)
+
+  }
+  //selecting user of selected type
+  const handleSelectUserOfSelectedUserType = (e) => {
+    setSelectedUserOfSelectedUserType(e.target.value)
+
+  }
+  const sendPostRequest = async () => {
+    try {
+      const payload = selectedTickets;
+      const config = {
+        headers: {
+          // 'teamId': parseInt(selectedTeam)
+        }
+      };
+      const url = `/upload/assignToUser/${selectedUserOfSelectedUserType}`;
+      const response = await axiosInstance.post(url, payload, config);
+      toast.success('Tickets assigned successfully!');
+      handleClose();
+      fetchData()
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Failed to assign tickets.');
+    }
+  };
 
 
   return (
@@ -420,8 +476,21 @@ function uploaded_tickets() {
       <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
-            <h3 className="title">All Tickets (Agent)</h3>
-            <ul
+            <h3 className="title">Uploaded Tickets</h3>
+            <div className="d-flex justify-content-between align-items-center">
+              <h3 className="title mb-0">All Tickets</h3>
+              {localStorage.getItem("roleName") === "Admin" && (
+                <Button
+                  onClick={handleOpenAssignTicket}
+                  className="btn btn-assign"
+                  data-bs-toggle="modal"
+                  data-bs-target="#assignTicketModal"
+                  id="assignButton"
+                >
+                  Assign Ticket
+                </Button>
+              )}
+            </div>            <ul
               className="nav recent-transactions-tab-header nav-tabs"
               id="followUp"
               role="tablist"
@@ -512,9 +581,9 @@ function uploaded_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th className="selection-cell-header" data-row-selection="true">
+                        {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
                           <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                        </th>
+                        </th> : ""}
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -535,13 +604,13 @@ function uploaded_tickets() {
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
-                            <td className="selection-cell">
+                            {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
                                 type="checkbox"
                                 checked={selectedTickets.includes(item.uniqueQueryId)}
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
-                            </td>
+                            </td> : ""}
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.firstName} {item.lastName}</span></td>
@@ -624,9 +693,9 @@ function uploaded_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th className="selection-cell-header" data-row-selection="true">
+                        {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
                           <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                        </th>
+                        </th> : ""}
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -648,13 +717,13 @@ function uploaded_tickets() {
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
-                            <td className="selection-cell">
+                            {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
                                 type="checkbox"
                                 checked={selectedTickets.includes(item.uniqueQueryId)}
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
-                            </td>
+                            </td> : ""}
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.firstName} {item.lastName}</span></td>
@@ -738,9 +807,9 @@ function uploaded_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th className="selection-cell-header" data-row-selection="true">
+                        {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
                           <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                        </th>
+                        </th> : ""}
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -761,13 +830,13 @@ function uploaded_tickets() {
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
-                            <td className="selection-cell">
+                            {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
                                 type="checkbox"
                                 checked={selectedTickets.includes(item.uniqueQueryId)}
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
-                            </td>
+                            </td> : ""}
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.firstName} {item.lastName}</span></td>
@@ -851,9 +920,9 @@ function uploaded_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th className="selection-cell-header" data-row-selection="true">
+                        {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
                           <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                        </th>
+                        </th> : ""}
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -876,13 +945,13 @@ function uploaded_tickets() {
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
                           <tr key={index}>
-                            <td className="selection-cell">
+                            {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
                                 type="checkbox"
                                 checked={selectedTickets.includes(item.uniqueQueryId)}
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
-                            </td>
+                            </td> : ""}
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.firstName} {item.lastName}</span></td>
@@ -983,6 +1052,40 @@ function uploaded_tickets() {
           </div>
         </div>
       </section>
+      <Modal show={isOpendAssign} onHide={handleClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Assign Tickets to Team</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form>
+            <div className="form-group">
+              <label htmlFor="teamSelect">Select User Type</label>
+              <select className="form-control" id="teamSelect" onChange={handleSelectUserType} value={seletedUserType}>
+                <option value="">Choose...</option>
+                <option value="3">Captain</option>
+                <option value="4">Closer</option>
+                <option value="5">Senior SuperVisor</option>
+
+              </select>
+              <label htmlFor="teamSelect">Select Team</label>
+              <select className="form-control" id="teamSelect" onChange={handleSelectUserOfSelectedUserType} value={selectedUserOfSelectedUserType}>
+                <option value="">Choose...</option>
+                {user.map((t) => (
+                  <option key={t.userId} value={t.userId}>{t.firstName + " " + t.lastName}</option>
+                ))}
+              </select>
+            </div>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={sendPostRequest}>
+            Assign Tickets
+          </Button>
+        </Modal.Footer>
+      </Modal>
       {/* <!-- -------------- -->
 
             <!-- ------------------------------------------------------------

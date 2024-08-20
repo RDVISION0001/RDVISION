@@ -398,7 +398,7 @@ function live_tickets() {
       <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
-            <h3 className="title">All Tickets (Agent)<span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
+            <h3 className="title">Live Tickets<span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
             <ul
               className="nav recent-transactions-tab-header nav-tabs"
               id="followUp"
@@ -1023,7 +1023,7 @@ function live_tickets() {
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
           <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Call Status
+            Send mail to Customer
           </h1>
         </Modal.Header>
         <Modal.Body>
@@ -1033,7 +1033,7 @@ function live_tickets() {
                 <div className="col-lg-6">
                   <div className="card shadow-sm">
                     <div className="card-body">
-                      <h5 className="card-title text-center mb-4">User Detail</h5>
+                      <h5 className="card-title text-center mb-4">Customer Detail</h5>
                       <div className="user-info">
                         <div><strong>Name:</strong> {senderNameForEmail}</div>
                         <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
