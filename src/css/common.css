@@ -74,17 +74,16 @@
   
   .calender-modal {
     width: 69%;
-    height: 32%;
+    height: 420px;
     background-color: #515356;
     border-radius: 10px;
     overflow: hidden;
     padding: 1rem;
     position: fixed;
-    top: 20%;
-    left: 60%;
+    top: 266px;
+    left: 50%;
     transform: translate(-50%, -50%);
     border: none;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   }
   
   
