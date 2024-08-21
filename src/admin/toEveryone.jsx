@@ -22,12 +22,16 @@ function toEveryone() {
     const [team, setTeam] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState('');
     const [data, setData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
     const [seletedUserType, setSelectedUserType] = useState(0)
     const [user, setUser] = useState([])
     const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
     const handleClose = () => setShow(false);
+
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     //Short Method
     const [shortValue, setShortValue] = useState("")
@@ -43,11 +47,6 @@ function toEveryone() {
         }
     }
 
-    const handleRowClick = (tabName) => {
-        setActiveTab(tabName);
-        setCurrentPage(0);
-        fetchTickets(params[tabName], 0);
-    };
 
     //handle select tickets
     const handleTicketSelect = (e, id) => {
@@ -111,10 +110,10 @@ function toEveryone() {
         setSelectedUserType(e.target.value)
 
     }
-    const fetchTickets = async (params, page) => {
+    const fetchTickets = async (params, page, perPage) => {
         try {
             const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                params: { ...params, page }
+                params: { ...params, page, size: perPage }
             });
             setData(response.data.dtoList);
             setCurrentPage(response.data.currentPage);
@@ -123,6 +122,12 @@ function toEveryone() {
             console.error('Error fetching tickets:', error);
         }
     };
+
+    //iteam par page
+    useEffect(() => {
+        fetchTickets(params[activeTab], currentPage, itemsPerPage);
+    }, [activeTab, currentPage, itemsPerPage]);
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await axiosInstance.get('/user/dropdown', {
@@ -134,24 +139,58 @@ function toEveryone() {
         fetchData();
     }, [seletedUserType]);
 
-    useEffect(() => {
-        fetchTickets(params.allTickets, 0);
-    }, []);
 
+    //handle row click
+    const handleRowClick = (tabName) => {
+        setActiveTab(tabName);
+        setCurrentPage(0);
+        fetchTickets(params[tabName], 0, itemsPerPage);
+    };
+
+    //handle Previous Page
     const handlePreviousPage = () => {
         if (currentPage > 0) {
-            fetchTickets(params[activeTab], currentPage - 1);
+            setCurrentPage(currentPage - 1);
         }
     };
 
+    //handle handle Next Page
     const handleNextPage = () => {
         if (currentPage < totalPages - 1) {
-            fetchTickets(params[activeTab], currentPage + 1);
+            setCurrentPage(currentPage + 1);
         }
     };
+
+    //handle Items Per Page Change
+    const handleItemsPerPageChange = (perPage) => {
+        setItemsPerPage(perPage);
+        setCurrentPage(0);
+    };
+
+    const generatePageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 9;
+        const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
+
+        let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
+        let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
+
+        if (endPage - startPage < maxPagesToShow - 1) {
+            startPage = Math.max(endPage - maxPagesToShow + 1, 0);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+
+        return pageNumbers;
+    };
+
     const disableTcket = () => {
         return selectedTickets.length === 0 ? "disabled" : ""
     }
+
+
 
     return (
         <>
@@ -410,9 +449,27 @@ function toEveryone() {
                                     </div>
                                 </div>
                                 <div className="pagination-controls">
-                                    <button onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                                    <span>Page {currentPage + 1} of {totalPages}</span>
-                                    <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+                                    <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                                    {generatePageNumbers().map((page) => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                                        >
+                                            {page + 1}
+                                        </button>
+                                    ))}
+                                    <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+                                    <span> Items per page:</span>{' '}
+                                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
                                 </div>
                             </div>
                         </section>

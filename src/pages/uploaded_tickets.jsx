@@ -158,6 +158,8 @@ function uploaded_tickets() {
     }
   };
 
+
+  //notification
   const playNotificationSound = () => {
     const audio = new Audio(R2ZWYCP);
     audio.play();
@@ -284,6 +286,7 @@ function uploaded_tickets() {
 
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
+  //iteam par page
   useEffect(() => {
     fetchData(params[activeTab], currentPage, itemsPerPage);
   }, [activeTab, currentPage, itemsPerPage]);
@@ -324,6 +327,7 @@ function uploaded_tickets() {
     }
   };
 
+  //handle row click
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);

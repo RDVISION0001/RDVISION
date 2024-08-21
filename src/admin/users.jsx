@@ -304,7 +304,12 @@ function users() {
                               <td>{item.systemIp}</td>
                               <td className="action">
                                 <Button className="btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
-                                <Button className={`mx-sm-3 ${item.userStatus === 'F' ? 'btn-danger' : 'btn-success'}`}
+                                <Button
+                                  className="mx-sm-3"
+                                  style={{
+                                    backgroundColor: item.userStatus === 'F' ? 'red' : 'green',
+                                    color: 'white' // Ensures the text color contrasts well with the background
+                                  }}
                                   onClick={() => handleEnableDisableUser(item.userId)}
                                 >
                                   {item.userStatus === 'F' ? 'Disable' : 'Enable'}
