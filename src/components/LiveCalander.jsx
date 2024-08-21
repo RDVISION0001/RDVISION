@@ -57,7 +57,7 @@ console.log(date.split("-")[2])
         ))}
 
         {calendarDays.map((day, index) => (
-          <div key={index} className="dateHover p-2 border text-center " >
+          <div key={index} className={`dateHover p-2 border text-center ${ (day===parseInt(date.split("-")[2]) && currentYear===parseInt(date.split("-")[0]) && (currentMonth+1)===parseInt(date.split("-")[1]))?"bg-danger":""} ` }>
             <div className='detailsBox'>{day}/{currentMonth}/{currentYear}
               <span>
               {

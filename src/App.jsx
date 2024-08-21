@@ -69,6 +69,9 @@ import Tocaptain from './senior_supervisor/toCaptain';
 import './components/css/themedigproX01.css';
 import './components/css/themedigproX01.scss';
 
+//common css
+import './css/common.css'
+
 
 // css/////////////////
 import './admin/css/admin.css';
