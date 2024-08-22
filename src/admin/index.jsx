@@ -5,6 +5,7 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 import FloatingButton from '../components/FloatingButton';
+import FeatureControl from '../components/FeatureControl';
 
 
 //pages
@@ -28,8 +29,12 @@ function index() {
             <Cardinfo />
           </div>
 
-          <div>
+          <div className="container-fluid mt-3">
             <FloatingButton />
+          </div>
+
+          <div className="container-fluid mt-3">
+            <FeatureControl />
           </div>
 
           <div className="container-fluid mt-3">

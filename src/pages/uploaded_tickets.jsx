@@ -58,6 +58,9 @@ function uploaded_tickets() {
   const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
   const [user, setUser] = useState([])
   const [productArray, setProductArray] = useState([]);
+  const [showAlltickets, setShowAllTiuckets] = useState(false)
+  const [files, setFiles] = useState([])
+  const [selectedDate, setSelectedDate] = useState(null)
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -138,7 +141,7 @@ function uploaded_tickets() {
 
   const fetchData = async (params, page, perPage) => {
     try {
-      const response = await axiosInstance.get('/upload/allTicketsByStatus', {
+      const response = await axiosInstance.get(`/upload/getByDate/${selectedDate ? selectedDate : ""}`, {
         params: { ...params, page, size: perPage }
       });
       setData(response.data.dtoList);
@@ -295,6 +298,24 @@ function uploaded_tickets() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    axiosInstance.get(`/upload/filesByDate`).then((resp) => {
+      setFiles(resp.data.response)
+    })
+  }, [])
+
+  //Open file
+  const setDateToOpenFile = (file) => {
+    setSelectedDate(file[0]);
+    setShowAllTiuckets(true);
+  };
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchData();
+    }
+  }, [selectedDate]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -420,8 +441,7 @@ function uploaded_tickets() {
       toast.error('Failed to assign tickets.');
     }
   };
-
-
+  console.log("Selected Date is :", selectedDate)
   return (
     <>
       {/* //Filter input */}
@@ -477,7 +497,24 @@ function uploaded_tickets() {
         </div>
       </section>
       {/* <!-- Tabbed Ticket Table --> */}
-      <section className="followup-table-section py-3">
+      <section className="card-body m-3">
+        <div className="row ">
+          {files.map((file, index) => (
+            <div className="col-12 col-md-8 col-lg-6 col-xl-4 mb-3" onClick={() => setDateToOpenFile(file)}>
+              <div className="d-flex align-items-center border p-3 rounded hover-scale bg-light shadow-sm">
+                <i className="fa-solid fa-file fa-2x me-3 text-info"></i>
+                <div>
+                  <h5 className="mb-1 text-dark fw-bold">Upload date: {file[0]}</h5>
+                  <small className="text-secondary">
+                    Total tickets: <span className="text-danger fw-bold">{file[1]}</span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      {showAlltickets ? <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
             <h3 className="title">Uploaded Tickets</h3>
@@ -1055,7 +1092,7 @@ function uploaded_tickets() {
             </select>
           </div>
         </div>
-      </section>
+      </section> : ""}
       <Modal show={isOpendAssign} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Assign Tickets to Team</Modal.Title>
