@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
+import axios from 'axios';
 
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -160,6 +161,18 @@ function live_tickets() {
     };
   }, []);
 
+
+  //click to call
+  const handleClick = async (number) => {
+    try {
+        const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
+            number: number.split("-")[1]  
+        });
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error during API call:', error);
+    }
+};
 
 
 
@@ -338,8 +351,8 @@ function live_tickets() {
   };
 
 
-  return (
 
+  return (
     <>
 
       {/* //Filter input */}
@@ -398,7 +411,7 @@ function live_tickets() {
       <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
-            <h3 className="title">Live Tickets<span class="d-flex justify-content-end"><i class="fa fa-filter" aria-hidden="true"></i></span></h3>
+            <h3 className="title">Live Tickets<span class="d-flex justify-content-end"></span></h3>
             <ul
               className="nav recent-transactions-tab-header nav-tabs"
               id="followUp"
@@ -547,7 +560,8 @@ function live_tickets() {
                             <td>
                               <span className="actions-wrapper">
                                 <Button
-                                  onClick={handleView}
+                                  onClick={() => handleClick(item.senderMobile)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -656,7 +670,8 @@ function live_tickets() {
                             <td>
                               <span className="actions-wrapper">
                                 <Button
-                                  onClick={handleView}
+                                  onClick={() => handleClick(item.senderMobile)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -765,7 +780,8 @@ function live_tickets() {
                             <td>
                               <span className="actions-wrapper">
                                 <Button
-                                  onClick={handleView}
+                                  onClick={() => handleClick(item.senderMobile)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -877,7 +893,8 @@ function live_tickets() {
                             <td>
                               <span className="actions-wrapper">
                                 <Button
-                                  onClick={handleView}
+                                  onClick={() => handleClick(item.senderMobile)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -1168,4 +1185,4 @@ function live_tickets() {
   )
 }
 
-export default live_tickets
+export default live_tickets;
