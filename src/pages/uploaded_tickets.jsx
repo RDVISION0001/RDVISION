@@ -106,12 +106,13 @@ function uploaded_tickets() {
     };
     fetchData();
   }, [seletedUserType]);
+
   // Define parameters for each tab
   const params = {
-    allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    allTickets: {userId},
+    ongoing: {userId, ticketStatus: 'Sale' },
+    newTickets: {userId,  ticketStatus: 'New' },
+    followUp: {userId,  ticketStatus: 'follow' },
   };
 
   const handleClose = () => {
@@ -206,6 +207,19 @@ function uploaded_tickets() {
       }
     };
   }, []);
+
+  //click to call
+  const handleClick = async (number) => {
+    try {
+        const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
+            number: number
+        });
+        console.log('Response:', response.data);
+    } catch (error) {
+        console.error('Error during API call:', error);
+    }
+};
+
 
 
   // Masking mobile number
@@ -682,8 +696,9 @@ function uploaded_tickets() {
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                                <Button
-                                  onClick={handleView}
+                              <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -796,8 +811,9 @@ function uploaded_tickets() {
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                                <Button
-                                  onClick={handleView}
+                              <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -909,8 +925,9 @@ function uploaded_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
-                                <Button
-                                  onClick={handleView}
+                              <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -1027,8 +1044,9 @@ function uploaded_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
-                                <Button
-                                  onClick={handleView}
+                              <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
+                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"

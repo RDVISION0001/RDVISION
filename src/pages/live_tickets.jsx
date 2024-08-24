@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
+import TicketJourney from "../components/TicketJourney"
 
 import axios from 'axios';
 
@@ -122,6 +123,17 @@ function live_tickets() {
     audio.play();
   };
 
+  //ticket journey/////////
+  const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+  const openTicketJourney = (ticketId) => {
+    setSelectedTicketInfo(ticketId)
+    console.log(ticketId)
+    document.getElementById("ticketjourney").showModal()
+  }
+  const closeTicketJourney = () => {
+    document.getElementById("ticketjourney").close()
+  }
+
   //Short Method
   const [shortValue, setShortValue] = useState("")
   const handleShortDataValue = (e) => {
@@ -165,14 +177,14 @@ function live_tickets() {
   //click to call
   const handleClick = async (number) => {
     try {
-        const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-            number: number.split("-")[1]  
-        });
-        console.log('Response:', response.data);
+      const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
+        number: number.split("-")[1]
+      });
+      console.log('Response:', response.data);
     } catch (error) {
-        console.error('Error during API call:', error);
+      console.error('Error during API call:', error);
     }
-};
+  };
 
 
 
@@ -559,6 +571,15 @@ function live_tickets() {
                             <td><span className="comment">{item.subject}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
+                              <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -669,6 +690,15 @@ function live_tickets() {
                             <td><span className="comment">{item.subject}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
+                                 <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -779,6 +809,15 @@ function live_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
+                              <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -892,6 +931,15 @@ function live_tickets() {
                             <td><span className="text">{item.comment}</span></td>
                             <td>
                               <span className="actions-wrapper">
+                              <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -1181,6 +1229,17 @@ function live_tickets() {
           </div>
         </div>
       </Modal>
+
+      <dialog
+        id="ticketjourney"
+        className="bg-white rounded shadow"
+        style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+      >
+
+        <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center" >
+          <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+        </div>
+      </dialog>
     </>
   )
 }

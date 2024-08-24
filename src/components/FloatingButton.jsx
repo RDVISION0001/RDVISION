@@ -54,6 +54,9 @@ const FloatingButton = () => {
           right: isMinimized ? '-500px' : 'auto',
         },
       };
+
+
+      
     return (
         <div>
             {isOpen && (
