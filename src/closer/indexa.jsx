@@ -5,7 +5,7 @@ import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
-// import Worktime from '../components/worktime';
+import Worktime from '../components/worktime';
 // import Chart from '../components/chart';
 import FloatingButton from '../components/FloatingButton';
 
@@ -39,11 +39,11 @@ function indexa() {
             <TaskProgress />
           </div>
 
-          {/* <div className="container-fluid mt-3">
+          <div className="d-flex flex-column align-items-end justify-content-end w-100">
             <Worktime />
           </div>
 
-          <div className="container-fluid mt-3">
+          {/* <div className="container-fluid mt-3">
             <Chart />
           </div> */}
 

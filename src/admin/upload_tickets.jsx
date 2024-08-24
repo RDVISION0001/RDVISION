@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Uploaded_tickets from '../pages/uploaded_tickets';
+import FloatingButton from '../components/FloatingButton'
 
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -40,6 +41,7 @@ function upload_tickets() {
       setCurrentPage(currentPage - 1);
     }
   };
+
   //selecting user type
   useEffect(() => {
     const fetchData = async () => {
@@ -79,6 +81,8 @@ function upload_tickets() {
 
     return pageNumbers;
   };
+
+  
   // Upload ticket state
   const [dataToSave, setDataToSave] = useState({
     csvStringData: ""
@@ -176,8 +180,9 @@ function upload_tickets() {
       setSelectedTickets([]); // Reset to an empty array
     }
   };
-  ///assign function
 
+
+  ///assign function
   const sendPostRequest = async () => {
     try {
       const payload = selectedTickets;
@@ -226,7 +231,9 @@ function upload_tickets() {
                 </div>
               </div>
             </section>
-           <Uploaded_tickets/>
+            <FloatingButton />
+
+            <Uploaded_tickets />
           </div>
         </div>
       </div>

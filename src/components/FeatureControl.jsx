@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
-import axiosInstance from 'axios';
+import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import axiosInstance from '../axiosInstance';
 
 function FeatureControl() {
     const [isOn, setIsOn] = useState(false);
+    useEffect(() => {
+        fetchStatus()
+    }, [])
 
+    const fetchStatus = () => {
+        axiosInstance.get('user/getAutoStatus').then((response) => {
+            setIsOn(response.data)
+
+        })
+    }
     const handleFeature = async () => {
-        const newStatus = !isOn ? 'ON' : 'OFF';
-        try {
-            await axiosInstance.get('user/autoAssign');
-            setIsOn(!isOn);
-            toast.success(`Feature turned ${newStatus} successfully!`);
-        } catch (error) {
-            console.error('Error toggling feature:', error);
-            toast.error('Failed to toggle the feature.');
+        const response = await axiosInstance.put('user/autoAssign');
+        if (!isOn) {
+            toast.info("Auto assign feature is enabled")
+        } else {
+            toast.info("Auto assign feature is disabled")
         }
+        fetchStatus()
     };
 
     return (
