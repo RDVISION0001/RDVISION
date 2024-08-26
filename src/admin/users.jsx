@@ -84,13 +84,32 @@ function users() {
     roleId: 0,
     departmentId: 0,
     teamId: 0,
-    profilepic: '',
+    imageData: "",
     createdDate: 0,
     createdBy: 0,
     updatedBy: 0,
     systemIp: '',
     userStatus: 0,
   });
+
+
+  //image handling
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setFormData((prevData) => ({
+        ...prevData,
+        imageData: reader.result.split(",")[1] // Store the Base64 string in imageData
+      }));
+    };
+
+    if (file) {
+      reader.readAsDataURL(file); // Convert the file to a Base64 string
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -218,7 +237,19 @@ function users() {
     }
   };
 
+  //resuble function to convert byte code to image url
+  function convertToImage(imageString) {
+    const byteCharacters = atob(imageString); // Decode base64 string
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    return url;
 
+  }
 
   return (
     <>
@@ -243,7 +274,7 @@ function users() {
                       <div key={index} className="col-lg-3 col-md-6">
                         <div className="user-team-card p-3 m-2"> {/* Added padding and margin */}
                           <div className="profile-thumb">
-                            <img src={profile2} alt="profile-img" className="img-fluid" />
+                            <img src={convertToImage(item.imageData)} className="img-fluid rounded" />
                           </div>
                           <div className="content-area">
                             <h3 className="title">{item.firstName} {item.lastName}</h3>
@@ -294,7 +325,7 @@ function users() {
                               </td>
                               <td key={item.id}>
                                 <div className="profile-thumb">
-                                  <img src={item.profilepic} alt="profile-icon" className="img-fluid" />
+                                  <img src={convertToImage(item.imageData)} alt="profile-icon" className="img-fluid" />
                                 </div>
                               </td>
                               <td>{item.firstName} {item.lastName}</td>
@@ -441,9 +472,12 @@ function users() {
                       <div className="user-profile">
                         <img src="../img/profiles/profile08.png" className="img-fluid" alt="upload-profile" />
                         <div className="upload-profile-wrapper">
-                          <input type="file" value={formData.profilepic} onChange={handleChange} name="upload-profile" id="upload-profile-img" hidden />
+                          <input type="file" value={formData.profilepic} onChange={handleFileChange} name="upload-profile" id="upload-profile-img" hidden />
                           <label for="upload-profile-img" className="form-label"><i className="fa-solid fa-user-pen"></i></label>
                         </div>
+                      </div>
+                      <div>
+                        <img className='m-2 w-75 rounded' src={convertToImage(formData.imageData)} alt="" />
                       </div>
                     </div>
                     <div className="col-9 pe-0">
@@ -596,7 +630,7 @@ function users() {
 
                   <div className="col-md-6">
                     <label for="inputEmail" className="form-label">IP</label>
-                    <input type="email" className="form-control" id="inputEmail" value="10.135.2.21" />
+                    <input type="text" className="form-control" id="inputEmail" value="10.135.2.21" />
                   </div>
 
                   <div className="col-12 mt-5 text-center">

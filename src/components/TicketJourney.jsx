@@ -42,7 +42,7 @@ const TicketJourney = (props) => {
                     ))}
 
 
-                </ul>:<div> No data</div>
+                </ul>:<div className='text-center'> No data found</div>
             }
         </div>
     );
