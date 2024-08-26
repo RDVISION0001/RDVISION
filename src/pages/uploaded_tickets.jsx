@@ -109,10 +109,10 @@ function uploaded_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {userId},
-    ongoing: {userId, ticketStatus: 'Sale' },
-    newTickets: {userId,  ticketStatus: 'New' },
-    followUp: {userId,  ticketStatus: 'follow' },
+    allTickets: { userId:(localStorage.getItem("roleName")==="Admin"?null:userId)},
+    ongoing: { userId:(localStorage.getItem("roleName")==="Admin"?null:userId), ticketStatus: 'Sale' },
+    newTickets: { userId:(localStorage.getItem("roleName")==="Admin"?null:userId),  ticketStatus: 'New' },
+    followUp: { userId:(localStorage.getItem("roleName")==="Admin"?null:userId),  ticketStatus: 'follow' },
   };
 
   const handleClose = () => {
@@ -143,7 +143,7 @@ function uploaded_tickets() {
   const fetchData = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get(`/upload/getByDate/${selectedDate ? selectedDate : ""}`, {
-        params: { ...params, page, size: perPage }
+        params: { ...params, page, size: perPage, userId:(localStorage.getItem("roleName")==="Admin"?null:userId)}
       });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
