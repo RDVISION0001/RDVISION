@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
-import TicketJourney from "../components/TicketJourney"
 
 import axios from 'axios';
 
@@ -20,6 +19,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Clipboard copy
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import TicketJourney from '../components/TicketJourney';
 
 
 
@@ -55,6 +55,7 @@ function live_tickets() {
   const [data, setData] = useState(null);
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+  const [callId,setCallId]=useState(0)
 
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -123,17 +124,6 @@ function live_tickets() {
     audio.play();
   };
 
-  //ticket journey/////////
-  const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
-  const openTicketJourney = (ticketId) => {
-    setSelectedTicketInfo(ticketId)
-    console.log(ticketId)
-    document.getElementById("ticketjourney").showModal()
-  }
-  const closeTicketJourney = () => {
-    document.getElementById("ticketjourney").close()
-  }
-
   //Short Method
   const [shortValue, setShortValue] = useState("")
   const handleShortDataValue = (e) => {
@@ -181,6 +171,7 @@ function live_tickets() {
         number: number.split("-")[1]
       });
       console.log('Response:', response.data);
+      setCallId(response.data.call_id)
     } catch (error) {
       console.error('Error during API call:', error);
     }
@@ -296,6 +287,7 @@ function live_tickets() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
+        call_id:callId
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -303,6 +295,7 @@ function live_tickets() {
       handleClose();
       fetchData(params[activeTab], currentPage, itemsPerPage);
       setError(null);
+      setCallId(0)
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -362,7 +355,18 @@ function live_tickets() {
     }
   };
 
+  //ticket journey
+  const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+  const openTicketJourney = (ticketId) => {
+    setSelectedTicketInfo(ticketId)
+    console.log(ticketId)
+    document.getElementById("ticketjourney").showModal()
+  }
+  const closeTicketJourney = () => {
+    document.getElementById("ticketjourney").close()
+  }
 
+console.log("Calal id is ",callId)
 
   return (
     <>
@@ -571,7 +575,7 @@ function live_tickets() {
                             <td><span className="comment">{item.subject}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                              <Button
+                                <Button
                                   onClick={() => openTicketJourney(item.uniqueQueryId)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
@@ -690,15 +694,6 @@ function live_tickets() {
                             <td><span className="comment">{item.subject}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                                 <Button
-                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                  // onClick={handleView}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call bg-danger"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-info "></i>
-                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -809,15 +804,6 @@ function live_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
-                              <Button
-                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                  // onClick={handleView}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call bg-danger"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-info "></i>
-                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -931,15 +917,6 @@ function live_tickets() {
                             <td><span className="text">{item.comment}</span></td>
                             <td>
                               <span className="actions-wrapper">
-                              <Button
-                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                  // onClick={handleView}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call bg-danger"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-info "></i>
-                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
@@ -1229,17 +1206,17 @@ function live_tickets() {
           </div>
         </div>
       </Modal>
-
-      <dialog
-        id="ticketjourney"
-        className="bg-white rounded shadow"
-        style={{ width: '80%', maxWidth: '600px', border: 'none' }}
-      >
-
-        <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center" >
-          <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
-        </div>
-      </dialog>
+            <dialog
+                id="ticketjourney"
+                className="bg-white rounded shadow"
+                style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+            >
+              
+               <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center" >
+                <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+                </div>
+            </dialog>
+        
     </>
   )
 }
