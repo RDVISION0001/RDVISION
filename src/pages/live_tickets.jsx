@@ -55,7 +55,7 @@ function live_tickets() {
   const [data, setData] = useState(null);
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
-  const [callId,setCallId]=useState(0)
+  const [callId, setCallId] = useState(0)
 
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -81,7 +81,10 @@ function live_tickets() {
     setShow(true);
   };
 
-  const handleOff = () => setOn(false);
+  const handleOff = () => {
+    setOn(false)
+    setProductArray([])
+  };
   const handleOn = (queryId, senderName, email, mobile, product) => {
     setUniqueQueryId(queryId);
     setSenderNameForEmail(senderName);
@@ -140,10 +143,8 @@ function live_tickets() {
 
       },
       onConnect: () => {
-        console.log('Connected');
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          console.log("Message received", newProduct)
           playNotificationSound()
           setData((prevProducts) => [newProduct, ...prevProducts]);
         });
@@ -170,7 +171,6 @@ function live_tickets() {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
         number: number.split("-")[1]
       });
-      console.log('Response:', response.data);
       setCallId(response.data.call_id)
     } catch (error) {
       console.error('Error during API call:', error);
@@ -224,7 +224,6 @@ function live_tickets() {
 
     try {
       const response = await axiosInstance.post(url, data);
-      console.log('Data fetched successfully:', response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -287,7 +286,7 @@ function live_tickets() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
-        call_id:callId
+        call_id: callId
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -359,14 +358,12 @@ function live_tickets() {
   const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
   const openTicketJourney = (ticketId) => {
     setSelectedTicketInfo(ticketId)
-    console.log(ticketId)
     document.getElementById("ticketjourney").showModal()
   }
   const closeTicketJourney = () => {
     document.getElementById("ticketjourney").close()
   }
 
-console.log("Calal id is ",callId)
 
   return (
     <>
@@ -695,6 +692,15 @@ console.log("Calal id is ",callId)
                             <td>
                               <span className="actions-wrapper">
                                 <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
@@ -709,7 +715,7 @@ console.log("Calal id is ",callId)
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.queryProductName)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -819,7 +825,7 @@ console.log("Calal id is ",callId)
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.queryProductName)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -918,6 +924,15 @@ console.log("Calal id is ",callId)
                             <td>
                               <span className="actions-wrapper">
                                 <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
@@ -932,7 +947,7 @@ console.log("Calal id is ",callId)
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.queryProductName)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -1198,7 +1213,6 @@ console.log("Calal id is ",callId)
                         </button>
                       </div>
                     </form>
-
                   </div>
                 </div>
               </div>
@@ -1206,17 +1220,17 @@ console.log("Calal id is ",callId)
           </div>
         </div>
       </Modal>
-            <dialog
-                id="ticketjourney"
-                className="bg-white rounded shadow"
-                style={{ width: '80%', maxWidth: '600px', border: 'none' }}
-            >
-              
-               <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center" >
-                <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
-                </div>
-            </dialog>
-        
+      <dialog
+        id="ticketjourney"
+        className="bg-white rounded shadow"
+        style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+      >
+
+        <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center">
+          <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+        </div>
+      </dialog>
+
     </>
   )
 }

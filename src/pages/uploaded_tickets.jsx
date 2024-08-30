@@ -20,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 // Clipboard copy
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import TicketJourney from '../components/TicketJourney';
 
 
 
@@ -61,6 +62,7 @@ function uploaded_tickets() {
   const [showAlltickets, setShowAllTiuckets] = useState(false)
   const [files, setFiles] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
+  const [callId, setCallId] = useState(0)
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -106,13 +108,13 @@ function uploaded_tickets() {
     };
     fetchData();
   }, [seletedUserType]);
-
   // Define parameters for each tab
+
   const params = {
-    allTickets: { userId: (localStorage.getItem("roleName") === "Admin" ? null : userId) },
-    ongoing: { userId: (localStorage.getItem("roleName") === "Admin" ? null : userId), ticketStatus: 'Sale' },
-    newTickets: { userId: (localStorage.getItem("roleName") === "Admin" ? null : userId), ticketStatus: 'New' },
-    followUp: { userId: (localStorage.getItem("roleName") === "Admin" ? null : userId), ticketStatus: 'follow' },
+    allTickets: {},
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
+    followUp: { ticketStatus: 'follow' },
   };
 
   const handleClose = () => {
@@ -124,7 +126,10 @@ function uploaded_tickets() {
     setShow(true);
   };
 
-  const handleOff = () => setOn(false);
+  const handleOff = () => {
+    setOn(false)
+    setProductArray([])
+  };
   const handleOn = (queryId, firstName, email, mobile, product) => {
     setUniqueQueryId(queryId);
     setSenderNameForEmail(firstName);
@@ -143,7 +148,7 @@ function uploaded_tickets() {
   const fetchData = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get(`/upload/getByDate/${selectedDate ? selectedDate : ""}`, {
-        params: { ...params, page, size: perPage, userId: (localStorage.getItem("roleName") === "Admin" ? null : userId) }
+        params: { ...params, page, size: perPage }
       });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
@@ -161,6 +166,19 @@ function uploaded_tickets() {
       console.error('Error fetching data:', error);
     }
   };
+
+  //click to call
+  const handleClick = async (number) => {
+    try {
+      const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
+        number: number
+      });
+      setCallId(response.data.call_id)
+    } catch (error) {
+      console.error('Error during API call:', error);
+    }
+  };
+
 
 
   //notification
@@ -185,10 +203,8 @@ function uploaded_tickets() {
 
       },
       onConnect: () => {
-        console.log('Connected');
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          console.log("Message received", newProduct)
           playNotificationSound()
           setData((prevProducts) => [newProduct, ...prevProducts]);
         });
@@ -207,19 +223,6 @@ function uploaded_tickets() {
       }
     };
   }, []);
-
-  //click to call
-  const handleClick = async (number) => {
-    try {
-        const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-            number: number
-        });
-        console.log('Response:', response.data);
-    } catch (error) {
-        console.error('Error during API call:', error);
-    }
-};
-
 
 
   // Masking mobile number
@@ -273,7 +276,6 @@ function uploaded_tickets() {
 
     try {
       const response = await axiosInstance.post(url, data);
-      console.log('Data fetched successfully:', response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -349,6 +351,7 @@ function uploaded_tickets() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
+        call_id: callId
       };
       const res = await axiosInstance.post(`/upload/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -455,7 +458,18 @@ function uploaded_tickets() {
       toast.error('Failed to assign tickets.');
     }
   };
-  console.log("Selected Date is :", selectedDate)
+
+
+  //ticket journey
+  const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+  const openTicketJourney = (ticketId) => {
+    setSelectedTicketInfo(ticketId)
+    document.getElementById("ticketjourney").showModal()
+  }
+  const closeTicketJourney = () => {
+    document.getElementById("ticketjourney").close()
+  }
+
   return (
     <>
       {/* //Filter input */}
@@ -696,9 +710,18 @@ function uploaded_tickets() {
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                              <Button
-                                  onClick={() => handleClick(item.mobileNumber)}
+                                <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
                                   // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
+                                  // onClick={handleView}
+                                  onClick={() => handleClick(item.mobileNumber)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -711,7 +734,7 @@ function uploaded_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={() => handleOn(item.uniqueQueryId, item.firstName, item.email, item.mobileNumber, item.queryProductName)}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.firstName, item.email, item.mobileNumber, item.productEnquiry)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -811,9 +834,17 @@ function uploaded_tickets() {
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td>
                               <span className="actions-wrapper">
-                              <Button
-                                  onClick={() => handleClick(item.mobileNumber)}
+                                <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
                                   // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -826,7 +857,7 @@ function uploaded_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.productEnquiry)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -925,9 +956,8 @@ function uploaded_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
-                              <Button
+                                <Button
                                   onClick={() => handleClick(item.mobileNumber)}
-                                  // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -940,7 +970,7 @@ function uploaded_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.productEnquiry)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -1044,9 +1074,17 @@ function uploaded_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
-                              <Button
-                                  onClick={() => handleClick(item.mobileNumber)}
+                                <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
                                   // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
+                                  onClick={() => handleClick(item.mobileNumber)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
                                   className="btn-action call"
@@ -1059,7 +1097,7 @@ function uploaded_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={handleOn}
+                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.productEnquiry)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -1368,6 +1406,16 @@ function uploaded_tickets() {
           </div>
         </div>
       </Modal>
+      <dialog
+        id="ticketjourney"
+        className="bg-white rounded shadow"
+        style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+      >
+
+        <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center">
+          <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+        </div>
+      </dialog>
     </>
   )
 }
