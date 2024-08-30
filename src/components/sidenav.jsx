@@ -64,6 +64,22 @@ function Sidenav() {
     }, 1000);
   })
 
+
+  //resuble function to convert byte code to image url
+  function convertToImage(imageString) {
+    const byteCharacters = atob(imageString); // Decode base64 string
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    return url;
+
+  }
+
+
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
       <ul className="nav sidebar2658 flex-column w-100">
@@ -72,8 +88,13 @@ function Sidenav() {
         {roleName === 'SuperAdmin' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
-              <div className="profile-icon">
-                <i className="fa-solid fa-display"></i>
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
@@ -123,8 +144,13 @@ function Sidenav() {
         {roleName === 'Admin' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
-              <div className="profile-icon">
-                <i className="fa-solid fa-display"></i>
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
@@ -182,13 +208,21 @@ function Sidenav() {
           </>
         )}
 
+
         {/* closer */}
         {roleName === 'Closer' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
-              <div className="profile-icon">
-                <i className="fa-solid fa-display"></i>
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
               </div>
+
+
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
@@ -231,8 +265,13 @@ function Sidenav() {
         {roleName === 'Captain' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
-              <div className="profile-icon">
-                <i className="fa-solid fa-display"></i>
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
@@ -276,8 +315,13 @@ function Sidenav() {
         {roleName === 'SeniorSuperVisor' && (
           <>
             <li className="nav-item d-flex align-items-center user-logo">
-              <div className="profile-icon">
-                <i className="fa-solid fa-display"></i>
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
               </div>
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
