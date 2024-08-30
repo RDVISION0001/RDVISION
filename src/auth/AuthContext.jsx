@@ -9,9 +9,9 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [roleName, setRoleName] = useState('');
   const [userId, setUserId] = useState('');
-  const [firstName, setFirstName] = useState(''); 
+  const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [attendanceId, setAttendanceId] = useState(''); 
+  const [attendanceId, setAttendanceId] = useState('');
 
 
 
@@ -19,9 +19,9 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     const storedRoleName = localStorage.getItem('roleName');
     const storedUserId = localStorage.getItem('userId');
-    const storedFirstName = localStorage.getItem('firstName'); 
-    const storedLastName = localStorage.getItem('lastName'); 
-    const storedAttendanceId = localStorage.getItem('attendanceId'); 
+    const storedFirstName = localStorage.getItem('firstName');
+    const storedLastName = localStorage.getItem('lastName');
+    const storedAttendanceId = localStorage.getItem('attendanceId');
 
 
     if (token) {
@@ -39,35 +39,36 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (storedFirstName) {
-      setFirstName(storedFirstName); 
+      setFirstName(storedFirstName);
       console.log('First Name:', storedFirstName);
     }
 
     if (storedLastName) {
-      setLastName(storedLastName); 
+      setLastName(storedLastName);
       console.log('Last Name:', storedLastName)
     }
 
     if (storedAttendanceId) {
-      setAttendanceId(storedAttendanceId); 
+      setAttendanceId(storedAttendanceId);
       console.log('Attendance Id:', storedAttendanceId)
     }
   }, []);
 
-  const login = async (email, password,logInOtp) => {
+  const login = async (email, password, logInOtp) => {
     try {
-      const response = await axiosInstance.post('/auth/login', { email, password,logInOtp });
+      const response = await axiosInstance.post('/auth/login', { email, password, logInOtp });
       if (response.status === 200) {
-        const { jwtToken, user,  attendanceId } = response.data;
+        const { jwtToken, user, attendanceId } = response.data;
         localStorage.setItem('token', jwtToken);
         localStorage.setItem('roleName', user.roleDto.roleName);
         localStorage.setItem('userId', user.userId);
-        localStorage.setItem('firstName', user.firstName); 
-        localStorage.setItem('lastName', user.lastName); 
-        localStorage.setItem('attendanceId', attendanceId); 
-        localStorage.setItem("loginTime",new Date().getTime())
+        localStorage.setItem('firstName', user.firstName);
+        localStorage.setItem('lastName', user.lastName);
+        localStorage.setItem('attendanceId', attendanceId);
+        localStorage.setItem("loginTime", new Date().getTime())
+        localStorage.setItem("imageData", user.imageData)
 
-        
+
         setIsAuthenticated(true);
         setRoleName(user.roleDto.roleName);
         setUserId(user.userId);
@@ -92,14 +93,14 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('roleName');
     localStorage.removeItem('userId');
-    localStorage.removeItem('firstName'); 
-    localStorage.removeItem('attendanceId'); 
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('attendanceId');
 
     setIsAuthenticated(false);
     setRoleName('');
     setUserId('');
-    setFirstName(''); 
-    setAttendanceId(''); 
+    setFirstName('');
+    setAttendanceId('');
 
     toast.info('Logged out successfully');
   };

@@ -72,7 +72,8 @@ function live_tickets() {
     allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    // followUp: { ticketStatus: 'follow' },
+    followUp: {},
   };
 
   const handleClose = () => setShow(false);
@@ -364,6 +365,10 @@ function live_tickets() {
     document.getElementById("ticketjourney").close()
   }
 
+  const [followUpStatus, setFollowupStatus] = useState("Follow")
+
+
+
 
   return (
     <>
@@ -500,6 +505,15 @@ function live_tickets() {
                 </button>
               </li>
             </ul>
+            {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call back</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
+            </div> : ""}
             <div
               className="tab-content recent-transactions-tab-body"
               id="followUpContent"
@@ -529,12 +543,12 @@ function live_tickets() {
                     </thead>
                     {data ? (
                       <tbody>
-                        {data.filter(
+                        {(data.filter(
                           (item) =>
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).map((item, index) => (
+                        )).map((item, index) => (
                           <tr key={index}>
                             <td><span className="text">{item.queryTime}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -883,7 +897,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).map((item, index) => (
+                        ).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).map((item, index) => (
                           <tr key={index}>
                             <td><span className="text">{item.queryTime}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -995,6 +1009,7 @@ function live_tickets() {
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
+              <option value="1000">1000</option>
             </select>
           </div>
         </div>

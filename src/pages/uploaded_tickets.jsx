@@ -114,7 +114,8 @@ function uploaded_tickets() {
     allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
-    followUp: { ticketStatus: 'follow' },
+    // followUp: { ticketStatus: 'follow' },
+    followUp: {},
   };
 
   const handleClose = () => {
@@ -459,7 +460,6 @@ function uploaded_tickets() {
     }
   };
 
-
   //ticket journey
   const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
   const openTicketJourney = (ticketId) => {
@@ -469,6 +469,10 @@ function uploaded_tickets() {
   const closeTicketJourney = () => {
     document.getElementById("ticketjourney").close()
   }
+
+  const [followUpStatus, setFollowupStatus] = useState("Follow")
+
+
 
   return (
     <>
@@ -1004,6 +1008,15 @@ function uploaded_tickets() {
                 aria-labelledby="new-arrivals-tkts-tab"
                 tabindex="0"
               >
+                {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Call_Back"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call back</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Follow"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Interested"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Not_Interested"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Wrong_Number"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Place_with_other"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Not_Pickup"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
+                </div> : ""}
                 <div className="followups-table table-responsive table-height">
                   <table className="table">
                     <thead className="sticky-header">
@@ -1026,12 +1039,12 @@ function uploaded_tickets() {
                     </thead>
                     {data ? (
                       <tbody>
-                        {data.filter(
+                        {(data.filter(
                           (item) =>
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).map((item, index) => (
+                        )).filter((items) => (items.ticketstatus.toLowerCase()===followUpStatus.toLowerCase())).map((item, index) => (
                           <tr key={index}>
                             {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
@@ -1067,11 +1080,9 @@ function uploaded_tickets() {
                                 {item.ticketstatus}
                               </a>
                             </div>
-
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
                             <td><span className="text">{(`${item.followUpDateTime}`).split(",")[2]}-{(`${item.followUpDateTime}`).split(",")[1]}-{(`${item.followUpDateTime}`).split(",")[0]}/{(`${item.followUpDateTime}`).split(",")[3]}:{(`${item.followUpDateTime}`).split(",")[4]}</span></td>
                             <td><span className="text">{item.comment}</span></td>
-
                             <td>
                               <span className="actions-wrapper">
                                 <Button
@@ -1145,6 +1156,7 @@ function uploaded_tickets() {
               <option value="20">20</option>
               <option value="50">50</option>
               <option value="100">100</option>
+              <option value="1000">1000</option>
             </select>
           </div>
         </div>
