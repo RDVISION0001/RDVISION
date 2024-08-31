@@ -4,7 +4,7 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
-import Worktime from '../components/worktime';
+import ChartWorktime from "../components/ChartWorktime"
 
 
 //pages
@@ -29,7 +29,7 @@ function indexm() {
           </div>
 
           <div className="container-fluid mt-3">
-            <Worktime />
+            <ChartWorktime />
           </div>
 
 

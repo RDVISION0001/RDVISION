@@ -4,7 +4,7 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
-// import Worktime from '../components/worktime';
+import ChartWorktime from '../components/ChartWorktime';
 import FloatingButton from '../components/FloatingButton';
 
 
@@ -33,9 +33,9 @@ function indexss() {
             <FloatingButton />
           </div>
 
-          {/* <div className="container-fluid mt-3">
-            <Worktime />
-          </div> */}
+          <div className="container-fluid mt-3">
+            <ChartWorktime />
+          </div>
 
 
           <div className="container-fluid mt-3">
