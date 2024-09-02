@@ -113,14 +113,14 @@ const TicketJourney = (props) => {
                     </span>
                 </div>
                 {loading ? <div className='d-flex justify-content-center'>Loading.....</div> : stages.length > 0 ? (
-                    <ul className="events " style={{ maxHeight: '50vh', width: '65vw', overflowY: 'auto' }}>
+                    <ul className="events " style={{ maxHeight: '50vh', width: '95%', overflowY: 'auto' }}>
                         {stages.slice().reverse().map((stage, index) => (
                             <li className={`text-primary ${index % 2 === 0 ? "bg-light" : "bg-white"} `} key={index}>
-                                <time dateTime={`${stage.updateDate[0]}-${stage.updateDate[1]}-${stage.updateDate[2]}`}>
+                                <time dateTime={`${stage.updateDate[0]}-${stage.updateDate[1]}-${stage.updateDate[2]}`} style={{ width: "130px" }}>
                                     {stage.updateDate[2]}-{stage.updateDate[1]}-{stage.updateDate[0]}
                                 </time>
-                                <span style={{ display: 'flex', alignItems: 'center' }} >
-                                    <strong style={{ marginRight: '10px', width: "35vw" }}>
+                                <span style={{ display: 'flex', justifyContent: "space-between", width: "100%" }} >
+                                    <strong >
                                         {stage.updateTime[0]}:{stage.updateTime[1]} &amp; {stage.comment}
                                         <div>{stage.userName}</div>
                                     </strong>
@@ -141,7 +141,7 @@ const TicketJourney = (props) => {
                                                     />
                                                     {currentSrc === stage.recordingFile.replace(/"/g, '') && (
                                                         <div className='m-2'>
-                                                            <div id='currentTime'>{currentTime} / {duration}</div> {/* Display the current time */}
+                                                            <div id='currentTime'>{currentTime} / {duration}</div> {/ Display the current time /}
 
                                                         </div>
                                                     )}
