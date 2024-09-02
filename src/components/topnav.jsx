@@ -1,5 +1,6 @@
 import React from 'react';
 import LiveCalander from './LiveCalander';
+import TimezoneClocks from './TimezoneClocks';
 // import TimeZone from './TimeZone';
 
 function topnav() {
@@ -21,22 +22,21 @@ function topnav() {
   };
 
 
-
   //handle Open Clock
-  // const handleOnClock = () => {
-  //   const dialog = document.getElementById("clock");
-  //   if (dialog) {
-  //     dialog.showModal();
-  //   }
-  // };
+  const handleOnClock = () => {
+    const dialog = document.getElementById("clock");
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
 
   //handle close Clock
-  // const handleOff = () => {
-  //   const dialog = document.getElementById("clock");
-  //   if (dialog) {
-  //     dialog.close();
-  //   }
-  // };
+  const handleOff = () => {
+    const dialog = document.getElementById("clock");
+    if (dialog) {
+      dialog.close();
+    }
+  };
 
 
 
@@ -56,7 +56,7 @@ function topnav() {
             <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
           </a>
           <a href="#" className="notification">
-            <i class="fa-solid fa-clock fa-xl" ></i>
+            <i class="fa-solid fa-clock fa-xl" onClick={handleOnClock} ></i>
           </a>
         </div>
       </nav>
@@ -69,12 +69,12 @@ function topnav() {
         </div>
       </dialog>
 
-      {/* <dialog id="clock" className="calender-modal">
+      <dialog id="clock" className="">
         <div className="modal-content">
           <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleOff}></i>
-          <TimeZone />
+          <TimezoneClocks />
         </div>
-      </dialog> */}
+      </dialog>
 
     </>
   );

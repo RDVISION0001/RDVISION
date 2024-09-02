@@ -286,7 +286,7 @@ function uploaded_tickets() {
     const colors = {
       'New': 'dodgerblue',
       'Sale': 'green',
-      'Follow': 'blue',
+      'Follow': 'RoyalBlue',
       'Interested': 'orange',
       'Not_Interested': 'red',
       'Wrong_Number': 'gray',

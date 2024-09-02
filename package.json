@@ -21,6 +21,8 @@
     "highcharts-react-official": "^3.2.1",
     "highcharts-solid-gauge": "^0.1.7",
     "jquery": "^3.7.1",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.5.45",
     "qs": "^6.12.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
