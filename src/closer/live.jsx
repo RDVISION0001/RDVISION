@@ -4,15 +4,16 @@ import React from 'react';
 import Topnav from '../components/topnav';
 import Sidenav from '../components/sidenav';
 // import Cardinfo from '../components/cardinfo';
-// import Worktime from '../components/worktime';
+// import TaskProgress from '../components/TaskProgress';
+// import ChartWorktime from '../components/ChartWorktime';
+import FloatingButton from '../components/FloatingButton';
 
 
 //pages
-import Uploaded_tickets from '../pages/uploaded_tickets';
+import Live_tickets from '../pages/live_tickets';
 
 
-
-function upticket() {
+function live() {
 
 
   return (
@@ -29,20 +30,27 @@ function upticket() {
             <Cardinfo />
           </div> */}
 
-          {/* <div className="container-fluid mt-3">
-            <Worktime />
-          </div> */}
-
-
-          <div className="container-fluid mt-3">
-            <Uploaded_tickets />
+          <div>
+            <FloatingButton />
           </div>
 
-        </div >
-        </div >
-      </>
-      );
+          {/* <div className="container-fluid mt-3">
+            <TaskProgress />
+          </div> */}
+
+          {/* <div className="container-fluid mt-3">
+            <ChartWorktime />
+          </div> */}
+
+          <div className="container-fluid mt-3">
+            <Live_tickets />
+          </div>
+
+        </div>
+      </div>
+    </>
+  );
 }
 
 
-      export default upticket
+export default live

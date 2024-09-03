@@ -536,7 +536,7 @@ function uploaded_tickets() {
               <div className="d-flex align-items-center border p-3 rounded hover-scale bg-light shadow-sm">
                 <i className="fa-solid fa-file fa-2x me-3 text-info"></i>
                 <div>
-                  <h5 className="mb-1 text-dark fw-bold">Upload date: {file[0]}</h5>
+                  <h5 className="mb-1 text-dark fw-bold">Assign Date: {file[0]}</h5>
                   <small className="text-secondary">
                     Total tickets: <span className="text-danger fw-bold">{file[1]}</span>
                   </small>
