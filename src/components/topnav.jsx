@@ -22,22 +22,6 @@ function topnav() {
   };
 
 
-  //handle Open Clock
-  const handleOnClock = () => {
-    const dialog = document.getElementById("clock");
-    if (dialog) {
-      dialog.showModal();
-    }
-  };
-
-  //handle close Clock
-  const handleOff = () => {
-    const dialog = document.getElementById("clock");
-    if (dialog) {
-      dialog.close();
-    }
-  };
-
 
 
   return (
@@ -47,6 +31,7 @@ function topnav() {
           <a className="btn border-0 ms-2" id="menu-btn"><i className="fa-solid fa-bars"></i></a>
           <span className="page-title">Dashboard</span>
         </div>
+        <TimezoneClocks />
         <div className="right-part">
           <div className="global-search">
             <i className="fa-solid fa-magnifying-glass"></i>
@@ -54,9 +39,6 @@ function topnav() {
           </div>
           <a href="#" className="notification">
             <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
-          </a>
-          <a href="#" className="notification">
-            <i class="fa-solid fa-clock fa-xl" onClick={handleOnClock} ></i>
           </a>
         </div>
       </nav>
@@ -66,13 +48,6 @@ function topnav() {
         <div className="modal-content">
           <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
           <LiveCalander />
-        </div>
-      </dialog>
-
-      <dialog id="clock" className="">
-        <div className="modal-content">
-          <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleOff}></i>
-          <TimezoneClocks />
         </div>
       </dialog>
 

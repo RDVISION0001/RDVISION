@@ -1299,15 +1299,7 @@ function live_tickets() {
         <Modal.Body>
           <div className="">
             <div className="card shadow-sm">
-              <div className="card-body">
-                <h5 className="card-title text-center mb-4">Customer Detail</h5>
-                <div className="user-info">
-                  <div><strong>Name:</strong> {selectNameForInvoice}</div>
-                  <div><strong>Ticket ID:</strong> {selectTicketForInvoice}</div>
-                  <div><strong>Email:</strong> {selectEmailForInvoice}</div>
-                  <div><strong>Mobile Number:</strong> {selectMobileForInvoice}</div>
-                </div>
-              </div>
+              
               <div>
                 <InvoiceBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
               </div>
