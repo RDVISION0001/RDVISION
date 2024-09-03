@@ -248,14 +248,14 @@ function Sidenav() {
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
                     <NavLink to="/closer_live" className="nav-link">
-                      <i class="fa-solid fa-arrow-right" style={{ color: '#050505' }}></i>
+                      <i class="fa-solid fa-arrow-right-from-bracket" style={{ color: '#050505' }}></i>
                       <span className="nav-text">Live Tickets</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/closer_upload_tickets" className="nav-link">
-                      <i class="fa-solid fa-arrow-right" style={{ color: '#050505' }}></i>
-                      <span className="nav-text">Assign by Captain</span>
+                    <i class="fa-solid fa-arrow-right-from-bracket" style={{ color: '#050505' }}></i>
+                    <span className="nav-text">Assign by Captain</span>
                     </NavLink>
                   </li>
                 </ul>

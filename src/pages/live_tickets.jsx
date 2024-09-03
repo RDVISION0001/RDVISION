@@ -58,6 +58,10 @@ function live_tickets() {
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
   const [callId, setCallId] = useState(0)
   const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
+  const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
+  const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
+  const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
+
 
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -103,8 +107,11 @@ function live_tickets() {
     setView(true);
   };
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
-  const handleInvoice = (ticketId) => {
+  const handleInvoice = (ticketId, name, email, mobile) => {
     setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
     setIsInvoiceOn(!isInvoiceOn)
   }
 
@@ -629,7 +636,7 @@ function live_tickets() {
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
                                 <Button
-                                  onClick={() => handleInvoice(item.uniqueQueryId)}
+                                  onClick={() => handleInvoice(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile)}
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
@@ -1286,7 +1293,7 @@ function live_tickets() {
       <Modal show={isInvoiceOn} onHide={handleInvoice} className="" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
           <h1 className=" w-100 text-center" id="followUpModalLabel">
-            Raise Invoice
+            <u> Raise Invoice</u>
           </h1>
         </Modal.Header>
         <Modal.Body>
@@ -1295,22 +1302,16 @@ function live_tickets() {
               <div className="card-body">
                 <h5 className="card-title text-center mb-4">Customer Detail</h5>
                 <div className="user-info">
-                  <div><strong>Name:</strong> {senderNameForEmail}</div>
-                  <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
-                  <div><strong>Email:</strong> {senderEmailFormail}</div>
-                  <div><strong>Mobile Number:</strong> {senderMobile}</div>
+                  <div><strong>Name:</strong> {selectNameForInvoice}</div>
+                  <div><strong>Ticket ID:</strong> {selectTicketForInvoice}</div>
+                  <div><strong>Email:</strong> {selectEmailForInvoice}</div>
+                  <div><strong>Mobile Number:</strong> {selectMobileForInvoice}</div>
                 </div>
               </div>
               <div>
-                <InvoiceBox ticketId={selectTicketForInvoice} />
+                <InvoiceBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
               </div>
             </div>
-          </div>
-
-
-          <div className="modal-footer justify-content-center border-0">
-            <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
-            <Button variant="primary" onClick={handleSendEmail}>Send</Button>
           </div>
 
         </Modal.Body>

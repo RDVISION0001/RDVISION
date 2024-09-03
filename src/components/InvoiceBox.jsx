@@ -15,7 +15,7 @@ function InvoiceBox(props) {
     // State for modal visibility
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     // State for tickets
     const [loading, setLoading] = useState(false);
@@ -79,6 +79,7 @@ function InvoiceBox(props) {
         selectedProductId: '',
         ticketId: '',
         userId: '',
+        price:''
     });
 
     const handleSubmit = async (e) => {
@@ -91,8 +92,8 @@ function InvoiceBox(props) {
                 productId: formData.selectedProductId,
                 ticketId: selectedTicketId,
                 userId: userId,
+                price:formData.price
             });
-            console.log('Response:', response.data);
             toast.success('Add order successfully!');
             handleClose();
         } catch (error) {
@@ -198,17 +199,12 @@ function InvoiceBox(props) {
     const handleSendInvoice = async () => {
         try {
             const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}`);
-            console.log('Response:', response.data);
             toast.success('Invoice sent successfully!');
         } catch (error) {
             console.error('Error sending invoice:', error);
             toast.error('Failed to send invoice');
         }
     };
-
-
-
-
     return (
         <>
             <div className="">
@@ -218,10 +214,7 @@ function InvoiceBox(props) {
                         <div className="order-cards-details-wrapper-main">
                             {ticketDetails ? (
                                 <div className="order-details-card">
-                                    <div className="header">
-                                        <p className="title">{ticketDetails.uniqueQueryId}</p>
-                                        <p className="date">{ticketDetails.queryTime}</p>
-                                    </div>
+                            
                                     <div className="card">
                                         <div className="thumb-wrapper">
                                             <img src="../img/thumb-img.png" alt="thumb-image" className="img-fluid" />
@@ -290,7 +283,7 @@ function InvoiceBox(props) {
                                                                         <td>{productOrder?.product[0].composition}</td>
                                                                         <td>{productOrder?.product[0].packagingSize}</td>
                                                                         <td>{productOrder?.product[0].pillsQty}</td>
-                                                                        <td>{productOrder?.product[0].price}</td>
+                                                                        <td>{productOrder?.totalAmount}</td>
                                                                     </tr>
                                                                 ) : (
                                                                     <tr key={index}>
@@ -300,9 +293,11 @@ function InvoiceBox(props) {
                                                             ))}
                                                         </tbody>
                                                     </table>
-                                                    <div className="total">
-                                                        <p>Total</p>
-                                                        <p>{orderDetails.totalPayableAmount}</p>
+                                                    <div className="total d-flex justify-content-end">
+                                                        <div className='d-flex'>
+                                                            <p className='fw-semibold'>Total:- </p>
+                                                            <p>$ {orderDetails.totalPayableAmount}</p>
+                                                        </div>
                                                     </div>
                                                     <div className="add-more-products-wrapper">
                                                         <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
@@ -413,8 +408,10 @@ function InvoiceBox(props) {
                                 </div>
 
                                 {/* <!-- order items details ends here --> */}
+                                <div className='d-flex justify-content-center '>
+                                    <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Invoice</button>
 
-
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -462,6 +459,10 @@ function InvoiceBox(props) {
                                     <div className="col-6">
                                         <label htmlFor="Quantity" className="form-label">Quantity</label>
                                         <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
+                                    </div>
+                                    <div className="col-6">
+                                        <label htmlFor="price" className="form-label">Price</label>
+                                        <input type="number" name="price" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
                                     </div>
                                     <div className="col-6">
                                         <label htmlFor="Varient" className="form-label">Treatment</label>
