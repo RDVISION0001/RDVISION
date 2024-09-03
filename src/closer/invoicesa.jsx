@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+
+
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 //// Components ////
 import Topnav from '../components/topnav';
@@ -19,6 +24,7 @@ function invoicesa() {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const audio = new Audio(R2ZWYCP);
 
   // State for tickets
   const [loading, setLoading] = useState(true);
@@ -27,29 +33,54 @@ function invoicesa() {
   const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [ticketDetails, setTicketDetails] = useState(null);
 
+  
 
-  // Fetch tickets from ticketByStatus
+  //websocket for notification
   useEffect(() => {
-    const fetchTickets = async () => {
-      if (!userId) return; 
-      try {
-        const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-          params: {
-            // userId,
-            ticketStatus: 'Sale'
-          }
+    const socket = new SockJS('http://localhost:8080/ws');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      debug: (str) => {
+        console.log("Message string is " < str);
+
+      },
+      onConnect: () => {
+        stompClient.subscribe('/topic/invoice/', (message) => {
+          const newProduct = JSON.parse(message.body);
+          setTickets((prevProducts) => [newProduct, ...prevProducts]);
+          playNotificationSound()
+          // setData((prevProducts) => [newProduct, ...prevProducts]);
         });
-        setTickets(response.data.dtoList);
-      } catch (err) {
-        console.error('Error fetching tickets:', err);
-      } finally {
-        setLoading(false);
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+    });
+
+    stompClient.activate();
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate();
       }
     };
+  }, []);
 
-    fetchTickets();
-  }, [userId]);
+  const playNotificationSound = () => {
+    audio.play();
+  };
 
+
+  useEffect(() => {
+    fetchInvoices()
+  }, [])
+
+  const fetchInvoices = async()=>{
+    const response =await axiosInstance.get("/invoice/getinvoices")
+    setTickets(response.data)
+    console.log("Response is ",response.data)
+  }
   // Fetch ticket details when selectedTicketId changes
   useEffect(() => {
     if (selectedTicketId) {
@@ -284,15 +315,15 @@ function invoicesa() {
                         {/* <!-- ticket one ends here  --> */}
                         {tickets.map(ticket => (
                           <div className="nav-link" id="v-pills-ticket2-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ticket2" type="button" role="tab" aria-controls="v-pills-ticket2" aria-selected="true">
-                            <div className="order-card" key={ticket.uniqueQueryId} onClick={() => handleCardClick(ticket)}>
+                            <div className="order-card" key={ticket.ticketId} onClick={() => handleCardClick(ticket)}>
                               <div className="left-part">
-                                <h3 className="title">{ticket.queryMcatName}</h3>
+                                <h3 className="title">{ticket.inviceStatus}</h3>
                                 <p className="sub-title text-warning-emphasis">
                                   <i className="fa-solid fa-ticket"></i>
-                                  {ticket.uniqueQueryId}
+                                  {ticket.ticketId}
                                 </p>
                               </div>
-                              <div className="right-part">AT : <span className="badge no-status">{ticket.ticketstatus}</span></div>
+                              <div className="right-part">AT : <span className="badge no-status">{ticket.inviceId}</span></div>
                             </div>
                           </div>
                         ))}
