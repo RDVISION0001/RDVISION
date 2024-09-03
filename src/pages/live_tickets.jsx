@@ -21,7 +21,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TicketJourney from '../components/TicketJourney';
 
-
+import Invoicesa from '../closer/invoicesa';
+import InvoiceBox from '../components/InvoiceBox';
 
 
 function live_tickets() {
@@ -56,6 +57,7 @@ function live_tickets() {
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
   const [callId, setCallId] = useState(0)
+  const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
 
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -100,6 +102,11 @@ function live_tickets() {
     setUniqueQueryId(queryId);
     setView(true);
   };
+  const [isInvoiceOn, setIsInvoiceOn] = useState(false)
+  const handleInvoice = (ticketId) => {
+    setSelectTicketForInvoice(ticketId)
+    setIsInvoiceOn(!isInvoiceOn)
+  }
 
   const fetchData = async (params, page, perPage) => {
     try {
@@ -621,6 +628,13 @@ function live_tickets() {
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleInvoice(item.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-solid fa-file-invoice"></i>
+                                </Button>
                               </span>
                             </td>
                             <td className="ticket-id">
@@ -740,6 +754,13 @@ function live_tickets() {
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleInvoice(item.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-solid fa-file-invoice"></i>
+                                </Button>
                               </span>
                             </td>
                             <td className="ticket-id">
@@ -850,6 +871,13 @@ function live_tickets() {
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleInvoice(item.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-solid fa-file-invoice"></i>
+                                </Button>
                               </span>
                             </td>
                             <td className="ticket-id">
@@ -972,6 +1000,13 @@ function live_tickets() {
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleInvoice(item.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-solid fa-file-invoice"></i>
+                                </Button>
                               </span>
                             </td>
                             <td className="ticket-id">
@@ -1246,6 +1281,40 @@ function live_tickets() {
         </div>
       </dialog>
 
+
+      {/* //invoice modal */}
+      <Modal show={isInvoiceOn} onHide={handleInvoice} className="" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+        <Modal.Header closeButton>
+          <h1 className=" w-100 text-center" id="followUpModalLabel">
+            Raise Invoice
+          </h1>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="">
+            <div className="card shadow-sm">
+              <div className="card-body">
+                <h5 className="card-title text-center mb-4">Customer Detail</h5>
+                <div className="user-info">
+                  <div><strong>Name:</strong> {senderNameForEmail}</div>
+                  <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
+                  <div><strong>Email:</strong> {senderEmailFormail}</div>
+                  <div><strong>Mobile Number:</strong> {senderMobile}</div>
+                </div>
+              </div>
+              <div>
+                <InvoiceBox ticketId={selectTicketForInvoice} />
+              </div>
+            </div>
+          </div>
+
+
+          <div className="modal-footer justify-content-center border-0">
+            <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
+            <Button variant="primary" onClick={handleSendEmail}>Send</Button>
+          </div>
+
+        </Modal.Body>
+      </Modal>
     </>
   )
 }

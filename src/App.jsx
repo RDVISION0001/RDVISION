@@ -54,7 +54,7 @@ import Upticket from './closer/upticket';
 import Invoicesa from './closer/invoicesa';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
-import Ticketsa from './closer/ticketsa';
+import Live from './closer/live';
 import Usersa from './closer/usersa';
 
 // senior_supervisor 
@@ -162,7 +162,7 @@ function App() {
               <Route exact path="/closer_invoices" element={<Invoicesa />} />
               <Route exact path="/closer_orders" element={<Ordersa />} />
               <Route exact path="/closer_sales" element={<Salesa />} />
-              <Route exact path="/closer_tickets" element={<Ticketsa />} />
+              <Route exact path="/closer_live" element={<Live />} />
               <Route exact path="/closer_users" element={<Usersa />} />
 
               {/*Senior supervisor*/}

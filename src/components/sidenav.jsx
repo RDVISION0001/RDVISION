@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Logout from '../auth/logout';
 
 function Sidenav() {
   const { roleName, firstName, lastName } = useAuth();
+  const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(true);
+
 
   useEffect(() => {
     const menuBtn = document.querySelector("#menu-btn");
@@ -78,6 +80,11 @@ function Sidenav() {
     return url;
 
   }
+
+  // Toggle the sub-menu for the Closer role
+  const toggleTicketSubMenu = () => {
+    setIsTicketSubMenuOpen((prev) => !prev);
+  };
 
 
   return (
@@ -221,8 +228,6 @@ function Sidenav() {
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                 />
               </div>
-
-
               <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
@@ -235,16 +240,26 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/closer_upload_tickets" className="nav-link">
-                <i class="fa fa-upload" aria-hidden="true"></i>
-                <span className="nav-text">Uploaded Tickets</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/closer_tickets" className="nav-link">
+              <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text">Tickets</span>
-              </NavLink>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+              </div>
+              {isTicketSubMenuOpen && (
+                <ul className="nav flex-column px-4 ">
+                  <li className="nav-item">
+                    <NavLink to="/closer_live" className="nav-link">
+                      <i class="fa-solid fa-arrow-right" style={{ color: '#050505' }}></i>
+                      <span className="nav-text">Live Tickets</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/closer_upload_tickets" className="nav-link">
+                      <i class="fa-solid fa-arrow-right" style={{ color: '#050505' }}></i>
+                      <span className="nav-text">Assign by Captain</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
             <li className="nav-item">
               <NavLink to="/closer_invoices" className="nav-link">
