@@ -73,29 +73,29 @@ function InvoiceBox(props) {
 
     // Form state for adding products
     const [formData, setFormData] = useState({
-        // brand: '',
-        // treatment: '',
         quantity: '',
         selectedProductId: '',
         ticketId: '',
         userId: '',
-        price:''
+        price: '',
+        currency: ''
     });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await axiosInstance.post('/order/addToOrder', {
-                // brand: formData.brand,
-                // treatment: formData.treatment,
                 quantity: formData.quantity,
                 productId: formData.selectedProductId,
                 ticketId: selectedTicketId,
                 userId: userId,
-                price:formData.price
+                price: formData.price,
+                currency: formData.currency
+
             });
             toast.success('Add order successfully!');
             handleClose();
+            fatchaddedproduct()
         } catch (error) {
             console.error('Error submitting form:', error);
             toast.error('Failed to add order');
@@ -130,6 +130,10 @@ function InvoiceBox(props) {
 
     // Fetch order details from apiB when selectedTicketId changes
     useEffect(() => {
+        fatchaddedproduct()
+    }, []);
+
+    const fatchaddedproduct = () => {
         if (selectedTicketId) {
             const fetchOrderDetails = async () => {
                 try {
@@ -142,7 +146,7 @@ function InvoiceBox(props) {
 
             fetchOrderDetails();
         }
-    }, [orderDetails]);
+    }
 
     // Create shipping address
     useEffect(() => {
@@ -214,29 +218,38 @@ function InvoiceBox(props) {
                         <div className="order-cards-details-wrapper-main">
                             {ticketDetails ? (
                                 <div className="order-details-card">
-                            
-                                    <div className="card">
-                                        <div className="thumb-wrapper">
-                                            <img src="../img/thumb-img.png" alt="thumb-image" className="img-fluid" />
-                                        </div>
-                                        <div className="content-wrapper">
-                                            <h3 className="title">{ticketDetails.queryProductName}</h3>
-                                            <div className="contact-wrapper">
-                                                <div className="contact-item"><i className="fa-solid fa-phone"></i> {ticketDetails.senderMobile}</div>
-                                                <div className="contact-item">
-                                                    <i className="fa-solid fa-envelope-open-text"></i>
-                                                    {ticketDetails.senderEmail}
+                                    <div className="">
+                                        <div className="content-wrapper d-flex justify-content-between">
+                                            <div className='p-4 border rounded m-2'>
+                                                <h5 className="card-title text-center mb-4">Customer Detail</h5>
+                                                <div className="user-info">
+                                                    <div><strong>Name:</strong> {props.name}</div>
+                                                    <div><strong>Ticket ID:</strong> {selectedTicketId}</div>
+                                                    <div><strong>Email:</strong> {props.email}</div>
+                                                    <div><strong>Mobile Number:</strong> {props.mobile}</div>
                                                 </div>
                                             </div>
-                                            <div className="address-items mt-2">
-                                                <small>Billing Address</small>
-                                                <address>{ticketDetails.senderAddress}</address>
-                                            </div>
-                                            <div className="address-items">
-                                                <small>Delivery Address</small>
-                                                <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
+                                            <div className='border rounded p-4 m-2'>
+                                                <h3 className="title">{ticketDetails.queryProductName}</h3>
+                                                <div className="contact-wrapper">
+                                                    <div className="contact-item"><i className="fa-solid fa-phone"></i> {ticketDetails.senderMobile}</div>
+                                                    <div className="contact-item">
+                                                        <i className="fa-solid fa-envelope-open-text"></i>
+                                                        {ticketDetails.senderEmail}
+                                                    </div>
+                                                </div>
+                                                <div className="address-items mt-2">
+                                                    <small>Billing Address</small>
+                                                    <address>{ticketDetails.senderAddress}</address>
+                                                </div>
+                                                <div className="address-items">
+                                                    <small>Delivery Address</small>
+                                                    <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
+                                                </div>
+                                                <div className="card-body"></div>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
                             ) : (
@@ -428,20 +441,6 @@ function InvoiceBox(props) {
                         <div className="modal-body">
                             <form action="#" onSubmit={handleSubmit}>
                                 <div className="row g-3">
-                                    <div className="col-10">
-                                        <label htmlFor="Varient" className="form-label">Brand</label>
-                                        <select
-                                            name="brand"
-                                            value={formData.brand}
-                                            onChange={handleChange}
-                                            id="varient"
-                                            className="form-select">
-                                            <option value="">Choose...</option>
-                                            {products.map((productbrand) => (
-                                                <option key={productbrand.brand} value={productbrand.brand}>{productbrand.brand}</option>
-                                            ))}
-                                        </select>
-                                    </div>
                                     <div className="col-6">
                                         <label htmlFor="Varient" className="form-label">Product Name</label>
                                         <select
@@ -465,17 +464,21 @@ function InvoiceBox(props) {
                                         <input type="number" name="price" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
                                     </div>
                                     <div className="col-6">
-                                        <label htmlFor="Varient" className="form-label">Treatment</label>
+                                        <label htmlFor="currency" className="form-label">Currency</label>
                                         <select
-                                            name="treatment"
-                                            value={formData.treatment}
+                                            name="currency"
+                                            value={formData.currency}
                                             onChange={handleChange}
-                                            id="varient"
-                                            className="form-select">
-                                            <option value="">Choose...</option>
-                                            {products.map((producttreatment) => (
-                                                <option key={producttreatment.treatment} value={producttreatment.treatment}>{producttreatment.treatment}</option>
-                                            ))}
+                                            id="currency"
+                                            className="form-control"
+                                        >
+                                            <option value="" disabled>Select Currency</option>
+                                            <option value="INR">INR - Indian Rupee</option>
+                                            <option value="USD">USD - US Dollar</option>
+                                            <option value="GBP">GBP - British Pound</option>
+                                            <option value="AUD">AUD - Australian Dollar</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="JPY">JPY - Japanese Yen</option>
                                         </select>
                                     </div>
                                     <div className="modal-footer justify-content-center border-0">
