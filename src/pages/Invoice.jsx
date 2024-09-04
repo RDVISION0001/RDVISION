@@ -37,7 +37,7 @@ function Invoice() {
 
     //websocket for notification
     useEffect(() => {
-        const socket = new SockJS('http://rdvision.online/ws');
+        const socket = new SockJS('https://rdvision.online/ws');
         const stompClient = new Client({
             webSocketFactory: () => socket,
             debug: (str) => {
