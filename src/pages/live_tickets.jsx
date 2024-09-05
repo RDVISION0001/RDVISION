@@ -56,6 +56,7 @@ function live_tickets() {
   const [data, setData] = useState(null);
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+  const [showSaleTransaction, setShowTransaction] = useState(false);
   const [callId, setCallId] = useState(0)
   const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
   const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
@@ -263,12 +264,23 @@ function live_tickets() {
     return colors[ticketStatus] || 'white';
   };
 
+  // Update handleStatusChange function
   const handleStatusChange = (event) => {
     handleChange(event);
-    if (event.target.value === "Follow") {
+    const { value } = event.target;
+
+    // Show folloeupdatetime input when 'Follow' is selected
+    if (value === "Follow") {
       setShowFollowUpDate(true);
     } else {
       setShowFollowUpDate(false);
+    }
+
+    // Show transaction details input when 'Sale' is selected
+    if (value === "Sale") {
+      setShowTransaction(true);
+    } else {
+      setShowTransaction(false);
     }
   };
 
@@ -1081,7 +1093,7 @@ function live_tickets() {
                 <option>Choose Call-Status</option>
                 <option value="Sale">Sale</option>
                 <option value="New">New</option>
-                <option value="Follow">Follow</option>
+                <option value="Follow">Follow-up</option>
                 <option value="Interested">Interested</option>
                 <option value="Not_Interested">Not Interested</option>
                 <option value="Wrong_Number">Wrong Number</option>
@@ -1090,6 +1102,22 @@ function live_tickets() {
                 <option value="Not_Pickup">Not Pickup</option>
               </select>
             </div>
+
+            {showSaleTransaction && (
+              <div className="mb-3">
+                <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
+                <input
+                  type="transaction-details"
+                  placeholder="Enter Transaction id "
+                  className="form-control"
+                  id="transactionDetails"
+                  name="transactionDetails"
+                  value={formData.SaleTransaction}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
+
             {showFollowUpDate && (
               <div className="mb-3">
                 <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
@@ -1299,7 +1327,7 @@ function live_tickets() {
         <Modal.Body>
           <div className="">
             <div className="card shadow-sm">
-              
+
               <div>
                 <InvoiceBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
               </div>
