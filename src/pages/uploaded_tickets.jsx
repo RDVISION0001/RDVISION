@@ -2,14 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
-
-
-
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
-
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -21,8 +17,6 @@ import 'react-toastify/dist/ReactToastify.css';
 // Clipboard copy
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TicketJourney from '../components/TicketJourney';
-
-
 
 function uploaded_tickets() {
   const { userId } = useAuth();
@@ -54,6 +48,7 @@ function uploaded_tickets() {
   const [data, setData] = useState(null);
   const [newNotifications, setNewNotifications] = useState(0);
   const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+  const [showSaleTransaction, setShowTransaction] = useState(false);
   const [isOpendAssign, setIsOpnnedAssign] = useState(false)
   const [seletedUserType, setSelectedUserType] = useState(0)
   const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
@@ -295,14 +290,25 @@ function uploaded_tickets() {
     return colors[ticketStatus] || 'white';
   };
 
-  const handleStatusChange = (event) => {
-    handleChange(event);
-    if (event.target.value === "Follow") {
-      setShowFollowUpDate(true);
-    } else {
-      setShowFollowUpDate(false);
-    }
-  };
+// Update handleStatusChange function
+const handleStatusChange = (event) => {
+  handleChange(event);
+  const { value } = event.target;
+
+  // Show folloeupdatetime input when 'Follow' is selected
+  if (value === "Follow") {
+    setShowFollowUpDate(true);
+  } else {
+    setShowFollowUpDate(false);
+  }
+
+  // Show transaction details input when 'Sale' is selected
+  if (value === "Sale") {
+    setShowTransaction(true);
+  } else {
+    setShowTransaction(false);
+  }
+};
 
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
@@ -1219,7 +1225,7 @@ function uploaded_tickets() {
               >
                 <option>Choose Call-Status</option>
                 <option value="Sale">Sale</option>
-                <option value="New">New</option>
+                {/* <option value="New">New</option> */}
                 <option value="Follow">Follow</option>
                 <option value="Interested">Interested</option>
                 <option value="Not_Interested">Not Interested</option>
@@ -1230,6 +1236,21 @@ function uploaded_tickets() {
 
               </select>
             </div>
+            {showSaleTransaction && (
+              <div className="mb-3">
+                <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
+                <input
+                  type="transaction-details"
+                  placeholder="Enter Transaction id "
+                  className="form-control"
+                  id="transactionDetails"
+                  name="transactionDetails"
+                  value={formData.SaleTransaction}
+                  onChange={handleChange}
+                />
+              </div>
+            )} 
+
             {showFollowUpDate && (
               <div className="mb-3">
                 <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>

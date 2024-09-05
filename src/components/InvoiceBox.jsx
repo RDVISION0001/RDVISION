@@ -269,19 +269,19 @@ function InvoiceBox(props) {
                                                 <div className="address-items mt-2">
                                                     <small>Billing Address</small>
                                                     <address>
-                                                        {ticketDetails.senderAddress}
+                                                        {ticketDetails.senderAddress?ticketDetails.senderAddress:"No address found"}
                                                     </address>
 
                                                 </div>
                                                 <div className="address-items">
                                                     <small>Delivery Address</small>
                                                     <address>
-                                                        {` ${addressData && addressData.houseNumber},
+                                                        {addressData?` ${addressData && addressData.houseNumber},
                                                         ${addressData && addressData.landmark},
                                                         ${addressData && addressData.city},
                                                         ${addressData && addressData.state},
                                                         ${addressData && addressData.country},
-                                                        ${addressData && addressData.zipCode}`}
+                                                        ${addressData && addressData.zipCode}`:"No adress added"}
                                                     </address>                                                </div>
                                                 <div className=""></div>
                                             </div>
@@ -313,7 +313,7 @@ function InvoiceBox(props) {
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
                                                     </div>
-                                                    <table className="table">
+                                                   { orderDetails.productOrders && orderDetails.productOrders.length>0? <table className="table">
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">Name</th>
@@ -326,7 +326,7 @@ function InvoiceBox(props) {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {orderDetails.productOrders && orderDetails.productOrders.map((productOrder, index) => (
+                                                            { orderDetails.productOrders.map((productOrder, index) => (
                                                                 productOrder.product && productOrder.product[0] ? (
                                                                     <tr key={productOrder.productorderId}> {/* Use unique id as key */}
                                                                         <td>{productOrder.product[0].name}</td>
@@ -352,7 +352,7 @@ function InvoiceBox(props) {
                                                             ))}
 
                                                         </tbody>
-                                                    </table>
+                                                    </table>:<div className='d-flex justify-content-center'>No prduct Adedd</div>}
                                                     <div className="total d-flex justify-content-end">
                                                         <div className='d-flex'>
                                                             <p className='fw-semibold'>Total:- </p>

@@ -12,7 +12,8 @@ const DigitalClock = ({ timezone, country }) => {
         return () => clearInterval(interval);
     }, [timezone]);
 
-    const digitalTime = time.format('HH:mm:ss');
+    // Use 'hh:mm:ss A' for 12-hour format with AM/PM
+    const digitalTime = time.format('hh:mm:ss A');
     const timeDifference = (time.utcOffset() - indianTime.utcOffset()) / 60; // Difference in hours
 
     return (
@@ -33,6 +34,7 @@ const DigitalClock = ({ timezone, country }) => {
 const TimezoneClocks = () => {
     return (
         <div className="d-flex justify-content-start gap-4">
+            <DigitalClock timezone="Asia/Kolkata" country="India" />
             <DigitalClock timezone="America/New_York" country="US" />
             <DigitalClock timezone="Europe/London" country="UK" />
             <DigitalClock timezone="Australia/Sydney" country="AU" />
