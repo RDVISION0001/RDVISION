@@ -77,9 +77,22 @@ function InvoiceBox(props) {
         selectedProductId: '',
         ticketId: '',
         userId: '',
-        price: '',
+        price: '0',
         currency: ''
     });
+
+    const [selectedProductPrice, setSelectedProductPrice] = useState()
+
+    useEffect(() => {
+        fetchProductPrice()
+    }, [formData.selectedProductId])
+
+
+    const fetchProductPrice = async () => {
+        const response = await axiosInstance.get(`/product/getProduct/${formData.selectedProductId}`)
+        setSelectedProductPrice(response.data.dtoList.price)
+    }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -209,19 +222,41 @@ function InvoiceBox(props) {
             toast.error('Failed to send invoice');
         }
     };
+    const [isCollapsed, setIsCollapsed] = useState(false); // State to track collapse/expand
+
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed); // Toggle the collapse state
+    };
+    const handleDeleteProduct = async (productOrderId) => {
+        const response = await axiosInstance.delete(`/order/deleteProductOrder/${productOrderId}`)
+        if (response.data === "deleted") {
+            document.getElementById(`deleteIcon-${productOrderId}`).classList.remove("fa-lg")
+            document.getElementById(`deleteIcon-${productOrderId}`).classList.add("fa-bounce")
+            document.getElementById(`deleteIcon-${productOrderId}`).classList.add("fa-xl")
+            toast.success("Product Deleted")
+            fatchaddedproduct()
+            setTimeout(() => {
+                document.getElementById(`deleteIcon-${productOrderId}`).classList.remove("fa-bounce")
+                document.getElementById(`deleteIcon-${productOrderId}`).classList.remove("fa-xl")
+                document.getElementById(`deleteIcon-${productOrderId}`).classList.add("fa-bounce,fa-lg")
+
+            }, 1000)
+        }
+        
+    }
     return (
         <>
             <div className="">
                 <div className="tab-content vertical-tab-body-wrapper" id="v-pills-tabContent">
                     {/* <!-- tab one  --> */}
                     <div className="tab-pane fade show active" id="v-pills-ticket1" role="tabpanel" aria-labelledby="v-pills-ticket1-tab" tabindex="0">
-                        <div className="order-cards-details-wrapper-main">
+                        <div className="order-s-details-wrapper-main">
                             {ticketDetails ? (
-                                <div className="order-details-card">
+                                <div className="order-details-">
                                     <div className="">
                                         <div className="content-wrapper d-flex justify-content-between">
                                             <div className='p-4 border rounded m-2'>
-                                                <h5 className="card-title text-center mb-4">Customer Detail</h5>
+                                                <h5 className="-title text-center mb-4">Customer Detail</h5>
                                                 <div className="user-info">
                                                     <div><strong>Name:</strong> {props.name}</div>
                                                     <div><strong>Ticket ID:</strong> {selectedTicketId}</div>
@@ -231,22 +266,24 @@ function InvoiceBox(props) {
                                             </div>
                                             <div className='border rounded p-4 m-2'>
                                                 <h3 className="title">{ticketDetails.queryProductName}</h3>
-                                                <div className="contact-wrapper">
-                                                    <div className="contact-item"><i className="fa-solid fa-phone"></i> {ticketDetails.senderMobile}</div>
-                                                    <div className="contact-item">
-                                                        <i className="fa-solid fa-envelope-open-text"></i>
-                                                        {ticketDetails.senderEmail}
-                                                    </div>
-                                                </div>
                                                 <div className="address-items mt-2">
                                                     <small>Billing Address</small>
-                                                    <address>{ticketDetails.senderAddress}</address>
+                                                    <address>
+                                                        {ticketDetails.senderAddress}
+                                                    </address>
+
                                                 </div>
                                                 <div className="address-items">
                                                     <small>Delivery Address</small>
-                                                    <address>098, Viraj khand, Gomti Nagar, Lucknow UP India 206202</address>
-                                                </div>
-                                                <div className="card-body"></div>
+                                                    <address>
+                                                        {` ${addressData && addressData.houseNumber},
+                                                        ${addressData && addressData.landmark},
+                                                        ${addressData && addressData.city},
+                                                        ${addressData && addressData.state},
+                                                        ${addressData && addressData.country},
+                                                        ${addressData && addressData.zipCode}`}
+                                                    </address>                                                </div>
+                                                <div className=""></div>
                                             </div>
                                         </div>
 
@@ -263,8 +300,8 @@ function InvoiceBox(props) {
                                             <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
                                         </h2>
                                         <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                            <div className="accordion-body">
-                                                <div className="order-lists">
+                                            <div className="">
+                                                <div className="order-lists p-3">
                                                     <div className="items-wrapper">
                                                         <div className="list-item header">
                                                             <p className="title"></p>
@@ -285,25 +322,35 @@ function InvoiceBox(props) {
                                                                 <th scope="col">Size</th>
                                                                 <th scope="col">Pills Qty</th>
                                                                 <th scope="col">Price</th>
+                                                                <th scope='col'>Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             {orderDetails.productOrders && orderDetails.productOrders.map((productOrder, index) => (
                                                                 productOrder.product && productOrder.product[0] ? (
-                                                                    <tr key={index}>
-                                                                        <td>{productOrder?.product[0].name}</td>
-                                                                        <td>{productOrder?.product[0].brand}</td>
-                                                                        <td>{productOrder?.product[0].composition}</td>
-                                                                        <td>{productOrder?.product[0].packagingSize}</td>
-                                                                        <td>{productOrder?.product[0].pillsQty}</td>
-                                                                        <td>{productOrder?.totalAmount}</td>
+                                                                    <tr key={productOrder.productorderId}> {/* Use unique id as key */}
+                                                                        <td>{productOrder.product[0].name}</td>
+                                                                        <td>{productOrder.product[0].brand}</td>
+                                                                        <td>{productOrder.product[0].composition}</td>
+                                                                        <td>{productOrder.product[0].packagingSize}</td>
+                                                                        <td>{productOrder.product[0].pillsQty}</td>
+                                                                        <td>{productOrder.totalAmount}</td>
+                                                                        <td className='h-100 text-center'>
+                                                                            <i
+                                                                                onClick={() => handleDeleteProduct(productOrder.productorderId)}
+                                                                                id={`deleteIcon-${productOrder.productorderId}`}
+                                                                                className="fa-solid fa-trash fa-lg"
+                                                                                style={{ color: "#ec2222", cursor: "pointer" }}
+                                                                            ></i>
+                                                                        </td>
                                                                     </tr>
                                                                 ) : (
                                                                     <tr key={index}>
-                                                                        <td colSpan="6">Product details not available</td>
+                                                                        <td colSpan="7">Product details not available</td> {/* Ensure colSpan matches number of columns */}
                                                                     </tr>
                                                                 )
                                                             ))}
+
                                                         </tbody>
                                                     </table>
                                                     <div className="total d-flex justify-content-end">
@@ -312,7 +359,7 @@ function InvoiceBox(props) {
                                                             <p>$ {orderDetails.totalPayableAmount}</p>
                                                         </div>
                                                     </div>
-                                                    <div className="add-more-products-wrapper">
+                                                    <div className="add-more-products-wrapper ">
                                                         <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
                                                     </div>
                                                 </div>
@@ -326,23 +373,33 @@ function InvoiceBox(props) {
                                 {/* /////////////////shipping address */}
                                 <div className="accordion-item">
                                     <h2 className="accordion-header">
-                                        <button className="accordion-button" type="button" data-toggle="collapse" href="shippingDetils" data-bs-target="shippingDetils" aria-expanded="true" aria-controls="collapseOne">Sales/Invoice Details</button>
+                                        <button
+                                            className="accordion-button"
+                                            type="button"
+                                            onClick={toggleCollapse} // Handle click to toggle collapse
+                                            aria-expanded={!isCollapsed}
+                                            aria-controls="shippingDetils">
+                                            Sales/Invoice Details
+                                        </button>
                                     </h2>
 
-                                    <div id="shippingDetils" className="accordion-collapse collapse show" data-bs-parent="#accordionAddressDetails">
-                                        {selectedTicketId && (
-                                            <div className="accordion-body">
+                                    <div
+                                        id="shippingDetils"
+                                        className={`accordion-collapse collapse ${isCollapsed ? '' : 'show'}`}
+                                        data-bs-parent="#accordionAddressDetails">
+                                        {true && ( // Adjust condition if necessary
+                                            <div className="p-3">
                                                 <form onSubmit={handleshipSubmit}>
-                                                    <div className="row g-3">
+                                                    <div className="row g-3 p-3">
                                                         <div className="col-12">
-                                                            <label for="name" className="form-label">Shiping To :</label>
+                                                            <label htmlFor="name" className="form-label">Shipping To :</label>
                                                             <input type="text" id="name" className="form-control" placeholder="Eg. Jane Kapoor" />
                                                         </div>
                                                         <div className="col-12">
                                                             <h3 className="fieldset-heading">Shipping Address</h3>
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="hNo" className="form-label">House No./ Street</label>
+                                                            <label htmlFor="hNo" className="form-label">House No./ Street</label>
                                                             <input
                                                                 name="houseNumber"
                                                                 value={addressData ? addressData.houseNumber : ""}
@@ -352,18 +409,18 @@ function InvoiceBox(props) {
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="hNo" className="form-label">Landmark</label>
+                                                            <label htmlFor="landmark" className="form-label">Landmark</label>
                                                             <input
                                                                 type="text"
                                                                 name="landmark"
                                                                 value={addressData ? addressData.landmark : ""}
                                                                 onChange={handleshipChange}
-                                                                id="hNo"
+                                                                id="landmark"
                                                                 className="form-control"
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="city" className="form-label">City</label>
+                                                            <label htmlFor="city" className="form-label">City</label>
                                                             <input
                                                                 type="text"
                                                                 name="city"
@@ -374,7 +431,7 @@ function InvoiceBox(props) {
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="zipCode" className="form-label">Zip Code</label>
+                                                            <label htmlFor="zipCode" className="form-label">Zip Code</label>
                                                             <input
                                                                 type="text"
                                                                 name="zipCode"
@@ -385,7 +442,7 @@ function InvoiceBox(props) {
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="state" className="form-label">State</label>
+                                                            <label htmlFor="state" className="form-label">State</label>
                                                             <input
                                                                 type="text"
                                                                 name="state"
@@ -396,7 +453,7 @@ function InvoiceBox(props) {
                                                             />
                                                         </div>
                                                         <div className="col-6">
-                                                            <label for="country" className="form-label">Country</label>
+                                                            <label htmlFor="country" className="form-label">Country</label>
                                                             <input
                                                                 type="text"
                                                                 name="country"
@@ -408,7 +465,7 @@ function InvoiceBox(props) {
                                                         </div>
                                                         <div className="col-12">
                                                             <input type="checkbox" id="checkSame" className="form-check-inline" />
-                                                            <label for="checkSame" className="form-label checkSame-Address">Billing address is same as shipping</label>
+                                                            <label htmlFor="checkSame" className="form-label checkSame-Address">Billing address is same as shipping</label>
                                                         </div>
                                                         <div className="col-12">
                                                             <button className="btn btn-primary w-100">Submit Address</button>
@@ -457,11 +514,11 @@ function InvoiceBox(props) {
                                     </div>
                                     <div className="col-6">
                                         <label htmlFor="Quantity" className="form-label">Quantity</label>
-                                        <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
+                                        <input type="number" min="0" name="quantity" value={formData.quantity} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
                                     </div>
                                     <div className="col-6">
-                                        <label htmlFor="price" className="form-label">Price</label>
-                                        <input type="number" name="price" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
+                                        <label htmlFor="price" className="form-label">Add Total Price</label>
+                                        <input type="number" name="price" min="0" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
                                     </div>
                                     <div className="col-6">
                                         <label htmlFor="currency" className="form-label">Currency</label>
@@ -481,9 +538,12 @@ function InvoiceBox(props) {
                                             <option value="JPY">JPY - Japanese Yen</option>
                                         </select>
                                     </div>
+                                    <div className='w-100 d-flex justify-content-between p-4 text-primary'>
+                                            <span>price per quantity:-{selectedProductPrice}</span> <span>Total price for selected quaantity:-{selectedProductPrice*formData.quantity}</span>
+                                        </div>
                                     <div className="modal-footer justify-content-center border-0">
                                         <button type="button" onClick={handleClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" className="btn btn-primary">Add</button>
+                                        <button type="submit" disabled={formData.price==="0"?true:false} className="btn btn-primary">Add</button>
                                     </div>
                                 </div>
                             </form>
