@@ -2,13 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
-import axios from 'axios';
-
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
-
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -21,7 +18,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TicketJourney from '../components/TicketJourney';
 
-import Invoicesa from '../closer/invoicesa';
 import InvoiceBox from '../components/InvoiceBox';
 
 
@@ -192,8 +188,6 @@ function live_tickets() {
       console.error('Error during API call:', error);
     }
   };
-
-
 
   // Masking mobile number
   const maskMobileNumber = (number) => {
@@ -1092,7 +1086,7 @@ function live_tickets() {
               >
                 <option>Choose Call-Status</option>
                 <option value="Sale">Sale</option>
-                <option value="New">New</option>
+                {/* <option value="New">New</option> */}
                 <option value="Follow">Follow-up</option>
                 <option value="Interested">Interested</option>
                 <option value="Not_Interested">Not Interested</option>
