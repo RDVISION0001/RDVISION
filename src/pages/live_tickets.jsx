@@ -72,11 +72,11 @@ function live_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
+    allTickets: {userId},
+    ongoing: {userId,ticketStatus: 'Sale' },
+    newTickets: {userId, ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: {},
+    followUp: {userId,},
   };
 
   const handleClose = () => setShow(false);
@@ -504,7 +504,7 @@ function live_tickets() {
                   aria-selected="false"
                   tabindex="-1"
                 >
-                  Follow-up
+                  In-Negotiation
                 </button>
               </li>
               <li className="nav-item" role="presentation">
@@ -526,7 +526,6 @@ function live_tickets() {
               </li>
             </ul>
             {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call back</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
@@ -1092,7 +1091,6 @@ function live_tickets() {
                 <option value="Not_Interested">Not Interested</option>
                 <option value="Wrong_Number">Wrong Number</option>
                 <option value="Place_with_other">Place with other</option>
-                <option value="Call_Back">Call Back</option>
                 <option value="Not_Pickup">Not Pickup</option>
               </select>
             </div>
@@ -1108,6 +1106,7 @@ function live_tickets() {
                   name="transactionDetails"
                   value={formData.SaleTransaction}
                   onChange={handleChange}
+                  required
                 />
               </div>
             )}

@@ -106,11 +106,11 @@ function uploaded_tickets() {
   // Define parameters for each tab
 
   const params = {
-    allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
+    allTickets: { userId, },
+    ongoing: { userId, ticketStatus: 'Sale' },
+    newTickets: { userId, ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: {},
+    followUp: { userId, },
   };
 
   const handleClose = () => {
@@ -174,8 +174,6 @@ function uploaded_tickets() {
       console.error('Error during API call:', error);
     }
   };
-
-
 
   //notification
   const playNotificationSound = () => {
@@ -290,25 +288,25 @@ function uploaded_tickets() {
     return colors[ticketStatus] || 'white';
   };
 
-// Update handleStatusChange function
-const handleStatusChange = (event) => {
-  handleChange(event);
-  const { value } = event.target;
+  // Update handleStatusChange function
+  const handleStatusChange = (event) => {
+    handleChange(event);
+    const { value } = event.target;
 
-  // Show folloeupdatetime input when 'Follow' is selected
-  if (value === "Follow") {
-    setShowFollowUpDate(true);
-  } else {
-    setShowFollowUpDate(false);
-  }
+    // Show folloeupdatetime input when 'Follow' is selected
+    if (value === "Follow") {
+      setShowFollowUpDate(true);
+    } else {
+      setShowFollowUpDate(false);
+    }
 
-  // Show transaction details input when 'Sale' is selected
-  if (value === "Sale") {
-    setShowTransaction(true);
-  } else {
-    setShowTransaction(false);
-  }
-};
+    // Show transaction details input when 'Sale' is selected
+    if (value === "Sale") {
+      setShowTransaction(true);
+    } else {
+      setShowTransaction(false);
+    }
+  };
 
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
@@ -623,7 +621,7 @@ const handleStatusChange = (event) => {
                   aria-selected="false"
                   tabindex="-1"
                 >
-                  Follow-up
+                  In-Negotiation
                 </button>
               </li>
               <li className="nav-item" role="presentation">
@@ -1015,13 +1013,13 @@ const handleStatusChange = (event) => {
                 tabindex="0"
               >
                 {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Call_Back"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call back</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Follow"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Interested"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Not_Interested"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Wrong_Number"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Place_with_other"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
-                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus==="Not_Pickup"?"bg-danger":"bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call back</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
                 </div> : ""}
                 <div className="followups-table table-responsive table-height">
                   <table className="table">
@@ -1050,7 +1048,7 @@ const handleStatusChange = (event) => {
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                        )).filter((items) => (items.ticketstatus.toLowerCase()===followUpStatus.toLowerCase())).map((item, index) => (
+                        )).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).map((item, index) => (
                           <tr key={index}>
                             {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
@@ -1249,7 +1247,7 @@ const handleStatusChange = (event) => {
                   onChange={handleChange}
                 />
               </div>
-            )} 
+            )}
 
             {showFollowUpDate && (
               <div className="mb-3">
