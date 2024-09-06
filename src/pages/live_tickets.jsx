@@ -72,11 +72,11 @@ function live_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {userId},
-    ongoing: {userId,ticketStatus: 'Sale' },
-    newTickets: {userId, ticketStatus: 'New' },
+    allTickets: {},
+    ongoing: {ticketStatus: 'Sale' },
+    newTickets: {ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: {userId,},
+    followUp: {},
   };
 
   const handleClose = () => setShow(false);
