@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import LiveCalander from './LiveCalander';
 import TimezoneClocks from './TimezoneClocks';
+import axiosInstance from '../axiosInstance';
+import { useAuth } from '../auth/AuthContext';
 // import TimeZone from './TimeZone';
 
 function topnav() {
-
+  const { takingBreak } = useAuth()
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -21,6 +23,25 @@ function topnav() {
     }
   };
 
+  //working time api
+
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSeconds(prevSeconds => prevSeconds + 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  
+  useEffect(() => {
+    if (!takingBreak) {
+      axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
+    }else{
+      axiosInstance.post(`/attendance/addBreakSeconds/${localStorage.getItem("attendanceId")}`);
+    }
+  }, [seconds]);
 
 
 

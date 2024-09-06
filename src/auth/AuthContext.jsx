@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [attendanceId, setAttendanceId] = useState('');
 
 
+  const [takingBreak,setTakingBreak]=useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -106,7 +107,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout }}>
       {children}
     </AuthContext.Provider>
 

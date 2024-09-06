@@ -9,6 +9,12 @@ import 'react-toastify/dist/ReactToastify.css';
 ///compo//
 import Sidenav from './components/sidenav';
 
+//Coustomer invoice
+import Coustomer from './components/Coustomer';
+
+//in_Negotiation
+import InNegotiation from './pages/InNegotiation';
+
 
 // auth
 import './auth/login.css';
@@ -111,10 +117,14 @@ function App() {
 
   return (
     <>
+
       <ToastContainer />
       <AuthProvider>
         <Router>
           <Routes>
+
+            {/* //costoumer  invoice*/}
+            <Route exact path="/coustomer_invoice" element={<Coustomer />} />
 
             {/* auth */}
             <Route exact path="/" element={<Login />} />
@@ -126,6 +136,10 @@ function App() {
 
               {/* compo */}
               <Route exact path="/sidenav" element={<Sidenav />} />
+
+              {/* //in_Negotiation */}
+              <Route exact path="/in_negotiation" element={<InNegotiation />} />
+
 
               {/* admin */}
               <Route exact path="/admin_index" element={<Index />} />
