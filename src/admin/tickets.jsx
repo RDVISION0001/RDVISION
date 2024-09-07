@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 //components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 
 import { Modal, Button } from "react-bootstrap";
@@ -29,11 +27,11 @@ function tickets() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
- //Short Method
- const [shortValue, setShortValue] = useState("")
- const handleShortDataValue = (e) => {
-   setShortValue(e.target.value)
- }
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
@@ -113,12 +111,10 @@ function tickets() {
   return (
     <>
       <div className="admin-page tickets-page">
-        <Sidenav />
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
+        <div className="my-container main-content-block2658">
           <div className="container-fluid mt-3">
-             {/* <!-- Section one --> */}
-             <Cardinfo />
+            {/* <!-- Section one --> */}
+            <Cardinfo />
             <section className="filter-section">
               <div className="container-fluid">
                 <div className="row">
@@ -180,11 +176,11 @@ function tickets() {
                           </thead>
                           <tbody>
                             {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).map((item) => (
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
@@ -227,11 +223,11 @@ function tickets() {
                           </thead>
                           <tbody>
                             {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).map((item) => (
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input
@@ -274,11 +270,11 @@ function tickets() {
                           </thead>
                           <tbody>
                             {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).map((item) => (
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item) => (
                               <tr key={item.uniqueQueryId}>
                                 <td className="selection-cell">
                                   <input

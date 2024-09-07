@@ -18,31 +18,20 @@ function uptickets() {
   return (
 
     <>
-      <div className="superadmin-page">
+      <div className="container-fluid mt-3">
+        <Cardinfo />
+      </div>
 
-        <Sidenav />
-
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
-
-          <div className="container-fluid mt-3">
-            <Cardinfo />
-          </div>
-
-          {/* <div className="container-fluid mt-3">
+      {/* <div className="container-fluid mt-3">
             <Worktime />
           </div> */}
 
-
-          <div className="container-fluid mt-3">
-          <Uploaded_tickets />
-          </div>
-
-        </div >
-        </div >
-      </>
-      );
+      <div className="container-fluid mt-3">
+        <Uploaded_tickets />
+      </div>
+    </>
+  );
 }
 
 
-      export default uptickets
+export default uptickets

@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-//components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -99,132 +96,127 @@ function uploadProducts() {
 
   return (
     <>
-      <div className="admin-page tickets-page">
-        <Sidenav />
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
-          <div className="container-fluid mt-3">
-            <section className="data-table-bgs_02x24 py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
-                  <div className="heading-wrapper">
-                    <h3 className="title">Upload Products File</h3>
-                  </div>
-                  <div className="d-flex align-items-center mb-3">
-                    <input
-                      type="file"
-                      accept=".csv"
-                      className="form-control mr-3"
-                      id="customFile"
-                      onChange={handleFileUpload}
-                    />
+      <div className="container-fluid mt-3">
+        <section className="data-table-bgs_02x24 py-3">
+          <div className="container-fluid">
+            <div className="table-wrapper tabbed-table">
+              <div className="heading-wrapper">
+                <h3 className="title">Upload Products File</h3>
+              </div>
+              <div className="d-flex align-items-center mb-3">
+                <input
+                  type="file"
+                  accept=".csv"
+                  className="form-control mr-3"
+                  id="customFile"
+                  onChange={handleFileUpload}
+                />
 
-                    {loading ? (
-                      <div className='w-25 btn ml-3 rounded'>
-                        <div className='loader'></div>
-                      </div>
-                    ) : (
-                      <button
-                        className="btn btn-primary ml-3 rounded"
-                        style={{ flex: '0 0 25%' }}
-                        onClick={handleUploadDataToDB}
-                      >
-                        Upload Products
-                      </button>
-                    )}
+                {loading ? (
+                  <div className='w-25 btn ml-3 rounded'>
+                    <div className='loader'></div>
                   </div>
-                </div>    
+                ) : (
+                  <button
+                    className="btn btn-primary ml-3 rounded"
+                    style={{ flex: '0 0 25%' }}
+                    onClick={handleUploadDataToDB}
+                  >
+                    Upload Products
+                  </button>
+                )}
               </div>
-            </section>
-            <section className="filter-section">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-5">
-                    <div className="search-wrapper">
-                      <input
-                        type="text"
-                        name="search-user"
-                        id="searchUsers"
-                        className="form-control"
-                        placeholder="Search Department or Name..."
-                        value={searchQuery}
-                        onChange={handleSearchChange}
-                      />
-                      <div className="search-icon">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-            <section className="data-table-bgs_02x24 py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
-                  <div className="heading-wrapper">
-                    <h3 className="title">All Tickets</h3>
-                  </div>
-                  <div className="tab-content recent-transactions-tab-body" id="myTabContent">
-                    <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
-                      <div className="tickets-table table-responsive">
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th className="selection-cell-header" data-row-selection="true">
-                                <input type="checkbox" className="" />
-                              </th>
-                              <th tabIndex="0">Product Name</th>
-                              <th tabIndex="0">Image</th>
-                              <th tabIndex="0">Composition</th>
-                              <th tabIndex="0">Brand</th>
-                              <th tabIndex="0">Treatment</th>
-                              <th tabIndex="0">Size</th>
-                              <th tabIndex="0">Form</th>
-                              <th tabIndex="0">Pills Quantity</th>
-                              <th tabIndex="0">Price</th>
-                              <th tabIndex="0">Purchase Link</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {data.map((item) => (
-                              <tr key={item.productId}>
-                                <td className="selection-cell">
-                                  <input type="checkbox" />
-                                </td>
-                                <td>{item.name}</td>
-                                <td>{item.image ? <img src={item.image} alt={item.name} /> : "N/A"}</td>
-                                <td>{item.composition}</td>
-                                <td>{item.brand}</td>
-                                <td>{item.treatment}</td>
-                                <td>{item.packagingSize}</td>
-                                <td>{item.form}</td>
-                                <td>{item.pillsQty}</td>
-                                <td>{item.price}</td>
-                                <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                      <div className="pagination-wrapper">
-                        {Array.from({ length: totalPages }, (_, index) => (
-                          <button
-                            key={index}
-                            className={`btn ${currentPage === index ? 'btn-primary' : 'btn-secondary'}`}
-                            onClick={() => handlePageChange(index)}
-                          >
-                            {index + 1}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
+            </div>
           </div>
-        </div>
+        </section>
+        <section className="filter-section">
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-5">
+                <div className="search-wrapper">
+                  <input
+                    type="text"
+                    name="search-user"
+                    id="searchUsers"
+                    className="form-control"
+                    placeholder="Search Department or Name..."
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+                  <div className="search-icon">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section className="data-table-bgs_02x24 py-3">
+          <div className="container-fluid">
+            <div className="table-wrapper tabbed-table">
+              <div className="heading-wrapper">
+                <h3 className="title">All Tickets</h3>
+              </div>
+              <div className="tab-content recent-transactions-tab-body" id="myTabContent">
+                <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
+                  <div className="tickets-table table-responsive">
+                    <table className="table">
+                      <thead>
+                        <tr>
+                          <th className="selection-cell-header" data-row-selection="true">
+                            <input type="checkbox" className="" />
+                          </th>
+                          <th tabIndex="0">Product Name</th>
+                          <th tabIndex="0">Image</th>
+                          <th tabIndex="0">Composition</th>
+                          <th tabIndex="0">Brand</th>
+                          <th tabIndex="0">Treatment</th>
+                          <th tabIndex="0">Size</th>
+                          <th tabIndex="0">Form</th>
+                          <th tabIndex="0">Pills Quantity</th>
+                          <th tabIndex="0">Price</th>
+                          <th tabIndex="0">Purchase Link</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {data.map((item) => (
+                          <tr key={item.productId}>
+                            <td className="selection-cell">
+                              <input type="checkbox" />
+                            </td>
+                            <td>{item.name}</td>
+                            <td>{item.image ? <img src={item.image} alt={item.name} /> : "N/A"}</td>
+                            <td>{item.composition}</td>
+                            <td>{item.brand}</td>
+                            <td>{item.treatment}</td>
+                            <td>{item.packagingSize}</td>
+                            <td>{item.form}</td>
+                            <td>{item.pillsQty}</td>
+                            <td>{item.price}</td>
+                            <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="pagination-wrapper">
+                    {Array.from({ length: totalPages }, (_, index) => (
+                      <button
+                        key={index}
+                        className={`btn ${currentPage === index ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => handlePageChange(index)}
+                      >
+                        {index + 1}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
+
       <ToastContainer />
     </>
   );

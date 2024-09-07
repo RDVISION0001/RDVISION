@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
+
 //components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 import Uploaded_tickets from '../pages/uploaded_tickets';
 import FloatingButton from '../components/FloatingButton'
 
@@ -82,7 +81,7 @@ function upload_tickets() {
     return pageNumbers;
   };
 
-  
+
   // Upload ticket state
   const [dataToSave, setDataToSave] = useState({
     csvStringData: ""
@@ -213,30 +212,26 @@ function upload_tickets() {
   return (
     <>
       <ToastContainer />
-      <div className="admin-page tickets-page">
-        <Sidenav />
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
-          <div className="container-fluid mt-3">
-            <section className="data-table-bgs_02x24 py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
-                  <div className="heading-wrapper">
-                    <h3 className="title">Upload Tickets File</h3>
-                  </div>
-                  <div className="d-flex align-items-center mb-3">
-                    <input type="file" accept=".csv" className="form-control mr-3" id="customFile" onChange={handleFileUpload} />
-                    {loading ? <div className='w-25 btn rounded'><div className='loader '></div></div> : <button className="btn btn-primary ml-3 rounded" style={{ flex: '0 0 25%' }} onClick={handleUploadDataToDB}>Upload Data</button>}
-                  </div>
-                </div>
-              </div>
-            </section>
-            <FloatingButton />
 
-            <Uploaded_tickets />
+      <div className="container-fluid mt-3">
+        <section className="data-table-bgs_02x24 py-3">
+          <div className="container-fluid">
+            <div className="table-wrapper tabbed-table">
+              <div className="heading-wrapper">
+                <h3 className="title">Upload Tickets File</h3>
+              </div>
+              <div className="d-flex align-items-center mb-3">
+                <input type="file" accept=".csv" className="form-control mr-3" id="customFile" onChange={handleFileUpload} />
+                {loading ? <div className='w-25 btn rounded'><div className='loader '></div></div> : <button className="btn btn-primary ml-3 rounded" style={{ flex: '0 0 25%' }} onClick={handleUploadDataToDB}>Upload Data</button>}
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+        <FloatingButton />
+
+        <Uploaded_tickets />
       </div>
+
     </>
   );
 }

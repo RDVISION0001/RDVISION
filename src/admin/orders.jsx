@@ -1,133 +1,123 @@
 import React from 'react'
 
-//components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+
 
 function orders() {
   return (
     <>
-      <div className="superadmin-page">
-        {/* <!-- Side-Nav --> */}
-        <Sidenav />
-        {/* <!-- Main Wrapper --> */}
-        <div className="my-container main-content-block2658 orders-status-page active-cont">
-          {/* <!-- Top Nav --> */}
-          <Topnav />
-          {/* <!--End Top Nav --> */}
-          <div className="container-fluid mt-3">
-            {/* <!-- Section one --> */}
 
-            <section className="sadmin-top-section">
-              <div className="container-fluid">
-                <div className="row g-3">
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
+      <div className="container-fluid mt-3">
+        {/* <!-- Section one --> */}
+
+        <section className="sadmin-top-section">
+          <div className="container-fluid">
+            <div className="row g-3">
+              <div className="col-md-3">
+                <div className="card">
+                  <div className="div-top">
+                    <h3 className="title">Total Sales</h3>
+                    <span className="sales">$3,181 <span className="indicators">+55%</span></span>
                   </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="col-md-3">
-                    <div className="card">
-                      <div className="div-top">
-                        <h3 className="title">Total Sales</h3>
-                        <span className="sales">$3,181 <span className="indicators">+55%</span></span>
-                      </div>
-                      <div className="icon-wrapper">
-                        <i className="fa-solid fa-wallet"></i>
-                      </div>
-                    </div>
+                  <div className="icon-wrapper">
+                    <i className="fa-solid fa-wallet"></i>
                   </div>
                 </div>
               </div>
-            </section>
-
-            {/* <!-- Orders Overview --> */}
-            <section className="oreders-overview py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
-                  <h3 className="title">Order Overview</h3>
-                  <div className="tickets-table table-responsive">
-                    <table className="table">
-                      <thead>
-                        <tr>
-                          <th className="selection-cell-header" data-row-selection="true">
-                            <input type="checkbox" className="" />
-                          </th>
-                          <th tabindex="0">Ticket ID</th>
-                          <th tabindex="0">Client Name</th>
-                          <th tabindex="0">Deal Locked</th>
-                          <th tabindex="0">Old Reference</th>
-                          <th tabindex="0">Order Status</th>
-                          <th tabindex="0">Contact</th>
-                          <th tabindex="0">Email</th>
-                          <th tabindex="0">Description/Comment</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td className="selection-cell">
-                            <input type="checkbox" className="" />
-                          </td>
-                          <td>#12548796</td>
-                          <td>John Skrew</td>
-                          <td>Digvijay (Sales Dept.)</td>
-                          <td>N/A</td>
-                          <td><span className="badge preparing">Preparing</span></td>
-                          <td>+91 XXXXXXXX 90</td>
-                          <td>****@gmail.com</td>
-                          <td>Lorem ipsum dolor sit amet....</td>
-                        </tr>
-                        <tr>
-                          <td className="selection-cell">
-                            <input type="checkbox" className="" />
-                          </td>
-                          <td>#12548796</td>
-                          <td>Smith</td>
-                          <td>Hanuman (Sales Dept.)</td>
-                          <td>N/A</td>
-                          <td><span className="badge ofd">Out For Delivery</span></td>
-                          <td>+91 XXXXXXXX 90</td>
-                          <td>****@gmail.com</td>
-                          <td>Lorem ipsum dolor sit amet....</td>
-                        </tr>
-                      </tbody>
-                    </table>
+              <div className="col-md-3">
+                <div className="card">
+                  <div className="div-top">
+                    <h3 className="title">Total Sales</h3>
+                    <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                  </div>
+                  <div className="icon-wrapper">
+                    <i className="fa-solid fa-wallet"></i>
                   </div>
                 </div>
               </div>
-            </section>
-            {/* <!-- -------------- --> */}
+              <div className="col-md-3">
+                <div className="card">
+                  <div className="div-top">
+                    <h3 className="title">Total Sales</h3>
+                    <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                  </div>
+                  <div className="icon-wrapper">
+                    <i className="fa-solid fa-wallet"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-3">
+                <div className="card">
+                  <div className="div-top">
+                    <h3 className="title">Total Sales</h3>
+                    <span className="sales">$3,181 <span className="indicators">+55%</span></span>
+                  </div>
+                  <div className="icon-wrapper">
+                    <i className="fa-solid fa-wallet"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* <!-- Orders Overview --> */}
+        <section className="oreders-overview py-3">
+          <div className="container-fluid">
+            <div className="table-wrapper tabbed-table">
+              <h3 className="title">Order Overview</h3>
+              <div className="tickets-table table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th className="selection-cell-header" data-row-selection="true">
+                        <input type="checkbox" className="" />
+                      </th>
+                      <th tabindex="0">Ticket ID</th>
+                      <th tabindex="0">Client Name</th>
+                      <th tabindex="0">Deal Locked</th>
+                      <th tabindex="0">Old Reference</th>
+                      <th tabindex="0">Order Status</th>
+                      <th tabindex="0">Contact</th>
+                      <th tabindex="0">Email</th>
+                      <th tabindex="0">Description/Comment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="selection-cell">
+                        <input type="checkbox" className="" />
+                      </td>
+                      <td>#12548796</td>
+                      <td>John Skrew</td>
+                      <td>Digvijay (Sales Dept.)</td>
+                      <td>N/A</td>
+                      <td><span className="badge preparing">Preparing</span></td>
+                      <td>+91 XXXXXXXX 90</td>
+                      <td>****@gmail.com</td>
+                      <td>Lorem ipsum dolor sit amet....</td>
+                    </tr>
+                    <tr>
+                      <td className="selection-cell">
+                        <input type="checkbox" className="" />
+                      </td>
+                      <td>#12548796</td>
+                      <td>Smith</td>
+                      <td>Hanuman (Sales Dept.)</td>
+                      <td>N/A</td>
+                      <td><span className="badge ofd">Out For Delivery</span></td>
+                      <td>+91 XXXXXXXX 90</td>
+                      <td>****@gmail.com</td>
+                      <td>Lorem ipsum dolor sit amet....</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+        {/* <!-- -------------- --> */}
       </div>
+
 
       {/* <!-- Modal --> */}
       <div className="modal ticket-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

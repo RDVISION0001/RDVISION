@@ -5,11 +5,6 @@ import { useAuth } from '../auth/AuthContext';
 
 import profile2 from '../assets/img/profiles/profile2.png'
 
-
-//components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
-
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
@@ -289,12 +284,8 @@ function users() {
     <>
       <div className=''>
         <div className="superadmin-page">
-          {/* <!-- Side-Nav --> */}
-          <Sidenav />
           {/* <!-- Main Wrapper --> */}
-          <div className="my-container main-content-block2658 user-management-page active-cont">
-            {/* <!-- Top Nav --> */}
-            <Topnav />
+          <div className="my-container main-content-block2658 user-management-page">
             {/* <!--End Top Nav --> */}
             <div className="container-fluid mt-3">
               <section className="core-team-section">
