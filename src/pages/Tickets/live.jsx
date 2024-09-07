@@ -23,8 +23,6 @@ function live() {
             <Cardinfo />
           </div> */}
 
-    
-
       {/* <div className="container-fluid mt-3">
             <TaskProgress />
           </div> */}

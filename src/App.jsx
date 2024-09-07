@@ -13,8 +13,13 @@ import Topnav from './components/topnav'
 //Coustomer invoice
 import Coustomer from './components/Coustomer';
 
-//in_Negotiation
-import InNegotiation from './pages/InNegotiation';
+
+// pages
+import Paid from './pages/Invoices/Paid'
+import Pending from './pages/Invoices/Pending';
+import Live from './pages/Tickets/live'
+import Upticket from './pages/Tickets/upticket';
+import InNegotiation from './pages/Tickets/InNegotiation';
 
 
 // auth
@@ -57,10 +62,6 @@ import Ticketsm from './captain/ticketsm';
 
 // closer/old name agent
 import Indexa from './closer/indexa';
-import Upticket from './closer/Tickets/upticket';
-import Live from './closer/Tickets/live';
-import Paid from './closer/Invoices/Paid';
-import Pending from './closer/Invoices/Pending';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
 import Usersa from './closer/usersa';
@@ -145,8 +146,14 @@ function App() {
                   {/* compo */}
                   <Route exact path="/sidenav" element={<Sidenav />} />
 
-                  {/* //in_Negotiation */}
+
+                  {/* pages */}
+                  <Route exact path="/live_tickets" element={<Live />} />
+                  <Route exact path="/upload_tickets" element={<Upticket />} />
+                  <Route exact path="/invoices_pending" element={<Pending />} />
+                  <Route exact path="/invoices_paid" element={<Paid />} />
                   <Route exact path="/in_negotiation" element={<InNegotiation />} />
+
 
 
                   {/* admin */}
@@ -180,14 +187,8 @@ function App() {
 
                   {/* closer/agent */}
                   <Route exact path="/closer_index" element={<Indexa />} />
-                  <Route exact path="/closer_upload_tickets" element={<Upticket />} />
-                  <Route exact path="/closer_invoices_pending" element={<Pending />} />
-                  <Route exact path="/closer_invoices_paid" element={<Paid />} />
-
-
                   <Route exact path="/closer_orders" element={<Ordersa />} />
                   <Route exact path="/closer_sales" element={<Salesa />} />
-                  <Route exact path="/closer_live" element={<Live />} />
                   <Route exact path="/closer_users" element={<Usersa />} />
 
                   {/*Senior supervisor*/}

@@ -80,7 +80,8 @@ function login() {
     setLoading(false)
 
   }
-  console.log(isCapsLockOn ? "Caps Lock is on" : "caps lock if off")
+
+
   return (
     <section className="h-100 gradient-form" >
       <div className="container py-5 h-100">

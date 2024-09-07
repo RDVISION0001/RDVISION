@@ -160,3 +160,8 @@
     box-sizing: border-box;
     font-family: arial;
   }
+
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(50%) sepia(100%) hue-rotate(180deg) saturate(600%) brightness(50%);
+  }
+  
