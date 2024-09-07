@@ -6,7 +6,7 @@ import React from 'react';
 
 
 //pages
-import Uploaded_tickets from '../pages/uploaded_tickets';
+import Uploaded_tickets from '../../pages/uploaded_tickets';
 
 
 

@@ -94,11 +94,12 @@ function Sidenav() {
 
 
   return (
-    <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
+    <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column bg-white" id="sidebar">
       <ul className="nav sidebar2658 flex-column w-100">
 
         {/* SuperAdmin */}
         {roleName === 'SuperAdmin' && (
+        localStorage.getItem("userId") &&
           <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
@@ -155,7 +156,7 @@ function Sidenav() {
 
         {/* Admin */}
         {roleName === 'Admin' && (
-          <>
+         localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -224,7 +225,7 @@ function Sidenav() {
 
         {/* closer */}
         {roleName === 'Closer' && (
-          <>
+        localStorage.getItem("userId") &&  <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -254,20 +255,20 @@ function Sidenav() {
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
                     <NavLink to="/closer_live" className="nav-link">
-                    <i className="fa-solid fa-headset"></i>
-                    <span className="nav-text">Live Tickets</span>
+                      <i className="fa-solid fa-headset"></i>
+                      <span className="nav-text">Live Tickets</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/closer_upload_tickets" className="nav-link">
-                    <i className="fa-solid fa-upload"></i>
-                    <span className="nav-text">ABC</span>
+                      <i className="fa-solid fa-upload"></i>
+                      <span className="nav-text">ABC</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
-                    <i className="fa-solid fa-handshake"></i>
-                    <span className="nav-text">In-Negotiation</span>
+                      <i className="fa-solid fa-handshake"></i>
+                      <span className="nav-text">In-Negotiation</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -308,7 +309,7 @@ function Sidenav() {
 
         {/* captain/Manager */}
         {roleName === 'Captain' && (
-          <>
+         localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -358,7 +359,7 @@ function Sidenav() {
 
         {/*senior_supervisor*/}
         {roleName === 'SeniorSuperVisor' && (
-          <>
+        localStorage.getItem("userId") &&  <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -413,17 +414,17 @@ function Sidenav() {
             <span className="nav-text">Settings</span>
           </NavLink>
         </li> */}
-        <li className="nav-item">
+       {localStorage.getItem("userId") && <li className="nav-item">
           <Link className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
             <span className="nav-text cursor-pointer"><Logout /></span>
           </Link>
-        </li>
+        </li>}
       </ul>
-      <div className="userIP-wrapper">
+    {localStorage.getItem("userId") &&  <div className="userIP-wrapper">
         <small>Your IP</small>
         <p className="m-0">https://127.2.2.225</p>
-      </div>
+      </div>}
     </div>
   );
 }

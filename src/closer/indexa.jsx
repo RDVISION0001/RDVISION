@@ -4,7 +4,6 @@ import React from 'react';
 import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
 import ChartWorktime from '../components/ChartWorktime';
-import FloatingButton from '../components/FloatingButton';
 
 
 //pages
@@ -19,10 +18,6 @@ function indexa() {
     <>
       <div className="container-fluid mt-3">
         <Cardinfo />
-      </div>
-
-      <div>
-        <FloatingButton />
       </div>
 
       <div className="container-fluid mt-3">

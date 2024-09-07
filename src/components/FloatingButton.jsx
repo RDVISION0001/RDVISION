@@ -21,42 +21,42 @@ const FloatingButton = () => {
         borderRadius: '20px',
         padding: '3px',
         margin: '3px',
-        top: isMinimized ? '-203px' : 'auto',
-        right: isMinimized ? '-587%' : 'auto',
+        top: isMinimized ? '600px' : 'auto',
+        right: isMinimized ? '110%' : 'auto',
         width: isMinimized ? '200px' : '22.88%',
         height: isMinimized ? '80px' : '66%',
         maxWidth: '1000px',
         maxHeight: '600px',
-      
+
         // Add media queries for responsive behavior
         '@media (max-width: 1200px)': {
-          width: isMinimized ? '180px' : '25%',
-          height: isMinimized ? '70px' : '60%',
-          maxWidth: '900px',
-          maxHeight: '550px',
-          top: isMinimized ? '-180px' : 'auto',
-          right: isMinimized ? '-600px' : 'auto',
+            width: isMinimized ? '180px' : '25%',
+            height: isMinimized ? '70px' : '60%',
+            maxWidth: '900px',
+            maxHeight: '550px',
+            top: isMinimized ? '-180px' : 'auto',
+            right: isMinimized ? '-600px' : 'auto',
         },
         '@media (max-width: 768px)': {
-          width: isMinimized ? '150px' : '40%',
-          height: isMinimized ? '60px' : '50%',
-          maxWidth: '700px',
-          maxHeight: '500px',
-          top: isMinimized ? '-160px' : 'auto',
-          right: isMinimized ? '-550px' : 'auto',
+            width: isMinimized ? '150px' : '40%',
+            height: isMinimized ? '60px' : '50%',
+            maxWidth: '700px',
+            maxHeight: '500px',
+            top: isMinimized ? '-160px' : 'auto',
+            right: isMinimized ? '-550px' : 'auto',
         },
         '@media (max-width: 480px)': {
-          width: isMinimized ? '120px' : '70%',
-          height: isMinimized ? '50px' : '40%',
-          maxWidth: '400px',
-          maxHeight: '400px',
-          top: isMinimized ? '-140px' : 'auto',
-          right: isMinimized ? '-500px' : 'auto',
+            width: isMinimized ? '120px' : '70%',
+            height: isMinimized ? '50px' : '40%',
+            maxWidth: '400px',
+            maxHeight: '400px',
+            top: isMinimized ? '-140px' : 'auto',
+            right: isMinimized ? '-500px' : 'auto',
         },
-      };
+    };
 
 
-      
+
     return (
         <div>
             {isOpen && (
@@ -68,7 +68,7 @@ const FloatingButton = () => {
                     }}
                 >
                     <div
-                     style={styles}
+                        style={styles}
                     >
                         <button
                             className="btn btn-danger position-absolute"
@@ -109,7 +109,7 @@ const FloatingButton = () => {
                             id="HoduCCPluginIFrame"
                             style={{
                                 border: 'none',
-                                borderRadius:"15px",
+                                borderRadius: "15px",
                                 width: '96.5%',
                                 height: '98.5%',
                             }}
