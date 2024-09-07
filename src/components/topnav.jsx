@@ -3,6 +3,7 @@ import LiveCalander from './LiveCalander';
 import TimezoneClocks from './TimezoneClocks';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
+import FloatingButton from './FloatingButton';
 // import TimeZone from './TimeZone';
 
 function topnav() {
@@ -34,11 +35,13 @@ function topnav() {
     return () => clearInterval(interval);
   }, []);
 
-  
+
   useEffect(() => {
     if (!takingBreak) {
-      axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
-    }else{
+      if (localStorage.getItem("userId")) {
+        axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
+      }
+    } else {
       axiosInstance.post(`/attendance/addBreakSeconds/${localStorage.getItem("attendanceId")}`);
     }
   }, [seconds]);
@@ -47,31 +50,35 @@ function topnav() {
 
   return (
     <>
-      <nav className="navbar top-navbar navbar-light bg-white container-fluid">
-        <div className="left-part">
-          <a className="btn border-0 ms-2" id="menu-btn"><i className="fa-solid fa-bars"></i></a>
-          <span className="page-title">Dashboard</span>
-        </div>
-        <TimezoneClocks />
-        <div className="right-part">
-          <div className="global-search">
-            <i className="fa-solid fa-magnifying-glass"></i>
-            <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
+      {localStorage.getItem("userId") &&
+        <div className="topnav">
+          <nav className="navbar top-navbar navbar-light bg-white container-fluid">
+            <div className="left-part">
+              <a className="btn border-0 ms-2" id="menu-btn"><i className="fa-solid fa-bars"></i></a>
+              <span className="page-title">Dashboard</span>
+            </div>
+            <TimezoneClocks />
+            <div className="right-part">
+              <div className="global-search">
+                <i className="fa-solid fa-magnifying-glass"></i>
+                <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
+              </div>
+              <a href="#" className="notification">
+                <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
+              </a>
+            </div>
+          </nav>
+          <div>
+            <FloatingButton />
           </div>
-          <a href="#" className="notification">
-            <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
-          </a>
-        </div>
-      </nav>
 
-
-      <dialog id="calender" className="calender-modal">
-        <div className="modal-content">
-          <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
-          <LiveCalander />
-        </div>
-      </dialog>
-
+          <dialog id="calender" className="calender-modal">
+            <div className="modal-content">
+              <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
+              <LiveCalander />
+            </div>
+          </dialog>
+        </div>}
     </>
   );
 }

@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [attendanceId, setAttendanceId] = useState('');
 
 
-  const [takingBreak,setTakingBreak]=useState(false)
+  const [takingBreak, setTakingBreak] = useState(false)
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
         setLastName(user.lastName);
         console.log(user.lastName);
         toast.success('Login successfully!');
-        return true;
+        return user.roleDto.roleName;
       } else {
         toast.error('Login failed');
         return false;

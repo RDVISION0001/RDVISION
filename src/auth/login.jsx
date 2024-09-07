@@ -43,8 +43,22 @@ function login() {
     e.preventDefault();
     setLoading(true)
     try {
-      await login(email, password, logInOtp);
-      navigate('/Sidenav');
+      const status = await login(email, password, logInOtp);
+      console.log("Status is ", status)
+      if (status === "Closer") {
+        navigate("/closer_index")
+      } else if (status === "Admin") {
+        navigate("/admin_index")
+      } else if (status === "Captain") {
+        navigate("/captain_index")
+      } else if (status === "SeniorSuperVisor") {
+        navigate("/senior_supervisor_index")
+      } else if (status === "SuperAdmin") {
+        navigate("/super_admin_index")
+      }
+      window.location.reload()
+
+
     } catch (error) {
       setError('Login failed');
       setLoading(false)
@@ -134,7 +148,7 @@ function login() {
                     </form>
                     <div className="text-center pt-1 mb-5 pb-1">
                       {
-                        otpSent ? loading?<div className='d-flex justify-content-center'><div className='loader '></div></div>:<button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
+                        otpSent ? loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> : <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                           onClick={handleSubmit}> Login</button> : loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> :
                           <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
                             onClick={sendOtp}> Request Otp</button>

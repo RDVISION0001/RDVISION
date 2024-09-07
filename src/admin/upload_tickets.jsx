@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 //components
 import Uploaded_tickets from '../pages/uploaded_tickets';
-import FloatingButton from '../components/FloatingButton'
 
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
@@ -227,7 +226,6 @@ function upload_tickets() {
             </div>
           </div>
         </section>
-        <FloatingButton />
 
         <Uploaded_tickets />
       </div>

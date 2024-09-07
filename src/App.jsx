@@ -57,12 +57,12 @@ import Ticketsm from './captain/ticketsm';
 
 // closer/old name agent
 import Indexa from './closer/indexa';
-import Upticket from './closer/upticket';
+import Upticket from './closer/Tickets/upticket';
+import Live from './closer/Tickets/live';
 import Paid from './closer/Invoices/Paid';
 import Pending from './closer/Invoices/Pending';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
-import Live from './closer/live';
 import Usersa from './closer/usersa';
 
 // senior_supervisor 
@@ -127,7 +127,7 @@ function App() {
 
             <Sidenav />
 
-            <div className="my-container main-content-block2658 active-cont">
+            <div className="my-container main-content-block2658 active-cont bg-white">
               <Topnav />
               <Routes>
 

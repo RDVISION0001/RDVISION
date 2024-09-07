@@ -2,7 +2,6 @@ import React from 'react';
 
 //components
 import Cardinfo from '../components/cardinfo';
-import FloatingButton from '../components/FloatingButton';
 import FeatureControl from '../components/FeatureControl';
 
 
@@ -20,10 +19,6 @@ function index() {
 
         <div className="container-fluid mt-3">
           <Cardinfo />
-        </div>
-
-        <div className="container-fluid mt-3">
-          <FloatingButton />
         </div>
 
         <div className="container-fluid mt-3">
