@@ -308,7 +308,7 @@ function uploaded_tickets() {
     }
   };
 
-  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
+  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso && countryIso.toLowerCase()}.png`;
 
   //iteam par page
   useEffect(() => {
