@@ -1121,6 +1121,7 @@ function live_tickets() {
                   name="followUpDateTime"
                   value={formData.followUpDateTime}
                   onChange={handleChange}
+                  step="2"
                 />
               </div>
             )}
@@ -1129,7 +1130,7 @@ function live_tickets() {
               <textarea
                 rows="4"
                 className="form-control"
-                placeholder="Call Status in words"
+                placeholder="Discribe your conversation with client"
                 id="comment"
                 name="comment"
                 value={formData.comment}
@@ -1277,7 +1278,7 @@ function live_tickets() {
                         <textarea
                           rows="4"
                           className="form-control"
-                          placeholder="Call Status in words"
+                          placeholder="Discribe your conversation with client"
                           id="comment"
                           name="comment"
                         ></textarea>

@@ -1,5 +1,6 @@
 import React from 'react';
-import Invoice from '../../pages/Invoice';
+import Invoice from '../Invoice';
+
 
 function Pending() {
     return (

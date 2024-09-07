@@ -21,7 +21,7 @@ const FloatingButton = () => {
         borderRadius: '20px',
         padding: '3px',
         margin: '3px',
-        top: isMinimized ? '600px' : 'auto',
+        top: isMinimized ? '750px' : 'auto',
         right: isMinimized ? '110%' : 'auto',
         width: isMinimized ? '200px' : '22.88%',
         height: isMinimized ? '80px' : '66%',

@@ -1267,7 +1267,7 @@ function uploaded_tickets() {
               <textarea
                 rows="4"
                 className="form-control"
-                placeholder="Call Status in words"
+                placeholder="Discribe your conversation with client"
                 id="comment"
                 name="comment"
                 value={formData.comment}
@@ -1415,7 +1415,7 @@ function uploaded_tickets() {
                         <textarea
                           rows="4"
                           className="form-control"
-                          placeholder="Call Status in words"
+                          placeholder="Discribe your conversation with client"
                           id="comment"
                           name="comment"
                         ></textarea>

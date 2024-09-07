@@ -5,8 +5,8 @@ import Logout from '../auth/logout';
 
 function Sidenav() {
   const { roleName, firstName, lastName } = useAuth();
-  const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(true);
-  const [isInvoiceSubMenuOpen, setIsInvoiceSubMenuOpen] = useState(true);
+  const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(false);
+  const [isInvoiceSubMenuOpen, setIsInvoiceSubMenuOpen] = useState(false);
 
 
   useEffect(() => {
@@ -99,7 +99,7 @@ function Sidenav() {
 
         {/* SuperAdmin */}
         {roleName === 'SuperAdmin' && (
-        localStorage.getItem("userId") &&
+          localStorage.getItem("userId") &&
           <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
@@ -128,16 +128,55 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/super_admin_tickets" className="nav-link">
+              <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text">Tickets</span>
-              </NavLink>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+              </div>
+              {isTicketSubMenuOpen && (
+                <ul className="nav flex-column px-4 ">
+                  <li className="nav-item">
+                    <NavLink to="/live_tickets" className="nav-link">
+                      <i className="fa-solid fa-headset"></i>
+                      <span className="nav-text">Live Tickets</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/upload_tickets" className="nav-link">
+                      <i className="fa-solid fa-upload"></i>
+                      <span className="nav-text">ABC</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/in_negotiation" className="nav-link">
+                      <i className="fa-solid fa-handshake"></i>
+                      <span className="nav-text">In-Negotiation</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
+            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <NavLink to="/super_admin_invoices" className="nav-link">
-                <i className="fa-regular fa-address-card"></i>
-                <span className="nav-text">Invoices</span>
-              </NavLink>
+              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
+                <i className="fa-solid fa-file-invoice"></i>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+              </div>
+              {isInvoiceSubMenuOpen && (
+                <ul className="nav flex-column px-4">
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_pending" className="nav-link">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                      <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
             <li className="nav-item">
               <NavLink to="/super_admin_sales" className="nav-link">
@@ -156,7 +195,7 @@ function Sidenav() {
 
         {/* Admin */}
         {roleName === 'Admin' && (
-         localStorage.getItem("userId") && <>
+          localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -196,21 +235,60 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin_tickets" className="nav-link">
+              <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text">Tickets</span>
-              </NavLink>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+              </div>
+              {isTicketSubMenuOpen && (
+                <ul className="nav flex-column px-4 ">
+                  <li className="nav-item">
+                    <NavLink to="/live_tickets" className="nav-link">
+                      <i className="fa-solid fa-headset"></i>
+                      <span className="nav-text">Live Tickets</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/upload_tickets" className="nav-link">
+                      <i className="fa-solid fa-upload"></i>
+                      <span className="nav-text">ABC</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/in_negotiation" className="nav-link">
+                      <i className="fa-solid fa-handshake"></i>
+                      <span className="nav-text">In-Negotiation</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
+            </li>
+            {/* Invoices Sub-menu */}
+            <li className="nav-item">
+              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
+                <i className="fa-solid fa-file-invoice"></i>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+              </div>
+              {isInvoiceSubMenuOpen && (
+                <ul className="nav flex-column px-4">
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_pending" className="nav-link">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                      <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Upload Products</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/admin_invoices" className="nav-link">
-                <i className="fa-regular fa-address-card"></i>
-                <span className="nav-text">Invoices</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -225,7 +303,7 @@ function Sidenav() {
 
         {/* closer */}
         {roleName === 'Closer' && (
-        localStorage.getItem("userId") &&  <>
+          localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -254,13 +332,13 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
-                    <NavLink to="/closer_live" className="nav-link">
+                    <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text">Live Tickets</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/closer_upload_tickets" className="nav-link">
+                    <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">ABC</span>
                     </NavLink>
@@ -283,13 +361,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/closer_invoices_paid" className="nav-link">
+                    <NavLink to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/closer_invoices_pending" className="nav-link">
+                    <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
@@ -309,7 +387,7 @@ function Sidenav() {
 
         {/* captain/Manager */}
         {roleName === 'Captain' && (
-         localStorage.getItem("userId") && <>
+          localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -337,16 +415,55 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/captain_tickets" className="nav-link">
+              <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text">Tickets</span>
-              </NavLink>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+              </div>
+              {isTicketSubMenuOpen && (
+                <ul className="nav flex-column px-4 ">
+                  <li className="nav-item">
+                    <NavLink to="/live_tickets" className="nav-link">
+                      <i className="fa-solid fa-headset"></i>
+                      <span className="nav-text">Live Tickets</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/upload_tickets" className="nav-link">
+                      <i className="fa-solid fa-upload"></i>
+                      <span className="nav-text">ABC</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/in_negotiation" className="nav-link">
+                      <i className="fa-solid fa-handshake"></i>
+                      <span className="nav-text">In-Negotiation</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
+            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <NavLink to="/captain_invoices" className="nav-link">
-                <i className="fa-regular fa-address-card"></i>
-                <span className="nav-text">Invoices</span>
-              </NavLink>
+              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
+                <i className="fa-solid fa-file-invoice"></i>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+              </div>
+              {isInvoiceSubMenuOpen && (
+                <ul className="nav flex-column px-4">
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_pending" className="nav-link">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                      <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
             <li className="nav-item">
               <NavLink to="/captain_sales" className="nav-link">
@@ -359,7 +476,7 @@ function Sidenav() {
 
         {/*senior_supervisor*/}
         {roleName === 'SeniorSuperVisor' && (
-        localStorage.getItem("userId") &&  <>
+          localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
               <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
                 <img
@@ -387,22 +504,55 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/senior_supervisor_upload_tickets" className="nav-link">
-                <i class="fa fa-upload" aria-hidden="true"></i>
-                <span className="nav-text">Uploaded Tickets</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink to="/senior_supervisor_tickets" className="nav-link">
+              <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text">Tickets</span>
-              </NavLink>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+              </div>
+              {isTicketSubMenuOpen && (
+                <ul className="nav flex-column px-4 ">
+                  <li className="nav-item">
+                    <NavLink to="/live_tickets" className="nav-link">
+                      <i className="fa-solid fa-headset"></i>
+                      <span className="nav-text">Live Tickets</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/upload_tickets" className="nav-link">
+                      <i className="fa-solid fa-upload"></i>
+                      <span className="nav-text">ABC</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/in_negotiation" className="nav-link">
+                      <i className="fa-solid fa-handshake"></i>
+                      <span className="nav-text">In-Negotiation</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
+            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <NavLink to="/senior_supervisor_invoices" className="nav-link">
-                <i className="fa-regular fa-address-card"></i>
-                <span className="nav-text">Invoices</span>
-              </NavLink>
+              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
+                <i className="fa-solid fa-file-invoice"></i>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+              </div>
+              {isInvoiceSubMenuOpen && (
+                <ul className="nav flex-column px-4">
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_pending" className="nav-link">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                      <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
 
           </>
@@ -414,14 +564,14 @@ function Sidenav() {
             <span className="nav-text">Settings</span>
           </NavLink>
         </li> */}
-       {localStorage.getItem("userId") && <li className="nav-item">
+        {localStorage.getItem("userId") && <li className="nav-item">
           <Link className="nav-link">
             <i className="fa-solid fa-power-off text-danger"></i>
             <span className="nav-text cursor-pointer"><Logout /></span>
           </Link>
         </li>}
       </ul>
-    {localStorage.getItem("userId") &&  <div className="userIP-wrapper">
+      {localStorage.getItem("userId") && <div className="userIP-wrapper">
         <small>Your IP</small>
         <p className="m-0">https://127.2.2.225</p>
       </div>}
