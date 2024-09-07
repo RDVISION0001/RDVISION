@@ -19,35 +19,28 @@ function live() {
   return (
 
     <>
-      <div className="superadmin-page">
 
-        <Sidenav />
-
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
-
-          {/* <div className="container-fluid mt-3">
+      {/* <div className="container-fluid mt-3">
             <Cardinfo />
           </div> */}
 
-          <div>
-            <FloatingButton />
-          </div>
+      <div>
+        <FloatingButton />
+      </div>
 
-          {/* <div className="container-fluid mt-3">
+      {/* <div className="container-fluid mt-3">
             <TaskProgress />
           </div> */}
 
-          {/* <div className="container-fluid mt-3">
+      {/* <div className="container-fluid mt-3">
             <ChartWorktime />
           </div> */}
 
-          <div className="container-fluid mt-3">
-            <Live_tickets />
-          </div>
-
-        </div>
+      <div className="container-fluid mt-3">
+        <Live_tickets />
       </div>
+
+
     </>
   );
 }

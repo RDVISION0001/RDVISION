@@ -1,8 +1,6 @@
 import React from 'react';
 
 //Components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 import Cardinfo from '../components/cardinfo';
 import FloatingButton from '../components/FloatingButton';
 
@@ -18,26 +16,16 @@ function indexs() {
   return (
 
     <>
-      <div className="superadmin-page">
+      <div className="container-fluid mt-3">
+        <Cardinfo />
+      </div>
 
-        <Sidenav />
+      <div>
+        <FloatingButton />
+      </div>
 
-        <div className="my-container main-content-block2658 active-cont">
-          <Topnav />
-
-          <div className="container-fluid mt-3">
-            <Cardinfo />
-          </div>
-
-          <div>
-            <FloatingButton />
-          </div>
-
-          <div className="container-fluid mt-3">
-            <Live_tickets />
-          </div>
-
-        </div>
+      <div className="container-fluid mt-3">
+        <Live_tickets />
       </div>
     </>
   );

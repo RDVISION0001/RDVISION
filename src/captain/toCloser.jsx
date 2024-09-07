@@ -4,9 +4,6 @@ import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 
 function toCloser() {
   // Define parameters for each tab
@@ -19,7 +16,7 @@ function toCloser() {
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage,setItemsPerPage]=useState(10)
+  const [itemsPerPage, setItemsPerPage] = useState(10)
 
   // Action modal active
   const [activeTab, setActiveTab] = useState('allTickets');
@@ -28,7 +25,7 @@ function toCloser() {
   const handleRowClick = (tabName) => {
     setActiveTab(tabName);
     setCurrentPage(0);
-    fetchTickets(params[tabName], 0,itemsPerPage);
+    fetchTickets(params[tabName], 0, itemsPerPage);
   };
 
   // Post assign
@@ -46,11 +43,11 @@ function toCloser() {
       setSelectedTickets(selectedTickets.filter(ticketId => ticketId !== id));
     }
   };
- //Short Method
- const [shortValue, setShortValue] = useState("")
- const handleShortDataValue = (e) => {
-   setShortValue(e.target.value)
- }
+  //Short Method
+  const [shortValue, setShortValue] = useState("")
+  const handleShortDataValue = (e) => {
+    setShortValue(e.target.value)
+  }
   // Function to send POST request
   const sendPostRequest = async () => {
     try {
@@ -115,7 +112,7 @@ function toCloser() {
   const fetchTickets = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-        params: { ...params, page , size: perPage}
+        params: { ...params, page, size: perPage }
       });
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
@@ -140,7 +137,7 @@ function toCloser() {
     if (currentPage < totalPages - 1) {
       fetchTickets(params[activeTab], currentPage + 1);
     }
-  
+
   };
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
@@ -170,12 +167,8 @@ function toCloser() {
   return (
     <>
       <div className="admin-page tickets-page">
-        {/* <!-- Side-Nav --> */}
-        <Sidenav />
         {/* <!-- Main Wrapper --> */}
-        <div className="my-container main-content-block2658 active-cont">
-          {/* <!-- Top Nav --> */}
-          <Topnav />
+        <div className="my-container main-content-block2658">
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
@@ -235,7 +228,7 @@ function toCloser() {
                 <div className="row">
                   <div className="col-md-5">
                     <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue}  />
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
                       <div className="search-icon">
                         <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
@@ -324,11 +317,11 @@ function toCloser() {
                           </thead>
                           <tbody>
                             {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).map((item) => (
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).map((item) => (
                               <tr>
                                 <td className="selection-cell">
                                   <input
@@ -478,24 +471,24 @@ function toCloser() {
                 <div className="pagination-controls">
                   <button className='next_prev' onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
                   {generatePageNumbers().map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`next_prev ${page === currentPage ? 'active' : ''}`}
-                      >
-                        {page + 1}
-                      </button>
-                    ))}
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                    >
+                      {page + 1}
+                    </button>
+                  ))}
                   <button className='next_prev' onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
                   <span> Items per page:</span>{' '}
-                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
-                      <option value="20">20</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
+                  <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
                 </div>
               </div>
             </section>

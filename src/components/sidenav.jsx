@@ -6,6 +6,7 @@ import Logout from '../auth/logout';
 function Sidenav() {
   const { roleName, firstName, lastName } = useAuth();
   const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(true);
+  const [isInvoiceSubMenuOpen, setIsInvoiceSubMenuOpen] = useState(true);
 
 
   useEffect(() => {
@@ -81,9 +82,14 @@ function Sidenav() {
 
   }
 
-  // Toggle the sub-menu for the Closer role
+  // Toggle the Tickets sub-menu for the Closer role
   const toggleTicketSubMenu = () => {
     setIsTicketSubMenuOpen((prev) => !prev);
+  };
+
+  // Toggle the Invoices sub-menu for the Closer role
+  const toggleInvoiceSubMenu = () => {
+    setIsInvoiceSubMenuOpen((prev) => !prev);
   };
 
 
@@ -248,31 +254,49 @@ function Sidenav() {
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
                     <NavLink to="/closer_live" className="nav-link">
-                      <i class="fa-solid fa-arrow-right-from-bracket" style={{ color: '#050505' }}></i>
-                      <span className="nav-text">Live Tickets</span>
+                    <i className="fa-solid fa-headset"></i>
+                    <span className="nav-text">Live Tickets</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/closer_upload_tickets" className="nav-link">
-                      <i class="fa-solid fa-arrow-right-from-bracket" style={{ color: '#050505' }}></i>
-                      <span className="nav-text">ABC</span>
+                    <i className="fa-solid fa-upload"></i>
+                    <span className="nav-text">ABC</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
-                      <i class="fa-solid fa-arrow-right-from-bracket" style={{ color: '#050505' }}></i>
-                      <span className="nav-text">In-Negotiation</span>
+                    <i className="fa-solid fa-handshake"></i>
+                    <span className="nav-text">In-Negotiation</span>
                     </NavLink>
                   </li>
                 </ul>
               )}
             </li>
+            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <NavLink to="/closer_invoices" className="nav-link">
-                <i className="fa-regular fa-address-card"></i>
-                <span className="nav-text">Invoices</span>
-              </NavLink>
+              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
+                <i className="fa-solid fa-file-invoice"></i>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+              </div>
+              {isInvoiceSubMenuOpen && (
+                <ul className="nav flex-column px-4">
+                  <li className="nav-item">
+                    <NavLink to="/closer_invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/closer_invoices_pending" className="nav-link">
+                      <i className="fa-solid fa-hourglass-half"></i>
+                      <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                </ul>
+              )}
             </li>
+
             {/* <li className="nav-item">
               <NavLink to="/closer_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>

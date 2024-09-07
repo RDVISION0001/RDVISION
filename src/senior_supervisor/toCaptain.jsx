@@ -4,9 +4,6 @@ import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
 
 function toCaptain() {
   // Define parameters for each tab
@@ -166,12 +163,8 @@ function toCaptain() {
   return (
     <>
       <div className="admin-page tickets-page">
-        {/* <!-- Side-Nav --> */}
-        <Sidenav />
         {/* <!-- Main Wrapper --> */}
-        <div className="my-container main-content-block2658 active-cont">
-          {/* <!-- Top Nav --> */}
-          <Topnav />
+        <div className="my-container main-content-block2658">
           {/* <!--End Top Nav --> */}
           <div className="container-fluid mt-3">
             {/* <!-- Section one --> */}
@@ -353,9 +346,9 @@ function toCaptain() {
                         <table className="table">
                           <thead>
                             <tr>
-                            <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
-                        </th>
+                              <th className="selection-cell-header" data-row-selection="true">
+                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
+                              </th>
                               <th tabindex="0">Query ID</th>
                               <th tabindex="0">Client Name</th>
                               <th tabindex="0">Query Type</th>
@@ -416,9 +409,9 @@ function toCaptain() {
                         <table className="table">
                           <thead>
                             <tr>
-                            <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e)=>handleMultipleTicketSelection(e)}/>
-                        </th>
+                              <th className="selection-cell-header" data-row-selection="true">
+                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
+                              </th>
                               <th tabindex="0">Ticket ID</th>
                               <th tabindex="0">Client Name</th>
                               <th tabindex="0">Category/Department</th>

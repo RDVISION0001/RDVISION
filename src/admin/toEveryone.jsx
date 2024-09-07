@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-//components
-import Topnav from '../components/topnav';
-import Sidenav from '../components/sidenav';
+
 
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
@@ -195,9 +193,7 @@ function toEveryone() {
     return (
         <>
             <div className="admin-page tickets-page">
-                <Sidenav />
-                <div className="my-container main-content-block2658 active-cont">
-                    <Topnav />
+                <div className="my-container main-content-block2658">
                     <div className="container-fluid mt-3">
                         <section className="sadmin-top-section">
                             <div className="container-fluid">
