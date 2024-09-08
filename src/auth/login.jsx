@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 import './login.css'
@@ -80,6 +80,23 @@ function login() {
     setLoading(false)
 
   }
+
+  useEffect(() => {
+    const status = localStorage.getItem("roleName") ? localStorage.getItem("roleName") : ""
+    if (localStorage.getItem("userId")) {
+      if (status === "Closer") {
+        navigate("/closer_index")
+      } else if (status === "Admin") {
+        navigate("/admin_index")
+      } else if (status === "Captain") {
+        navigate("/captain_index")
+      } else if (status === "SeniorSuperVisor") {
+        navigate("/senior_supervisor_index")
+      } else if (status === "SuperAdmin") {
+        navigate("/super_admin_index")
+      }
+    }
+  }, [])
 
 
   return (
