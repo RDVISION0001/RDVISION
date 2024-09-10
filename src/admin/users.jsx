@@ -22,6 +22,8 @@ function users() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
+  const [selectedUser, setSelectedUser] = useState(0)
+
   ////add member //
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -30,7 +32,10 @@ function users() {
   //user managmeant
   const [view, setView] = useState(false);
   const handleOff = () => setView(false);
-  const handleView = () => setView(true);
+  const handleView = (userID) => {
+    setView(true)
+    setSelectedUser(userID)
+  };
 
   //taraget assign
   const [white, setWhite] = useState(false);
@@ -365,7 +370,7 @@ function users() {
                                 <td>{item.teamDto?.teamName}</td>
                                 <td>{item.systemIp}</td>
                                 <td className="action">
-                                  <Button className="btn-outline-secondary" onClick={handleView} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
+                                  <Button className="btn-outline-secondary" onClick={()=>handleView(item.userId)} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
                                   <Button
                                     className="mx-sm-3"
                                     style={{
@@ -624,14 +629,8 @@ function users() {
 
         {/* <!-- User Management Modal --> */}
         <Modal show={view} onHide={handleOff} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-
-          <div className="modal-dialog modal-dialog-centered modal-lg">
-            <div className="modal-content">
-              <Report />
-            </div>
-          </div>
+          <Report user={selectedUser} />
         </Modal>
-
 
         {/* <!-- Target assign --> */}
         <Modal show={white} onHide={handleBlack} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
