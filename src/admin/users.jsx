@@ -11,6 +11,8 @@ import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import Report from '../components/Report';
+
 function users() {
 
 
@@ -625,61 +627,7 @@ function users() {
 
           <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
-              <div className="modal-body">
-                <div className="heading-area text-center">
-                  <h2 className="title">User Management</h2>
-                </div>
-                <div className="main-content-area">
-                  <form className="row g-3">
-                    <div className="col-md-6">
-                      <label for="fname" className="form-label">First Name</label>
-                      <input type="text" className="form-control" placeholder="First Name" id="fname" />
-                    </div>
-                    <div className="col-md-6">
-                      <label for="lname" className="form-label">Last Name</label>
-                      <input type="text" className="form-control" placeholder="Last Name" id="lname" />
-                    </div>
-                    <div className="col-md-6">
-                      <label for="inputDepartment" className="form-label">Department</label>
-                      <select id="inputDepartment" className="form-select">
-                        <option selected>Choose...</option>
-                        <option>HR</option>
-                        <option>Sales</option>
-                        <option>Marketing</option>
-                        <option>IT</option>
-                      </select>
-                    </div>
-                    <div className="col-md-6">
-                      <label for="inputTeam" className="form-label">Team</label>
-                      <select id="inputTeam" className="form-select">
-                        <option selected>Choose...</option>
-                        <option>Dig A</option>
-                        <option>Dig B</option>
-                        <option>Dig C</option>
-                        <option>Dig D</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-6">
-                      <label for="inputContact" className="form-label">Post</label>
-                      <input type="text" className="form-control" id="inputContact" placeholder="+91 0000 001 123" />
-                    </div>
-
-                    <div className="col-md-6">
-                      <label for="inputEmail" className="form-label">IP</label>
-                      <input type="email" className="form-control" id="inputEmail" value="10.135.2.21" />
-                    </div>
-
-                    <div className="col-12 mt-5 text-center">
-                      <div className="button-grp">
-                        <button type="button" className="btn btn-secondary" onClick={handleOff} data-bs-dismiss="modal">Close</button>
-                        <span className="button-space"></span> {/* Placeholder for space */}
-                        <button type="submit" className="btn btn-warning">Hold</button>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
+              <Report />
             </div>
           </div>
         </Modal>
@@ -764,8 +712,6 @@ function users() {
             </div>
           </div>
         </Modal>
-
-
       </div>
 
     </>
