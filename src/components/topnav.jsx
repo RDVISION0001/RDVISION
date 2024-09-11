@@ -46,7 +46,14 @@ function topnav() {
     }
   }, [seconds]);
 
-
+  const [todayFollowups, setTodayFollowups] = useState(0)
+  useEffect(() => {
+    fetchTodayFollowups()
+  }, [])
+  const fetchTodayFollowups = async () => {
+    const response = await axiosInstance.get(`/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`)
+    setTodayFollowups(response.data)
+  }
 
   return (
     <>
@@ -63,9 +70,23 @@ function topnav() {
                 <i className="fa-solid fa-magnifying-glass"></i>
                 <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
               </div>
-              <a href="#" className="notification">
+              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
+                <span className='bg-danger text-white rounded-circle text-center' style={{
+                  height: "32px",
+                  width: "32px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "absolute",
+                  top: "-20px",
+                  right: "-20px"
+                }}>
+                 {todayFollowups}
+                </span>
               </a>
+
+
             </div>
           </nav>
           <div>

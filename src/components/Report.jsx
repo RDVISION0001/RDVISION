@@ -10,14 +10,19 @@ Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement
 
 function Report(props) {
     const [monthly, setMonthly] = useState(false);
-    const [useDetails, setUserDetails] = useState({})
+    const [useDetails, setUserDetails] = useState({});
+    const [totalWorktime, setTotalWorktime] = useState(0);
+    const [totalBeakTime, setTotalBreakTime] = useState(0);
+
     useEffect(() => {
-        loadeUserDetails()
-    }, [])
+        loadeUserDetails();
+    }, []);
+
     const loadeUserDetails = async () => {
-        const response = await axiosInstance.get(`/user/get/${props.user}`)
-        setUserDetails(response.data.dto)
-    }
+        const response = await axiosInstance.get(`/user/get/${props.user}`);
+        setUserDetails(response.data.dto);
+    };
+
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -37,6 +42,7 @@ function Report(props) {
             },
         ],
     });
+
     const [lineData, setLineData] = useState({
         labels: [],
         datasets: [
@@ -44,14 +50,35 @@ function Report(props) {
                 label: 'Total Assigned',
                 data: [],
                 fill: false,
-                backgroundColor: 'rgba(40, 167, 69, 0.8)',
-                borderColor: 'rgba(40, 167, 69, 1)',
+                backgroundColor: 'rgba(0, 123, 255, 0.8)', // Blue for Total Assigned
+                borderColor: 'rgba(0, 123, 255, 1)',        // Blue border for Total Assigned
                 borderWidth: 2,
                 pointRadius: 5,
-                pointBackgroundColor: 'rgba(40, 167, 69, 1)',
+                pointBackgroundColor: 'rgba(0, 123, 255, 1)', // Blue dots for Total Assigned
+            },
+            {
+                label: 'Total FollowUp',
+                data: [],
+                fill: false,
+                backgroundColor: 'rgba(220, 53, 69, 0.8)', // Red for Total FollowUp
+                borderColor: 'rgba(220, 53, 69, 1)',        // Red border for Total FollowUp
+                borderWidth: 2,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgba(220, 53, 69, 1)', // Red dots for Total FollowUp
+            },
+            {
+                label: 'Total Sale',
+                data: [],
+                fill: false,
+                backgroundColor: 'rgba(40, 167, 69, 0.8)', // Green for Total Sale
+                borderColor: 'rgba(40, 167, 69, 1)',        // Green border for Total Sale
+                borderWidth: 2,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgba(40, 167, 69, 1)', // Green dots for Total Sale
             },
         ],
     });
+
     const [apiData, setApiData] = useState([]);
     const [workData, setWorkData] = useState({ userId: props.user, weeks: 1 });
     const [workDataTickets, setWorkDataForTickets] = useState({ userId: props.user, weeks: 1 });
@@ -75,7 +102,9 @@ function Report(props) {
             const response = await axiosInstance.post("third_party_api/ticket/totalassigntickets", workDataTickets);
             const data = response.data;
             const labels = data.map(item => item.date ? item.date.join('-') : 'Unknown Date');
-            const numberOfTickets = data.map(item => item.count);
+            const numberOfTickets = data.map(item => item.assigncount);
+            const numberOfSaleTickets = data.map(item => item.assignedWithStatusSale);
+            const numberOfFollowuopTickets = data.map(item => item.assignedWithStatusNotIn);
             setLineData(prevData => ({
                 ...prevData,
                 labels: labels,
@@ -83,6 +112,14 @@ function Report(props) {
                     {
                         ...prevData.datasets[0],
                         data: numberOfTickets,
+                    },
+                    {
+                        ...prevData.datasets[1],
+                        data: numberOfFollowuopTickets,
+                    },
+                    {
+                        ...prevData.datasets[2],
+                        data: numberOfSaleTickets,
                     }
                 ],
             }));
@@ -95,8 +132,10 @@ function Report(props) {
         try {
             const response = await axiosInstance.post("third_party_api/ticket/totalassignticketsmonthly", workDataTickets);
             const data = response.data;
-            const labels = data.map(item => item.date ? item.date.join('-') : 'Unknown Date');
-            const numberOfTickets = data.map(item => item.count);
+            const labels = data.map(item => `${numberToMonthName(item.month)}_${item.year}`);
+            const numberOfTickets = data.map(item => item.assigncount);
+            const numberOfSaleTickets = data.map(item => item.assignedWithStatusSale);
+            const numberOfFollowuopTickets = data.map(item => item.assignedWithStatusNotIn);
             setLineData(prevData => ({
                 ...prevData,
                 labels: labels,
@@ -104,6 +143,14 @@ function Report(props) {
                     {
                         ...prevData.datasets[0],
                         data: numberOfTickets,
+                    },
+                    {
+                        ...prevData.datasets[1],
+                        data: numberOfFollowuopTickets,
+                    },
+                    {
+                        ...prevData.datasets[2],
+                        data: numberOfSaleTickets,
                     }
                 ],
             }));
@@ -122,6 +169,7 @@ function Report(props) {
         };
         fetchData();
     }, [monthly, workData]);
+
     useEffect(() => {
         if (apiData.length > 0) {
             const labels = monthly
@@ -129,6 +177,17 @@ function Report(props) {
                 : apiData.map(item => item.date && item.date.join('-'));
             const workData = apiData.map(item => item.totalWorkTime / 3600);
             const breakData = apiData.map(item => item.totalBreakTime / 3600);
+            let workTimeSum = 0;
+            let breakTimeSum = 0;
+
+            for (let i = 0; i < apiData.length; i++) {
+                workTimeSum += apiData[i].totalWorkTime;
+                breakTimeSum += apiData[i].totalBreakTime;
+            }
+
+            // After summing, update the state once
+            setTotalWorktime(workTimeSum);
+            setTotalBreakTime(breakTimeSum);
 
             setChartData(prevData => ({
                 ...prevData,
@@ -172,56 +231,48 @@ function Report(props) {
                 <Card className="mb-4">
                     <Card.Header className='d-flex justify-content-between'>
                         <p>Work and Break Category - Bar Chart</p>
-                        <div>
-                            <button className='btn btn-success m-1' onClick={toggleMonthly}>{!monthly ? "Monthly" : "Weekly"}</button>
+                        <div className='d-flex justify-content-center align-items-center'>
+                            <button className='btn btn-success m-1' onClick={toggleMonthly}>
+                                {monthly ? "Yearly" : "Weekly"}
+                            </button>
+                            <select
+                                className="form-select  w-100"
+                                value={workData.weeks}
+                                onChange={(e) =>
+                                    setWorkData(prevData => ({
+                                        ...prevData,
+                                        weeks: e.target.value,
+                                    }))
+                                }
+                            >
+                                <option value="1">1 {monthly ? "Year" : "Week"}</option>
+                                <option value="2">2 {monthly ? "Years" : "Weeks"}</option>
+                                <option value="3">3 {monthly ? "Years" : "Weeks"}</option>
+                                <option value="4">4 {monthly ? "Years" : "Weeks"}</option>
+                            </select>
                         </div>
+
                     </Card.Header>
                     <Card.Body>
+                        <div className='d-flex justify-content-between'>
+                            <div> Total Work Time:
+                                <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hours</span>
+                            </div>
+                            <div>Total Break Time:
+                                <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hours</span>
+                            </div>
+                        </div>
                         <Bar data={chartData} />
-                        <select
-                            className="form-select mt-3 w-25"
-                            value={workData.weeks}
-                            onChange={(e) =>
-                                setWorkData(prevData => ({
-                                    ...prevData,
-                                    weeks: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="1">1 {monthly ? "Month" : "Week"}</option>
-                            <option value="2">2 {monthly ? "Months" : "Weeks"}</option>
-                            <option value="3">3 {monthly ? "Months" : "Weeks"}</option>
-                            <option value="4">4 {monthly ? "Months" : "Weeks"}</option>
-                        </select>
                     </Card.Body>
                 </Card>
             </Col>
-
             <Col md={12}>
                 <Card className="mb-4">
-                    <Card.Header className='d-flex justify-content-between'>
-                        <p>Assigned Tickets - Line Chart</p>
-                        <div>
-                            <button className='btn btn-success m-1' onClick={toggleMonthly}>Toggle Monthly/Weekly</button>
-                        </div>
+                    <Card.Header>
+                        <p>Assigned Tickets Categories - Line Chart</p>
                     </Card.Header>
                     <Card.Body>
                         <Line data={lineData} />
-                        <select
-                            className="form-select mt-3 w-25"
-                            value={workDataTickets.weeks}
-                            onChange={(e) =>
-                                setWorkDataForTickets(prevData => ({
-                                    ...prevData,
-                                    weeks: e.target.value,
-                                }))
-                            }
-                        >
-                            <option value="1">1 {monthly ? "Month" : "Week"}</option>
-                            <option value="2">2 {monthly ? "Months" : "Weeks"}</option>
-                            <option value="3">3 {monthly ? "Months" : "Weeks"}</option>
-                            <option value="4">4 {monthly ? "Months" : "Weeks"}</option>
-                        </select>
                     </Card.Body>
                 </Card>
             </Col>

@@ -2,11 +2,46 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Logout from '../auth/logout';
+import axiosInstance from '../axiosInstance';
 
 function Sidenav() {
   const { roleName, firstName, lastName } = useAuth();
   const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(false);
   const [isInvoiceSubMenuOpen, setIsInvoiceSubMenuOpen] = useState(false);
+
+  const [liveTickets, setLiveTickets] = useState({
+    totalAssignTickets: 0,
+    totalFollowupsTickets: 0,
+  });
+  const [uploadedTickets, setUploadedTickets] = useState({
+    totalAssignTickets: 0,
+    totalFollowupsTickets: 0,
+  });
+
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchTicketData = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/getNoOfTickets/${localStorage.getItem('userId')}`);
+        const { Live, uploded } = response.data;
+
+        if (Live && uploded) {
+          setLiveTickets({
+            totalAssignTickets: Live.totalAssignTickets,
+            totalFollowupsTickets: Live.totalFollowupsTickets,
+          });
+          setUploadedTickets({
+            totalAssignTickets: uploded.totalAssignTickets,
+            totalFollowupsTickets: uploded.totalFollowupsTickets,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching ticket data:', error);
+      }
+    };
+
+    fetchTicketData();
+  }, []);
 
 
   useEffect(() => {
@@ -137,19 +172,19 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets</span>
+                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC</span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation</span>
+                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
                   </li>
                 </ul>
@@ -244,19 +279,19 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets</span>
+                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC</span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation</span>
+                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
                   </li>
                 </ul>
@@ -334,19 +369,19 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets</span>
+                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC</span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation</span>
+                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
                   </li>
                 </ul>
@@ -424,19 +459,19 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets</span>
+                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC</span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation</span>
+                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
                   </li>
                 </ul>
@@ -513,19 +548,19 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets</span>
+                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC</span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation</span>
+                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
                   </li>
                 </ul>

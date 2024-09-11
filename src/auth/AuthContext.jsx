@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('firstName');
     localStorage.removeItem('attendanceId');
-
+    localStorage.removeItem('loginTime');
     setIsAuthenticated(false);
     setRoleName('');
     setUserId('');
