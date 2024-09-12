@@ -73,11 +73,11 @@ function live_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { userId },
-    ongoing: { ticketStatus: 'Sale', userId },
-    newTickets: { ticketStatus: 'New', userId },
+    allTickets: { },
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: { userId },
+    followUp: { },
   };
 
   const handleClose = () => setShow(false);
@@ -506,6 +506,7 @@ function live_tickets() {
               </li>
             </ul>
             {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
+              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call Back</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
               <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
