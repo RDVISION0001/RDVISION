@@ -7,45 +7,56 @@ import { NavLink, useNavigate } from 'react-router-dom';
 
 function forgotpassword() {
     const [otpSent, setOtpSent] = useState(false);
-    const [loading, setLoading] = useState(false)
-    const navigate =useNavigate()
+    const [loading, setLoading] = useState(false);
+    const [otp, setOtp] = useState(Array(6).fill(""));
+    const navigate = useNavigate();
     const [userDetails, setUserDetails] = useState({
         email: "",
-        otp: "",
         newPassword: "",
         confirmPassword: ""
     });
-    //alerts
+
     const emptyEmailAlert = () => toast.info("Please Enter your Email");
-    const userNotFound = () => toast.info("Your email is not Registered")
-    const serverError = () => toast.error("Server Not Responding")
-    const sentotp = () => toast.success("Otp has been sent to your email")
-    //sending otp
+    const userNotFound = () => toast.info("Your email is not Registered");
+    const serverError = () => toast.error("Server Not Responding");
+    const sentOtp = () => toast.success("Otp has been sent to your email");
+
     const handleSendOtp = async () => {
-        setLoading(true)
+        setLoading(true);
         if (userDetails.email.length === 0) {
             emptyEmailAlert();
         } else {
-            // Simulate OTP sending
             try {
-                const response = await axiosInstance.get(`auth/otpForPassword/${userDetails.email}`)
-                console.log(response.data)
-                sentotp()
+                const response = await axiosInstance.get(`auth/otpForPassword/${userDetails.email}`);
+                console.log(response.data);
+                sentOtp();
                 setOtpSent(true);
-                setLoading(false)
             } catch (err) {
-                console.log(err.message)
+                console.log(err.message);
                 if (err.message === "Request failed with status code 400") {
-                    userNotFound()
+                    userNotFound();
                 } else if (err.message === "Network Error") {
-                    serverError()
+                    serverError();
                 }
-                setLoading(false)
+            } finally {
+                setLoading(false);
             }
         }
-        setLoading(false)
     };
-    //On change event handle
+
+    const handleOtpChange = (e, index) => {
+        const { value } = e.target;
+        if (/^[0-9]$/.test(value) || value === "") {
+            const updatedOtp = [...otp];
+            updatedOtp[index] = value;
+            setOtp(updatedOtp);
+        }
+
+        if (value && index < 5) {
+            document.getElementById(`otp-${index + 1}`).focus();
+        }
+    };
+
     const handleOnChange = (e) => {
         setUserDetails({
             ...userDetails,
@@ -54,32 +65,32 @@ function forgotpassword() {
     };
     // Resetting password
     const handleResetPassword = async () => {
-        setLoading(true)
+        setLoading(true);
+        const otpString = otp.join("");
         if (userDetails.newPassword !== userDetails.confirmPassword) {
             toast.error("Passwords do not match!");
-        } else if (userDetails.otp.length === 0) {
-            // Simulate password reset
-            toast.error('Otp cannot be empty!');
+        } else if (otpString.length < 6) {
+            toast.error('OTP is incomplete!');
         } else if (userDetails.newPassword.length === 0) {
-            toast.error("Password cannot be empty")
+            toast.error("Password cannot be empty");
         } else {
             try {
-                const response = await axiosInstance.post("auth/forgotPassword", userDetails)
-                if(response.data==="Otp is incorrect"){
-                    toast(response.data)
-                }else{
-                    toast.success(response.data)
-                    navigate("/")
+                const response = await axiosInstance.post("auth/forgotPassword", {
+                    ...userDetails,
+                    otp: otpString
+                });
+                if (response.data === "Otp is incorrect") {
+                    toast.error(response.data);
+                } else {
+                    toast.success(response.data);
+                    navigate("/");
                 }
-              
-                setLoading(false)
-            }catch(err){
-                toast.error("Some Error Occurs")
-                setLoading(false)
+            } catch (err) {
+                toast.error("Some Error Occurs");
+            } finally {
+                setLoading(false);
             }
-         
         }
-        setLoading(false)
     };
 
     return (
@@ -100,29 +111,35 @@ function forgotpassword() {
                             required
                         />
                     </div>
-                    <div className='custom-navlink'><NavLink className="" to="/">
-                      Sign-in
-                      </NavLink></div>
+                    <div className='custom-navlink'>
+                        <NavLink to="/">Sign-in</NavLink>
+                    </div>
                     {!otpSent && (
-                        loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> : <button className='btn btn-danger w-100' onClick={handleSendOtp}>
-                            Send OTP
-                        </button>
+                        loading ? <div className='d-flex justify-content-center'><div className='loader'></div></div> :
+                            <button className='btn btn-danger w-100' onClick={handleSendOtp}>
+                                Send OTP
+                            </button>
                     )}
                 </div>
 
                 {otpSent && (
                     <div>
                         <div className='mb-3'>
-                            <label htmlFor='otp' className='form-label'>OTP</label>
-                            <input
-                                onChange={handleOnChange}
-                                type='text'
-                                className='form-control'
-                                id='otp'
-                                name='otp'
-                                placeholder='Enter OTP'
-                                required
-                            />
+                            <label className='d-flex justify-content-center'>Enter OTP</label>
+                            <div className='d-flex justify-content-between'>
+                                {otp.map((digit, index) => (
+                                    <input
+                                        key={index}
+                                        id={`otp-${index}`}
+                                        type='text'
+                                        maxLength='1'
+                                        className='form-control otp-input'
+                                        value={digit}
+                                        onChange={(e) => handleOtpChange(e, index)}
+                                        style={{ width: '50px', textAlign: 'center' }}
+                                    />
+                                ))}
+                            </div>
                         </div>
                         <div className='mb-3'>
                             <label htmlFor='newPassword' className='form-label'>New Password</label>
@@ -148,18 +165,15 @@ function forgotpassword() {
                                 required
                             />
                         </div>
-                    
-                        {loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> : <button className='btn btn-danger w-100' onClick={handleResetPassword}>
-                            " Reset Password"
-                        </button>}
+                        {loading ? <div className='d-flex justify-content-center'><div className='loader'></div></div> :
+                            <button className='btn btn-danger w-100' onClick={handleResetPassword}>
+                                Reset Password
+                            </button>}
                     </div>
                 )}
-                 
             </div>
-           
             <ToastContainer />
         </div>
     );
 }
-
-export default forgotpassword;
+export default forgotpassword

@@ -58,6 +58,7 @@ function live_tickets() {
   const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
   const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
+  const [filterdate, setFilterDate] = useState(null)
 
 
   const [productArray, setProductArray] = useState([]);
@@ -72,11 +73,11 @@ function live_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: {},
-    ongoing: {ticketStatus: 'Sale' },
-    newTickets: {ticketStatus: 'New' },
+    allTickets: { userId },
+    ongoing: { ticketStatus: 'Sale', userId },
+    newTickets: { ticketStatus: 'New', userId },
     // followUp: { ticketStatus: 'follow' },
-    followUp: {},
+    followUp: { userId },
   };
 
   const handleClose = () => setShow(false);
@@ -388,60 +389,39 @@ function live_tickets() {
   const [followUpStatus, setFollowupStatus] = useState("Follow")
 
 
-
-
   return (
     <>
 
       {/* //Filter input */}
-      <section class="filter-section">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5">
-              <div class="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                <div class="search-icon">
-                  <i class="fa-solid fa-magnifying-glass"></i>
+      <section className="filter-section">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-5">
+              <div className="search-wrapper">
+                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                <div className="search-icon">
+                  <i className="fa-solid fa-magnifying-glass"></i>
                 </div>
               </div>
             </div>
-            <div class="col-md-7">
-              <div class="filter-wrapper d-flex gap-3">
-                {/* <!-- Department filter --> */}
-                <div class="btn-group department">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
+            {
+              activeTab === "followUp" && <div className="col-md-5">
+                <div className="search-wrapper d-flex justify-content-center align-items-center">
+                  <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                  <div className="search-icon">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+
+                  </div>
+                  <i
+                    className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                    onClick={() => setFilterDate(null)}
+                  ></i>
+
                 </div>
-                {/* <!-- Date filter --> */}
-                <div class="btn-group date">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
-                {/* <!-- Order Status filter --> */}
-                <div class="btn-group order-status">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
+
               </div>
-            </div>
+            }
+
           </div>
         </div>
       </section>
@@ -449,7 +429,7 @@ function live_tickets() {
       <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
-            <h3 className="title">Live Tickets<span class="d-flex justify-content-end"></span></h3>
+            <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
             <ul
               className="nav recent-transactions-tab-header nav-tabs"
               id="followUp"
@@ -485,8 +465,8 @@ function live_tickets() {
                   aria-selected="false"
                   tabindex="-1"
                 >
-                  {/* <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
-                  <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
+                  {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                  <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                   New Tickets
                 </button>
               </li>
@@ -645,7 +625,7 @@ function live_tickets() {
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
-                                  <i class="fa-solid fa-file-invoice"></i>
+                                  <i className="fa-solid fa-file-invoice"></i>
                                 </Button>
                               </span>
                             </td>
@@ -771,7 +751,7 @@ function live_tickets() {
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
-                                  <i class="fa-solid fa-file-invoice"></i>
+                                  <i className="fa-solid fa-file-invoice"></i>
                                 </Button>
                               </span>
                             </td>
@@ -888,7 +868,7 @@ function live_tickets() {
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
-                                  <i class="fa-solid fa-file-invoice"></i>
+                                  <i className="fa-solid fa-file-invoice"></i>
                                 </Button>
                               </span>
                             </td>
@@ -937,9 +917,9 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).map((item, index) => (
+                        ).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || item.queryTime.split(" ")[0] === filterdate).map((item, index) => (
                           <tr key={index}>
-                            <td><span className="text">{item.queryTime}</span></td>
+                            <td><span className="text">{item.queryTime.split(" ")[0]}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
                             <td> <td>
@@ -1017,7 +997,7 @@ function live_tickets() {
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
-                                  <i class="fa-solid fa-file-invoice"></i>
+                                  <i className="fa-solid fa-file-invoice"></i>
                                 </Button>
                               </span>
                             </td>
@@ -1249,27 +1229,27 @@ function live_tickets() {
                 </div>
                 <div className="col-8">
                   <div
-                    class="contact-info-row d-flex align-items-center justify-content-between"
+                    className="contact-info-row d-flex align-items-center justify-content-between"
                   >
-                    <a href="" class="contact-info phone"
-                    ><i class="fa-solid fa-phone"></i> +91 9918293747</a
+                    <a href="" className="contact-info phone"
+                    ><i className="fa-solid fa-phone"></i> +91 9918293747</a
                     >
-                    <a class="contact-info email" href="#"
-                    ><i class="fa-solid fa-envelope-open-text"></i>
+                    <a className="contact-info email" href="#"
+                    ><i className="fa-solid fa-envelope-open-text"></i>
                       example@email.com</a
                     >
                   </div>
                   <div className="main-content-area">
                     <form>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                        <label class="form-check-label" for="flexCheckDefault">
+                      <div className="form-check">
+                        <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                        <label className="form-check-label" for="flexCheckDefault">
                           Default checkbox
                         </label>
                       </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
-                        <label class="form-check-label" for="flexCheckChecked">
+                      <div className="form-check">
+                        <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                        <label className="form-check-label" for="flexCheckChecked">
                           Checked checkbox
                         </label>
                       </div>
