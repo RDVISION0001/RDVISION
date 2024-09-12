@@ -28,7 +28,7 @@ function uploaded_tickets() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const [filterdate, setFilterDate] = useState(null)
   // Form data state
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
   const [response, setResponse] = useState(null);
@@ -106,11 +106,11 @@ function uploaded_tickets() {
   // Define parameters for each tab
 
   const params = {
-    allTickets: { },
+    allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: { },
+    followUp: {},
   };
 
   const handleClose = () => {
@@ -476,68 +476,20 @@ function uploaded_tickets() {
 
   const [followUpStatus, setFollowupStatus] = useState("Follow")
 
+  const dateFormat = (uploadDate) => {
+    const date = [(uploadDate[0]), uploadDate[1].toString().padStart(2, "0"), uploadDate[2].toString().padStart(2, "0")].join("-")
 
-
+    return date;
+  }
   return (
     <>
-      {/* //Filter input */}
-      <section class="filter-section">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5">
-              <div class="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" class="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                <div class="search-icon">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-7">
-              <div class="filter-wrapper d-flex gap-3">
-                {/* <!-- Department filter --> */}
-                <div class="btn-group department">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Department</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
-                {/* <!-- Date filter --> */}
-                <div class="btn-group date">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Date</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
-                {/* <!-- Order Status filter --> */}
-                <div class="btn-group order-status">
-                  <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Order Status</button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                    <li><hr class="dropdown-divider" /></li>
-                    <li><a class="dropdown-item" href="#">Separated link</a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+
       {/* <!-- Tabbed Ticket Table --> */}
       <section className="card-body m-3">
         <div className="row ">
           {files.map((file, index) => (
             <div className="col-12 col-md-8 col-lg-6 col-xl-4 mb-3" onClick={() => setDateToOpenFile(file)}>
-              <div className="d-flex align-items-center border p-3 rounded hover-scale bg-light shadow-sm">
+              <div className="d-flex align-items-center border p-3 rounded hoverTickets shadow-sm">
                 <i className="fa-solid fa-file fa-2x me-3 text-info"></i>
                 <div>
                   <h5 className="mb-1 text-dark fw-bold">Assign Date: {file[0]}</h5>
@@ -550,6 +502,35 @@ function uploaded_tickets() {
           ))}
         </div>
       </section>
+      {/* //Filter input */}
+   { showAlltickets &&  <section class="filter-section">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-5">
+              <div className="search-wrapper">
+                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                <div className="search-icon">
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                </div>
+              </div>
+            </div>
+            {
+              activeTab === "followUp" && <div className="col-md-5">
+                <div className="search-wrapper d-flex justify-content-center align-items-center">
+                  <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                  <div className="search-icon">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                  </div>
+                  <i
+                    className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                    onClick={() => setFilterDate(null)}
+                  ></i>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </section>}
       {showAlltickets ? <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
@@ -1048,7 +1029,7 @@ function uploaded_tickets() {
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                        )).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).map((item, index) => (
+                        )).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || dateFormat(item.uploadDate) === filterdate).map((item, index) => (
                           <tr key={index}>
                             {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input

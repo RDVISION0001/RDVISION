@@ -2,105 +2,99 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
 import './login.css'
-import axios from 'axios';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
 function login() {
   const [email, setEmail] = useState('');
-  const [otpSent, setOtpSent] = useState(false)
+  const [otpSent, setOtpSent] = useState(false);
   const [password, setPassword] = useState('');
-  const [logInOtp, setOtp] = useState();
+  const [otp, setOtp] = useState(new Array(6).fill(''));
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
   const handleKeyDown = (event) => {
-    handleKeyDownEnter(event)
-    if (event.getModifierState("CapsLock")) {
-      setIsCapsLockOn(true);
-    } else {
-      setIsCapsLockOn(false);
-    }
+    handleKeyDownEnter(event);
+    setIsCapsLockOn(event.getModifierState("CapsLock"));
   };
 
   const handleKeyDownEnter = (event) => {
     if (event.key === 'Enter') {
-      sendOtp()
+      sendOtp();
     }
   };
+
   const handleKeyDownEnterLogin = (event) => {
     if (event.key === 'Enter') {
-      handleSubmit(event)
+      handleSubmit(event);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     try {
-      const status = await login(email, password, logInOtp);
-      console.log("Status is ", status)
-      if (status === "Closer") {
-        navigate("/closer_index")
-      } else if (status === "Admin") {
-        navigate("/admin_index")
-      } else if (status === "Captain") {
-        navigate("/captain_index")
-      } else if (status === "SeniorSuperVisor") {
-        navigate("/senior_supervisor_index")
-      } else if (status === "SuperAdmin") {
-        navigate("/super_admin_index")
-      }
-      window.location.reload()
-
-
+      const otpValue = otp.join('');
+      const status = await login(email, password, otpValue);
+      console.log("Status is ", status);
+      navigateBasedOnRole(status);
+      window.location.reload();
     } catch (error) {
       setError('Login failed');
-      setLoading(false)
+      setLoading(false);
     }
-    setLoading(false)
+    setLoading(false);
   };
-  const passwordWrong = () => toast("Password is incorrect")
-  const otpHasSent = () => toast.success('OTP has been sent to your email!');
-  const sendOtp = async () => {
-    setLoading(true)
-    try {
-      const response = await axiosInstance.post('/auth/generateOtp', { email, password })
-      setOtpSent(true)
-      otpHasSent()
-    } catch (err) {
-      passwordWrong()
-      setLoading(false)
-    }
-    setLoading(false)
 
-  }
+  const navigateBasedOnRole = (status) => {
+    const routes = {
+      Closer: "/closer_index",
+      Admin: "/admin_index",
+      Captain: "/captain_index",
+      SeniorSuperVisor: "/senior_supervisor_index",
+      SuperAdmin: "/super_admin_index",
+    };
+    if (routes[status]) navigate(routes[status]);
+  };
+
+  const passwordWrong = () => toast("Password is incorrect");
+  const otpHasSent = () => toast.success('OTP has been sent to your email!');
+
+  const sendOtp = async () => {
+    setLoading(true);
+    try {
+      await axiosInstance.post('/auth/generateOtp', { email, password });
+      setOtpSent(true);
+      otpHasSent();
+    } catch (err) {
+      passwordWrong();
+      setLoading(false);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const status = localStorage.getItem("roleName") ? localStorage.getItem("roleName") : ""
-    if (localStorage.getItem("userId")) {
-      if (status === "Closer") {
-        navigate("/closer_index")
-      } else if (status === "Admin") {
-        navigate("/admin_index")
-      } else if (status === "Captain") {
-        navigate("/captain_index")
-      } else if (status === "SeniorSuperVisor") {
-        navigate("/senior_supervisor_index")
-      } else if (status === "SuperAdmin") {
-        navigate("/super_admin_index")
-      }
-    }
-  }, [])
+    const status = localStorage.getItem("roleName") || "";
+    if (localStorage.getItem("userId")) navigateBasedOnRole(status);
+  }, []);
 
+  const handleOtpChange = (element, index) => {
+    const newOtp = [...otp];
+    newOtp[index] = element.value;
+    setOtp(newOtp);
+
+    // Auto-focus on next input
+    if (element.nextSibling && element.value) {
+      element.nextSibling.focus();
+    }
+  };
 
   return (
-    <section className="h-100 gradient-form" >
+    <section className="h-100 gradient-form">
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-xl-10">
@@ -108,7 +102,6 @@ function login() {
               <div className="row g-0">
                 <div className="col-lg-6">
                   <div className="card-body p-md-5 mx-md-4">
-
                     <div className="text-center">
                       <h4 className="mt-1 mb-5 pb-1">Login</h4>
                     </div>
@@ -117,66 +110,68 @@ function login() {
                       <p>Please login to your account</p>
 
                       <div data-mdb-input-init className="form-outline mb-4">
-                        <input type="email"
+                        <input
+                          type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          id="form2Example11" className="form-control"
-                          placeholder="Phone number or email address" />
-                        <label className="form-label" for="form2Example11">Email</label>
+                          className="form-control"
+                          placeholder="Email address"
+                        />
+                        <label className="form-label">Email</label>
                       </div>
 
                       <div data-mdb-input-init className="form-outline mb-4">
-                        <input type="password"
+                        <input
+                          type="password"
                           value={password}
                           onKeyDown={handleKeyDown}
                           onChange={(e) => setPassword(e.target.value)}
-                          id="form2Example22" className="form-control"
-                          placeholder="********" />
+                          className="form-control"
+                          placeholder="Password"
+                        />
                         <div className="d-flex justify-content-between align-items-center">
-                          <label className="form-label" htmlFor="form2Example22">Password</label>
-                          {isCapsLockOn ? <label className="text-danger fw-bold" style={{ fontSize: '0.875rem' }}>
-                            Caps Lock is ON
-                          </label> : ""}
+                          <label className="form-label">Password</label>
+                          {isCapsLockOn && <span className="text-danger fw-bold">Caps Lock is ON</span>}
                         </div>
-
                       </div>
 
-                      {/* <div className='custom-navlink'><NavLink className="" to="/forgot_password">
-                        Forgot Password
-                      </NavLink></div> */}
-
-                      {otpSent ? <div data-mdb-input-init className="form-outline mb-4">
-                        <input type="password"
-                          value={logInOtp}
-                          onChange={(e) => setOtp(e.target.value)}
-                          id="form2Example23" className="form-control"
-                          onKeyDown={handleKeyDownEnterLogin}
-                          placeholder="********" />
-                        <label className="form-label" for="form2Example22">Enter Otp</label>
-                      </div> : null}
-
-
-
-                      {/* 
-                      <div className="d-flex align-items-center justify-content-center pb-4">
-                        <p className="mb-0 me-2">Don't have an account?</p>
-                        <button type="button" data-mdb-button-init data-mdb-ripple-init className="btn btn-outline-danger">Create new</button>
-                      </div> */}
+                      {otpSent && (
+                        <>
+                          <label className="d-flex justify-content-center">Enter OTP</label>
+                          <div className="otp-inputs mb-4 d-flex justify-content-between">
+                            {otp.map((data, index) => (
+                              <input
+                                key={index}
+                                type="text"
+                                maxLength="1"
+                                value={data}
+                                onChange={(e) => handleOtpChange(e.target, index)}
+                                onKeyDown={handleKeyDownEnterLogin}
+                                className="form-control otp-input"
+                                style={{ width: '2.5rem', textAlign: 'center' }}
+                              />
+                            ))}
+                          </div>
+                        </>
+                      )}
 
                     </form>
                     <div className="text-center pt-1 mb-5 pb-1">
-                      {
-                        otpSent ? loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> : <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
-                          onClick={handleSubmit}> Login</button> : loading ? <div className='d-flex justify-content-center'><div className='loader '></div></div> :
-                          <button data-mdb-button-init data-mdb-ripple-init className="btn btn-danger"
-                            onClick={sendOtp}> Request Otp</button>
-                      }
-
+                      {otpSent ? (
+                        loading ? (
+                          <div className='d-flex justify-content-center'><div className='loader'></div></div>
+                        ) : (
+                          <button className="btn btn-danger" onClick={handleSubmit}>Login</button>
+                        )
+                      ) : (
+                        loading ? (
+                          <div className='d-flex justify-content-center'><div className='loader'></div></div>
+                        ) : (
+                          <button className="btn btn-danger" onClick={sendOtp}>Request Otp</button>
+                        )
+                      )}
                     </div>
-                    <div className='custom-navlink'><NavLink className="" to="/forgot_password">
-                      Forgot Password
-                    </NavLink></div>
-
+                    <div className='custom-navlink'><NavLink to="/forgot_password">Forgot Password</NavLink></div>
                   </div>
                 </div>
                 <div className="col-lg-6 d-flex align-items-center gradient-custom-2">

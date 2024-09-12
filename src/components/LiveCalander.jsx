@@ -4,6 +4,7 @@ import axiosInstance from '../axiosInstance';
 function LiveCalander() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [calenderData, setCalenderData] = useState([]);
+  const [calenderDataForUploaded, setCalenderDataForuploaded] = useState([]);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const currentYear = currentDate.getFullYear();
@@ -11,6 +12,7 @@ function LiveCalander() {
 
   useEffect(() => {
     fetchData();
+    fetchUploadedData();
   }, []);
 
   const fetchData = async () => {
@@ -22,15 +24,31 @@ function LiveCalander() {
     }
   };
 
+  const fetchUploadedData = async () => {
+    try {
+      const response = await axiosInstance.get(`/upload/followUpByDate/${localStorage.getItem("userId")}`);
+      setCalenderDataForuploaded(response.data.response);
+    } catch (error) {
+      console.error("Error fetching uploaded calendar data:", error);
+    }
+  };
+
   const getHighlightedDates = () => {
-    // Convert calendarData into a Map of dates to the number of tickets
     const ticketMap = new Map(
       calenderData.map(item => [new Date(item.date).toDateString(), item['no of tickets']])
     );
     return ticketMap;
   };
 
+  const getUploadedHighlightedDates = () => {
+    const uploadedMap = new Map(
+      calenderDataForUploaded.map(item => [new Date(item.date).toDateString(), item['no of tickets']])
+    );
+    return uploadedMap;
+  };
+
   const highlightedDates = getHighlightedDates();
+  const uploadedHighlightedDates = getUploadedHighlightedDates();
 
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -52,8 +70,6 @@ function LiveCalander() {
   const goToNextMonth = () => {
     setCurrentDate(new Date(currentYear, currentMonth + 1));
   };
-
-
 
   return (
     <div>
@@ -79,15 +95,40 @@ function LiveCalander() {
             {calendarDays.map((day, index) => {
               const dateString = day ? new Date(currentYear, currentMonth, day).toDateString() : '';
               const isHighlighted = dateString && highlightedDates.has(dateString);
+              const isUploadedHighlighted = dateString && uploadedHighlightedDates.has(dateString);
+
               const ticketCount = isHighlighted ? highlightedDates.get(dateString) : 0;
+              const uploadedTicketCount = isUploadedHighlighted ? uploadedHighlightedDates.get(dateString) : 0;
+
+              let highlightClass = '';
+              if (isHighlighted && isUploadedHighlighted) {
+                highlightClass = 'bg-success'; // Both datasets highlight the cell
+              } else if (isHighlighted) {
+                highlightClass = 'bg-danger'; // Only calenderData highlights the cell
+              } else if (isUploadedHighlighted) {
+                highlightClass = 'bg-warning'; // Only calenderDataForUploaded highlights the cell
+              }
 
               return (
-                <div key={index} className={`dateHover p-2 border text-center ${isHighlighted ? "bg-danger" : ""}`}>
+                <div key={index} className={`dateHover p-2 border text-center ${highlightClass}`}>
                   <div className='detailsBox'>
                     {day ? `${day}/${currentMonth + 1}/${currentYear}` : ""}
                     <span>
-                      {isHighlighted ? <div className='text-white bg-danger px-2 rounded'>Total follow-up tickets: {ticketCount}</div> : ""}
+                      {isHighlighted && (
+                        <div className='text-black bg-danger px-2 rounded'>
+                          Live follow-up tickets: {ticketCount}
+                        </div>
+                      )}
+                      {isUploadedHighlighted && (
+                        <div className='text-black bg-warning px-2 rounded m-2'>
+                          ABC follow-up tickets: {uploadedTicketCount}
+                        </div>
+                      )}
+                      {!isHighlighted && !isUploadedHighlighted && (
+                        <div className='text-black bg-warning px-2 rounded m-2'>No Followup today</div>
+                      )}
                     </span>
+
                   </div>
                   {day}
                 </div>
