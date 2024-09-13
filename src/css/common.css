@@ -177,7 +177,27 @@
     /* Smooth transition */
   }
 
-  .hoverTickets:hover{
+  .hoverTickets:hover {
     background-color: rgb(212, 212, 212);
 
+  }
+
+  /* pagination css  */
+  .pagination-button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    background-color: #0ecdc6dd;
+  }
+
+  .pagination-button.active {
+    background-color: #034852;
+    color: white;
+    border-color: #0ecdc6dd;
+  }
+
+  .pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
