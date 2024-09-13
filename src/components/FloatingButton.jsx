@@ -104,7 +104,7 @@ const FloatingButton = () => {
                             </div>
                         )}
                         <iframe
-                            src="https://omnicx.hoducc.com/Agent_plugin/"
+                            src="https://ccn.cloud-connect.in/Agent_plugin"
                             allow="geolocation; microphone; camera"
                             id="HoduCCPluginIFrame"
                             style={{

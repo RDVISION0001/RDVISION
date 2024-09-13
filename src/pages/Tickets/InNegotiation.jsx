@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 function InNegotiation() {
   const [ticketData, setTicketData] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedStage, setSelectedStage] = useState(2); // Default stage is 2
+  const [selectedStage, setSelectedStage] = useState(1); // Default stage is 2
   const { userId } = useAuth();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
@@ -46,18 +46,6 @@ function InNegotiation() {
   const handleShortDataValue = (e) => {
     setShortValue(e.target.value)
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
   const handleInvoice = (ticketId, name, email, mobile) => {
@@ -337,22 +325,24 @@ function InNegotiation() {
                     position: "relative",
                     width: `calc(100% / ${stages.length})`,
                     cursor: "pointer", // Add cursor pointer to indicate it's clickable
+                    fontSize: selectedStage === stage.stage ? "40px" : "inherit", // Default to inherit if not selected
+                    color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                   }}
                 >
                   <div
                     style={{
-                      backgroundColor: stage.color,
+                      backgroundColor: stage.color, // Highlight selected stage
                       width: "100%",
                       height: "100px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      color: "white",
                       fontWeight: "bold",
                       flexDirection: "column",
                       clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
                       marginRight: "-25px",
                       zIndex: 1,
+                      boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
                     }}
                   >
                     <div>{stage.count}</div>
@@ -376,6 +366,7 @@ function InNegotiation() {
                 </div>
               ))}
             </div>
+
           </div>
         </div>
       </section>
@@ -423,6 +414,7 @@ function InNegotiation() {
                     <th tabIndex="0">Customer Email</th>
                     <th tabIndex="0">Status</th>
                     <th tabIndex="0">Requirement</th>
+                    {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
                     <th tabIndex="0">Action</th>
                     <th tabIndex="0">Ticket ID</th>
                   </tr>
@@ -462,9 +454,59 @@ function InNegotiation() {
                         </div>
                       </td>
                       <td><span className="comment">{nego.queryProductName || nego.productEnquiry}</span></td>
+                      {selectedStage === 2 && <td><span className="text">{nego.followupDateTime && [nego.followupDateTime[2], nego.followupDateTime[1], nego.followupDateTime[0]].join("-")}/{nego.followupDateTime ? nego.followupDateTime[3] : ""}:{nego.followupDateTime ? nego.followupDateTime[4] : ""}</span></td>
+                      }
                       <td>
-                        {/* Add action buttons here */}
+                        <span className="actions-wrapper">
+                          <Button
+                            onClick={() => openTicketJourney(nego.uniqueQueryId)}
+                            // onClick={handleView}
+                            data-bs-toggle="modal"
+                            data-bs-target="#followUpModal"
+                            className="btn-action call bg-danger"
+                            title="Get connect on call"
+                          ><i className="fa-solid fa-info "></i>
+                          </Button>
+                          <Button
+                            onClick={() => handleClick(nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber)}
+                            data-bs-toggle="modal"
+                            data-bs-target="#followUpModal"
+                            className="btn-action call"
+                            title="Get connected on call"
+                          >
+                            <i className="fa-solid fa-phone"></i>
+                          </Button>
+
+                          <a
+                            href={`sms:${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
+                            className="btn-action message"
+                            title="Get connected on message"
+                          >
+                            <i className="fa-solid fa-message"></i>
+                          </a>
+
+                          <Button
+                            onClick={() => handleOn(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile, nego.queryProductName)}
+                            // href="mailto:someone@example.com"
+                            className="btn-action email"
+                            title="Get connect on email"
+                          ><i className="fa-solid fa-envelope"></i
+                          ></Button>
+                          <a href={`https://wa.me/${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. if you're looking for a good deal please type YES👍`}`}
+                            target='_blank'
+                            className="btn-action whatsapp"
+                            title="Get connect on whatsapp"
+                          ><i className="fa-brands fa-whatsapp"></i></a>
+                          <Button
+                            onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
+                            className="rounded-circle "
+                            title="Get connect on"
+                          >
+                            <i className="fa-solid fa-file-invoice"></i>
+                          </Button>
+                        </span>
                       </td>
+
                       <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
                     </tr>
                   ))}
