@@ -476,11 +476,17 @@ function uploaded_tickets() {
 
   const [followUpStatus, setFollowupStatus] = useState("Follow")
 
-  const dateFormat = (uploadDate) => {
-    const date = [(uploadDate[0]), uploadDate[1].toString().padStart(2, "0"), uploadDate[2].toString().padStart(2, "0")].join("-")
-
-    return date;
+  function formatFollowUpDate(followUpDateTime) {
+    const [year, month, day] = followUpDateTime;
+    // Convert month to 2-digit format and day to 2-digit format
+    const formattedMonth = String(month).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    return `${year}-${formattedMonth}-${formattedDay}`;
   }
+
+
+
+
   return (
     <>
 
@@ -503,12 +509,12 @@ function uploaded_tickets() {
         </div>
       </section>
       {/* //Filter input */}
-   { showAlltickets &&  <section class="filter-section">
+      {showAlltickets && <section class="filter-section">
         <div className="container-fluid">
           <div className="row">
             <div className="col-md-5">
               <div className="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
                 <div className="search-icon">
                   <i className="fa-solid fa-magnifying-glass"></i>
                 </div>
@@ -1029,7 +1035,7 @@ function uploaded_tickets() {
                             item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                        )).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || dateFormat(item.uploadDate) === filterdate).map((item, index) => (
+                        )).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || formatFollowUpDate(item.followUpDateTime) === filterdate).map((item, index) => (
                           <tr key={index}>
                             {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input

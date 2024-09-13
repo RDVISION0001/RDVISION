@@ -73,11 +73,11 @@ function live_tickets() {
 
   // Define parameters for each tab
   const params = {
-    allTickets: { },
+    allTickets: {},
     ongoing: { ticketStatus: 'Sale' },
     newTickets: { ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
-    followUp: { },
+    followUp: {},
   };
 
   const handleClose = () => setShow(false);
@@ -387,6 +387,12 @@ function live_tickets() {
   }
 
   const [followUpStatus, setFollowupStatus] = useState("Follow")
+  function formatFollowUpDate(followUpDateTime) {
+    // If it's already in the "2024-08-10T13:14" format, return it as is
+    return followUpDateTime.split('T')[0]; // Extracts just the date portion (YYYY-MM-DD)
+
+  }
+
 
 
   return (
@@ -398,7 +404,7 @@ function live_tickets() {
           <div className="row">
             <div className="col-md-5">
               <div className="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
                 <div className="search-icon">
                   <i className="fa-solid fa-magnifying-glass"></i>
                 </div>
@@ -918,7 +924,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || item.queryTime.split(" ")[0] === filterdate).map((item, index) => (
+                        ).filter((items) => (items.ticketstatus.toLowerCase() === followUpStatus.toLowerCase())).filter((item) => !filterdate || item.followUpDateTime && formatFollowUpDate(item.followUpDateTime) === filterdate).map((item, index) => (
                           <tr key={index}>
                             <td><span className="text">{item.queryTime.split(" ")[0]}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
