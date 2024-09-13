@@ -13,6 +13,7 @@ function Report(props) {
     const [useDetails, setUserDetails] = useState({});
     const [totalWorktime, setTotalWorktime] = useState(0);
     const [totalBeakTime, setTotalBreakTime] = useState(0);
+    const [defaultUrl, setDefaultUrl] = useState("/third_party_api/ticket")
 
     useEffect(() => {
         loadeUserDetails();
@@ -99,7 +100,7 @@ function Report(props) {
 
     const loadAssignTickets = async () => {
         try {
-            const response = await axiosInstance.post("third_party_api/ticket/totalassigntickets", workDataTickets);
+            const response = await axiosInstance.post(`${defaultUrl}/totalassigntickets`, workDataTickets);
             const data = response.data;
             const labels = data.map(item => item.date ? item.date.join('-') : 'Unknown Date');
             const numberOfTickets = data.map(item => item.assigncount);
@@ -130,7 +131,7 @@ function Report(props) {
 
     const loadAssignTicketsMonth = async () => {
         try {
-            const response = await axiosInstance.post("third_party_api/ticket/totalassignticketsmonthly", workDataTickets);
+            const response = await axiosInstance.post(`${defaultUrl}/totalassignticketsmonthly`, workDataTickets);
             const data = response.data;
             const labels = data.map(item => `${numberToMonthName(item.month)}_${item.year}`);
             const numberOfTickets = data.map(item => item.assigncount);
@@ -212,7 +213,7 @@ function Report(props) {
         } else {
             loadAssignTickets();
         }
-    }, [monthly, workDataTickets]);
+    }, [monthly, workDataTickets,defaultUrl]);
 
     const numberToMonthName = (number) => {
         const months = [
@@ -269,7 +270,13 @@ function Report(props) {
             <Col md={12}>
                 <Card className="mb-4">
                     <Card.Header>
-                        <p>Assigned Tickets Categories - Line Chart</p>
+                        <div className='d-flex justify-content-between'>
+                            <p>Assigned Tickets Categories - Line Chart</p>
+                            <select name={defaultUrl}className='form-select  w-25' onChange={(e) => setDefaultUrl(e.target.value)} id="">
+                                <option value="/third_party_api/ticket">Live</option>
+                                <option value="/upload">(ABC)Assigned By Captain</option>
+                            </select>
+                        </div>
                     </Card.Header>
                     <Card.Body>
                         <Line data={lineData} />
