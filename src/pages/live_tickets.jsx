@@ -182,7 +182,8 @@ function live_tickets() {
   const handleClick = async (number) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: number.split("-")[1]
+        number: number.replace(/[+-]/g, ""),
+        userId
       });
       setCallId(response.data.call_id)
     } catch (error) {
