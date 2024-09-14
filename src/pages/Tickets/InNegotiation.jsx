@@ -435,7 +435,7 @@ function InNegotiation() {
                       </td>
                       <td><span className="text">{nego.senderName || nego.firstName}</span></td>
                       <td>
-                        <CopyToClipboard text={nego.senderMobile}>
+                        <CopyToClipboard text={nego.senderMobile?nego.senderMobile:nego.mobileNumber}>
                           <button>Copy</button>
                         </CopyToClipboard>
                         <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>

@@ -37,6 +37,62 @@ function users() {
     setSelectedUser(userID)
   };
 
+  ////make agent //
+  const [selectedagent, setSelectedagent] = useState(0)
+  const [one, setOne] = useState(false);
+  const handleZero = () => setOne(false);
+  const handleOne = (userID) => {
+    setOne(true)
+    setSelectedUser(userID)
+    setSelectedagent(userID)
+  };
+
+  //agent username
+  const [agentUserName, setAgentUserName] = useState("");
+  const [agentPassword, setAgentPassword] = useState("");
+  const [allredyAgent, setAlreadyAgent] = useState(false)
+
+  const handleAgentSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      userId: selectedagent,
+      agentUserName: agentUserName,
+      agentPassword: agentPassword,
+    };
+    try {
+      const response = await axiosInstance.post("/user/addagent", payload);
+      console.log("Agent added successfully:", response.data);
+      handleZero(); // Close the modal on success
+    } catch (error) {
+      console.error("Error adding agent:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkUserIsAgent()
+  }, [selectedagent])
+
+  const checkUserIsAgent = async () => {
+    try {
+      const response = await axiosInstance.get(`/user/getAgent/${selectedagent}`);
+      setAlreadyAgent(response.data);
+    } catch (error) {
+      // Error handling
+      if (error.response) {
+        // Server responded with a status other than 2xx
+        setAlreadyAgent(error.response.data)
+        console.error("Status code:", error.response.status);
+      } else if (error.request) {
+        // Request was made but no response was received
+        console.error("No response received:", error.request);
+      } else {
+        // Something happened in setting up the request
+        console.error("Error setting up the request:", error.message);
+      }
+    }
+  };
+
+
   //taraget assign
   const [white, setWhite] = useState(false);
   const handleBlack = () => setWhite(false);
@@ -339,7 +395,6 @@ function users() {
                       <div className="tab-pane table-responsive all-users-tab fade show active" id="nav-all-users" role="tabpanel" aria-labelledby="nav-all-users-tab" tabindex="0">
                         <table className="table users-table">
                           <thead>
-
                             <tr>
                               <th className="selection-cell-header" data-row-selection="true">
                                 <input type="checkbox" className="" />
@@ -355,31 +410,49 @@ function users() {
                           </thead>
                           <tbody>
                             {data.map((item) => (
-                              <tr >
+                              <tr key={item.id}>
                                 <td className="selection-cell">
                                   <input type="checkbox" className="" />
                                 </td>
-                                <td key={item.id}>
+                                <td>
                                   <div className="profile-thumb">
-                                    <img src={convertToImage(item.imageData)} alt="profile-icon" className="img-fluid" />
+                                    <img
+                                      src={convertToImage(item.imageData)}
+                                      alt="profile-icon"
+                                      className="img-fluid"
+                                      style={{ maxWidth: '50px', height: 'auto' }} // Ensures responsive image size
+                                    />
                                   </div>
                                 </td>
-                                <td>{item.firstName} {item.lastName}</td>
-                                <td>{item.departmentDto?.deptName}</td>
-                                <td>{item.roleDto?.roleName}</td>
-                                <td>{item.teamDto?.teamName}</td>
-                                <td>{item.systemIp}</td>
+                                <td>
+                                  {item.firstName} {item.lastName}
+                                </td>
+                                <td className="d-none d-sm-table-cell"> {/* Hidden on xs, visible on sm and larger */}
+                                  {item.departmentDto?.deptName}
+                                </td>
+                                <td className="d-none d-md-table-cell"> {/* Hidden on xs and sm, visible on md and larger */}
+                                  {item.roleDto?.roleName}
+                                </td>
+                                <td className="d-none d-lg-table-cell"> {/* Hidden on xs, sm, md, visible on lg and larger */}
+                                  {item.teamDto?.teamName}
+                                </td>
+                                <td>
+                                  {item.systemIp}
+                                </td>
                                 <td className="action">
-                                  <Button className="btn-outline-secondary" onClick={()=>handleView(item.userId)} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
+                                  <Button className="btn-outline-secondary" onClick={() => handleView(item.userId)} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
                                   <Button
                                     className="mx-sm-3"
                                     style={{
                                       backgroundColor: item.userStatus === 'F' ? 'red' : 'green',
-                                      color: 'white' // Ensures the text color contrasts well with the background
+                                      color: 'white'
                                     }}
                                     onClick={() => handleEnableDisableUser(item.userId)}
                                   >
                                     {item.userStatus === 'F' ? 'Disable' : 'Enable'}
+                                  </Button>
+                                  <Button className="btn-outline-secondary" onClick={() => handleOne(item.userId)}>
+                                    Make Agent
                                   </Button>
                                 </td>
                               </tr>
@@ -708,6 +781,51 @@ function users() {
               {imageUploading ? "Loading..." : <button className="btn btn-success ms-3" onClick={updateImageOfUser}>
                 Update Image
               </button>}
+            </div>
+          </div>
+        </Modal>
+
+        {/* make agent modal */}
+        <Modal show={one} onHide={handleZero} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content">
+              <div className="modal-body">
+                {allredyAgent && <div className='text-danger fw-bold alert alert-warning text-center'>This user is allready added to agent </div>}
+                <div className="heading-area text-center">
+                  <h2 className="title">Make Agent</h2>
+                </div>
+                <div className="main-content-area">
+                  <form className="row g-3" onSubmit={handleAgentSubmit}>
+                    <div className="col-md-6">
+                      <label for="fname" className="form-label">UserName</label>
+                      <input type="text"
+                        className="form-control"
+                        placeholder="Agent UserName"
+                        id="fname"
+                        value={agentUserName}
+                        onChange={(e) => setAgentUserName(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-md-6">
+                      <label for="lname" className="form-label">Password</label>
+                      <input type="text"
+                        className="form-control"
+                        placeholder="password"
+                        id="lname"
+                        value={agentPassword}
+                        onChange={(e) => setAgentPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-12 mt-5 text-center">
+                      <div className="button-grp">
+                        <button type="button" className="btn btn-secondary" onClick={handleZero} data-bs-dismiss="modal">Close</button>
+                        <span className="button-space"></span> {/* Placeholder for space */}
+                        <button type="submit" className="btn btn-warning">Submit</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         </Modal>
