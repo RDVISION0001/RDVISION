@@ -40,7 +40,10 @@ function users() {
   ////make agent //
   const [selectedagent, setSelectedagent] = useState(0)
   const [one, setOne] = useState(false);
-  const handleZero = () => setOne(false);
+  const handleZero = () => {
+    setOne(false)
+    setAlreadyAgent(false)
+  };
   const handleOne = (userID) => {
     setOne(true)
     setSelectedUser(userID)
@@ -61,7 +64,7 @@ function users() {
     };
     try {
       const response = await axiosInstance.post("/user/addagent", payload);
-      console.log("Agent added successfully:", response.data);
+      toast.success('Agent added successfully');
       handleZero(); // Close the modal on success
     } catch (error) {
       console.error("Error adding agent:", error);
@@ -73,25 +76,28 @@ function users() {
   }, [selectedagent])
 
   const checkUserIsAgent = async () => {
-    try {
-      const response = await axiosInstance.get(`/user/getAgent/${selectedagent}`);
-      setAlreadyAgent(response.data);
-    } catch (error) {
-      // Error handling
-      if (error.response) {
-        // Server responded with a status other than 2xx
-        setAlreadyAgent(error.response.data)
-        console.error("Status code:", error.response.status);
-      } else if (error.request) {
-        // Request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request
-        console.error("Error setting up the request:", error.message);
+    if (selectedagent) {
+      try {
+        const response = await axiosInstance.get(`/user/getAgent/${selectedagent}`);
+        setAlreadyAgent(response.data);
+      } catch (error) {
+        // Error handling
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          setAlreadyAgent(error.response.data);
+          console.error("Status code:", error.response.status);
+        } else if (error.request) {
+          // Request was made but no response was received
+          console.error("No response received:", error.request);
+        } else {
+          // Something happened in setting up the request
+          console.error("Error setting up the request:", error.message);
+        }
       }
+    } else {
+      console.warn("No agent selected.");
     }
   };
-
 
   //taraget assign
   const [white, setWhite] = useState(false);

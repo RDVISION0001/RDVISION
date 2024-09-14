@@ -16,13 +16,15 @@ const TicketJourney = (props) => {
 
     useEffect(() => {
         setLoading(true);
-        axiosInstance.get(`/history/getByTicketId/${props.tktid}`)
+        if (props.tktid) {
+            axiosInstance.get(`/history/getByTicketId/${props.tktid}`)
             .then((response) => {
                 setStages(response.data);
             })
             .finally(() => {
                 setLoading(false);
             });
+        }
     }, [props.tktid]);
 
     const playRecording = useCallback((src) => {
