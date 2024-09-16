@@ -4,6 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
+import { toast } from 'react-toastify';
 
 const Worktime = () => {
   const [timeElapsed, setTimeElapsed] = useState(0); // Working time in seconds
@@ -35,27 +36,9 @@ const Worktime = () => {
 
   // Fetch initial working hours and break hours on component load
   useEffect(() => {
-    todayWorkingHour();
-    todayBreakHour();
+    setInitialWorkingTime(parseInt(localStorage.getItem("workTime")))
+    setBreakTime(parseInt(localStorage.getItem("breakTime")))
   }, []);
-
-  const todayWorkingHour = async () => {
-    try {
-      const response = await axiosInstance.get(`/attendance/workinhourbyattendanceid/${localStorage.getItem("attendanceId")}`);
-      setInitialWorkingTime(response.data); // Assuming the API returns time in seconds
-    } catch (error) {
-      console.error("Error fetching working hour:", error);
-    }
-  };
-
-  const todayBreakHour = async () => {
-    try {
-      const response = await axiosInstance.get(`/attendance/BreakSecondbyattendanceid/${localStorage.getItem("attendanceId")}`);
-      setBreakTime(response.data); // Assuming the API returns time in seconds
-    } catch (error) {
-      console.error("Error fetching break hour:", error);
-    }
-  };
 
   const shiftDurationHours = 12;
   const totalShiftTime = shiftDurationHours * 3600;
@@ -104,9 +87,14 @@ const Worktime = () => {
   };
 
   const toggleBreakOnServer = async () => {
-    const response = axiosInstance.get(`/attendance/toggleBreak/${localStorage.getItem("attendanceId")}`)
-    console.log((await response).data,"toggle data is ")
+    const response = await axiosInstance.get(`/user/toggleBreak/${localStorage.getItem("userId")}`)
+    if (response.data) {
+      toast.info("You Are Taking Break")
+    } else {
+      toast.info("Returned on Work")
+    }
   }
+
 
   return (
     <section className="map-and-rankings">

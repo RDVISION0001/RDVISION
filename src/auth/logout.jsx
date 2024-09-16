@@ -10,7 +10,9 @@ const logout = () => {
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({
     attendanceId: localStorage.getItem("attendanceId"),
-    logoutReason: ""
+    logoutReason: "",
+    actualWorkingSeconds: 0,
+    totalBreakInSec: 0
   })
   const handleClose = () => setShow(false);
   const handleShow = () => {
@@ -19,9 +21,10 @@ const logout = () => {
   const handleStatusChange = (e) => {
     setFormData({
       ...formData,
-      logoutReason: e.target.value
+      logoutReason: e.target.value,
+      actualWorkingSeconds: localStorage.getItem("workTime"),
+      totalBreakInSec: localStorage.getItem("breakTime")
     })
-
   }
 
   const handleSubmit = async () => {
@@ -30,7 +33,6 @@ const logout = () => {
       const response = await axiosInstance.post("attendance/logout", formData)
       console.log(response)
       if (response.status === 200) {
-        console.log("Ethar to aya hi nhi ")
         logout()
         navigate("/")
       }

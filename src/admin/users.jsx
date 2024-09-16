@@ -411,6 +411,7 @@ function users() {
                               <th tabindex="0">Designation</th>
                               <th tabindex="0">Team</th>
                               <th tabindex="0">IP Assigned</th>
+                              <th tabindex="0">Status</th>
                               <th tabindex="0">Action</th>
                             </tr>
                           </thead>
@@ -444,6 +445,9 @@ function users() {
                                 </td>
                                 <td>
                                   {item.systemIp}
+                                </td>
+                                <td>
+                                  <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${item.onBreak ? "red" : "green"}` }}></div>
                                 </td>
                                 <td className="action">
                                   <Button className="btn-outline-secondary" onClick={() => handleView(item.userId)} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>

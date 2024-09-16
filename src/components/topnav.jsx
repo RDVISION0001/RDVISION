@@ -25,7 +25,6 @@ function topnav() {
   };
 
   //working time api
-
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,14 +36,25 @@ function topnav() {
 
 
   useEffect(() => {
+    localStorage.setItem("workTime", 0);
+    localStorage.setItem("breakTime", 0);
+
+  }, [])
+
+  useEffect(() => {
     if (!takingBreak) {
       if (localStorage.getItem("userId")) {
-        axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
+        // axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
+        let workTime = parseInt(localStorage.getItem("workTime"))
+        localStorage.setItem("workTime", workTime += 1)
       }
     } else {
-      axiosInstance.post(`/attendance/addBreakSeconds/${localStorage.getItem("attendanceId")}`);
+      // axiosInstance.post(`/attendance/addBreakSeconds/${localStorage.getItem("attendanceId")}`);
+      let breakTime = parseInt(localStorage.getItem("breakTime"))
+      localStorage.setItem("breakTime", breakTime += 1)
     }
   }, [seconds]);
+
 
   const [todayFollowups, setTodayFollowups] = useState(0)
   useEffect(() => {
@@ -82,7 +92,7 @@ function topnav() {
                   top: "-20px",
                   right: "-20px"
                 }}>
-                 {todayFollowups}
+                  {todayFollowups}
                 </span>
               </a>
 
