@@ -91,6 +91,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    localStorage.removeItem('workTime');
+    localStorage.removeItem('breakTime');
     localStorage.removeItem('token');
     localStorage.removeItem('roleName');
     localStorage.removeItem('userId');

@@ -201,11 +201,13 @@ function InNegotiation() {
     return number.slice(0, -4) + 'XXXX';
   };
 
-  //,asking EMail
+  //masking EMail
   const maskEmail = (email) => {
-    const [user, domain] = email.split('@');
-    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
-    return `${maskedUser}@${domain}`;
+    if (email) {
+      const [user, domain] = email.split('@');
+      const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+      return `${maskedUser}@${domain}`;
+    }
   };
 
   //click to call
@@ -435,7 +437,7 @@ function InNegotiation() {
                       </td>
                       <td><span className="text">{nego.senderName || nego.firstName}</span></td>
                       <td>
-                        <CopyToClipboard text={nego.senderMobile?nego.senderMobile:nego.mobileNumber}>
+                        <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
                           <button>Copy</button>
                         </CopyToClipboard>
                         <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
