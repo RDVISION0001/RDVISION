@@ -63,7 +63,6 @@ const TaskProgress = () => {
                 ...prevState,
                 total: resp.data.saleTask
             }));
-            console.log("Total task is",resp.data.saleTask)
         })
 
         //total new tickets
