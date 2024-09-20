@@ -5,8 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
 import { toast } from 'react-toastify';
+import AttendanceBarChart from './AttendanceBarChart';
 
-const Worktime = () => {
+const ChartWorktime = () => {
   const [timeElapsed, setTimeElapsed] = useState(0); // Working time in seconds
   const [initialWorkingTime, setInitialWorkingTime] = useState(0); // Initial working time in seconds
   const [breakTime, setBreakTime] = useState(0); // Break time in seconds
@@ -165,6 +166,8 @@ const Worktime = () => {
                   </div>
                 </div>
               </div>
+              <AttendanceBarChart />
+
             </div>
             <div className="rank-card top-rankers">
               <h3 className="heading">Best Selling Department</h3>
@@ -212,4 +215,4 @@ const Worktime = () => {
   );
 };
 
-export default Worktime;
+export default ChartWorktime;
