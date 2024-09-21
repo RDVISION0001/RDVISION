@@ -26,6 +26,7 @@ function live_tickets() {
 
   // Clipboard copy
   const [copied, setCopied] = useState(false);
+  const [filteredTickets, setFilteredTickets] = useState([]);
 
 
   // Pagination state
@@ -60,7 +61,7 @@ function live_tickets() {
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
   const [filterdate, setFilterDate] = useState(null)
 
-
+  const [countryFilter, setCountryFilter] = useState(null)
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
     ticketId: "",
@@ -133,6 +134,14 @@ function live_tickets() {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+  };
+
+
+  //filter tickets base on country
+  const filterTickets = (tickets) => {
+    const allowedCountries = ['US', 'UK', 'AU']; // ISO country codes for US, UK, and Australia
+    const filtered = tickets.filter(ticket => allowedCountries.includes(ticket.senderCountryIso));
+    setFilteredTickets(filtered);
   };
 
   const playNotificationSound = () => {
@@ -394,7 +403,7 @@ function live_tickets() {
 
   }
 
-
+  console.log(countryFilter)
 
   return (
     <>
@@ -443,7 +452,7 @@ function live_tickets() {
               role="tablist"
             >
 
-              <li className="nav-item" role="presentation">
+              <li className="nav-item d-flex justify-content-between w-100" role="presentation">
                 <button
                   className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
                   onClick={() => handleRowClick("newTickets")}
@@ -461,6 +470,16 @@ function live_tickets() {
                   <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                   New Tickets
                 </button>
+                <div class="input-group mb-3 w-50">
+                  <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className="form-select" id="inputGroupSelect02">
+                    <option value="">All</option>
+                    <option value="US">US</option>
+                    <option value="AU">AU</option>
+                    <option value="UK">UK</option>
+                  </select>
+
+                  <label class="input-group-text" for="inputGroupSelect02">Select Country</label>
+                </div>
               </li>
 
 
@@ -508,7 +527,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).map((item, index) => (
+                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).map((item, index) => (
                           <tr key={index}>
                             <td><span className="text">{item.queryTime}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
