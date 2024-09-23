@@ -58,9 +58,13 @@ function InNegotiation() {
     setSelectMobileForInvoice(mobile)
     setIsInvoiceOn(!isInvoiceOn)
   }
-
-  const handleClose = () => setShow(false);
-  const handleShow = (queryId) => {
+  const [dorpedInStage, setDropedinStage] = useState(null)
+  const handleClose = () => {
+    setShow(false)
+    setShowTransaction(false)
+  };
+  const handleShow = (queryId, targetStage) => {
+    setDropedinStage(targetStage)
     setUniqueQueryId(queryId);
     setShow(true);
   };
@@ -94,6 +98,7 @@ function InNegotiation() {
       fetchDatas2()
       fetchDatas3()
     }
+    setDropedinStage(null)
   };
 
   // Update handleStatusChange function
@@ -358,6 +363,65 @@ function InNegotiation() {
     .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
 
+
+  const [draggedItem, setDraggedItem] = useState(null);
+  const [dragSource, setDragSource] = useState(null);
+
+  const handleDragStart = (e, item, stage) => {
+    setDraggedItem(item);
+    setDragSource(stage);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e, targetStage) => {
+    e.preventDefault();
+
+    if (dragSource !== targetStage) {
+      // Move the item to the target stage
+      const sourceData = {
+        stage1: stage1Data,
+        stage2: stage2Data,
+        stage3: stage3Data,
+      };
+
+      setSatge1Data(sourceData.stage1.filter(ticket => ticket !== draggedItem));
+      setSatge2Data(sourceData.stage2.filter(ticket => ticket !== draggedItem));
+      setSatge3Data(sourceData.stage3.filter(ticket => ticket !== draggedItem));
+
+      if (targetStage === 'stage1') {
+        setSatge1Data(prev => [...prev, draggedItem]);
+      } else if (targetStage === 'stage2') {
+        setSatge2Data(prev => [...prev, draggedItem]);
+      } else if (targetStage === 'stage3') {
+        setSatge3Data(prev => [...prev, draggedItem]);
+
+      }
+      console.log(`Dropped Ticket ID: ${draggedItem.uniqueQueryId} to ${targetStage}`);
+      handleShow(draggedItem.uniqueQueryId, targetStage)
+      if (targetStage === "stage3") {
+        setShowTransaction(true)
+        setFormData((preData) => ({
+          ...preData,
+          ticketStatus: "Sale"
+        }));
+      }
+
+      // Reset dragged item and source
+
+      setDraggedItem(null);
+      setDragSource(null);
+    }
+  };
+
+  const handleShowUniqe = (uniqueQueryId) => {
+    // Your existing handleShow function logic
+    console.log(`Show ticket with ID: ${uniqueQueryId}`);
+  };
 
   return (
     <>
@@ -663,81 +727,37 @@ function InNegotiation() {
         </div>}
       {
         !list &&
-        <div className='p-3 '>
+        <div className='p-3'>
           <div className="row g-0">
-            <div className="col-sm text-center border">
-              <div className='border'>
-                <span className='fw-bold '>Stage 1</span>
-                <div>
-                  consisting Status Not Connected, wrong mobile number and Not Pickup
+            {['stage1', 'stage2', 'stage3'].map((stage, idx) => (
+              <div className={`col-sm text-center `} key={stage}>
+                <div className='border'>
+                  <span className='fw-bold'>{`Stage ${idx + 1}`}</span>
+                  <div>{`consisting Status ${stage === 'stage1' ? 'Not Connected, wrong mobile number and Not Pickup' : stage === 'stage2' ? 'Connected follow-ups and call backs' : 'only sale'}`}</div>
                 </div>
-              </div>
-              <div className='d-flex flex-wrap justify-content-center'>
-                {
-                  stage1Data.map((ticket, index) => (
-                    <div className=" border text-sm m-2 tktcard" style={{ width: "15rem", borderRadius: "10px", cursor: "Pointer" }}>
+                <div className='d-flex flex-wrap justify-content-around' onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, stage)}>
+                  {(stage === 'stage1' ? stage1Data : stage === 'stage2' ? stage2Data : stage3Data).map((ticket) => (
+                    <div
+                      key={ticket.uniqueQueryId}
+                      className="border text-sm m-2 tktcard"
+                      style={{ width: "15rem", borderRadius: "10px", cursor: "pointer" }}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, ticket, stage)}
+                    >
                       <div className='m-1'>
-                        <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment ? ticket.comment : "comment not available"}</div>
-                        <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry ? ticket.productEnquiry : "Enquiry not available"}</div>
+                        <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment || "comment not available"}</div>
+                        <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry || "Enquiry not available"}</div>
                       </div>
-                      <div className='text-primary p-1' style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShow(ticket.uniqueQueryId)}>{ticket.ticketstatus}</div>
+                      <div className='text-primary p-1' style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShowUniqe(ticket.uniqueQueryId)}>
+                        {ticket.ticketstatus}
+                      </div>
                     </div>
-                  ))
-                }
-              </div>
-            </div>
-            <div className="col-sm text-center">
-              <div className=' border'>
-                <div className='border'>
-                  <span className='fw-bold '>Stage 2</span>
-                  <div>
-                    consisting Status Connected followups and call backs
-                  </div>
-                </div>
-                <div className='d-flex flex-wrap justify-content-center'>
-                {
-                    stage2Data.map((ticket, index) => (
-                      <div className=" border text-sm m-2 tktcard" style={{ width: "15rem", borderRadius: "10px", cursor: "Pointer" }}>
-                        <div className='m-1'>
-                          <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment ? ticket.comment : "comment not available"}</div>
-                          <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry ? ticket.productEnquiry : "Enquiry not available"}</div>
-                        </div>
-                        <div className='text-primary p-1' style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShow(ticket.uniqueQueryId)}>{ticket.ticketstatus}</div>
-                      </div>
-                    ))
-                  }
+                  ))}
                 </div>
               </div>
-            </div>
-            <div className="col-sm text-center">
-              <div className=' border'>
-                <div className='border'>
-                  <span className='fw-bold '>Stage 3</span>
-                  <div>
-                    consisting Status only sale
-                  </div>
-                </div>
-                <div className='d-flex flex-wrap justify-content-center'>
-                {
-                    stage3Data.map((ticket, index) => (
-                      <div className=" border text-sm m-2 tktcard" style={{ width: "15rem", borderRadius: "10px", cursor: "Pointer" }}>
-                        <div className='m-1'>
-                          <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment ? ticket.comment : "comment not available"}</div>
-                          <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry ? ticket.productEnquiry : "Enquiry not available"}</div>
-                        </div>
-                        <div className="text-primary p-1 d-flex justify-content-center align-items-center" style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShow(ticket.uniqueQueryId)}>
-                          {ticket.ticketstatus}
-                        </div>
-
-                      </div>
-                    ))
-                  }
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
-
       }
       {error && <div className="api-error"> {error.message}</div>}
       <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
@@ -758,14 +778,45 @@ function InNegotiation() {
                 onChange={handleStatusChange}
               >
                 <option>Choose Call-Status</option>
-                <option value="Sale">Sale</option>
+                {
+                  dorpedInStage === "stage3" &&
+                  <>
+                    <option value="Sale" >Sale</option>
+                  </>
+                }
+
                 {/* <option value="New">New</option> */}
-                <option value="Follow">Follow-up</option>
-                <option value="Interested">Interested</option>
-                <option value="Not_Interested">Not Interested</option>
-                <option value="Wrong_Number">Wrong Number</option>
-                <option value="Place_with_other">Place with other</option>
-                <option value="Not_Pickup">Not Pickup</option>
+                {
+                  dorpedInStage === "stage1" &&
+                  <>
+                    <option value="Not_Pickup">Not Pickup</option>
+                    <option value="Wrong_Number">Wrong Number</option>
+                  </>
+                }
+                {
+                  dorpedInStage === "stage2" &&
+                  <>
+
+                    <option value="Follow">Follow-up</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Not_Interested">Not Interested</option>
+
+                    <option value="Place_with_other">Place with other</option>
+                  </>
+                }
+                {
+                  dorpedInStage == null &&
+                  <>
+                    <option value="Not_Pickup">Not Pickup</option>
+                    <option value="Wrong_Number">Wrong Number</option>
+                    <option value="Follow">Follow-up</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Not_Interested">Not Interested</option>
+                    <option value="Place_with_other">Place with other</option>
+                    <option value="Sale" >Sale</option>
+                  </>
+                }
+
               </select>
             </div>
 
