@@ -103,7 +103,7 @@ function topnav() {
             <FloatingButton />
           </div>
 
-          <dialog id="calender" className="calender-modal">
+          <dialog id="calender" className="calender-modal bg-light text-black">
             <div className="modal-content">
               <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
               <LiveCalander />

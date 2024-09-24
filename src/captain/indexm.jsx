@@ -4,10 +4,8 @@ import React from 'react';
 import Cardinfo from '../components/cardinfo';
 import ChartWorktime from "../components/ChartWorktime"
 
-
 //pages
 import Live_tickets from '../pages/live_tickets';
-
 
 function indexm() {
 
