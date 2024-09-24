@@ -64,7 +64,7 @@ function Invoice(props) {
         setSelectedTicketId(ticket.ticketId);
         console.log(ticket.ticketId)
     };
-    
+
 
     // Fetch order details from apiB when selectedTicketId changes
     useEffect(() => {
@@ -172,10 +172,9 @@ function Invoice(props) {
                                             {/* <!-- ticket details ends here --> */}
                                             <div className="accordion status-wrappers" id="accordionExample">
 
-                                                {/* <!-- order items details ends here --> */}
                                                 <div className="accordion-item payment">
                                                     <h2 className="accordion-header">
-                                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="paymentDetails" aria-expanded="false" aria-controls="paymentDetails">
+                                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="#collapseTwo">
                                                             <span>Payment Details</span>
                                                             <span className="status-icon pending">
                                                                 <i className="fa-solid fa-hourglass-end"></i>
@@ -183,7 +182,28 @@ function Invoice(props) {
                                                             </span>
                                                         </button>
                                                     </h2>
+                                                    <div id="collapseTwo" className="accordion-button collapsed" data-bs-parent="#accordionExample">
+                                                        <div className="accordion-body">
+                                                            <p className="text text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                                                            <div className="btns-group d-flex gap-3 justify-content-center mt-4">
+                                                                <a href="#" className="btn btn-primary">Check Status</a>
+                                                                <a href="#" className="btn btn-warning">Send Invoice</a>
+                                                                <a href="#" className="btn btn-success">Mark As Paid</a>
+                                                                <a href="#" className="btn btn-danger">Mark As Hold</a>
+                                                            </div>
+                                                            <div className="form-hold p-3">
+                                                                <form action="">
+                                                                    <div className="form-group mb-3">
+                                                                        <label className="form-label" htmlFor="holdReason">Define Reason</label>
+                                                                        <textarea name="holdReason" id="holdReason" cols="20" rows="5" className="form-control" placeholder="Reason to hold the order or invoice......"></textarea>
+                                                                    </div>
+                                                                    <a href="#" className="btn btn-danger">Hold Now</a>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
                                                 <TrackPackage />
                                             </div>
                                         </div>

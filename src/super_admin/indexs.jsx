@@ -5,11 +5,6 @@ import Cardinfo from '../components/cardinfo';
 import FloatingButton from '../components/FloatingButton';
 
 
-
-//pages
-import Live_tickets from '../pages/live_tickets';
-
-
 function indexs() {
 
 
@@ -22,10 +17,6 @@ function indexs() {
 
       <div>
         <FloatingButton />
-      </div>
-
-      <div className="container-fluid mt-3">
-        <Live_tickets />
       </div>
     </>
   );

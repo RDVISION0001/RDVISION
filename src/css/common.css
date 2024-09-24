@@ -62,7 +62,7 @@
     visibility: hidden;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
     box-shadow: 10px 10px 10 px 10px green;
-    color: white;
+    color: rgb(11, 11, 11);
   }
 
   .dateHover:hover .detailsBox {
