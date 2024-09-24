@@ -201,3 +201,45 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+
+  .tracking-steps {
+    position: relative;
+  }
+  
+  .step-circle-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+  }
+  
+  .step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    z-index: 1;
+  }
+  
+  .step-line {
+    width: 2px;
+    height: 50px;
+    background-color: #007bff;
+  }
+  
+  .tracking-step {
+    display: flex;
+    align-items: flex-start;
+  }
+  
+  .step-details {
+    flex-grow: 1;
+  }
+  

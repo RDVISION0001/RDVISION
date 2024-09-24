@@ -530,7 +530,7 @@ function live_tickets() {
                         ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).map((item, index) => (
                           <tr key={index}>
                             <td><span className="text">{item.queryTime}</span></td>
-                            <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
                             <td> <td>
                               <CopyToClipboard

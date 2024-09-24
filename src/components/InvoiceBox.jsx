@@ -59,7 +59,7 @@ function InvoiceBox(props) {
         if (selectedTicketId) {
             const fetchTicketDetails = async () => {
                 try {
-                    const response = await axiosInstance.get(`/third_party_api/ticket/getTicket/${selectedTicketId}`);
+                    const response = await axiosInstance.get(`/${selectedTicketId.length < 15 ? "third_party_api/ticket" : "upload"}/getTicket/${selectedTicketId}`);
                     setTicketDetails(response.data.dtoList);
                 } catch (err) {
                     console.error('Error fetching ticket details:', err);
@@ -89,8 +89,10 @@ function InvoiceBox(props) {
 
 
     const fetchProductPrice = async () => {
-        const response = await axiosInstance.get(`/product/getProduct/${formData.selectedProductId}`)
-        setSelectedProductPrice(response.data.dtoList.price)
+        if (formData.selectedProductId) {
+            const response = await axiosInstance.get(`/product/getProduct/${formData.selectedProductId}`)
+            setSelectedProductPrice(response.data.dtoList.price)
+        }
     }
 
 
@@ -242,7 +244,7 @@ function InvoiceBox(props) {
 
             }, 1000)
         }
-        
+
     }
     return (
         <>
@@ -269,19 +271,19 @@ function InvoiceBox(props) {
                                                 <div className="address-items mt-2">
                                                     <small>Billing Address</small>
                                                     <address>
-                                                        {ticketDetails.senderAddress?ticketDetails.senderAddress:"No address found"}
+                                                        {ticketDetails.senderAddress ? ticketDetails.senderAddress : "No address found"}
                                                     </address>
 
                                                 </div>
                                                 <div className="address-items">
                                                     <small>Delivery Address</small>
                                                     <address>
-                                                        {addressData?` ${addressData && addressData.houseNumber},
+                                                        {addressData ? ` ${addressData && addressData.houseNumber},
                                                         ${addressData && addressData.landmark},
                                                         ${addressData && addressData.city},
                                                         ${addressData && addressData.state},
                                                         ${addressData && addressData.country},
-                                                        ${addressData && addressData.zipCode}`:"No adress added"}
+                                                        ${addressData && addressData.zipCode}` : "No adress added"}
                                                     </address>                                                </div>
                                                 <div className=""></div>
                                             </div>
@@ -313,7 +315,7 @@ function InvoiceBox(props) {
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
                                                     </div>
-                                                   { orderDetails.productOrders && orderDetails.productOrders.length>0? <table className="table">
+                                                    {orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">Name</th>
@@ -326,7 +328,7 @@ function InvoiceBox(props) {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            { orderDetails.productOrders.map((productOrder, index) => (
+                                                            {orderDetails.productOrders.map((productOrder, index) => (
                                                                 productOrder.product && productOrder.product[0] ? (
                                                                     <tr key={productOrder.productorderId}> {/* Use unique id as key */}
                                                                         <td>{productOrder.product[0].name}</td>
@@ -352,7 +354,7 @@ function InvoiceBox(props) {
                                                             ))}
 
                                                         </tbody>
-                                                    </table>:<div className='d-flex justify-content-center'>No prduct Adedd</div>}
+                                                    </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
                                                     <div className="total d-flex justify-content-end">
                                                         <div className='d-flex'>
                                                             <p className='fw-semibold'>Total:- </p>
@@ -539,11 +541,11 @@ function InvoiceBox(props) {
                                         </select>
                                     </div>
                                     <div className='w-100 d-flex justify-content-between p-4 text-primary'>
-                                            <span>price per quantity:-{selectedProductPrice}</span> <span>Total price for selected quaantity:-{selectedProductPrice*formData.quantity}</span>
-                                        </div>
+                                        <span>price per quantity:-{selectedProductPrice}</span> <span>Total price for selected quaantity:-{selectedProductPrice * formData.quantity}</span>
+                                    </div>
                                     <div className="modal-footer justify-content-center border-0">
                                         <button type="button" onClick={handleClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" disabled={formData.price==="0"?true:false} className="btn btn-primary">Add</button>
+                                        <button type="submit" disabled={formData.price === "0" ? true : false} className="btn btn-primary">Add</button>
                                     </div>
                                 </div>
                             </form>
