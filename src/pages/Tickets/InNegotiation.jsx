@@ -82,8 +82,7 @@ function InNegotiation() {
         followUpDateTime: formData.followUpDateTime,
         call_id: callId
       };
-      const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
-      setResponse(res.data.dtoList);
+      const res = await axiosInstance.post(`/${uniqueQueryId.length < 15 ? "third_party_api/ticket" : "upload"}/updateTicketResponse/${uniqueQueryId}`, {}, { params }); setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       handleClose();
       fetchData(params[activeTab], currentPage, negosPerPage);
