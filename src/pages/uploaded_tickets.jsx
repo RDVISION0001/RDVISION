@@ -593,6 +593,7 @@ function uploaded_tickets() {
                         {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
                           <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                         </th> : ""}
+                        <th tabindex="0">Se n.</th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -620,6 +621,8 @@ function uploaded_tickets() {
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
                             </td> : ""}
+                            <td><span className="text">{index+1}.</span></td>
+
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.firstName} {item.lastName}</span></td>

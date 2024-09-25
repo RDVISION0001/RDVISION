@@ -25,10 +25,6 @@ function indexa() {
       <div className="container-fluid mt-3">
         <ChartWorktime />
       </div>
-
-      <div className="container-fluid m-3">
-        <LiveCalander />
-      </div>
     </>
   );
 }
