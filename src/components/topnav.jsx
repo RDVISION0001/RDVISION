@@ -36,8 +36,10 @@ function topnav() {
 
 
   useEffect(() => {
-    localStorage.setItem("workTime", 0);
-    localStorage.setItem("breakTime", 0);
+    if (!localStorage.getItem('workTime')) {
+      localStorage.setItem("workTime", 0);
+      localStorage.setItem("breakTime", 0);
+    }
 
   }, [])
 

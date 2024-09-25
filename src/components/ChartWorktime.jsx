@@ -5,7 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
 import { toast } from 'react-toastify';
-import AttendanceBarChart from './AttendanceBarChart';
+import Report from './Report'
+import UserWorkTimeReport from './UserWorkTimeReport';
+import LiveCalander from '../components/LiveCalander';
 
 const ChartWorktime = () => {
   const [timeElapsed, setTimeElapsed] = useState(0); // Working time in seconds
@@ -98,25 +100,22 @@ const ChartWorktime = () => {
 
 
   return (
-    <section className="map-and-rankings">
+    <section className="">
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-8">
             <div className="graph-wrapper">
-              <h3 className="title">Weekly Report</h3>
-              <div id="map-container" className="highchart-wrapper" style={{ width: "100%", height: "100%", minHeight: "555px" }}>
-                <HighchartsReact
-                  highcharts={Highcharts}
-                  options={options}
-                />
+              <div className="container-fluid m-3">
+                <LiveCalander />
               </div>
+
             </div>
           </div>
           <div className="col-md-4">
             <div className="bg-white border">
-              <div className=''>
-                <div className='bg-light d-flex align-items-center justify-content-between' style={{ padding: '10px' }}>
-                  <div className='d-flex flex-column p-4 bg-light'>
+              <div className='bg-light'>
+                <div className='bg-light d-flex align-items-center justify-content-between' >
+                  <div className='d-flex flex-column px-4 bg-light'>
                     <span style={{ fontSize: "15px", fontWeight: "semibold", color: "gray" }}>Work Tracker</span>
                     <span>
                       <button className='' style={{ fontSize: "12px", backgroundColor: "rgb(255, 0, 0)", padding: "1px 20px", borderRadius: "5px" }} onClick={toggleBreak}>
@@ -124,49 +123,50 @@ const ChartWorktime = () => {
                       </button>
                     </span>
                   </div>
+                  <div className="position-relative d-flex align-items-center justify-content-center">
+                    <svg width="160" height="160">
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r="40"
+                        fill="none"
+                        stroke="#e6e6e6"
+                        strokeWidth="10"
+                      />
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r="40"
+                        fill="none"
+                        stroke="#007bff"
+                        strokeWidth="10"
+                        strokeDasharray="408"
+                        strokeDashoffset={408 - (408 * timeElapsedPercentage) / 100}
+                        transform="rotate(90 80 80)" // Start from the bottom
+                      />
+                    </svg>
+                    <div className="position-absolute text-center d-flex flex-column">
+                      <strong style={{ fontWeight: 'bold', fontSize: '15px' }}>{hours} : {minutes}</strong>
+                      <strong>Hrs.</strong>
+                    </div>
+                  </div>
                   <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${takingBreak ? "red" : "green"}` }}></div>
                 </div>
-              </div>
-              <div className="d-flex flex-column align-items-center justify-content-center p-4 w-100">
-                <div className="position-relative d-flex align-items-center justify-content-center">
-                  <svg width="160" height="160">
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="65"
-                      fill="none"
-                      stroke="#e6e6e6"
-                      strokeWidth="10"
-                    />
-                    <circle
-                      cx="80"
-                      cy="80"
-                      r="65"
-                      fill="none"
-                      stroke="#007bff"
-                      strokeWidth="10"
-                      strokeDasharray="408"
-                      strokeDashoffset={408 - (408 * timeElapsedPercentage) / 100}
-                      transform="rotate(90 80 80)" // Start from the bottom
-                    />
-                  </svg>
-                  <div className="position-absolute text-center d-flex flex-column">
-                    <strong style={{ fontWeight: 'bold', fontSize: '24px' }}>{hours} : {minutes}</strong>
-                    <strong>Hrs.</strong>
-                  </div>
-                </div>
-                <div>
-                  <div className='d-flex mt-2 items-content-center p-1'>
-                    <p className=" " style={{ fontSize: '20px' }}><strong>{hours} : {minutes} : {seconds}</strong></p>  <span className='mx-2 ' style={{ fontSize: "20px", color: "gray" }}>| </span>
-                    <p className='text-danger ' style={{ fontSize: '20px' }}><strong>{breakHours} : {breakMinutes} : {breakSeconds}</strong></p>
-                  </div>
-                  <div className='d-flex mt-2 justify-content-center' style={{ color: "gray" }}>
-                    <p className=" " style={{ fontSize: '15px' }}>Working Hours</p>  <span className='mx-2 ' style={{ fontSize: "15px", color: "gray" }}>| </span>
-                    <p className=' ' style={{ fontSize: '15px' }}>Break</p>
+                <div className="d-flex flex-column align-items-center justify-content-center  w-100">
+                  <div>
+                    <div className='d-flex mt-2 items-content-center p-1'>
+                      <p className=" " style={{ fontSize: '20px' }}><strong>{hours} : {minutes} : {seconds}</strong></p>  <span className='mx-2 ' style={{ fontSize: "20px", color: "gray" }}>| </span>
+                      <p className='text-danger ' style={{ fontSize: '20px' }}><strong>{breakHours} : {breakMinutes} : {breakSeconds}</strong></p>
+                    </div>
+                    <div className='d-flex mt-2 justify-content-center' style={{ color: "gray" }}>
+                      <p className=" " style={{ fontSize: '15px' }}>Working Hours</p>  <span className='mx-2 ' style={{ fontSize: "15px", color: "gray" }}>| </span>
+                      <p className=' ' style={{ fontSize: '15px' }}>Break</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              <AttendanceBarChart />
+
+              <UserWorkTimeReport user={localStorage.getItem("userId")} isShowingToUser={true} />
 
             </div>
             <div className="rank-card top-rankers">
