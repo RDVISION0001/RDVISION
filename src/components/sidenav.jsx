@@ -199,15 +199,15 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -306,15 +306,15 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -396,15 +396,15 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -486,15 +486,15 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                 </ul>
@@ -575,15 +575,15 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
                     <NavLink to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/invoices_paid" className="nav-link">
+                      <i className="fa-solid fa-check-circle"></i>
+                      <span className="nav-text">Paid</span>
                     </NavLink>
                   </li>
                 </ul>
