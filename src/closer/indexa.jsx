@@ -5,7 +5,7 @@ import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
 import ChartWorktime from '../components/ChartWorktime';
 import LiveCalander from '../components/LiveCalander';
-
+import PaymentSuccess from '../components/PaymentSuccess';
 
 
 function indexa() {
@@ -16,6 +16,10 @@ function indexa() {
     <>
       <div className="container-fluid mt-3">
         <Cardinfo />
+      </div>
+
+      <div className="container-fluid mt-3">
+        <PaymentSuccess />
       </div>
 
       <div className="container-fluid mt-3">

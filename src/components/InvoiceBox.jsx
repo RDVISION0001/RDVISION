@@ -33,26 +33,26 @@ function InvoiceBox(props) {
     });
 
     // Fetch tickets from ticketByStatus
-    useEffect(() => {
-        const fetchTickets = async () => {
-            if (!userId) return;
-            try {
-                const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-                    params: {
-                        // userId,
-                        ticketStatus: 'Sale'
-                    }
-                });
-                setTickets(response.data.dtoList);
-            } catch (err) {
-                console.error('Error fetching tickets:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchTickets = async () => {
+    //         if (!userId) return;
+    //         try {
+    //             const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
+    //                 params: {
+    //                     // userId,
+    //                     ticketStatus: 'Sale'
+    //                 }
+    //             });
+    //             setTickets(response.data.dtoList);
+    //         } catch (err) {
+    //             console.error('Error fetching tickets:', err);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
 
-        fetchTickets();
-    }, [userId]);
+    //     fetchTickets();
+    // }, [userId]);
 
     // Fetch ticket details when selectedTicketId changes
     useEffect(() => {
@@ -296,7 +296,7 @@ function InvoiceBox(props) {
                             )}
                             {/* <!-- ticket details ends here --> */}
                             <div className="accordion status-wrappers" id="accordionExample">
-                                {orderDetails ? (
+                           
                                     <div className="accordion-item">
                                         <h2 className="accordion-header">
                                             <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
@@ -315,7 +315,7 @@ function InvoiceBox(props) {
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
                                                     </div>
-                                                    {orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
+                                                    {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
                                                         <thead>
                                                             <tr>
                                                                 <th scope="col">Name</th>
@@ -328,7 +328,7 @@ function InvoiceBox(props) {
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {orderDetails.productOrders.map((productOrder, index) => (
+                                                            {orderDetails && orderDetails.productOrders.map((productOrder, index) => (
                                                                 productOrder.product && productOrder.product[0] ? (
                                                                     <tr key={productOrder.productorderId}> {/* Use unique id as key */}
                                                                         <td>{productOrder.product[0].name}</td>
@@ -355,12 +355,12 @@ function InvoiceBox(props) {
 
                                                         </tbody>
                                                     </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
-                                                    <div className="total d-flex justify-content-end">
+                                                 {orderDetails &&   <div className="total d-flex justify-content-end">
                                                         <div className='d-flex'>
                                                             <p className='fw-semibold'>Total:- </p>
                                                             <p>$ {orderDetails.totalPayableAmount}</p>
                                                         </div>
-                                                    </div>
+                                                    </div>}
                                                     <div className="add-more-products-wrapper ">
                                                         <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
                                                     </div>
@@ -368,9 +368,7 @@ function InvoiceBox(props) {
                                             </div>
                                         </div>
                                     </div>
-                                ) : (
-                                    <p></p>
-                                )}
+                                
 
                                 {/* /////////////////shipping address */}
                                 <div className="accordion-item">

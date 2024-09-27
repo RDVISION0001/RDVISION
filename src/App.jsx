@@ -114,6 +114,11 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
+import Failedpayment from './components/Failedpayment';
+import ViewInvoice from './components/ViewInvoice';
+import PaymentSuccess from './components/PaymentSuccess';
+import PaymentFailed from './components/PaymentFailed';
+
 
 
 function App() {
@@ -134,6 +139,12 @@ function App() {
 
                 {/* //costoumer  invoice*/}
                 <Route exact path="/coustomer_invoice" element={<Coustomer />} />
+
+                <Route exact path="/retry_payment/:orderid" element={<Failedpayment />} />
+                <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
+                <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
+                <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
+
 
                 {/* auth */}
                 <Route exact path="/" element={<Login />} />
