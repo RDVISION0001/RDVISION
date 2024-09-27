@@ -4,7 +4,7 @@ import Invoice from '../Invoice';
 function Paid() {
     return (
         <div>
-            <Invoice status="Paid" />
+            <Invoice status="paid" />
         </div>
     )
 }

@@ -206,7 +206,7 @@
   .tracking-steps {
     position: relative;
   }
-  
+
   .step-circle-container {
     position: relative;
     display: flex;
@@ -214,7 +214,7 @@
     align-items: center;
     margin-right: 20px;
   }
-  
+
   .step-circle {
     width: 30px;
     height: 30px;
@@ -227,19 +227,132 @@
     font-size: 16px;
     z-index: 1;
   }
-  
+
   .step-line {
     width: 2px;
     height: 50px;
     background-color: #007bff;
   }
-  
+
   .tracking-step {
     display: flex;
     align-items: flex-start;
   }
-  
+
   .step-details {
     flex-grow: 1;
   }
-  
+
+  /* paymentsucess */
+
+  .order-confirmation-container {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .left-side {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .thank-you {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .right-side {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .order-summary {
+    border-radius: 10px;
+  }
+
+  .order-item {
+    display: flex;
+  }
+
+  .order-item img {
+    margin-right: 10px;
+  }
+
+  .order-total {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  /* boom effect */
+  /* Boom effect keyframes */
+  @keyframes boomEffect {
+    0% {
+      transform: scale(0.5);
+      opacity: 0;
+    }
+
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* Apply the boom effect to the container */
+  .order-confirmation-container {
+    animation: boomEffect 1s ease-out;
+  }
+
+  /* Optional: Apply additional effects to the thank-you text */
+  .thank-you {
+    font-size: 2rem;
+    color: #ff0000;
+    animation: boomEffect 1.2s ease-out;
+  }
+
+  /* //////////////////////// */
+  .follower-boom {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1000;
+  }
+
+  .follower-boom.show {
+    opacity: 1;
+    animation: boom 3s ease-in-out forwards;
+  }
+
+  @keyframes boom {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+    }
+
+    50% {
+      transform: translate(-50%, -50%) scale(1.2);
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+
+  .order-confirmation-container {
+    position: relative;
+  }
