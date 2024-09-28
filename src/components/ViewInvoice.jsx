@@ -11,7 +11,7 @@ const ViewInvoice = () => {
     const [orderData, setOrderData] = useState(null); // Order data state
     const [error, setError] = useState(null); // Error state
     const { baseUrl } = useAuth();
-    const [isLive, setIsLive] = useState(false);
+    const [isLive, setIsLive] = useState(true);
     const [currecy, setCurrency] = useState(null);
     const [terms, setTerms] = useState(false);
 
@@ -57,7 +57,7 @@ const ViewInvoice = () => {
         }
     };
 
-    const stripePromise = loadStripe("pk_test_51KpHlnSAxOboMMom0iL0iGQCFoBJm1TpQxShbdJbj7vsqVh8QHWz3LFV66YSJDMRUXuA0UAfl5lddXOcgDlXYhmD00hHgDaIEU");
+    const stripePromise = loadStripe("pk_live_51KpHlnSAxOboMMomzgtOknKDOwEg9AysCqs6g0O2e9ETloartosrHcf8qOAwOsChi8s5EYN8UHzNn2VgyKirIE6K00TujZ91YB");
 
     if (error) {
         return <div className="alert alert-danger">{error}</div>;
@@ -83,7 +83,7 @@ const ViewInvoice = () => {
             try {
                 const stripe = await stripePromise;
 
-                const response = await fetch(`http://localhost:8080/invoice/create-checkout-session/${orderid}`, {
+                const response = await fetch(`https://rdvision.online/invoice/create-checkout-session/${orderid}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
