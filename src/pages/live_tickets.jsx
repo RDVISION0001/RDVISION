@@ -75,8 +75,8 @@ function live_tickets() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: { ticketStatus: 'Sale' },
-    newTickets: { ticketStatus: 'New' },
+    ongoing: {userId, ticketStatus: 'Sale' },
+    newTickets: {userId, ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
     followUp: {},
   };
