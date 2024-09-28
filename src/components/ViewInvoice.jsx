@@ -3,33 +3,61 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { loadStripe } from '@stripe/stripe-js';
 import axiosInstance from '../axiosInstance';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../auth/AuthContext';
+import { toast } from 'react-toastify';
 
 const ViewInvoice = () => {
     const { orderid } = useParams(); // Get the order ID from the URL parameters
     const [orderData, setOrderData] = useState(null); // Order data state
     const [error, setError] = useState(null); // Error state
     const { baseUrl } = useAuth();
-    const [isLive, setIsLive] = useState(true)
-    const [currency, setCurrency] = useState(null)
+    const [isLive, setIsLive] = useState(false);
+    const [currecy, setCurrency] = useState(null);
+    const [terms, setTerms] = useState(false);
+
+    const handleCheckboxChange = (event) => {
+        setTerms(event.target.checked);
+    };
 
     useEffect(() => {
         fetchOrderDetails();
     }, []);
 
+    const handleMouseEnter = () => {
+        setButtonStyle((prevStyle) => ({
+            ...prevStyle,
+            backgroundColor: '#0056b3', // Darker shade for hover effect
+        }));
+    };
+
+    const handleMouseLeave = () => {
+        setButtonStyle((prevStyle) => ({
+            ...prevStyle,
+            backgroundColor: '#007bff', // Original color
+        }));
+    };
+
+    const [buttonStyle, setButtonStyle] = useState({
+        height: '50px',
+        width: '150px',
+        fontSize: '25px',
+        backgroundColor: '#007bff', // Bootstrap primary color
+        transition: 'background-color 0.3s ease',
+    });
+
     const fetchOrderDetails = async () => {
         try {
             const response = await axiosInstance.get(`/order/getOrderDetails/${orderid}`);
             setOrderData(response.data);
-            setCurrency(response.data.orderDetails.productOrders[0].currency)
+            setCurrency(response.data.orderDetails.productOrders[0].currency);
+            console.log(response.data.orderDetails.productOrders[0].currency);
         } catch (error) {
             console.error("Error fetching order details:", error);
             setError("Failed to load order details. Please try again later.");
         }
     };
 
-    const stripePromise = loadStripe("pk_live_51KpHlnSAxOboMMomzgtOknKDOwEg9AysCqs6g0O2e9ETloartosrHcf8qOAwOsChi8s5EYN8UHzNn2VgyKirIE6K00TujZ91YB");
+    const stripePromise = loadStripe("pk_test_51KpHlnSAxOboMMom0iL0iGQCFoBJm1TpQxShbdJbj7vsqVh8QHWz3LFV66YSJDMRUXuA0UAfl5lddXOcgDlXYhmD00hHgDaIEU");
 
     if (error) {
         return <div className="alert alert-danger">{error}</div>;
@@ -49,37 +77,36 @@ const ViewInvoice = () => {
 
     const products = orderData.orderDetails.productOrders; // Extract product orders
     const total_price = orderData.orderDetails.totalPayableAmount; // Total price for the order
-    const paymentStatus = orderData.orderDetails.paymentStatus; // Payment Status
-    const ticketId = orderData.ticketDetail.uniqueQueryId; // Ticket ID
-    const queryTime = orderData.ticketDetail.queryTime; // Query Time
-
 
     const handlePay = async () => {
-        console.log("Handling Paymnet")
-        try {
-            const stripe = await stripePromise;
+        if (terms) {
+            try {
+                const stripe = await stripePromise;
 
-            const response = await fetch(`https://rdvision.online/invoice/create-checkout-session/${orderid}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    isLive: isLive
-                }) // Convert to cents
-            });
+                const response = await fetch(`http://localhost:8080/invoice/create-checkout-session/${orderid}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        isLive: isLive
+                    })
+                });
 
-            const session = await response.json();
+                const session = await response.json();
 
-            const { error } = await stripe.redirectToCheckout({
-                sessionId: session.id,
-            });
+                const { error } = await stripe.redirectToCheckout({
+                    sessionId: session.id,
+                });
 
-            if (error) {
-                console.error('Stripe checkout error:', error.message);
+                if (error) {
+                    console.error('Stripe checkout error:', error.message);
+                }
+            } catch (err) {
+                console.error('Payment error:', err);
             }
-        } catch (err) {
-            console.error('Payment error:', err);
+        } else {
+            toast.info("Please Agree Terms & Conditions");
         }
     };
 
@@ -90,7 +117,6 @@ const ViewInvoice = () => {
         phone: "+91-1234567890",
         email: "contact@rdvision.com"
     };
-    console.log(baseUrl);
 
     // Flatten products for easier rendering
     const flattenedProducts = products.flatMap((productOrder, orderIndex) =>
@@ -100,87 +126,90 @@ const ViewInvoice = () => {
             key: `${orderIndex}-${product.productId}-${productIndex}`
         }))
     );
+
     return (
-        <div className="container m-5">
-            <div className="card border-primary mx-auto" style={{ maxWidth: '800px' }}>
-                <div className="card-body text-center">
-                    <h2 className="mb-4">Trust Badges</h2>
-                    <div id="gallery-images" className="mb-4">
-                        {["https://1drv.ms/i/s!AqitzNn5GW7cb3xDT057LNjP4k8?embed=1&width=240&height=210", "https://1drv.ms/i/s!AqitzNn5GW7cbvpal1RJ246qemg?embed=1&width=360&height=303", "https://via.placeholder.com/50"].map((image, index) => (
-                            <img
-                                key={index}
-                                src={image}
-                                alt="Gallery"
-                                className="img-fluid rounded-circle"
-                                style={{ width: '50px', margin: '0 10px' }}
-                            />
-                        ))}
-                    </div>
-                    <div className='d-flex justify-content-center'>
+        <div className="container-fluid p-5">
+            <header className="bg-light text-left p-3">
+                <h1 className="text-primary mb-1">BuyMed24.com</h1>
+                <p>Cholapur, Varanasi, Uttar Pradesh, India, 221101</p>
+                <p>Email: invoice@buymed24.com</p>
+                <p>Helpline No: <a href="tel:+13189366091">+1 (318) 936-6091</a></p>
+            </header>
 
-                        <div>
-                            {/* Company Information */}
-                            <h3>Company Information</h3>
-                            <p><strong>Name:</strong> {companyDetails.name}</p>
-                            <p><strong>Address:</strong> {companyDetails.address}</p>
-                            <p><strong>Phone:</strong> {companyDetails.phone}</p>
-                            <p><strong>Email:</strong> {companyDetails.email}</p>
+            <section className="quote-details mb-3">
+                <div className="text-end">
+                    <p className="mb-0">Date: {new Date().toLocaleDateString()}</p>
+                    <p className="mb-0">Quotation ID: {orderData.ticketDetail.uniqueQueryId}</p>
+                </div>
 
-                        </div>
-                        <div>
-                            {/* Customer Information */}
-                            <h3>Customer Information</h3>
-                            <p><strong>Name:</strong> {customer.name}</p>
-                            <p><strong>Email:</strong> {customer.email}</p>
-                            <p><strong>Mobile:</strong> {customer.mobile}</p>
-                            <p><strong>Address:</strong> {customer.address}</p>
-                        </div>
+                <p>To</p>
+                <p>{customer.name}</p>
+                <p>{customer.address}</p>
+                <p>{customer.mobile}</p>
+            </section>
 
-                    </div>
-
-                    {/* Product Table */}
-                    <h2 className='mt-5'>Products</h2>
-                    <table className="table table-bordered table-hover text-center">
-                        <thead className="thead-light">
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Image</th>
-                                <th>Description</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
+            <section className="product-details">
+                <div className='fw-bold m-3 text-center' style={{ fontSize: "20px" }}>Order Details</div>
+                <table className="table table-bordered table-hover text-center">
+                    <thead className="thead-light">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Product Name</th>
+                            <th>Product Description</th>
+                            <th>Qty</th>
+                            {/* <th>Price / Unit</th> */}
+                            <th>Total Amount ({currecy})</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {flattenedProducts.map((product, index) => (
+                            <tr key={product.key}>
+                                <td className='border'>{index + 1}</td>
+                                <td className='border'>
+                                    {product.name}
+                                </td>
+                                <td className='border'>{product.composition} - {product.treatment}</td>
+                                <td className='border'>{product.quantity}</td>
+                                {/* <td className='border'>{product.price}</td> */}
+                                <td className='border'>{product.price * product.quantity}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {flattenedProducts.map((product, index) => (
-                                <tr
-                                    key={product.key}
-                                    style={
-                                        index === flattenedProducts.length - 1
-                                            ? { borderBottom: '2px solid #dee2e6' }
-                                            : { borderBottom: '2px solid #dee2e6' }
-                                    }
-                                >
-                                    <td className='border'>{product.name}</td>
-                                    <td className='border'>
-                                        <img src={product.image} alt={product.name} style={{ width: '50px' }} />
-                                    </td>
-                                    <td className='border'>{product.composition} - {product.treatment}</td>
-                                    <td className='border'>{product.quantity}</td>
-                                    <td className='border'>{currency} {product.price}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                        ))}
+                    </tbody>
+                </table>
+            </section>
 
-                    {/* Total Price */}
-                    <div className="font-weight-bold text-primary fw-bold" style={{ fontSize: "25px" }}>
-                        Total Price : {currency} {total_price}
-                    </div>
-                    <div className="mt-3">
-                        <button type="button" className="btn btn-primary rounded" onClick={handlePay}>
-                            Pay Now
-                        </button>
-                    </div>
+            {/* Total Price */}
+            <div className="total mb-3">
+                <p className="font-weight-bold text-end">Total Price: {currecy} {total_price}</p>
+            </div>
+
+            <div>
+                <div className="form-check">
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={terms}
+                        onChange={handleCheckboxChange}
+                        id="flexCheckDefault"
+                    />
+                    <label className="form-check-label" htmlFor="flexCheckDefault">
+                        Agree to our <a href="/terms" target='_blank'>Terms & Conditions</a>
+                    </label>
+                </div>
+            </div>
+
+            <div className="mt-3 text-center">
+                <div className="mt-3">
+                    <button
+                        type="button"
+                        style={buttonStyle}
+                        className="btn rounded"
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                        onClick={handlePay}
+                    >
+                        Pay Now
+                    </button>
                 </div>
             </div>
         </div>

@@ -117,6 +117,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import ViewInvoice from './components/ViewInvoice';
 import PaymentSuccess from './components/PaymentSuccess';
 import PaymentFailed from './components/PaymentFailed';
+import Terms_Conditions from './components/Terms_Conditions';
+
 
 
 
@@ -141,6 +143,7 @@ function App() {
                 <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
                 <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
                 <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
+                <Route exact path="/terms" element={<Terms_Conditions />} />
 
 
                 {/* auth */}
