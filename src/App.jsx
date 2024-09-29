@@ -132,10 +132,12 @@ function App() {
         <Router>
           <div className="superadmin-page">
 
-            <Sidenav />
+            {localStorage.getItem("userId") && <Sidenav />}
 
             <div className="my-container main-content-block2658 active-cont bg-white">
-              <Topnav />
+
+              {localStorage.getItem("userId") && <Topnav />}
+
               <Routes>
 
                 {/* //costoumer  invoice*/}
@@ -153,10 +155,8 @@ function App() {
 
                 <Route element={<PrivateRoute />}>
 
-
                   {/* compo */}
                   <Route exact path="/sidenav" element={<Sidenav />} />
-
 
                   {/* pages */}
                   <Route exact path="/live_tickets" element={<Live />} />
@@ -164,8 +164,6 @@ function App() {
                   <Route exact path="/invoices_pending" element={<Pending />} />
                   <Route exact path="/invoices_paid" element={<Paid />} />
                   <Route exact path="/in_negotiation" element={<InNegotiation />} />
-
-
 
                   {/* admin */}
                   <Route exact path="/admin_index" element={<Index />} />
@@ -177,7 +175,6 @@ function App() {
                   <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
                   <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
                   <Route exact path="/admin_upload_products" element={<Upload_products />} />
-
 
                   {/* super_admin */}
                   <Route exact path="/super_admin_index" element={<Indexs />} />
@@ -194,7 +191,6 @@ function App() {
                   <Route exact path="/captain_sales" element={<Salesm />} />
                   <Route exact path="/captain_to_closer" element={<Tocloser />} />
                   <Route exact path="/captain_tickets" element={<Ticketsm />} />
-
 
                   {/* closer/agent */}
                   <Route exact path="/closer_index" element={<Indexa />} />
