@@ -167,8 +167,11 @@ function live_tickets() {
       onConnect: () => {
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          playNotificationSound()
-          setData((prevProducts) => [newProduct, ...prevProducts]);
+          if (newProduct.assigntouser === parseInt(localStorage.getItem("userId"))) {
+            console.log("Condition matched")
+            playNotificationSound()
+            setData((prevProducts) => [newProduct, ...prevProducts]);
+          }
         });
       },
       onStompError: (frame) => {
