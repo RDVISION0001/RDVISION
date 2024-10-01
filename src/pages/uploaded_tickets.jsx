@@ -106,7 +106,7 @@ function uploaded_tickets() {
   // Define parameters for each tab
 
   const params = {
-    newTickets: {userId, ticketStatus: 'New' },
+    newTickets: {ticketStatus: 'New'},
   };
 
   const handleClose = () => {
