@@ -168,7 +168,9 @@ function live_tickets() {
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
           if (newProduct.assigntouser === parseInt(localStorage.getItem("userId"))) {
-            console.log("Condition matched")
+            playNotificationSound()
+            setData((prevProducts) => [newProduct, ...prevProducts]);
+          }else if(!newProduct.assigntouser){
             playNotificationSound()
             setData((prevProducts) => [newProduct, ...prevProducts]);
           }
