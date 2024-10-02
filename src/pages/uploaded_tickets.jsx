@@ -163,7 +163,8 @@ function uploaded_tickets() {
   const handleClick = async (number) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: number
+        number: number.replace(/[+-]/g, ""),
+        userId
       });
       setCallId(response.data.call_id)
     } catch (error) {
