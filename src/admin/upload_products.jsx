@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Modal } from 'react-bootstrap';
 
 function uploadProducts() {
   const [activeTab, setActiveTab] = useState("allTickets");
@@ -12,8 +13,12 @@ function uploadProducts() {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [dataToSave, setDataToSave] = useState({ csvStringData: "" });
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(null);
   const itemsPerPage = 10;
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [imageLinks, setImageLinks] = useState(['']); // State to hold image links
+  const [imageUploading, setImageUploading] = useState(false);
+  const [seletedProductId, setSelectedProductId] = useState(null)
 
   // Fetching products
   const fetchProducts = async (page = 0, query = "") => {
@@ -63,26 +68,7 @@ function uploadProducts() {
 
   // Handle upload CSV Data To Database
   const handleUploadDataToDB = async () => {
-    try {
-      if (dataToSave.csvStringData.length > 0) {
-        setLoading(true);
-        const response = await axiosInstance.post("product/uploadproductscsv", dataToSave);
-        console.log("Response is ", response.data);
-        if (response.data === "CSV products uploaded successfully") {
-          toast.info("Successfully uploaded");
-          setLoading(false);
-          fetchProducts(); // Fetch updated products
-        } else {
-          toast.error("Something went wrong. Try again!");
-          setLoading(false);
-        }
-      } else {
-        toast.info("Please check if file is selected.");
-      }
-    } catch (err) {
-      toast.error("An error occurred while uploading the data.");
-      setLoading(false);
-    }
+    toast.info("Upload dtest")
   };
 
   const handleSearchChange = (e) => {
@@ -92,6 +78,42 @@ function uploadProducts() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+  };
+  const handleImageLinkChange = (index, value) => {
+    const newImageLinks = [...imageLinks];
+    newImageLinks[index] = value; // Update the specific image link
+    setImageLinks(newImageLinks);
+  };
+
+  // Function to add a new image input
+  const addImageInput = () => {
+    setImageLinks([...imageLinks, '']); // Add a new empty input for image link
+  };
+
+  // Handle modal close
+  const handleUpdateHide = () => {
+    setIsUpdate(false);
+    setImageLinks(['']); // Reset image links when modal is closed
+    setSelectedProductId(null)
+  };
+
+
+  const handleOpenDialog = (productId) => {
+    setIsUpdate(true)
+    setSelectedProductId(productId)
+  }
+
+  const uploadProductImages = async () => {
+    console.log(imageLinks)
+    try {
+      const response = await axiosInstance.post(`/product/addImage/${seletedProductId}`, imageLinks);
+      // Optionally handle the response if needed
+      toast.success("Images uploaded successfully:")
+      setIsUpdate(false)
+    } catch (error) {
+      console.error("Error uploading images:", error);
+      // Optionally handle error feedback to the user
+    }
   };
 
   return (
@@ -139,7 +161,7 @@ function uploadProducts() {
                     name="search-user"
                     id="searchUsers"
                     className="form-control"
-                    placeholder="Search Department or Name..."
+                    placeholder="Search Product by Name..."
                     value={searchQuery}
                     onChange={handleSearchChange}
                   />
@@ -155,7 +177,7 @@ function uploadProducts() {
           <div className="container-fluid">
             <div className="table-wrapper tabbed-table">
               <div className="heading-wrapper">
-                <h3 className="title">All Tickets</h3>
+                <h3 className="title">All Products</h3>
               </div>
               <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                 <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
@@ -166,6 +188,7 @@ function uploadProducts() {
                           <th className="selection-cell-header" data-row-selection="true">
                             <input type="checkbox" className="" />
                           </th>
+                          <th tabIndex="0">S.No.</th>
                           <th tabIndex="0">Product Name</th>
                           <th tabIndex="0">Image</th>
                           <th tabIndex="0">Composition</th>
@@ -175,29 +198,39 @@ function uploadProducts() {
                           <th tabIndex="0">Form</th>
                           <th tabIndex="0">Pills Quantity</th>
                           <th tabIndex="0">Price</th>
-                          <th tabIndex="0">Purchase Link</th>
+                          {/* <th tabIndex="0">Purchase Link</th> */}
+                          <th tabIndex="0">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item) => (
-                          <tr key={item.productId}>
-                            <td className="selection-cell">
-                              <input type="checkbox" />
-                            </td>
-                            <td>{item.name}</td>
-                            <td>{item.image ? <img src={item.image} alt={item.name} /> : "N/A"}</td>
-                            <td>{item.composition}</td>
-                            <td>{item.brand}</td>
-                            <td>{item.treatment}</td>
-                            <td>{item.packagingSize}</td>
-                            <td>{item.form}</td>
-                            <td>{item.pillsQty}</td>
-                            <td>{item.price}</td>
-                            <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td>
-                          </tr>
-                        ))}
+                        {data
+                          .filter(item =>
+                            searchQuery ? item.name.toLowerCase().includes(searchQuery.toLowerCase()) : true
+                          )
+                          .map((item, index) => (
+                            <tr key={item.productId}>
+                              <td className="selection-cell">
+                                <input type="checkbox" />
+                              </td>
+                              <td>{index + 1}</td>
+                              <td>{item.name}</td>
+                              <td>{item.image ? <img src={item.image} alt={item.name} /> : "N/A"}</td>
+                              <td>{item.composition}</td>
+                              <td>{item.brand}</td>
+                              <td>{item.treatment}</td>
+                              <td>{item.packagingSize}</td>
+                              <td>{item.form}</td>
+                              <td>{item.pillsQty}</td>
+                              <td>{item.price}</td>
+                              {/* <td>{item.paymentLink ? <a href={item.paymentLink}>Buy Now</a> : "N/A"}</td> */}
+                              <td>
+                                <button onClick={(e) => handleOpenDialog(item.productId)}>Upload Images</button>
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
+
                   </div>
                   <div className="pagination-wrapper">
                     {Array.from({ length: totalPages }, (_, index) => (
@@ -216,7 +249,49 @@ function uploadProducts() {
           </div>
         </section>
       </div>
-
+      {/* Modal for Updating Images */}
+      <Modal
+        show={isUpdate}
+        onHide={handleUpdateHide}
+        centered
+        size="lg"
+      >
+        <div className="p-4 bg-white rounded w-100">
+          <h4>Upload Product Images</h4>
+          <div className="row g-3">
+            {imageLinks.map((link, index) => (
+              <div key={index} className="col-12">
+                <input
+                  type="text"
+                  placeholder="Enter image URL"
+                  value={link}
+                  onChange={(e) => handleImageLinkChange(index, e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            ))}
+            <div className="col-12 d-flex justify-content-center mt-3">
+              <button className="btn btn-secondary" onClick={addImageInput}>
+                Add More Images
+              </button>
+            </div>
+          </div>
+          <div className="mt-4 d-flex justify-content-end">
+            <button className="btn btn-secondary" onClick={handleUpdateHide}>
+              Close
+            </button>
+            {imageUploading ? (
+              <button className="btn btn-success ms-3" disabled>
+                Loading...
+              </button>
+            ) : (
+              <button className="btn btn-success ms-3" onClick={uploadProductImages}>
+                Upload Products
+              </button>
+            )}
+          </div>
+        </div>
+      </Modal>
       <ToastContainer />
     </>
   );
