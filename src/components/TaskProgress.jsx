@@ -48,7 +48,7 @@ const TaskProgress = () => {
 
     useEffect(() => {
 
-        //sale
+       if(localStorage.getItem("userId")){ //sale
         axiosInstance.get(`/history/getTotalTodayUpdateByUser/${localStorage.getItem("userId")}`).then((resp) => {
             const data = resp.data;
             setSaleProgress(prevState => ({
@@ -66,7 +66,7 @@ const TaskProgress = () => {
         })
 
         //total new tickets
-       TotalNew()
+       TotalNew()}
 
     }, [])
 
