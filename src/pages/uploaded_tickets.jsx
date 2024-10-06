@@ -21,6 +21,8 @@ import TicketJourney from '../components/TicketJourney';
 function uploaded_tickets() {
   const { userId } = useAuth();
 
+  const [selectedKey, setSelectedKey] = useState(null)
+
   // Clipboard copy
   const [copied, setCopied] = useState(false);
 
@@ -106,7 +108,7 @@ function uploaded_tickets() {
   // Define parameters for each tab
 
   const params = {
-    newTickets: {ticketStatus: 'New'},
+    newTickets: { ticketStatus: 'New' },
   };
 
   const handleClose = () => {
@@ -481,6 +483,11 @@ function uploaded_tickets() {
     return `${year}-${formattedMonth}-${formattedDay}`;
   }
 
+  const handleSelecteRow = (index) => {
+    setSelectedKey(index)
+    console.log(selectedKey)
+  }
+
 
   return (
     <>
@@ -614,7 +621,14 @@ function uploaded_tickets() {
                             item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.firstName.toLowerCase().includes(shortValue.toLowerCase())
                         ).map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index}
+                            style={{
+                              boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                              zIndex: index === selectedKey ? 1 : "auto",
+                              position: index === selectedKey ? "relative" : "static"
+                            }}
+                            onClick={() => handleSelecteRow(index)}
+                          >
                             {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
                               <input
                                 type="checkbox"
@@ -622,7 +636,7 @@ function uploaded_tickets() {
                                 onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                               />
                             </td> : ""}
-                            <td><span className="text">{index+1}.</span></td>
+                            <td><span className="text">{index + 1}.</span></td>
 
                             <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -645,12 +659,12 @@ function uploaded_tickets() {
                               </CopyToClipboard>
                             </td><span className="text">{maskEmail(item.email)}</span></td>
 
-                            <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                            <td onClick={() => handleShow(item.uniqueQueryId)} >
                               <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                            </div>
+                            </td>
                             <td><span className="comment">{item.productEnquiry}<br /></span></td>
 
                             <td>

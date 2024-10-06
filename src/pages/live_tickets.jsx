@@ -24,10 +24,11 @@ import InvoiceBox from '../components/InvoiceBox';
 function live_tickets() {
   const { userId } = useAuth();
 
+  const [selectedKey, setSelectedKey] = useState(null)
+
   // Clipboard copy
   const [copied, setCopied] = useState(false);
   const [filteredTickets, setFilteredTickets] = useState([]);
-
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
@@ -75,8 +76,8 @@ function live_tickets() {
   // Define parameters for each tab
   const params = {
     allTickets: {},
-    ongoing: {ticketStatus: 'Sale' },
-    newTickets: {ticketStatus: 'New' },
+    ongoing: { ticketStatus: 'Sale' },
+    newTickets: { ticketStatus: 'New' },
     // followUp: { ticketStatus: 'follow' },
     followUp: {},
   };
@@ -170,7 +171,7 @@ function live_tickets() {
           if (newProduct.assigntouser === parseInt(localStorage.getItem("userId"))) {
             playNotificationSound()
             setData((prevProducts) => [newProduct, ...prevProducts]);
-          }else if(!newProduct.assigntouser){
+          } else if (!newProduct.assigntouser) {
             playNotificationSound()
             setData((prevProducts) => [newProduct, ...prevProducts]);
           }
@@ -190,6 +191,11 @@ function live_tickets() {
       }
     };
   }, []);
+
+  const handleSelecteRow = (index) => {
+    setSelectedKey(index)
+    console.log(selectedKey)
+  }
 
 
   //click to call
@@ -408,7 +414,6 @@ function live_tickets() {
 
   }
 
-  console.log(countryFilter)
 
   return (
     <>
@@ -533,7 +538,15 @@ function live_tickets() {
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
                         ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index}
+                            style={{
+                              boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                              zIndex: index === selectedKey ? 1 : "auto",
+                              position: index === selectedKey ? "relative" : "static"
+                            }}
+                            onClick={() => handleSelecteRow(index)}
+                          >
+
                             <td><span className="text">{item.queryTime}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
@@ -555,17 +568,12 @@ function live_tickets() {
                               </CopyToClipboard>
                             </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
 
-                            <div className="dropdown" onClick={() => handleShow(item.uniqueQueryId)} >
+                            <td onClick={() => handleShow(item.uniqueQueryId)} >
                               <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
                                 style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
                                 {item.ticketstatus}
                               </a>
-                              <ul className="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                <li><a className="dropdown-item danger" >Action</a></li>
-                                <li><a className="dropdown-item" >Another action</a></li>
-                                <li><a className="dropdown-item" >Something else here</a></li>
-                              </ul>
-                            </div>
+                            </td>
 
                             <td><span className="comment">{item.subject}<br /></span></td>
 
@@ -576,7 +584,7 @@ function live_tickets() {
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
-                                  className="btn-action call"
+                                  className="btn-action call rounded-circle"
                                   title="Get connect on call"
                                 ><i className="fa-solid fa-phone"></i>
                                 </Button>
