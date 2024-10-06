@@ -10,7 +10,11 @@ function Invoice(props) {
     const [loading, setLoading] = useState(true);
     const [tickets, setTickets] = useState([]);
     const [selectedTicketId, setSelectedTicketId] = useState(null);
-    const [orderDetails, setOrderDetails] = useState(null);
+    const [orderDetails, setOrderDetails] = useState([]);
+    const [ticketDetails, setTicketDetails] = useState(null)
+    const [address, setAddress] = useState(null)
+    const [totalAmount, setTotalAmount] = useState(null)
+    const [currency, setCurrency] = useState(null)
 
     // WebSocket for notifications
     useEffect(() => {
@@ -45,24 +49,8 @@ function Invoice(props) {
         fetchInvoices();
     }, [props.status]);
 
-    // Fetch ticket details when selectedTicketId changes
-    useEffect(() => {
-        if (selectedTicketId) {
-            const fetchTicketDetails = async () => {
-                try {
-                    const response = await axiosInstance.get(`/third_party_api/ticket/getTicket/${selectedTicketId}`);
-                    setOrderDetails(response.data.dtoList);
-                } catch (error) {
-                    console.error('Error fetching ticket details:', error);
-                }
-            };
-            fetchTicketDetails();
-        }
-    }, [selectedTicketId]);
-
-    const handleCardClick = (ticket) => {
+    const handleCardClick = async (ticket) => {
         setSelectedTicketId(ticket.ticketId);
-        console.log(ticket.ticketId)
     };
 
 
@@ -71,8 +59,13 @@ function Invoice(props) {
         if (selectedTicketId) {
             const fetchOrderDetails = async () => {
                 try {
-                    const response = await axiosInstance.get(`/order/getOrder/${selectedTicketId}`);
+                    const response = await axiosInstance.get(`/order/getOrderDetails/${selectedTicketId}`);
                     setOrderDetails(response.data.dtoList);
+                    setOrderDetails(response.data.orderDetails.productOrders)
+                    setAddress(response.data.addresss)
+                    setTicketDetails(response.data.ticketDetail)
+                    setTotalAmount(response.data.orderDetails.totalPayableAmount)
+                    setCurrency(response.data.orderDetails.productOrders[0].currency)
                 } catch (err) {
                     console.error('Error fetching order details:', err);
                 }
@@ -82,7 +75,7 @@ function Invoice(props) {
         }
     }, [selectedTicketId]);
 
-
+    console.log(ticketDetails)
     return (
         <>
             {/* <!--End Top Nav --> */}
@@ -166,44 +159,77 @@ function Invoice(props) {
                             </div>
                             <div className="col-7">
                                 <div className="tab-content vertical-tab-body-wrapper" id="v-pills-tabContent">
-                                    {/* <!-- tab one  --> */}
                                     <div className="tab-pane fade show active" id="v-pills-ticket1" role="tabpanel" aria-labelledby="v-pills-ticket1-tab" tabindex="0">
                                         <div className="order-cards-details-wrapper-main">
-                                            {/* <!-- ticket details ends here --> */}
                                             <div className="accordion status-wrappers" id="accordionExample">
-
                                                 <div className="accordion-item payment">
-                                                    <h2 className="accordion-header">
-                                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="#collapseTwo">
-                                                            <span>Payment Details</span>
-                                                            <span className="status-icon pending">
-                                                                <i className="fa-solid fa-hourglass-end"></i>
-                                                                <i className="fa-solid fa-check"></i>
-                                                            </span>
-                                                        </button>
-                                                    </h2>
                                                     <div id="collapseTwo" className="accordion-button collapsed" data-bs-parent="#accordionExample">
-                                                        <div className="accordion-body">
-                                                            <p className="text text-center">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-                                                            <div className="btns-group d-flex gap-3 justify-content-center mt-4">
-                                                                <a href="#" className="btn btn-primary">Check Status</a>
-                                                                <a href="#" className="btn btn-warning">Send Invoice</a>
-                                                                <a href="#" className="btn btn-success">Mark As Paid</a>
-                                                                <a href="#" className="btn btn-danger">Mark As Hold</a>
-                                                            </div>
-                                                            <div className="form-hold p-3">
-                                                                <form action="">
-                                                                    <div className="form-group mb-3">
-                                                                        <label className="form-label" htmlFor="holdReason">Define Reason</label>
-                                                                        <textarea name="holdReason" id="holdReason" cols="20" rows="5" className="form-control" placeholder="Reason to hold the order or invoice......"></textarea>
+                                                        <div className="container my-4">
+                                                            <div className="card shadow-sm p-4">
+                                                                <div className="d-flex justify-content-between">
+                                                                    <h5>TKTID:{ticketDetails ? ticketDetails.uniqueQueryId : ""}</h5>
+                                                                    <span>03 Mar 2023</span>
+                                                                </div>
+
+                                                                {/* Billing and Delivery Information */}
+                                                                <div className="card mt-3 p-3">
+                                                                    <div className="row">
+                                                                        {/* Icon or Placeholder */}
+                                                                        <div className="col-2 d-flex align-items-center">
+                                                                            <img src="https://via.placeholder.com/50" alt="user" className="img-fluid rounded" />
+                                                                        </div>
+
+                                                                        {/* Billing Name and Info */}
+                                                                        <div className="col-10">
+                                                                            <h6>Billing Name</h6>
+                                                                            <p className="mb-1">
+                                                                                <span className="me-3">📞 {ticketDetails ? ticketDetails.senderMobile : ""}</span>
+                                                                                <span>📧 {ticketDetails ? ticketDetails.senderEmail : ""}</span>
+                                                                            </p>
+                                                                            <p className="mb-0">
+                                                                                <strong>Billing Address : </strong>{ticketDetails ? ticketDetails.senderAddress : ""}
+                                                                            </p>
+                                                                            <p className="mb-0">
+                                                                                <strong>Delivery Address : </strong> {address && address.houseNumber},{address && address.landmark},{address && address.city},
+                                                                                {address && address.state},{address && address.country},{address && address.zipCode}
+
+                                                                            </p>
+                                                                        </div>
                                                                     </div>
-                                                                    <a href="#" className="btn btn-danger">Hold Now</a>
-                                                                </form>
+                                                                </div>
+
+                                                                {/* Products Details */}
+                                                                {orderDetails && orderDetails.map((order, index) => (
+                                                                    <div className="mt-4">
+                                                                        <div className="d-flex justify-content-between">
+                                                                            <span>{order.product[0].name}</span>
+                                                                            <span>{order.currency} {order.totalAmount}</span>
+                                                                        </div>
+                                                                        <p>Qty: {order.quantity} </p>
+
+
+                                                                    </div>
+                                                                ))}
+
+                                                                {/* Total Price */}
+                                                                <div className="d-flex justify-content-end mt-3">
+                                                                    {currency && <h5>Total Ammount :-{currency} {totalAmount}</h5>}
+                                                                </div>
+
+                                                                {/* Payment Status and Action Buttons */}
+                                                                <div className="mt-4">
+                                                                    <h6>Payment Status :-</h6>
+                                                                    {/* Buttons */}
+                                                                    <div className="d-flex justify-content-between mt-3">
+                                                                        <button className="btn btn-success">Mark as Paid</button>
+                                                                        <button className="btn btn-warning">Hold</button>
+                                                                        <button className="btn btn-primary">Send Invoice</button>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <TrackPackage />
                                             </div>
                                         </div>

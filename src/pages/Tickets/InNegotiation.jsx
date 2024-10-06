@@ -11,6 +11,9 @@ import { toast } from 'react-toastify';
 
 
 function InNegotiation() {
+
+  const [selectedKey, setSelectedKey] = useState(null)
+
   const [list, setlist] = useState(true)
   const [ticketData, setTicketData] = useState([]);
   const [error, setError] = useState(null);
@@ -187,6 +190,10 @@ function InNegotiation() {
     }
   };
 
+  const handleSelecteRow = (index) => {
+    setSelectedKey(index)
+    console.log(selectedKey)
+  }
 
   // Define stages
   const stages = [
@@ -422,6 +429,7 @@ function InNegotiation() {
     console.log(`Show ticket with ID: ${uniqueQueryId}`);
   };
 
+
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
@@ -569,13 +577,21 @@ function InNegotiation() {
                         <th tabIndex="0">Status</th>
                         <th tabIndex="0">Requirement</th>
                         {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
+                        <th tabIndex="0">Follow Comment</th>
                         <th tabIndex="0">Action</th>
                         <th tabIndex="0">Ticket ID</th>
                       </tr>
                     </thead>
                     <tbody>
                       {currentData.map((nego, index) => (
-                        <tr key={index}>
+                        <tr key={index}
+                          style={{
+                            boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                            zIndex: index === selectedKey ? 1 : "auto",
+                            position: index === selectedKey ? "relative" : "static"
+                          }}
+                          onClick={() => handleSelecteRow(index)}
+                        >
                           <td>
                             <span className="text">
                               {nego.senderMobile
@@ -610,6 +626,7 @@ function InNegotiation() {
                           <td><span className="comment">{nego.queryProductName || nego.productEnquiry}</span></td>
                           {selectedStage === 2 && <td><span className="text">{nego.followupDateTime && [nego.followupDateTime[2], nego.followupDateTime[1], nego.followupDateTime[0]].join("-")}/{nego.followupDateTime ? nego.followupDateTime[3] : ""}:{nego.followupDateTime ? nego.followupDateTime[4] : ""}</span></td>
                           }
+                          <td>{nego.comment}</td>
                           <td>
                             <span className="actions-wrapper">
                               <Button
