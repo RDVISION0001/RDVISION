@@ -456,17 +456,17 @@
 
   /* UploadProducts.css */
 
-/* Highlight selected row with a light blue background */
-.selected-row {
-  background-color: #d1ecf1 !important;
-}
+  /* Highlight selected row with a light blue background */
+  .selected-row {
+    background-color: #d1ecf1 !important;
+  }
 
-/* Optionally, change text color for better readability */
-.selected-row td {
-  color: #0c5460;
-}
+  /* Optionally, change text color for better readability */
+  .selected-row td {
+    color: #0c5460;
+  }
 
-/* Change cursor to pointer to indicate row is clickable */
-.table tbody tr {
-  cursor: pointer;
-}
+  /* Change cursor to pointer to indicate row is clickable */
+  .table tbody tr {
+    cursor: pointer;
+  }
