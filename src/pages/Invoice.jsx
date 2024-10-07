@@ -15,7 +15,9 @@ function Invoice(props) {
     const [address, setAddress] = useState(null)
     const [totalAmount, setTotalAmount] = useState(null)
     const [currency, setCurrency] = useState(null)
-    const [paymentstatus, setPaymentStatus] = useState(null)
+    const [dateTimeStamp,setDatetimeStamp]=useState(null)
+    const [paymentStatus,setPaymentStatus]=useState(null)
+    const [selectedKey,setSelectedKeuy]=useState(null)
 
     // WebSocket for notifications
     useEffect(() => {
@@ -67,6 +69,7 @@ function Invoice(props) {
                     setTicketDetails(response.data.ticketDetail)
                     setTotalAmount(response.data.orderDetails.totalPayableAmount)
                     setCurrency(response.data.orderDetails.productOrders[0].currency)
+                    setDatetimeStamp(response.data.orderDetails.date)
                     setPaymentStatus(response.data.orderDetails.paymentStatus)
                 } catch (err) {
                     console.error('Error fetching order details:', err);
@@ -77,7 +80,24 @@ function Invoice(props) {
         }
     }, [selectedTicketId]);
 
-    console.log(ticketDetails)
+
+    function formatTimestampToDate(timestamp) {
+        // Convert the timestamp to a Date object
+        const date = new Date(timestamp);
+      
+        // Format the date (yyyy-MM-dd HH:mm:ss)
+        const formattedDate = date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false // 24-hour format
+        });
+      
+        return formattedDate;
+      }
     return (
         <>
             {/* <!--End Top Nav --> */}
@@ -142,12 +162,12 @@ function Invoice(props) {
                                 <div className="order-menu-wrapper">
                                     <div className="nav flex-column vertical-tab-nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                         {/* <!-- ticket one ends here  --> */}
-                                        {tickets.map(ticket => (
-                                            <div className="nav-link" id="v-pills-ticket2-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ticket2" type="button" role="tab" aria-controls="v-pills-ticket2" aria-selected="true">
+                                        {tickets.map((ticket,index )=> (
+                                            <div className={`nav-link ${index===selectedKey?"bg-secondary text-white":""}`} key={index} onClick={()=>setSelectedKeuy(index)} id="v-pills-ticket2-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ticket2" type="button" role="tab" aria-controls="v-pills-ticket2" aria-selected="true">
                                                 <div className="order-card" key={ticket.ticketId} onClick={() => handleCardClick(ticket)}>
                                                     <div className="left-part">
                                                         <h3 className="title">{ticket.inviceStatus}</h3>
-                                                        <p className="sub-title text-warning-emphasis">
+                                                        <p className="sub-title ">
                                                             <i className="fa-solid fa-ticket"></i>
                                                             {ticket.ticketId}
                                                         </p>
@@ -159,18 +179,14 @@ function Invoice(props) {
                                     </div>
                                 </div>
                             </div>
-                            {paymentstatus && <div className="col-7">
-                                <div className="" id="v-pills-tabContent">
-                                    <div className="tab-pane fade show active" id="v-pills-ticket1" role="tabpanel" aria-labelledby="v-pills-ticket1-tab" tabindex="0">
-                                        <div className="order-cards-details-wrapper-main">
-                                            <div className="accordion status-wrappers" id="accordionExample">
-                                                <div className="accordion-item payment">
-                                                    <div id="collapseTwo" className="accordion-button collapsed" data-bs-parent="#accordionExample">
-                                                        <div className="container">
-                                                            <div className="card shadow-sm">
+                            {dateTimeStamp && <div className="col-7">
+                                
+                                        
+                                                        <div className="container my-4">
+                                                            <div className="card shadow-sm p-4">
                                                                 <div className="d-flex justify-content-between">
                                                                     <h5>TKTID:{ticketDetails ? ticketDetails.uniqueQueryId : ""}</h5>
-                                                                    <span>03 Mar 2023</span>
+                                                                   {dateTimeStamp && <span>{formatTimestampToDate(dateTimeStamp)}</span>}
                                                                 </div>
 
                                                                 {/* Billing and Delivery Information */}
@@ -220,7 +236,7 @@ function Invoice(props) {
 
                                                                 {/* Payment Status and Action Buttons */}
                                                                 <div className="mt-4">
-                                                                    <h6>Payment Status :-{paymentstatus}</h6>
+                                                                    {paymentStatus && <h6 >Payment Status :- <span className={`${paymentStatus==="PENDING"?"text-danger":"text-success"}`}>{paymentStatus}</span></h6>}
                                                                     {/* Buttons */}
                                                                     <div className="d-flex justify-content-between mt-3">
                                                                         <button className="btn btn-success">Mark as Paid</button>
@@ -230,13 +246,8 @@ function Invoice(props) {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                
                                                 <TrackPackage />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>}
                         </div>
                     </div>
