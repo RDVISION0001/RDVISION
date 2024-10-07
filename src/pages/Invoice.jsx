@@ -15,6 +15,7 @@ function Invoice(props) {
     const [address, setAddress] = useState(null)
     const [totalAmount, setTotalAmount] = useState(null)
     const [currency, setCurrency] = useState(null)
+    const [paymentstatus, setPaymentStatus] = useState(null)
 
     // WebSocket for notifications
     useEffect(() => {
@@ -66,6 +67,7 @@ function Invoice(props) {
                     setTicketDetails(response.data.ticketDetail)
                     setTotalAmount(response.data.orderDetails.totalPayableAmount)
                     setCurrency(response.data.orderDetails.productOrders[0].currency)
+                    setPaymentStatus(response.data.orderDetails.paymentStatus)
                 } catch (err) {
                     console.error('Error fetching order details:', err);
                 }
@@ -157,15 +159,15 @@ function Invoice(props) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-7">
-                                <div className="tab-content vertical-tab-body-wrapper" id="v-pills-tabContent">
+                            {paymentstatus && <div className="col-7">
+                                <div className="" id="v-pills-tabContent">
                                     <div className="tab-pane fade show active" id="v-pills-ticket1" role="tabpanel" aria-labelledby="v-pills-ticket1-tab" tabindex="0">
                                         <div className="order-cards-details-wrapper-main">
                                             <div className="accordion status-wrappers" id="accordionExample">
                                                 <div className="accordion-item payment">
                                                     <div id="collapseTwo" className="accordion-button collapsed" data-bs-parent="#accordionExample">
-                                                        <div className="container my-4">
-                                                            <div className="card shadow-sm p-4">
+                                                        <div className="container">
+                                                            <div className="card shadow-sm">
                                                                 <div className="d-flex justify-content-between">
                                                                     <h5>TKTID:{ticketDetails ? ticketDetails.uniqueQueryId : ""}</h5>
                                                                     <span>03 Mar 2023</span>
@@ -218,7 +220,7 @@ function Invoice(props) {
 
                                                                 {/* Payment Status and Action Buttons */}
                                                                 <div className="mt-4">
-                                                                    <h6>Payment Status :-</h6>
+                                                                    <h6>Payment Status :-{paymentstatus}</h6>
                                                                     {/* Buttons */}
                                                                     <div className="d-flex justify-content-between mt-3">
                                                                         <button className="btn btn-success">Mark as Paid</button>
@@ -235,7 +237,7 @@ function Invoice(props) {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>}
                         </div>
                     </div>
                 </section>
