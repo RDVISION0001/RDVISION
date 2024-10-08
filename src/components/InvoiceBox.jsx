@@ -539,7 +539,6 @@ function InvoiceBox(props) {
                                         </select>
                                     </div>
                                     <div className='w-100 d-flex justify-content-between p-4 text-primary'>
-                                        <span>price per quantity:-{selectedProductPrice}</span> <span>Total price for selected quaantity:-{selectedProductPrice * formData.quantity}</span>
                                     </div>
                                     <div className="modal-footer justify-content-center border-0">
                                         <button type="button" onClick={handleClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -537,7 +537,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).map((item, index) => (
+                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).filter((item)=>item.senderCountryIso!=="IN").map((item, index) => (
                           <tr key={index}
                             style={{
                               boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
