@@ -29,6 +29,7 @@ function InNegotiation() {
   const [senderEmailFormail, setSenderEmailForMail] = useState("");
   const [senderMobile, setSenderMobile] = useState("");
   const [productArray, setProductArray] = useState([]);
+  const [assignedTo,setAssignedTo]=useState(0)
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -152,11 +153,12 @@ function InNegotiation() {
       fetchDatas2()
       fetchDatas3()
     }
-  }, [list])
+  }, [list,assignedTo])
   const fetchDatas1 = async (stage) => {
+    console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        userId,
+        user:assignedTo,
         stage: 1,
       });
       setSatge1Data(response.data);
@@ -166,9 +168,10 @@ function InNegotiation() {
     }
   };
   const fetchDatas2 = async (stage) => {
+    console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        userId,
+        user:assignedTo,
         stage: 2,
       });
       setSatge2Data(response.data);
@@ -178,9 +181,10 @@ function InNegotiation() {
     }
   };
   const fetchDatas3 = async (stage) => {
+    console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        userId,
+        user:assignedTo,
         stage: 3,
       });
       setSatge3Data(response.data);
@@ -207,7 +211,7 @@ function InNegotiation() {
   const fetchData = async (stage) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        userId,
+        user:assignedTo,
         stage: stage,
       });
       setTicketData(response.data);
@@ -259,7 +263,7 @@ function InNegotiation() {
 
   useEffect(() => {
     fetchData(selectedStage);
-  }, [selectedStage]);
+  }, [selectedStage,assignedTo]);
   //masking mobile
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
@@ -277,6 +281,7 @@ function InNegotiation() {
 
   //click to call
   const handleClick = async (number) => {
+    console.log(number.replace(/[+-]/g, ""))
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
         number: number.replace(/[+-]/g, ""),
@@ -433,7 +438,33 @@ function InNegotiation() {
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
-
+      <div className='w-25 d-flex justify-content-center' >
+       
+          <div className="form-check" style={{ marginLeft: "10px" }}>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="flexCheckDefault"
+              checked={assignedTo===userId}
+              onChange={()=>setAssignedTo(userId)} // Call toggle method on change
+            />
+            <label className="form-check-label" htmlFor="flexCheckDefault">
+              Assigned to me
+            </label>
+          </div>
+          <div className="form-check" style={{ marginLeft: "10px" }}>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="flexCheckChecked"
+              checked={assignedTo===0} // Checked if 'list' is false
+              onChange={()=>setAssignedTo(0)} // Call toggle method on change
+            />
+            <label className="form-check-label" htmlFor="flexCheckChecked">
+             All negotiation tickets
+            </label>
+          </div>
+        </div>
         <div className='w-25 d-flex justify-content-center' >
           <div>choose view</div>
           <div className="form-check" style={{ marginLeft: "10px" }}>
@@ -639,7 +670,7 @@ function InNegotiation() {
                               ><i className="fa-solid fa-info "></i>
                               </Button>
                               <Button
-                                onClick={() => handleClick(nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber)}
+                                onClick={() => handleClick(nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}
                                 data-bs-toggle="modal"
                                 data-bs-target="#followUpModal"
                                 className="btn-action call"
