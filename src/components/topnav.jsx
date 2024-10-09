@@ -36,10 +36,8 @@ function topnav() {
 
 
   useEffect(() => {
-    if (!localStorage.getItem("workTime") && !localStorage.getItem("breakTime")) {
       localStorage.setItem("workTime", 0);
       localStorage.setItem("breakTime", 0);
-    }
   }, [])
 
   useEffect(() => {
