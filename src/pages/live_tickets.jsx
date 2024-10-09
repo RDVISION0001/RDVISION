@@ -19,6 +19,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TicketJourney from '../components/TicketJourney';
 
 import InvoiceBox from '../components/InvoiceBox';
+import QuotationBox from '../components/QuotationBox';
 
 
 function live_tickets() {
@@ -92,15 +93,14 @@ function live_tickets() {
     setOn(false)
     setProductArray([])
   };
-  const handleOn = (queryId, senderName, email, mobile, product) => {
-    setUniqueQueryId(queryId);
-    setSenderNameForEmail(senderName);
-    setSenderEmailForMail(email);
-    setSenderMobile(mobile);
-    setProductArray(prevArray => [...prevArray, product]);
-    setOn(true);
-  };
 
+  const handleOn = (ticketId, name, email, mobile) => {
+    setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
+    setOn(!isInvoiceOn)
+  }
   const handleCloses = () => setView(false);
   const handleView = (queryId) => {
     setUniqueQueryId(queryId);
@@ -202,7 +202,7 @@ function live_tickets() {
   const handleClick = async (number) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: number.replace(/[+-]/g, ""),
+        number: formatNumberAccordingToHodu(number),
         userId
       });
       setCallId(response.data.call_id)
@@ -210,6 +210,14 @@ function live_tickets() {
       console.error('Error during API call:', error);
     }
   };
+
+  const formatNumberAccordingToHodu = (number) => {
+    if (number.includes("+")) {
+      return number.replace(/[+-]/g, "")
+    } else {
+      return "1" + number
+    }
+  }
 
   // Masking mobile number
   const maskMobileNumber = (number) => {
@@ -537,7 +545,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).filter((item)=>item.senderCountryIso!=="IN").map((item, index) => (
+                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (
                           <tr key={index}
                             style={{
                               boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
@@ -594,7 +602,7 @@ function live_tickets() {
                                   title="Get connect on message"
                                 ><i className="fa-solid fa-message"></i></a>
                                 <Button
-                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.queryProductName)}
+                                  onClick={() => handleOn(item.uniqueQueryId)}
                                   // href="mailto:someone@example.com"
                                   className="btn-action email"
                                   title="Get connect on email"
@@ -746,77 +754,24 @@ function live_tickets() {
         </Modal.Body>
       </Modal>
 
-      {/* <!-- -------------- -->
-            <!-- ------------------------------------------------------------
-            --------------------- seed price and mail Modal ---------------------
-          -------------------------------------------------------------- --> */}
 
+     // Send Quotation Mail to Customer
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
-          <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Send mail to Customer
+          <h1 className=" w-100 text-center" id="followUpModalLabel">
+            Send Quotation Mail to Customer
           </h1>
         </Modal.Header>
         <Modal.Body>
-          <form>
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">Customer Detail</h5>
-                      <div className="user-info">
-                        <div><strong>Name:</strong> {senderNameForEmail}</div>
-                        <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
-                        <div><strong>Email:</strong> {senderEmailFormail}</div>
-                        <div><strong>Mobile Number:</strong> {senderMobile}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6 mt-4 mt-lg-0">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">Product Details</h5>
-                      <div className="user-info d-flex flex-wrap">
-                        {productArray.map((product, index) => (
-                          <React.Fragment key={index}>
-                            <div>{product}</div>
-                            {index !== productArray.length - 1 && <div className="comma">,</div>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="">
+            <div className="card shadow-sm">
+              <div>
+                <QuotationBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
               </div>
             </div>
-
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-md-8">
-                  <div className="d-flex align-items-center justify-content-center p-3">
-                    <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
-                    <select className="form-select" onChange={handleSelectProduct}>
-                      <option value="">Select products</option>
-                      {productsList.map((product, index) => (
-                        <option key={index} value={product.name}>{product.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer justify-content-center border-0">
-              <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
-              <Button variant="primary" onClick={handleSendEmail}>Send</Button>
-            </div>
-          </form>
+          </div>
         </Modal.Body>
       </Modal>
-
 
 
       {/* <!-- Modal ticket popup --> */}
