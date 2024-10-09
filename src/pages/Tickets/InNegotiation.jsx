@@ -7,7 +7,9 @@ import axiosInstance from '../../axiosInstance';
 import { useAuth } from '../../auth/AuthContext'
 import TicketJourney from '../../components/TicketJourney';
 import InvoiceBox from '../../components/InvoiceBox';
+
 import { toast } from 'react-toastify';
+import QuotationBox from '../../components/QuotationBox';
 
 
 function InNegotiation() {
@@ -29,7 +31,7 @@ function InNegotiation() {
   const [senderEmailFormail, setSenderEmailForMail] = useState("");
   const [senderMobile, setSenderMobile] = useState("");
   const [productArray, setProductArray] = useState([]);
-  const [assignedTo,setAssignedTo]=useState(0)
+  const [assignedTo, setAssignedTo] = useState(0)
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -134,14 +136,13 @@ function InNegotiation() {
     setOn(false)
     setProductArray([])
   };
-  const handleOn = (queryId, senderName, email, mobile, product) => {
-    setUniqueQueryId(queryId);
-    setSenderNameForEmail(senderName);
-    setSenderEmailForMail(email);
-    setSenderMobile(mobile);
-    setProductArray(prevArray => [...prevArray, product]);
-    setOn(true);
-  };
+  const handleOn = (ticketId, name, email, mobile) => {
+    setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
+    setOn(!isInvoiceOn)
+  }
 
   const [stage1Data, setSatge1Data] = useState([])
   const [stage2Data, setSatge2Data] = useState([])
@@ -153,12 +154,12 @@ function InNegotiation() {
       fetchDatas2()
       fetchDatas3()
     }
-  }, [list,assignedTo])
+  }, [list, assignedTo])
   const fetchDatas1 = async (stage) => {
     console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        user:assignedTo,
+        user: assignedTo,
         stage: 1,
       });
       setSatge1Data(response.data);
@@ -171,7 +172,7 @@ function InNegotiation() {
     console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        user:assignedTo,
+        user: assignedTo,
         stage: 2,
       });
       setSatge2Data(response.data);
@@ -184,7 +185,7 @@ function InNegotiation() {
     console.log(assignedTo)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        user:assignedTo,
+        user: assignedTo,
         stage: 3,
       });
       setSatge3Data(response.data);
@@ -211,7 +212,7 @@ function InNegotiation() {
   const fetchData = async (stage) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        user:assignedTo,
+        user: assignedTo,
         stage: stage,
       });
       setTicketData(response.data);
@@ -263,7 +264,7 @@ function InNegotiation() {
 
   useEffect(() => {
     fetchData(selectedStage);
-  }, [selectedStage,assignedTo]);
+  }, [selectedStage, assignedTo]);
   //masking mobile
   const maskMobileNumber = (number) => {
     if (number.length < 4) return number;
@@ -281,10 +282,9 @@ function InNegotiation() {
 
   //click to call
   const handleClick = async (number) => {
-    console.log(number.replace(/[+-]/g, ""))
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: number.replace(/[+-]/g, ""),
+        number: formatNumberAccordingToHodu(number),
         userId
       });
       setCallId(response.data.call_id)
@@ -295,6 +295,15 @@ function InNegotiation() {
   //close ticket journey
   const closeTicketJourney = () => {
     document.getElementById("ticketjourney").close()
+  }
+
+  const formatNumberAccordingToHodu = (number) => {
+    if (number.includes("+")) {
+      return number.replace(/[+-]/g, "")
+    } else {
+      return "1" + number
+    }
+
   }
 
   //openn and close ticket journey
@@ -438,15 +447,15 @@ function InNegotiation() {
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
-      <div className='w-25 d-flex justify-content-center' >
-       
+        <div className='w-25 d-flex justify-content-center' >
+
           <div className="form-check" style={{ marginLeft: "10px" }}>
             <input
               className="form-check-input"
               type="checkbox"
               id="flexCheckDefault"
-              checked={assignedTo===userId}
-              onChange={()=>setAssignedTo(userId)} // Call toggle method on change
+              checked={assignedTo === userId}
+              onChange={() => setAssignedTo(userId)} // Call toggle method on change
             />
             <label className="form-check-label" htmlFor="flexCheckDefault">
               Assigned to me
@@ -457,11 +466,11 @@ function InNegotiation() {
               className="form-check-input"
               type="checkbox"
               id="flexCheckChecked"
-              checked={assignedTo===0} // Checked if 'list' is false
-              onChange={()=>setAssignedTo(0)} // Call toggle method on change
+              checked={assignedTo === 0} // Checked if 'list' is false
+              onChange={() => setAssignedTo(0)} // Call toggle method on change
             />
             <label className="form-check-label" htmlFor="flexCheckChecked">
-             All negotiation tickets
+              All negotiation tickets
             </label>
           </div>
         </div>
@@ -923,77 +932,24 @@ function InNegotiation() {
         </Modal.Body>
       </Modal>
 
-      {/* <!-- -------------- -->
-          <!-- ------------------------------------------------------------
-          --------------------- seed price and mail Modal ---------------------
-        -------------------------------------------------------------- --> */}
 
+      // Send Quotation Mail to Customer
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
-          <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Send mail to Customer
+          <h1 className=" w-100 text-center" id="followUpModalLabel">
+            Send Quotation Mail to Customer
           </h1>
         </Modal.Header>
         <Modal.Body>
-          <form>
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">Customer Detail</h5>
-                      <div className="user-info">
-                        <div><strong>Name:</strong> {senderNameForEmail}</div>
-                        <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
-                        <div><strong>Email:</strong> {senderEmailFormail}</div>
-                        <div><strong>Mobile Number:</strong> {senderMobile}</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="col-lg-6 mt-4 mt-lg-0">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">Product Details</h5>
-                      <div className="user-info d-flex flex-wrap">
-                        {productArray.map((product, index) => (
-                          <React.Fragment key={index}>
-                            <div>{product}</div>
-                            {index !== productArray.length - 1 && <div className="comma">,</div>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="">
+            <div className="card shadow-sm">
+              <div>
+                <QuotationBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
               </div>
             </div>
-
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-md-8">
-                  <div className="d-flex align-negos-center justify-content-center p-3">
-                    <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
-                    <select className="form-select" onChange={handleSelectProduct}>
-                      <option value="">Select products</option>
-                      {productsList.map((product, index) => (
-                        <option key={index} value={product.name}>{product.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer justify-content-center border-0">
-              <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
-              <Button variant="primary" onClick={handleSendEmail}>Send</Button>
-            </div>
-          </form>
+          </div>
         </Modal.Body>
       </Modal>
-
 
 
       {/* <!-- Modal ticket popup --> */}

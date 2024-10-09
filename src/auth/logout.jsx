@@ -67,7 +67,7 @@ const logout = () => {
                 onChange={handleStatusChange}
               >
                 <option value="" >Choose Call-Status</option>
-                <option value="Lunch Break">Lunch Break</option>
+                <option value="Over">Over</option>
                 <option value="Senior instruction">Senior instruction</option>
                 <option value="Half Day">Half Day</option>
               </select>
