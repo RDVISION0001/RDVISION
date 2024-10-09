@@ -165,7 +165,7 @@ function uploaded_tickets() {
   const handleClick = async (number) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: number.replace(/[+-]/g, ""),
+        number: checkTextStart(number),
         userId
       });
       setCallId(response.data.call_id)
@@ -174,6 +174,21 @@ function uploaded_tickets() {
     }
   };
 
+  const checkTextStart = (inputText) => {
+    if (!inputText || inputText.length === 0) {
+      return "Input text is empty";
+    }
+
+    const firstChar = inputText.charAt(0);
+    console.log(inputText, firstChar)
+    if (!isNaN(firstChar)) {
+      console.log("1" + inputText)
+      return "1" + inputText;
+    } else if (/^[a-zA-Z]$/.test(firstChar)) {
+      console.log("if", "1" + inputText.split(" ")[1])
+      return "1" + inputText.split(" ")[1];
+    }
+  };
   //notification
   const playNotificationSound = () => {
     const audio = new Audio(R2ZWYCP);
