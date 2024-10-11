@@ -20,7 +20,7 @@ import Pending from './pages/Invoices/Pending';
 import Live from './pages/Tickets/live'
 import Upticket from './pages/Tickets/upticket';
 import InNegotiation from './pages/Tickets/InNegotiation';
-
+import Products from './pages/Products';
 
 // auth
 import './auth/login.css';
@@ -40,7 +40,6 @@ import Tickets from './admin/tickets';
 import Users from './admin/users';
 import Upload_tickets from './admin/upload_tickets';
 import ToEveryone from './admin/toEveryone';
-import Upload_products from './admin/upload_products'
 
 
 // super_admin
@@ -164,6 +163,8 @@ function App() {
                   <Route exact path="/invoices_pending" element={<Pending />} />
                   <Route exact path="/invoices_paid" element={<Paid />} />
                   <Route exact path="/in_negotiation" element={<InNegotiation />} />
+                  <Route exact path="/upload_products" element={<Products />} />
+
 
                   {/* admin */}
                   <Route exact path="/admin_index" element={<Index />} />
@@ -174,7 +175,6 @@ function App() {
                   <Route exact path="/admin_users" element={<Users />} />
                   <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
                   <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
-                  <Route exact path="/admin_upload_products" element={<Upload_products />} />
 
                   {/* super_admin */}
                   <Route exact path="/super_admin_index" element={<Indexs />} />
