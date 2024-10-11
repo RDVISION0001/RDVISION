@@ -31,28 +31,14 @@ function InvoiceBox(props) {
         state: '',
         country: '',
     });
+    const [serchValue, setserchValue] = useState("")
 
-    // Fetch tickets from ticketByStatus
-    // useEffect(() => {
-    //     const fetchTickets = async () => {
-    //         if (!userId) return;
-    //         try {
-    //             const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-    //                 params: {
-    //                     // userId,
-    //                     ticketStatus: 'Sale'
-    //                 }
-    //             });
-    //             setTickets(response.data.dtoList);
-    //         } catch (err) {
-    //             console.error('Error fetching tickets:', err);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
+    const handleInputChange = (e) => {
+        setserchValue(e.target.value); // Update state with the input's value
+        console.log('Input Value:', e.target.value); // Log the current input value
+    };
 
-    //     fetchTickets();
-    // }, [userId]);
+  
 
     // Fetch ticket details when selectedTicketId changes
     useEffect(() => {
@@ -81,43 +67,45 @@ function InvoiceBox(props) {
         currency: ''
     });
 
-    const [selectedProductPrice, setSelectedProductPrice] = useState()
-
-    useEffect(() => {
-        fetchProductPrice()
-    }, [formData.selectedProductId])
 
 
-    const fetchProductPrice = async () => {
-        if (formData.selectedProductId) {
-            const response = await axiosInstance.get(`/product/getProduct/${formData.selectedProductId}`)
-            setSelectedProductPrice(response.data.dtoList.price)
+    const handleSubmit = async (productId) => {
+        const enteredPrice = priceValues[productId] || "";
+        const enteredQuantity = quantityValues[productId] || "";
+        const currency = formData.currency || "";
+        // Validation for empty fields
+        if (!currency) {
+            toast.error('Currency is required!');
+            return;
         }
-    }
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+        if (!enteredPrice) {
+            toast.error('Price is required!');
+            return;
+        }
+        if (!enteredQuantity) {
+            toast.error('Quantity is required!');
+            return;
+        }
+    
+        // Proceed with the API request
         try {
             const response = await axiosInstance.post('/order/addToOrder', {
-                quantity: formData.quantity,
-                productId: formData.selectedProductId,
+                quantity: enteredQuantity,
+                productId: productId,
                 ticketId: selectedTicketId,
                 userId: userId,
-                price: formData.price,
-                currency: formData.currency
-
+                price: enteredPrice,
+                currency: currency
             });
-            toast.success('Add order successfully!');
-            handleClose();
-            fatchaddedproduct()
+    
+            toast.success('Added to order successfully!');
+            fatchaddedproduct();
         } catch (error) {
             console.error('Error submitting form:', error);
             toast.error('Failed to add order');
         }
-
     };
-
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -141,7 +129,7 @@ function InvoiceBox(props) {
         fetchData();
     }, [selectedTicketId]);
 
-    const [orderDetails, setOrderDetails] = useState(true);
+    const [orderDetails, setOrderDetails] = useState(null);
 
     // Fetch order details from apiB when selectedTicketId changes
     useEffect(() => {
@@ -246,6 +234,52 @@ function InvoiceBox(props) {
         }
 
     }
+
+
+    const [selectedProducts, setSelectedProducts] = useState([]); // State to store selected product IDs
+
+    // Handle checkbox change
+    const handleCheckboxChange = (productId) => {
+        setSelectedProducts(prevSelected => {
+            // Check if the product ID is already selected
+
+            console.log(productId)
+            if (prevSelected.includes(productId)) {
+                // If selected, remove it
+                return prevSelected.filter(id => id !== productId);
+            } else {
+                // If not selected, add it
+                return [...prevSelected, productId];
+            }
+        });
+    };
+
+    // Log selected products to console
+    React.useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
+
+    const [priceValues, setPriceValues] = useState({});
+    const [quantityValues, setQuantityValues] = useState({});
+
+
+    // Handle price input change
+    const handlePriceChange = (e, productId) => {
+        setPriceValues((prevState) => ({
+            ...prevState,
+            [productId]: e.target.value,
+        }));
+    };
+
+    // Handle quantity input change
+    const handleQuantityChange = (e, productId) => {
+        setQuantityValues((prevState) => ({
+            ...prevState,
+            [productId]: e.target.value,
+        }));
+    };
+
+
     return (
         <>
             <div className="">
@@ -277,14 +311,14 @@ function InvoiceBox(props) {
                                                 </div>
                                                 <div className="address-items">
                                                     <small>Delivery Address</small>
-                                                    <address>
+                                                   {addressData &&  <address>
                                                         {addressData ? ` ${addressData && addressData.houseNumber},
                                                         ${addressData && addressData.landmark},
                                                         ${addressData && addressData.city},
                                                         ${addressData && addressData.state},
                                                         ${addressData && addressData.country},
                                                         ${addressData && addressData.zipCode}` : "No adress added"}
-                                                    </address>                                                </div>
+                                                    </address>    }                                            </div>
                                                 <div className=""></div>
                                             </div>
                                         </div>
@@ -296,79 +330,79 @@ function InvoiceBox(props) {
                             )}
                             {/* <!-- ticket details ends here --> */}
                             <div className="accordion status-wrappers" id="accordionExample">
-                           
-                                    <div className="accordion-item">
-                                        <h2 className="accordion-header">
-                                            <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
-                                        </h2>
-                                        <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                            <div className="">
-                                                <div className="order-lists p-3">
-                                                    <div className="items-wrapper">
-                                                        <div className="list-item header">
-                                                            <p className="title"></p>
-                                                            <p className="cost"></p>
-                                                        </div>
-                                                        {/* <div className="list-item otr-list">
+
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header">
+                                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Items Details</button>
+                                    </h2>
+                                    <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                        <div className="">
+                                            <div className="order-lists p-3">
+                                                <div className="items-wrapper">
+                                                    <div className="list-item header">
+                                                        <p className="title"></p>
+                                                        <p className="cost"></p>
+                                                    </div>
+                                                    {/* <div className="list-item otr-list">
                                                             <p className="item">TicketId: <span>{orderDetails.ticketId}</span></p>
                                                             <p className="item">Quantity : <span>{orderDetails.quantity}</span></p>
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
-                                                    </div>
-                                                    {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th scope="col">Name</th>
-                                                                <th scope="col">Brand</th>
-                                                                <th scope="col">Composition</th>
-                                                                <th scope="col">Size</th>
-                                                                <th scope="col">Pills Qty</th>
-                                                                <th scope="col">Price</th>
-                                                                <th scope='col'>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {orderDetails && orderDetails.productOrders.map((productOrder, index) => (
-                                                                productOrder.product && productOrder.product[0] ? (
-                                                                    <tr key={productOrder.productorderId}> {/* Use unique id as key */}
-                                                                        <td>{productOrder.product[0].name}</td>
-                                                                        <td>{productOrder.product[0].brand}</td>
-                                                                        <td>{productOrder.product[0].composition}</td>
-                                                                        <td>{productOrder.product[0].packagingSize}</td>
-                                                                        <td>{productOrder.product[0].pillsQty}</td>
-                                                                        <td>{productOrder.totalAmount}</td>
-                                                                        <td className='h-100 text-center'>
-                                                                            <i
-                                                                                onClick={() => handleDeleteProduct(productOrder.productorderId)}
-                                                                                id={`deleteIcon-${productOrder.productorderId}`}
-                                                                                className="fa-solid fa-trash fa-lg"
-                                                                                style={{ color: "#ec2222", cursor: "pointer" }}
-                                                                            ></i>
-                                                                        </td>
-                                                                    </tr>
-                                                                ) : (
-                                                                    <tr key={index}>
-                                                                        <td colSpan="7">Product details not available</td> {/* Ensure colSpan matches number of columns */}
-                                                                    </tr>
-                                                                )
-                                                            ))}
+                                                </div>
+                                                {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Name</th>
+                                                            <th scope="col">Brand</th>
+                                                            <th scope="col">Composition</th>
+                                                            <th scope="col">Size</th>
+                                                            <th scope="col">Quantity</th>
+                                                            <th scope="col">Price</th>
+                                                            <th scope='col'>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {orderDetails && orderDetails.productOrders.map((productOrder, index) => (
+                                                            productOrder.product && productOrder.product[0] ? (
+                                                                <tr key={productOrder.productorderId}> {/* Use unique id as key */}
+                                                                    <td>{productOrder.product[0].name}</td>
+                                                                    <td>{productOrder.product[0].brand}</td>
+                                                                    <td>{productOrder.product[0].composition}</td>
+                                                                    <td>{productOrder.product[0].packagingSize}</td>
+                                                                    <td>{productOrder.quantity}</td>
+                                                                    <td>{productOrder.totalAmount}</td>
+                                                                    <td className='h-100 text-center'>
+                                                                        <i
+                                                                            onClick={() => handleDeleteProduct(productOrder.productorderId)}
+                                                                            id={`deleteIcon-${productOrder.productorderId}`}
+                                                                            className="fa-solid fa-trash fa-lg"
+                                                                            style={{ color: "#ec2222", cursor: "pointer" }}
+                                                                        ></i>
+                                                                    </td>
+                                                                </tr>
+                                                            ) : (
+                                                                <tr key={index}>
+                                                                    <td colSpan="7">Product details not available</td> {/* Ensure colSpan matches number of columns */}
+                                                                </tr>
+                                                            )
+                                                        ))}
 
-                                                        </tbody>
-                                                    </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
-                                                 {orderDetails &&   <div className="total d-flex justify-content-end">
-                                                        <div className='d-flex'>
-                                                            <p className='fw-semibold'>Total:- </p>
-                                                            <p>$ {orderDetails.totalPayableAmount}</p>
-                                                        </div>
-                                                    </div>}
-                                                    <div className="add-more-products-wrapper ">
-                                                        <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
+                                                    </tbody>
+                                                </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
+                                                {orderDetails && <div className="total d-flex justify-content-end">
+                                                    <div className='d-flex'>
+                                                        <p className='fw-semibold'>Total:- </p>
+                                                        <p>{ orderDetails.productOrders[0] && orderDetails.productOrders[0].currency}  {orderDetails.totalPayableAmount}</p>
                                                     </div>
+                                                </div>}
+                                                <div className="add-more-products-wrapper ">
+                                                    <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                
+                                </div>
+
 
                                 {/* /////////////////shipping address */}
                                 <div className="accordion-item">
@@ -488,46 +522,35 @@ function InvoiceBox(props) {
                 </div>
             </div>
 
-            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
                 <div className="modal-dialog">
-                    <div className="modal-content">
+                    <div className="modal-content " style={{ minWidth: "700px" }
+                    }>
                         <div className="modal-header border-0">
-                            <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Add Items</h1>
+                            <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Select Products</h1>
                             <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div className="modal-body">
-                            <form action="#" onSubmit={handleSubmit}>
-                                <div className="row g-3">
-                                    <div className="col-6">
-                                        <label htmlFor="Varient" className="form-label">Product Name</label>
-                                        <select
-                                            name="selectedProductId"
-                                            value={formData.selectedProductId}
-                                            onChange={handleChange}
-                                            id="varient"
-                                            className="form-select">
-                                            <option value="">Choose...</option>
-                                            {products.map((productname) => (
-                                                <option key={productname.productId} value={productname.productId}>{productname.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="Quantity" className="form-label">Quantity</label>
-                                        <input type="number" min="0" name="quantity" value={formData.quantity} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="price" className="form-label">Add Total Price</label>
-                                        <input type="number" name="price" min="0" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="currency" className="form-label">Currency</label>
+                       
+                          
+                            <>
+                                <div className='d-flex justify-content-between px-5'>
+                                    <input
+                                        type='text'
+                                        placeholder='Enter product Name'
+                                        value={serchValue}
+                                        onChange={handleInputChange}
+                                        className='p-2 bg-white text-black'
+                                    />
+
+                                    <div className='d-flex  align-items-center'>
+                                        <label htmlFor="Currency" className='mx-5'>Choose Currency</label>
                                         <select
                                             name="currency"
                                             value={formData.currency}
                                             onChange={handleChange}
                                             id="currency"
                                             className="form-control"
+                                            style={{ maxWidth: '100px', fontSize: '15px' }}
                                         >
                                             <option value="" disabled>Select Currency</option>
                                             <option value="INR">INR - Indian Rupee</option>
@@ -538,15 +561,72 @@ function InvoiceBox(props) {
                                             <option value="JPY">JPY - Japanese Yen</option>
                                         </select>
                                     </div>
-                                    <div className='w-100 d-flex justify-content-between p-4 text-primary'>
-                                    </div>
-                                    <div className="modal-footer justify-content-center border-0">
-                                        <button type="button" onClick={handleClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" disabled={formData.price === "0" ? true : false} className="btn btn-primary">Add</button>
+                                </div>
+
+                                <div className="container mt-3">
+                                    <div className="row">
+                                        {products && products
+                                            .filter(product =>
+                                                serchValue.length > 0
+                                                    ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                                                    : true
+                                            )
+                                            .map((product, index) => (
+                                                <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
+                                                    <div className="card p-2" style={{ width: '100%', maxWidth: '350px', height: 'auto' }}>
+                                                        <div className="d-flex align-items-center">
+
+                                                            {/* Image Section */}
+                                                            <div>
+                                                                <img
+                                                                    src={product.images && product.images[0]}
+                                                                    alt="Product"
+                                                                    className="img-fluid rounded"
+                                                                    style={{ maxWidth: '80px' }}
+                                                                />
+                                                            </div>
+
+                                                            {/* Product Details Section */}
+                                                            <div className="ms-2 w-100 ">
+                                                                <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                                                    {product.name} {product.Price}
+                                                                </h6>
+
+                                                                {/* Price and Quantity Input Section */}
+                                                                <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control form-control-sm mx-2"
+                                                                        placeholder="Price"
+                                                                        style={{ maxWidth: '70px' }}
+                                                                        value={priceValues[product.productId] || ''}
+                                                                        onChange={(e) => handlePriceChange(e, product.productId)}
+                                                                    />
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control form-control-sm mx-2"
+                                                                        placeholder="Quantity"
+                                                                        style={{ maxWidth: '70px' }}
+                                                                        value={quantityValues[product.productId] || ''}
+                                                                        onChange={(e) => handleQuantityChange(e, product.productId)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+                                                            <button
+                                                                className='bg-info'
+                                                                style={{ height: "30px", fontSize: "12px" }}
+                                                                onClick={() => handleSubmit(product.productId)}
+                                                            >
+                                                                Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </>
                     </div>
                 </div>
             </Modal>
@@ -585,4 +665,4 @@ function InvoiceBox(props) {
         </>
     )
 }
-export default InvoiceBox
+export default InvoiceBox;

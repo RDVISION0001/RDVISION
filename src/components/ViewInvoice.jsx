@@ -5,6 +5,7 @@ import axiosInstance from '../axiosInstance';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { toast } from 'react-toastify';
+import { Modal } from 'react-bootstrap';
 
 const ViewInvoice = () => {
     const { orderid } = useParams(); // Get the order ID from the URL parameters
@@ -14,6 +15,9 @@ const ViewInvoice = () => {
     const [isLive, setIsLive] = useState(true);
     const [currecy, setCurrency] = useState(null);
     const [terms, setTerms] = useState(false);
+    const [show, setShow] = useState(false)
+    const [selectedimnage, setSalectedImage] = useState(null)
+    const [productOrders, setProductOrders] = useState([])
 
     const handleCheckboxChange = (event) => {
         setTerms(event.target.checked);
@@ -50,6 +54,7 @@ const ViewInvoice = () => {
             const response = await axiosInstance.get(`/order/getOrderDetails/${orderid}`);
             setOrderData(response.data);
             setCurrency(response.data.orderDetails.productOrders[0].currency);
+            setProductOrders(response.data.orderDetails.productOrders)
             console.log(response.data.orderDetails.productOrders[0].currency);
         } catch (error) {
             console.error("Error fetching order details:", error);
@@ -127,6 +132,15 @@ const ViewInvoice = () => {
         }))
     );
 
+    const viewImage = (image) => {
+        setSalectedImage(image)
+        setShow(true)
+    }
+
+    const close = () => {
+        setShow(false)
+    }
+    console.log(productOrders[0].product)
     return (
         <div className="container-fluid p-5">
             <header className="bg-light text-left p-3">
@@ -155,6 +169,7 @@ const ViewInvoice = () => {
                         <tr>
                             <th>S.No</th>
                             <th>Product Name</th>
+                            <th>Images</th>
                             <th>Product Description</th>
                             <th>Qty</th>
                             {/* <th>Price / Unit</th> */}
@@ -162,16 +177,21 @@ const ViewInvoice = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {flattenedProducts.map((product, index) => (
-                            <tr key={product.key}>
+                        {productOrders.map((productOrder, index) => (
+                            <tr key={index + 1}>
                                 <td className='border'>{index + 1}</td>
                                 <td className='border'>
-                                    {product.name}
+                                    {productOrder.product[0].name}
                                 </td>
-                                <td className='border'>{product.composition} - {product.treatment}</td>
-                                <td className='border'>{product.quantity}</td>
+                                <td className='border'>
+                                    {productOrder.product[0].images && productOrder.product[0].images.map((image, index) =>
+                                        <img key={index} style={{ maxHeight: "30px" }} onClick={() => viewImage(image)} src={image} alt="" />
+                                    )}
+                                </td>
+                                <td className='border'>{productOrder.product[0].composition} - {productOrder.product[0].treatment}</td>
+                                <td className='border'>{productOrder.quantity}</td>
                                 {/* <td className='border'>{product.price}</td> */}
-                                <td className='border'>{product.price * product.quantity}</td>
+                                <td className='border'>{productOrder.totalAmount}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -212,6 +232,11 @@ const ViewInvoice = () => {
                     </button>
                 </div>
             </div>
+            <Modal show={show} onHide={close} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+                <div className='d-flex justify-content-center'>
+                    <img src={selectedimnage} style={{ maxHeight: "400px", maxWidth: "700px" }} alt="" />
+                </div>
+            </Modal>
         </div>
     );
 };
