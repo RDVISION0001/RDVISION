@@ -1,40 +1,46 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
+import { toast } from 'react-toastify';
 
 function UploadedProduct() {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        // Fetch data from API
+        axiosInstance
+            .get('/product/getAllProducts')
+            .then((response) => {
+                // Assuming response contains an array of products
+                setProducts(response.data.dtoList);
+            })
+            .catch((error) => {
+                console.error('Error fetching products:', error);
+            });
+    }, []);
+
+
     const [isBasicActive, setBasicActive] = useState(true);
     const [basicData, setBasicData] = useState({
-        productName: '',
+        name: '',
         productCode: '',
         price: '',
         unit: '',
         description: '',
-        productImage: [],
         productVideo: '',
         productBrochure: ''
     });
+
+    const [imageList, setimageList] = useState([])
 
     const [advanceData, setAdvanceData] = useState({
         strength: '',
         packagingType: '',
         packagingSize: '',
         brand: '',
-        manufacturer: '',
-        prescription: ''
+        composition: '',
+        treatment: '',
     });
-
-    const handleFileChange = (e, field) => {
-        const files = Array.from(e.target.files);  // Get all selected files
-        const fileUrls = files.map(file => URL.createObjectURL(file));  // Create URLs for file previews
-        if (field === 'productImage') {
-            setBasicData(prevData => ({
-                ...prevData,
-                productImage: [...prevData.productImage, ...fileUrls]  // Append new image URLs to the existing ones
-            }));
-        }
-        console.log(`${field} uploaded:`, files);
-    };
 
     const handleInputChange = (e) => {
         const { id, value } = e.target;
@@ -49,29 +55,104 @@ function UploadedProduct() {
         e.preventDefault();
         // Prepare payload based on the required format
         const payload = {
-            productId: '',
-            productCode: "P12345",
-            productName: basicData.productName,
-            composition: "Ingredient 1, Ingredient 2",
-            brand: advanceData.brand,
-            treatment: "Treatment Description",
-            packagingSize: advanceData.packagingSize,
-            packagingType: advanceData.packagingType,
+            productCode: basicData.productCode,
+            name: basicData.name,
+            price: basicData.price,
+            unit: basicData.unit,
+            description: basicData.description,
             productVideo: basicData.productVideo,
             bruchureLink: basicData.productBrochure,
-            images: basicData.productImage
+            images: imageList,
+            composition: advanceData.composition,
+            brand: advanceData.brand,
+            treatment: advanceData.treatment,
+            packagingSize: advanceData.packagingSize,
+            strength: advanceData.strength,
+            packagingType: advanceData.packagingType,
         };
 
         try {
             const response = await axiosInstance.post('/product/addproduct', payload);
             console.log('Product added successfully:', response.data);
+            toast.success(" Product Added ")
+            setBasicData({
+                name: '',
+                productCode: '',
+                price: '',
+                unit: '',
+                description: '',
+                productVideo: '',
+                productBrochure: ''
+            })
+            setimageList([])
+            setAdvanceData({
+                strength: '',
+                packagingType: '',
+                packagingSize: '',
+                brand: '',
+                composition: '',
+                treatment: '',
+            })
         } catch (error) {
             console.error('Error adding product:', error);
         }
     };
+    const [imageLink, setImageLink] = useState("");
+    const handleLinkChangeEvent = (e) => {
+        setImageLink(e.target.value)
+    }
+    const openLinkInput = () => {
+
+        const inputElement = document.getElementById("inputLink");
+        inputElement.showModal()
+        inputElement.classList.add("d-flex")
+    };
+    const closeLinkInput = () => {
+        const inputElement = document.getElementById("inputLink");
+        inputElement.classList.remove("d-flex")
+        inputElement.close()
+        setImageLink("")
+    };
+    const openVideoInput = () => {
+
+        const inputElement = document.getElementById("videoLink");
+        inputElement.showModal()
+        inputElement.classList.add("d-flex")
+    };
+    const closevideoInput = () => {
+        const inputElement = document.getElementById("videoLink");
+        inputElement.classList.remove("d-flex")
+        inputElement.close()
+    };
+    const openPdfInput = () => {
+
+        const inputElement = document.getElementById("pdfLink");
+        inputElement.showModal()
+        inputElement.classList.add("d-flex")
+    };
+    const closePdfInput = () => {
+        const inputElement = document.getElementById("pdfLink");
+        inputElement.classList.remove("d-flex")
+        inputElement.close()
+    };
+    const addImageInArray = () => {
+        setimageList((prev) => {
+            // Return a new array with the previous items and the new imageLink
+            return [...prev, imageLink];
+        });
+        closeLinkInput();  // Close the dialog after adding the image
+    };
+    const handleProductFileChange = (e) => {
+        const { name, value } = e.target;
+        console.log(name, value)
+        setBasicData((prev) => ({
+            ...prev,        // Spread the previous state
+            [name]: value   // Update the field based on the input name
+        }));
+    };
 
 
-
+    
     return (
         <div>
             {/* Toggle between Basic and Advance Details */}
@@ -97,6 +178,7 @@ function UploadedProduct() {
                         <div className="row">
                             <div className="container mt-4">
                                 <div className="card">
+
                                     <div className="card-body">
                                         <form onSubmit={handleSubmit}>
                                             <div className="row">
@@ -108,29 +190,27 @@ function UploadedProduct() {
                                                                     {[...Array(5)].map((_, index) => (
                                                                         <div key={index} className="form-group mb-1">
                                                                             <label className="border rounded d-flex justify-content-center align-items-center" style={{ height: '50px', width: "50px", cursor: 'pointer' }}>
-                                                                                <FaCamera size={10} />
-                                                                                <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileChange(e, 'productImage')} multiple />
-                                                                            </label>
+                                                                                {imageList[index + 1] ? <img src={imageList[index + 1]} style={{ maxHeight: "50px" }} /> : <FaCamera size={10} onClick={openLinkInput} />
+                                                                                } </label>
                                                                         </div>
                                                                     ))}
                                                                 </div>
                                                                 <div className="col d-flex justify-content-center align-items-center">
                                                                     <div className="form-group mb-3">
                                                                         <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '200px', width: "200px", cursor: 'pointer' }}>
-                                                                            <FaCamera size={24} />
-                                                                            <input type="file" style={{ display: 'none' }} onChange={(e) => handleFileChange(e, 'productImage')} multiple />
+
+                                                                            {imageList[0] ? <img src={imageList[0]} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
+                                                                            }
                                                                         </label>
                                                                         <div className='d-flex justify-content-between mt-2'>
                                                                             <div className="form-group">
                                                                                 <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
-                                                                                    <i className="fa fa-video" aria-hidden="true"></i>
-                                                                                    <input type="file" style={{ display: 'none' }} accept="video/*" onChange={(e) => handleFileChange(e, 'productVideo')} />
+                                                                                    {basicData.productVideo.length > 0 ? "Added" : <i className="fa fa-video" aria-hidden="true" onClick={openVideoInput}></i>}
                                                                                 </label>
                                                                             </div>
                                                                             <div className="form-group">
                                                                                 <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
-                                                                                    <i className="fa fa-file-pdf" aria-hidden="true"></i>
-                                                                                    <input type="file" style={{ display: 'none' }} accept="application/pdf" onChange={(e) => handleFileChange(e, 'productBrochure')} />
+                                                                                    {basicData.productBrochure.length > 0 ? "Added" : <i className="fa fa-file-pdf" aria-hidden="true" onClick={openPdfInput}></i>}
                                                                                 </label>
                                                                             </div>
                                                                         </div>
@@ -138,6 +218,36 @@ function UploadedProduct() {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                            <>
+                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
+
+                                                                    <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
+                                                                    <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
+                                                                </div>
+                                                            </>
+                                                        </dialog>
+                                                        <dialog id='videoLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                            <>
+                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closevideoInput}>close</button></div>
+
+                                                                    <input name='productVideo' type="text" value={basicData.productVideo} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                                                                    <button className='bg-primary text-white m-2' onClick={closevideoInput}>Add Image</button>
+                                                                </div>
+                                                            </>
+                                                        </dialog>
+                                                        <dialog id='pdfLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                            <>
+                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closePdfInput}>close</button></div>
+
+                                                                    <input type="text" name='productBrochure' value={basicData.productBrochure} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                                                                    <button className='bg-primary text-white m-2' onClick={closePdfInput}>Add Image</button>
+                                                                </div>
+                                                            </>
+                                                        </dialog>
                                                     </div>
                                                 </div>
 
@@ -146,7 +256,7 @@ function UploadedProduct() {
                                                         <div className="form-group col-md-6 col-sm-12">
                                                             <label htmlFor="price">Product Name</label>
                                                             <div className="input-group">
-                                                                <input type="text" className="form-control" id="productName" value={basicData.productName} onChange={handleInputChange} placeholder="Enter product name" required />
+                                                                <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
                                                             </div>
                                                         </div>
                                                         <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
@@ -237,22 +347,15 @@ function UploadedProduct() {
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Manufacturer</label>
+                                                <label className="col-sm-3 col-form-label">Composition</label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="manufacturer" value={advanceData.manufacturer} onChange={handleInputChange} placeholder="Ex - ABC Manufacturer" />
+                                                    <input type="text" className="form-control" id="composition" value={advanceData.composition} onChange={handleInputChange} placeholder="Ex - ABC composition" />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Prescription Required</label>
+                                                <label className="col-sm-3 col-form-label">Treatment</label>
                                                 <div className="col-sm-9">
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="radio" name="prescription" id="prescription" value="yes" onChange={handleInputChange} />
-                                                        <label className="form-check-label">Yes</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="radio" name="prescription" id="prescription" value="no" onChange={handleInputChange} />
-                                                        <label className="form-check-label">No</label>
-                                                    </div>
+                                                    <input type="text" className="form-control" id="treatment" value={advanceData.treatment} onChange={handleInputChange} placeholder="Ex - ABC treatment" />
                                                 </div>
                                             </div>
                                             <div className="text-right mt-3 d-flex justify-content-end">
@@ -264,8 +367,83 @@ function UploadedProduct() {
                             </div>
                         </div>
                     </div>
+
                 </section>
             )}
+
+            {/* productb table list */}
+            <section className="followup-table-section py-3">
+                <div className="container-fluid">
+                    <div className="table-wrapper tabbed-table">
+                        <h3 className="title">Products List<span className="d-flex justify-content-end"></span></h3>
+                        <div className="tab-content recent-transactions-tab-body" id="followUpContent">
+                            <div className="tab-pane fade show active" id="new-arrivals-tkts-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tkts-tab" tabindex="0">
+                                <div className="followups-table table-responsive table-height">
+                                    <table className="table">
+                                        <thead className="sticky-header">
+                                            <tr>
+                                                <th tabindex="0">S No.</th>
+                                                <th tabindex="0">Product Code</th>
+                                                <th tabindex="0">Name of Medicine</th>
+                                                <th tabindex="0">Strength</th>
+                                                <th tabindex="0">Packging Size</th>
+                                                <th tabindex="0">Packging Type</th>
+                                                <th tabindex="0">Composition</th>
+                                                <th tabindex="0">Brand</th>
+                                                <th tabindex="0">Treatment</th>
+                                                <th tabindex="0">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {products.length > 0 ? (
+                                                products.map((product) => (
+                                                    <tr>
+                                                        <td><span className="text">0.</span></td>
+                                                        <td><span className="text">{product.productCode}</span></td>
+                                                        <td><span className="text">{product.name}</span></td>
+                                                        <td><span className="text">{product.strength}</span></td>
+                                                        <td><span className="text">{product.packagingSize}</span></td>
+                                                        <td><span className="text">{product.packagingType}</span></td>
+                                                        <td><span className="text">{product.composition}</span></td>
+                                                        <td><span className="text">{product.brand}</span></td>
+                                                        <td><span className="text">{product.treatment}</span></td>
+                                                        <td className='d-flex justify-content-arround'>
+                                                            <i class="fa-solid fa-pen-to-square fa-2xl" style={{ color: "#042c71" }}></i>
+                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "#a8101f" }}></i>
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td colSpan="5" className="text-center">
+                                                        No products found
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pagination-controls">
+                        <button className="next_prev" disabled>Previous</button>
+                        <button className="next_prev active">1</button>
+                        <button className="next_prev">Next</button>
+                        <span> Items per page:</span>
+                        <select className="next_prev">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="1000">1000</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
         </div>
     );
 }
