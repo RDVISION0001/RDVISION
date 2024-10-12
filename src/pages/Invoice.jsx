@@ -15,9 +15,9 @@ function Invoice(props) {
     const [address, setAddress] = useState(null)
     const [totalAmount, setTotalAmount] = useState(null)
     const [currency, setCurrency] = useState(null)
-    const [dateTimeStamp,setDatetimeStamp]=useState(null)
-    const [paymentStatus,setPaymentStatus]=useState(null)
-    const [selectedKey,setSelectedKeuy]=useState(null)
+    const [dateTimeStamp, setDatetimeStamp] = useState(null)
+    const [paymentStatus, setPaymentStatus] = useState(null)
+    const [selectedKey, setSelectedKeuy] = useState(null)
 
     // WebSocket for notifications
     useEffect(() => {
@@ -84,20 +84,20 @@ function Invoice(props) {
     function formatTimestampToDate(timestamp) {
         // Convert the timestamp to a Date object
         const date = new Date(timestamp);
-      
+
         // Format the date (yyyy-MM-dd HH:mm:ss)
         const formattedDate = date.toLocaleString('en-US', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false // 24-hour format
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // 24-hour format
         });
-      
+
         return formattedDate;
-      }
+    }
     return (
         <>
             {/* <!--End Top Nav --> */}
@@ -162,8 +162,8 @@ function Invoice(props) {
                                 <div className="order-menu-wrapper">
                                     <div className="nav flex-column vertical-tab-nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                         {/* <!-- ticket one ends here  --> */}
-                                        {tickets.map((ticket,index )=> (
-                                            <div className={`nav-link ${index===selectedKey?"bg-secondary text-white":""}`} key={index} onClick={()=>setSelectedKeuy(index)} id="v-pills-ticket2-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ticket2" type="button" role="tab" aria-controls="v-pills-ticket2" aria-selected="true">
+                                        {tickets.map((ticket, index) => (
+                                            <div className={`nav-link ${index === selectedKey ? "bg-secondary text-white" : ""}`} key={index} onClick={() => setSelectedKeuy(index)} id="v-pills-ticket2-tab" data-bs-toggle="pill" data-bs-target="#v-pills-ticket2" type="button" role="tab" aria-controls="v-pills-ticket2" aria-selected="true">
                                                 <div className="order-card" key={ticket.ticketId} onClick={() => handleCardClick(ticket)}>
                                                     <div className="left-part">
                                                         <h3 className="title">{ticket.inviceStatus}</h3>
@@ -180,74 +180,74 @@ function Invoice(props) {
                                 </div>
                             </div>
                             {dateTimeStamp && <div className="col-7">
-                                
-                                        
-                                                        <div className="container my-4">
-                                                            <div className="card shadow-sm p-4">
-                                                                <div className="d-flex justify-content-between">
-                                                                    <h5>TKTID:{ticketDetails ? ticketDetails.uniqueQueryId : ""}</h5>
-                                                                   {dateTimeStamp && <span>{formatTimestampToDate(dateTimeStamp)}</span>}
-                                                                </div>
-
-                                                                {/* Billing and Delivery Information */}
-                                                                <div className="card mt-3 p-3">
-                                                                    <div className="row">
-                                                                        {/* Icon or Placeholder */}
-                                                                        <div className="col-2 d-flex align-items-center">
-                                                                            <img src="https://via.placeholder.com/50" alt="user" className="img-fluid rounded" />
-                                                                        </div>
-
-                                                                        {/* Billing Name and Info */}
-                                                                        <div className="col-10">
-                                                                            <h6>Billing Name</h6>
-                                                                            <p className="mb-1">
-                                                                                <span className="me-3">📞 {ticketDetails ? ticketDetails.senderMobile : ""}</span>
-                                                                                <span>📧 {ticketDetails ? ticketDetails.senderEmail : ""}</span>
-                                                                            </p>
-                                                                            <p className="mb-0">
-                                                                                <strong>Billing Address : </strong>{ticketDetails ? ticketDetails.senderAddress : ""}
-                                                                            </p>
-                                                                            <p className="mb-0">
-                                                                                <strong>Delivery Address : </strong> {address && address.houseNumber},{address && address.landmark},{address && address.city},
-                                                                                {address && address.state},{address && address.country},{address && address.zipCode}
-
-                                                                            </p>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                                {/* Products Details */}
-                                                                {orderDetails && orderDetails.map((order, index) => (
-                                                                    <div className="mt-4">
-                                                                        <div className="d-flex justify-content-between">
-                                                                            <span>{order.product[0].name}</span>
-                                                                            <span>{order.currency} {order.totalAmount}</span>
-                                                                        </div>
-                                                                        <p>Qty: {order.quantity} </p>
 
 
-                                                                    </div>
-                                                                ))}
+                                <div className="container my-4">
+                                    <div className="card shadow-sm p-4">
+                                        <div className="d-flex justify-content-between">
+                                            <h5>TKTID:{ticketDetails ? ticketDetails.uniqueQueryId : ""}</h5>
+                                            {dateTimeStamp && <span>{formatTimestampToDate(dateTimeStamp)}</span>}
+                                        </div>
 
-                                                                {/* Total Price */}
-                                                                <div className="d-flex justify-content-end mt-3">
-                                                                    {currency && <h5>Total Ammount :-{currency} {totalAmount}</h5>}
-                                                                </div>
+                                        {/* Billing and Delivery Information */}
+                                        <div className="card mt-3 p-3">
+                                            <div className="row">
+                                                {/* Icon or Placeholder */}
+                                                <div className="col-2 d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/50" alt="user" className="img-fluid rounded" />
+                                                </div>
 
-                                                                {/* Payment Status and Action Buttons */}
-                                                                <div className="mt-4">
-                                                                    {paymentStatus && <h6 >Payment Status :- <span className={`${paymentStatus==="PENDING"?"text-danger":"text-success"}`}>{paymentStatus}</span></h6>}
-                                                                    {/* Buttons */}
-                                                                    <div className="d-flex justify-content-between mt-3">
-                                                                        <button className="btn btn-success">Mark as Paid</button>
-                                                                        <button className="btn btn-warning">Hold</button>
-                                                                        <button className="btn btn-primary">Send Invoice</button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                
-                                                <TrackPackage />
+                                                {/* Billing Name and Info */}
+                                                <div className="col-10">
+                                                    <h6>Billing Name</h6>
+                                                    <p className="mb-1">
+                                                        <span className="me-3">📞 {ticketDetails ? ticketDetails.senderMobile : ""}</span>
+                                                        <span>📧 {ticketDetails ? ticketDetails.senderEmail : ""}</span>
+                                                    </p>
+                                                    <p className="mb-0">
+                                                        <strong>Billing Address : </strong>{ticketDetails ? ticketDetails.senderAddress : ""}
+                                                    </p>
+                                                    <p className="mb-0">
+                                                        <strong>Delivery Address : </strong> {address && address.houseNumber},{address && address.landmark},{address && address.city},
+                                                        {address && address.state},{address && address.country},{address && address.zipCode}
+
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Products Details */}
+                                        {orderDetails && orderDetails.map((order, index) => (
+                                            <div className="mt-4">
+                                                <div className="d-flex justify-content-between">
+                                                    <span>{order.product[0].name}</span>
+                                                    <span>{order.currency} {order.totalAmount}</span>
+                                                </div>
+                                                <p>Qty: {order.quantity} </p>
+
+
+                                            </div>
+                                        ))}
+
+                                        {/* Total Price */}
+                                        <div className="d-flex justify-content-end mt-3">
+                                            {currency && <h5>Total Ammount :-{currency} {totalAmount}</h5>}
+                                        </div>
+
+                                        {/* Payment Status and Action Buttons */}
+                                        <div className="mt-4">
+                                            {paymentStatus && <h6 >Payment Status :- <span className={`${paymentStatus === "PENDING" ? "text-danger" : "text-success"}`}>{paymentStatus}</span></h6>}
+                                            {/* Buttons */}
+                                            <div className="d-flex justify-content-between mt-3">
+                                                <button className="btn btn-success">Mark as Paid</button>
+                                                <button className="btn btn-warning">Hold</button>
+                                                <button className="btn btn-primary">Send Invoice</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <TrackPackage />
                             </div>}
                         </div>
                     </div>

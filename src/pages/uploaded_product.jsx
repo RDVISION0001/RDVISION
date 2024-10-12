@@ -8,7 +8,11 @@ function UploadedProduct() {
 
     useEffect(() => {
         // Fetch data from API
-        axiosInstance
+        fetchProducts()
+    }, []);
+
+    const fetchProducts = async () => {
+        await axiosInstance
             .get('/product/getAllProducts')
             .then((response) => {
                 // Assuming response contains an array of products
@@ -17,8 +21,7 @@ function UploadedProduct() {
             .catch((error) => {
                 console.error('Error fetching products:', error);
             });
-    }, []);
-
+    }
 
     const [isBasicActive, setBasicActive] = useState(true);
     const [basicData, setBasicData] = useState({
@@ -53,7 +56,6 @@ function UploadedProduct() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // Prepare payload based on the required format
         const payload = {
             productCode: basicData.productCode,
             name: basicData.name,
@@ -137,22 +139,33 @@ function UploadedProduct() {
     };
     const addImageInArray = () => {
         setimageList((prev) => {
-            // Return a new array with the previous items and the new imageLink
             return [...prev, imageLink];
         });
-        closeLinkInput();  // Close the dialog after adding the image
+        closeLinkInput();
     };
     const handleProductFileChange = (e) => {
         const { name, value } = e.target;
         console.log(name, value)
         setBasicData((prev) => ({
-            ...prev,        // Spread the previous state
-            [name]: value   // Update the field based on the input name
+            ...prev,
+            [name]: value
         }));
     };
 
+    //delete products
+    const handleDeleteProduct = async (productId) => {
+        try {
+            const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
+            toast.success("Product deleted successfully");
+            fetchProducts(); // Refresh the product list after deletion
+        } catch (error) {
+            toast.error("Failed to delete product. Please try again.");
+        }
+    };
 
-    
+
+
+
     return (
         <div>
             {/* Toggle between Basic and Advance Details */}
@@ -385,6 +398,7 @@ function UploadedProduct() {
                                                 <th tabindex="0">S No.</th>
                                                 <th tabindex="0">Product Code</th>
                                                 <th tabindex="0">Name of Medicine</th>
+                                                <th tabindex="0">Product Image</th>
                                                 <th tabindex="0">Strength</th>
                                                 <th tabindex="0">Packging Size</th>
                                                 <th tabindex="0">Packging Type</th>
@@ -398,18 +412,28 @@ function UploadedProduct() {
                                             {products.length > 0 ? (
                                                 products.map((product) => (
                                                     <tr>
-                                                        <td><span className="text">0.</span></td>
+                                                        <td><span className="text">1.</span></td>
                                                         <td><span className="text">{product.productCode}</span></td>
                                                         <td><span className="text">{product.name}</span></td>
+                                                        <td>
+                                                            <span className="text">
+                                                                <img src={product.images} style={{ width: "50px", height: "50px" }} />
+                                                            </span>
+                                                        </td>
                                                         <td><span className="text">{product.strength}</span></td>
                                                         <td><span className="text">{product.packagingSize}</span></td>
                                                         <td><span className="text">{product.packagingType}</span></td>
                                                         <td><span className="text">{product.composition}</span></td>
                                                         <td><span className="text">{product.brand}</span></td>
                                                         <td><span className="text">{product.treatment}</span></td>
-                                                        <td className='d-flex justify-content-arround'>
-                                                            <i class="fa-solid fa-pen-to-square fa-2xl" style={{ color: "#042c71" }}></i>
-                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "#a8101f" }}></i>
+                                                        <td>
+                                                            <span className="actions-wrapper">
+                                                                <i
+                                                                    className="fa-solid fa-trash fa-2xl"
+                                                                    style={{ color: "#a8101f", cursor: "pointer" }}
+                                                                    onClick={() => handleDeleteProduct(product.productId)}
+                                                                ></i>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 ))

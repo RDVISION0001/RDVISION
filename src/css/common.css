@@ -470,3 +470,17 @@
   .table tbody tr {
     cursor: pointer;
   }
+
+
+  
+  .fullscreen-modal .modal-dialog {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    max-width: none;
+  }
+
+  .fullscreen-modal .modal-content {
+    height: 100%;
+    border-radius: 0;
+  }
