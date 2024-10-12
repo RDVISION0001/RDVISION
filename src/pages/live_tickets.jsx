@@ -862,24 +862,26 @@ function live_tickets() {
 
 
       {/* //invoice modal */}
-      <Modal show={isInvoiceOn} onHide={handleInvoice} className="" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-        <Modal.Header closeButton>
-          <h1 className=" w-100 text-center" id="followUpModalLabel">
-            <u> Raise Invoice</u>
-          </h1>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="">
-            <div className="card shadow-sm">
-
-              <div>
-                <InvoiceBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
-              </div>
-            </div>
-          </div>
-
-        </Modal.Body>
+      <Modal
+        show={isInvoiceOn}
+        onHide={handleInvoice}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal" // Add a custom class here
+      >
+        <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+          <u> Raise Invoice</u>
+        </h1>
+        <InvoiceBox
+          ticketId={selectTicketForInvoice}
+          name={selectNameForInvoice}
+          email={selectEmailForInvoice}
+          mobile={selectMobileForInvoice}
+        />
       </Modal>
+
     </>
   )
 }

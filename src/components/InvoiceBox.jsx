@@ -38,7 +38,7 @@ function InvoiceBox(props) {
         console.log('Input Value:', e.target.value); // Log the current input value
     };
 
-  
+
 
     // Fetch ticket details when selectedTicketId changes
     useEffect(() => {
@@ -86,7 +86,7 @@ function InvoiceBox(props) {
             toast.error('Quantity is required!');
             return;
         }
-    
+
         // Proceed with the API request
         try {
             const response = await axiosInstance.post('/order/addToOrder', {
@@ -97,7 +97,7 @@ function InvoiceBox(props) {
                 price: enteredPrice,
                 currency: currency
             });
-    
+
             toast.success('Added to order successfully!');
             fatchaddedproduct();
         } catch (error) {
@@ -105,7 +105,7 @@ function InvoiceBox(props) {
             toast.error('Failed to add order');
         }
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -212,6 +212,16 @@ function InvoiceBox(props) {
             toast.error('Failed to send invoice');
         }
     };
+
+    const handleSendQuotation = async () => {
+        try {
+            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}`);
+            toast.success('Quotation sent successfully!');
+        } catch (error) {
+            console.error('Error sending quotation:', error);
+            toast.error('Failed to send quotation');
+        }
+    };
     const [isCollapsed, setIsCollapsed] = useState(false); // State to track collapse/expand
 
     const toggleCollapse = () => {
@@ -311,14 +321,14 @@ function InvoiceBox(props) {
                                                 </div>
                                                 <div className="address-items">
                                                     <small>Delivery Address</small>
-                                                   {addressData &&  <address>
+                                                    {addressData && <address>
                                                         {addressData ? ` ${addressData && addressData.houseNumber},
                                                         ${addressData && addressData.landmark},
                                                         ${addressData && addressData.city},
                                                         ${addressData && addressData.state},
                                                         ${addressData && addressData.country},
                                                         ${addressData && addressData.zipCode}` : "No adress added"}
-                                                    </address>    }                                            </div>
+                                                    </address>}                                            </div>
                                                 <div className=""></div>
                                             </div>
                                         </div>
@@ -349,50 +359,56 @@ function InvoiceBox(props) {
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
                                                 </div>
-                                                {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Brand</th>
-                                                            <th scope="col">Composition</th>
-                                                            <th scope="col">Size</th>
-                                                            <th scope="col">Quantity</th>
-                                                            <th scope="col">Price</th>
-                                                            <th scope='col'>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {orderDetails && orderDetails.productOrders.map((productOrder, index) => (
-                                                            productOrder.product && productOrder.product[0] ? (
-                                                                <tr key={productOrder.productorderId}> {/* Use unique id as key */}
-                                                                    <td>{productOrder.product[0].name}</td>
-                                                                    <td>{productOrder.product[0].brand}</td>
-                                                                    <td>{productOrder.product[0].composition}</td>
-                                                                    <td>{productOrder.product[0].packagingSize}</td>
-                                                                    <td>{productOrder.quantity}</td>
-                                                                    <td>{productOrder.totalAmount}</td>
-                                                                    <td className='h-100 text-center'>
-                                                                        <i
-                                                                            onClick={() => handleDeleteProduct(productOrder.productorderId)}
-                                                                            id={`deleteIcon-${productOrder.productorderId}`}
-                                                                            className="fa-solid fa-trash fa-lg"
-                                                                            style={{ color: "#ec2222", cursor: "pointer" }}
-                                                                        ></i>
-                                                                    </td>
+                                                {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? (
+                                                    <div className="overflow-x-auto">
+                                                        <table className="min-w-full table-auto border-collapse border border-gray-200">
+                                                            <thead>
+                                                                <tr className="bg-gray-100">
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Name</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Brand</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Composition</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Size</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Quantity</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Price</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-center">Action</th>
                                                                 </tr>
-                                                            ) : (
-                                                                <tr key={index}>
-                                                                    <td colSpan="7">Product details not available</td> {/* Ensure colSpan matches number of columns */}
-                                                                </tr>
-                                                            )
-                                                        ))}
+                                                            </thead>
+                                                            <tbody>
+                                                                {orderDetails.productOrders.map((productOrder, index) => (
+                                                                    productOrder.product && productOrder.product[0] ? (
+                                                                        <tr key={productOrder.productorderId} className="hover:bg-gray-50">
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].name}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].brand}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].composition}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].packagingSize}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.quantity}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.totalAmount}</td>
+                                                                            <td className='h-100 border border-gray-300 py-2 px-3 text-center'>
+                                                                                <i
+                                                                                    onClick={() => handleDeleteProduct(productOrder.productorderId)}
+                                                                                    id={`deleteIcon-${productOrder.productorderId}`}
+                                                                                    className="fa-solid fa-trash fa-lg"
+                                                                                    style={{ color: "#ec2222", cursor: "pointer" }}
+                                                                                ></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ) : (
+                                                                        <tr key={index}>
+                                                                            <td colSpan="7" className="border border-gray-300 px-3  text-center">Product details not available</td>
+                                                                        </tr>
+                                                                    )
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                ) : (
+                                                    <div className='d-flex justify-content-center'>No product Added</div>
+                                                )}
 
-                                                    </tbody>
-                                                </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
                                                 {orderDetails && <div className="total d-flex justify-content-end">
                                                     <div className='d-flex'>
                                                         <p className='fw-semibold'>Total:- </p>
-                                                        <p>{ orderDetails.productOrders[0] && orderDetails.productOrders[0].currency}  {orderDetails.totalPayableAmount}</p>
+                                                        <p>{orderDetails.productOrders[0] && orderDetails.productOrders[0].currency}  {orderDetails.totalPayableAmount}</p>
                                                     </div>
                                                 </div>}
                                                 <div className="add-more-products-wrapper ">
@@ -512,7 +528,8 @@ function InvoiceBox(props) {
                                 </div>
 
                                 {/* <!-- order items details ends here --> */}
-                                <div className='d-flex justify-content-center '>
+                                <div className='d-flex justify-content-between ' style={{ paddingLeft: "30%", paddingRight: "30%" }}>
+                                    <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
                                     <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Invoice</button>
 
                                 </div>
@@ -522,113 +539,111 @@ function InvoiceBox(props) {
                 </div>
             </div>
 
-            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content " style={{ minWidth: "700px" }
-                    }>
-                        <div className="modal-header border-0">
-                            <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Select Products</h1>
-                            <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade rounded " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+
+                <div className="modal-header border-0">
+                    <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Select Products</h1>
+                    <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+
+                <>
+                    <div className='d-flex justify-content-between px-5'>
+                        <input
+                            type='text'
+                            placeholder='Enter product Name'
+                            value={serchValue}
+                            onChange={handleInputChange}
+                            className='p-2 bg-white text-black'
+                        />
+
+                        <div className='d-flex  align-items-center'>
+                            <label htmlFor="Currency" className='mx-5'>Choose Currency</label>
+                            <select
+                                name="currency"
+                                value={formData.currency}
+                                onChange={handleChange}
+                                id="currency"
+                                className="form-control"
+                                style={{ maxWidth: '100px', fontSize: '15px' }}
+                            >
+                                <option value="" disabled>Select Currency</option>
+                                <option value="INR">INR - Indian Rupee</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                            </select>
                         </div>
-                       
-                          
-                            <>
-                                <div className='d-flex justify-content-between px-5'>
-                                    <input
-                                        type='text'
-                                        placeholder='Enter product Name'
-                                        value={serchValue}
-                                        onChange={handleInputChange}
-                                        className='p-2 bg-white text-black'
-                                    />
+                    </div>
 
-                                    <div className='d-flex  align-items-center'>
-                                        <label htmlFor="Currency" className='mx-5'>Choose Currency</label>
-                                        <select
-                                            name="currency"
-                                            value={formData.currency}
-                                            onChange={handleChange}
-                                            id="currency"
-                                            className="form-control"
-                                            style={{ maxWidth: '100px', fontSize: '15px' }}
-                                        >
-                                            <option value="" disabled>Select Currency</option>
-                                            <option value="INR">INR - Indian Rupee</option>
-                                            <option value="USD">USD - US Dollar</option>
-                                            <option value="GBP">GBP - British Pound</option>
-                                            <option value="AUD">AUD - Australian Dollar</option>
-                                            <option value="EUR">EUR - Euro</option>
-                                            <option value="JPY">JPY - Japanese Yen</option>
-                                        </select>
-                                    </div>
-                                </div>
+                    <div className="container mt-3">
+                        <div className="row">
+                            {products && products
+                                .filter(product =>
+                                    serchValue.length > 0
+                                        ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                                        : true
+                                )
+                                .map((product, index) => (
+                                    <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
+                                        <div className="card p-2" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
+                                            <div className="d-flex flex-column flex-md-row align-items-center">
 
-                                <div className="container mt-3">
-                                    <div className="row">
-                                        {products && products
-                                            .filter(product =>
-                                                serchValue.length > 0
-                                                    ? product.name.toLowerCase().includes(serchValue.toLowerCase())
-                                                    : true
-                                            )
-                                            .map((product, index) => (
-                                                <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
-                                                    <div className="card p-2" style={{ width: '100%', maxWidth: '350px', height: 'auto' }}>
-                                                        <div className="d-flex align-items-center">
+                                                {/* Image Section */}
+                                                <div>
+                                                    <img
+                                                        src={product.images && product.images[0]}
+                                                        alt="Product"
+                                                        className="img-fluid rounded"
+                                                        style={{ maxWidth: '60px' }}
+                                                    />
+                                                </div>
 
-                                                            {/* Image Section */}
-                                                            <div>
-                                                                <img
-                                                                    src={product.images && product.images[0]}
-                                                                    alt="Product"
-                                                                    className="img-fluid rounded"
-                                                                    style={{ maxWidth: '80px' }}
-                                                                />
-                                                            </div>
+                                                {/* Product Details Section */}
+                                                <div className="ms-2 w-100 ">
+                                                    <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                                        {product.name} {product.Price}
+                                                    </h6>
 
-                                                            {/* Product Details Section */}
-                                                            <div className="ms-2 w-100 ">
-                                                                <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
-                                                                    {product.name} {product.Price}
-                                                                </h6>
-
-                                                                {/* Price and Quantity Input Section */}
-                                                                <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>
-                                                                    <input
-                                                                        type="text"
-                                                                        className="form-control form-control-sm mx-2"
-                                                                        placeholder="Price"
-                                                                        style={{ maxWidth: '70px' }}
-                                                                        value={priceValues[product.productId] || ''}
-                                                                        onChange={(e) => handlePriceChange(e, product.productId)}
-                                                                    />
-                                                                    <input
-                                                                        type="text"
-                                                                        className="form-control form-control-sm mx-2"
-                                                                        placeholder="Quantity"
-                                                                        style={{ maxWidth: '70px' }}
-                                                                        value={quantityValues[product.productId] || ''}
-                                                                        onChange={(e) => handleQuantityChange(e, product.productId)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-
-                                                            <button
-                                                                className='bg-info'
-                                                                style={{ height: "30px", fontSize: "12px" }}
-                                                                onClick={() => handleSubmit(product.productId)}
-                                                            >
-                                                                Add
-                                                            </button>
-                                                        </div>
+                                                    {/* Price and Quantity Input Section */}
+                                                    <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control form-control-sm mx-2"
+                                                            placeholder="Price"
+                                                            style={{ maxWidth: '70px' }}
+                                                            value={priceValues[product.productId] || ''}
+                                                            onChange={(e) => handlePriceChange(e, product.productId)}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="form-control form-control-sm mx-2"
+                                                            placeholder="Quantity"
+                                                            style={{ maxWidth: '70px' }}
+                                                            value={quantityValues[product.productId] || ''}
+                                                            onChange={(e) => handleQuantityChange(e, product.productId)}
+                                                        />
                                                     </div>
                                                 </div>
-                                            ))}
+
+                                                <button
+                                                    className='bg-info mt-2 mt-md-0'
+                                                    style={{ height: "30px", fontSize: "12px" }}
+                                                    onClick={() => handleSubmit(product.productId)}
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </>
+
+                                ))}
+                        </div>
                     </div>
-                </div>
+                </>
+
             </Modal>
 
             {/* <!-- Modal --> */}

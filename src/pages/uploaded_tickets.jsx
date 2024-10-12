@@ -83,15 +83,15 @@ function uploaded_tickets() {
   //hnadling multiple selection
   const handleMultipleTicketSelection = (e) => {
     setSelectedTickets([])
-    const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
+    const checked = e.target.checked; 
     if (checked) {
-      let newSelectedTickets = [...selectedTickets]; // Start with the current state
+      let newSelectedTickets = [...selectedTickets]; 
       for (let i = 0; i < data.length; i++) {
-        newSelectedTickets.push(data[i].uniqueQueryId); // Add the new elements
+        newSelectedTickets.push(data[i].uniqueQueryId); 
       }
-      setSelectedTickets(newSelectedTickets); // Update the state once with the new array
+      setSelectedTickets(newSelectedTickets); 
     } else {
-      setSelectedTickets([]); // Reset to an empty array
+      setSelectedTickets([]); 
     }
   };
 
