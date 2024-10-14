@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../axiosInstance';
+import { toast } from 'react-toastify';
+
 
 const InvoiceInfo = () => {
     const [invoices, setInvoices] = useState([]);
@@ -11,30 +13,30 @@ const InvoiceInfo = () => {
         totalPendingInvoices: null,
         totalAwaitingPaidInvoices: null,
     });
-
+    const [trackingNumber, setTrackingNumber] = useState("")
+    const [selectedTicket, setSelectedTicket] = useState("")
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     // Fetch Invoice Count Data
     useEffect(() => {
-        const fetchInvoiceData = async () => {
-            try {
-                const response = await axiosInstance.get('/invoice/invoideCOunt');
-                setInvoiceData({
-                    totalInvoices: response.data.totalInvoices,
-                    totalPaidInvoices: response.data.totalPaidInvoices,
-                    totalPendingInvoices: response.data.totalPendingInvoices,
-                    totalAwaitingPaidInvoices: response.data.totalAwaitingPaidInvoices,
-                });
-            } catch (err) {
-                setError('Failed to fetch invoice data');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchInvoiceData();
     }, []);
-
+    const fetchInvoiceData = async () => {
+        try {
+            const response = await axiosInstance.get('/invoice/invoideCOunt');
+            setInvoiceData({
+                totalInvoices: response.data.totalInvoices,
+                totalPaidInvoices: response.data.totalPaidInvoices,
+                totalPendingInvoices: response.data.totalPendingInvoices,
+                totalAwaitingPaidInvoices: response.data.totalAwaitingPaidInvoices,
+            });
+        } catch (err) {
+            setError('Failed to fetch invoice data');
+        } finally {
+            setLoading(false);
+        }
+    };
     // Fetch Invoice Details
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -82,7 +84,31 @@ const InvoiceInfo = () => {
                 return 'Invalid month';
         }
     };
-    
+
+    const openTrackingBox = (ticketId) => {
+        setSelectedTicket(ticketId)
+        document.getElementById("trackingInput").classList.add("d-flex")
+        document.getElementById("trackingInput").showModal()
+    }
+    const closeTrackingBox = () => {
+        document.getElementById("trackingInput").classList.remove("d-flex")
+        document.getElementById("trackingInput").close()
+    }
+
+    const addTrackingNumber = async (ticketId) => {
+        const response = await axiosInstance.post('/invoice/addTrackingNumber', {
+            ticketId:selectedTicket,
+            trackingNumber: trackingNumber
+        })
+       
+       if(response.data==="Tracking Number Added"){
+        
+        closeTrackingBox()
+        fetchInvoiceData()
+        toast.success(response.data)
+        setTrackingNumber("")
+       }
+    }
 
     return (
         <>
@@ -194,8 +220,8 @@ const InvoiceInfo = () => {
                                             <td>{invoice.quotedPrice}</td>
                                             <td>{invoice.lastupdateDate}</td>
                                             <td>{invoice.totalAmount}</td>
-                                            <td>{(invoice.trackingNumber && invoice.inviceStatus==="paid")?invoice.trackingNumber:<button className='bg-primary'>Add Tracking Number</button>}</td>
-                                            <td className={`${invoice.inviceStatus==='Pending'?"bg-danger":"bg-success"} d-flex justify-content-center text-white fw-bold`}>{invoice.inviceStatus}</td>
+                                            <td>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber?invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:""}</td>
+                                            <td className={`${invoice.inviceStatus === 'Pending' ? "bg-danger" : "bg-success"} d-flex justify-content-center text-white fw-bold`}>{invoice.inviceStatus}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -207,6 +233,18 @@ const InvoiceInfo = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                    <div className="text-center">
+                        <dialog id='trackingInput' className='w-100 h-100 bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                            <>
+                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeTrackingBox}>close</button></div>
+
+                                    <input type="text" value={trackingNumber} onChange={(e)=>setTrackingNumber(e.target.value)} autoFocus className='p-2 bg-white text-black ' style={{ width: "500px" }} placeholder='Enter Tracking Number' />
+                                    <button className='bg-primary text-white m-2' onClick={addTrackingNumber} >Add Tracking Number</button>
+                                </div>
+                            </>
+                        </dialog>
                     </div>
                 </div>
             </section>
