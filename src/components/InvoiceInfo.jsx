@@ -39,17 +39,18 @@ const InvoiceInfo = () => {
     };
     // Fetch Invoice Details
     useEffect(() => {
-        const fetchInvoices = async () => {
-            try {
-                const response = await axiosInstance.get("/invoice/getinvoices");
-                setInvoices(response.data);
-            } catch (error) {
-                console.error("Error fetching invoices:", error);
-                setError("Failed to fetch invoices");
-            }
-        };
         fetchInvoices();
     }, []);
+
+    const fetchInvoices = async () => {
+        try {
+            const response = await axiosInstance.get("/invoice/getinvoices");
+            setInvoices(response.data);
+        } catch (error) {
+            console.error("Error fetching invoices:", error);
+            setError("Failed to fetch invoices");
+        }
+    };
 
     if (loading) return <p className='text-center'>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -100,11 +101,10 @@ const InvoiceInfo = () => {
             ticketId:selectedTicket,
             trackingNumber: trackingNumber
         })
-       
+     
        if(response.data==="Tracking Number Added"){
-        
+        fetchInvoices()
         closeTrackingBox()
-        fetchInvoiceData()
         toast.success(response.data)
         setTrackingNumber("")
        }
@@ -200,28 +200,28 @@ const InvoiceInfo = () => {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th tabindex="0">Created Date</th>
-                                    <th tabindex="0">Ticket ID</th>
-                                    <th tabindex="0">Currency</th>
-                                    <th tabindex="0">Quoted Price</th>
-                                    <th tabindex="0">Last Update</th>
-                                    <th tabindex="0">Totel Amount</th>
-                                    <th tabindex="0">Tracking Id</th>
-                                    <th tabindex="0">Invoice Status</th>
+                                    <th tabindex="0 " className='text-center'>Created Date</th>
+                                    <th tabindex="0 " className='text-center'>Ticket ID</th>
+                                    <th tabindex="0 " className='text-center'>Currency</th>
+                                    <th tabindex="0 " className='text-center'>Quoted Price</th>
+                                    <th tabindex="0 " className='text-center'>Last Update</th>
+                                    <th tabindex="0 " className='text-center'>Totel Amount</th>
+                                    <th tabindex="0 " className='text-center'>Tracking Id</th>
+                                    <th tabindex="0 " className='text-center'>Invoice Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {invoices.length > 0 ? (
                                     invoices.map((invoice) => (
                                         <tr key={invoice.id}>
-                                            <td>{invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}</td>
-                                            <td>{invoice.ticketId}</td>
-                                            <td>{invoice.currency}</td>
-                                            <td>{invoice.quotedPrice}</td>
-                                            <td>{invoice.lastupdateDate}</td>
-                                            <td>{invoice.totalAmount}</td>
-                                            <td>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber?invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:""}</td>
-                                            <td className={`${invoice.inviceStatus === 'Pending' ? "bg-danger" : "bg-success"} d-flex justify-content-center text-white fw-bold`}>{invoice.inviceStatus}</td>
+                                            <td className='text-center'>{invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}</td>
+                                            <td className='text-center'>{invoice.ticketId}</td>
+                                            <td className='text-center'>{invoice.currency}</td>
+                                            <td className='text-center'>{invoice.quotedPrice}</td>
+                                            <td className='text-center'>{invoice.lastupdateDate}</td>
+                                            <td className='text-center'>{invoice.totalAmount}</td>
+                                            <td className='text-center'>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber?invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:""}</td>
+                                            <td className={`${invoice.inviceStatus === 'Pending' ? "text-danger" : "text-success"} text-center fw-bold`}>{invoice.inviceStatus}</td>
                                         </tr>
                                     ))
                                 ) : (
@@ -238,7 +238,7 @@ const InvoiceInfo = () => {
                         <dialog id='trackingInput' className='w-100 h-100 bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
                             <>
                                 <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeTrackingBox}>close</button></div>
+                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <i class="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{color: "#ff1900",cursor:"Pointer"}}></i></div>
 
                                     <input type="text" value={trackingNumber} onChange={(e)=>setTrackingNumber(e.target.value)} autoFocus className='p-2 bg-white text-black ' style={{ width: "500px" }} placeholder='Enter Tracking Number' />
                                     <button className='bg-primary text-white m-2' onClick={addTrackingNumber} >Add Tracking Number</button>

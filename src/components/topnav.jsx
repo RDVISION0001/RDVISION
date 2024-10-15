@@ -8,6 +8,7 @@ import FloatingButton from './FloatingButton';
 
 function topnav() {
   const { takingBreak } = useAuth()
+  const {followupState} =useAuth()
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -36,9 +37,15 @@ function topnav() {
 
 
   useEffect(() => {
+    // Check if 'workTime' and 'breakTime' exist in localStorage
+    if (localStorage.getItem("workTime") === null) {
       localStorage.setItem("workTime", 0);
+    }
+    if (localStorage.getItem("breakTime") === null) {
       localStorage.setItem("breakTime", 0);
-  }, [])
+    }
+  }, []);
+  
 
   useEffect(() => {
     if (!takingBreak) {
@@ -58,12 +65,12 @@ function topnav() {
   const [todayFollowups, setTodayFollowups] = useState(0)
   useEffect(() => {
     fetchTodayFollowups()
-  }, [])
+  }, [followupState])
   const fetchTodayFollowups = async () => {
     const response = await axiosInstance.get(`/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`)
     setTodayFollowups(response.data)
   }
-
+console.log(localStorage.getItem("workTime"))
   return (
     <>
       {localStorage.getItem("userId") &&
@@ -102,7 +109,7 @@ function topnav() {
             <FloatingButton />
           </div>
 
-          <dialog id="calender" className="calender-modal bg-light text-black">
+          <dialog id="calender" className="calender-modal bg-light text-black" style={{height:"100vh",width:"100vw"}}>
             <div className="modal-content">
               <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
               <LiveCalander />

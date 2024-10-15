@@ -24,6 +24,7 @@ import QuotationBox from '../components/QuotationBox';
 
 function live_tickets() {
   const { userId } = useAuth();
+  const {setFolowupUpdate}=useAuth()
 
   const [selectedKey, setSelectedKey] = useState(null)
 
@@ -326,6 +327,7 @@ function live_tickets() {
   };
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
     if (!uniqueQueryId) {
       setError('Unique Query ID is not defined');
@@ -346,6 +348,7 @@ function live_tickets() {
       fetchData(params[activeTab], currentPage, itemsPerPage);
       setError(null);
       setCallId(0)
+    setFolowupUpdate(uniqueQueryId)
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -754,8 +757,6 @@ function live_tickets() {
         </Modal.Body>
       </Modal>
 
-
-     // Send Quotation Mail to Customer
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
           <h1 className=" w-100 text-center" id="followUpModalLabel">

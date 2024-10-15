@@ -304,6 +304,7 @@ function users() {
       try {
         const response = await axiosInstance.get('/role/getAllRoles');
         setRole(response.data.dtoList);
+        console.log("Roles ",response.data.dtoList)
       } catch (error) {
         console.error('Error fetching roles:', error);
       }
@@ -733,6 +734,7 @@ function users() {
                         <option value="5">Senior Supervisor</option>
                         <option value="3">Captain</option>
                         <option value="4">Closer</option>
+                        <option value="6">Project Coordinator</option>
                       </select>
                     </div>
                     <div className="col-md-6">

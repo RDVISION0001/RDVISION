@@ -336,7 +336,7 @@ function Sidenav() {
         )}
 
 
-        {/* closer */}
+        {/* closer  */}
         {roleName === 'Closer' && (
           localStorage.getItem("userId") && <>
             <li className="nav-item d-flex align-items-center user-logo">
@@ -427,6 +427,33 @@ function Sidenav() {
           </>
         )}
 
+        {roleName === 'Product_Coordinator' && (
+          localStorage.getItem("userId") && <>
+                <li className="nav-item d-flex align-items-center user-logo">
+                  <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                    <img
+                      className="img-fluid rounded-circle"
+                      src={convertToImage(localStorage.getItem("imageData"))}
+                      alt="no Image"
+                      style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    />
+                  </div>
+                  <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                    {firstName} {lastName}
+                    <small className="d-block">{roleName}</small>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <NavLink to="/upload_products" className="nav-link">
+                    <i class="fa-solid fa-file"></i>
+                    <span className="nav-text">Upload Products</span>
+                  </NavLink>
+                </li>
+              </>
+        
+
+         
+        )}
         {/* captain/Manager */}
         {roleName === 'Captain' && (
           localStorage.getItem("userId") && <>

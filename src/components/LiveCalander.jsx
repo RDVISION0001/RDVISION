@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
+import { useAuth } from '../auth/AuthContext';
 
 function LiveCalander() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -9,11 +10,12 @@ function LiveCalander() {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
+  const { followupState } = useAuth()
 
   useEffect(() => {
     fetchData();
     fetchUploadedData();
-  }, []);
+  }, [followupState]);
 
   const fetchData = async () => {
     try {
@@ -71,21 +73,24 @@ function LiveCalander() {
     setCurrentDate(new Date(currentYear, currentMonth + 1));
   };
 
+  const handleDateClick = (day) => {
+    setCurrentDate(new Date(currentYear, currentMonth, day));
+  };
+
   return (
-    <div>
-      <div className="container mt-4" style={{ maxWidth: '1200px' }}>
-        <div className="text-center">
-          <h2>
+    <div className="container-fluid mt-4">
+      <div className="row">
+
+        {/* <h4>{currentDate.toLocaleString('default', { month: 'long' })} {currentYear}</h4> */}
+        <div className="d-flex justify-content-between m-3">
+          <button className="btn btn-secondary" onClick={goToPreviousMonth}>Previous</button>
+          <h2 >
             {currentDate.toLocaleString('default', { month: 'long' })} {currentYear}
           </h2>
-          <div className="d-flex justify-content-between my-3">
-            <button className="btn btn-primary" onClick={goToPreviousMonth}>
-              Previous
-            </button>
-            <button className="btn btn-primary" onClick={goToNextMonth}>
-              Next
-            </button>
-          </div>
+          <button className="btn btn-secondary" onClick={goToNextMonth}>Next</button>
+        </div>
+
+        <div className="text-center" style={{ marginTop: "50px" }}>
 
           <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
             {daysOfWeek.map((day) => (
@@ -102,42 +107,36 @@ function LiveCalander() {
 
               let highlightClass = '';
               if (isHighlighted && isUploadedHighlighted) {
-                highlightClass = 'bg-success'; // Both datasets highlight the cell
+                highlightClass = 'text-success'; // Both datasets highlight the cell
               } else if (isHighlighted) {
-                highlightClass = 'bg-danger'; // Only calenderData highlights the cell
+                highlightClass = 'text-danger'; // Only calenderData highlights the cell
               } else if (isUploadedHighlighted) {
-                highlightClass = 'bg-warning'; // Only calenderDataForUploaded highlights the cell
+                highlightClass = 'text-warning'; // Only calenderDataForUploaded highlights the cell
               }
 
               return (
-                <div key={index} className={`dateHover p-2 border text-center ${highlightClass}`}>
-                  <div className='detailsBox'>
-                    {day ? `${day}/${currentMonth + 1}/${currentYear}` : ""}
-                    <span>
-                      {isHighlighted && (
-                        <div className='text-black bg-danger px-2 rounded'>
-                          Live follow-up tickets: {ticketCount}
-                        </div>
-                      )}
-                      {isUploadedHighlighted && (
-                        <div className='text-black bg-warning px-2 rounded m-2'>
-                          ABC follow-up tickets: {uploadedTicketCount}
-                        </div>
-                      )}
-                      {!isHighlighted && !isUploadedHighlighted && (
-                        <div className='text-black bg-warning px-2 rounded m-2'>No Followup today</div>
-                      )}
-                    </span>
-
-                  </div>
-                  {day}
+                <div key={index} className={`p-2 border text-center ${highlightClass}`}
+                  style={{ minWidth: '100px', minHeight: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                  {day ? `${day}/${currentMonth + 1}/${currentYear}` : ''}
+                  {isHighlighted && (
+                    <div className="text-white bg-danger px-2 rounded">
+                      Live follow-up tickets: {ticketCount}
+                    </div>
+                  )}
+                  {isUploadedHighlighted && (
+                    <div className="text-white bg-warning px-2 rounded m-2">
+                      ABC follow-up tickets: {uploadedTicketCount}
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
+
         </div>
       </div>
     </div>
+
   );
 }
 

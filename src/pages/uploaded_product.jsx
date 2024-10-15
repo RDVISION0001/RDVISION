@@ -95,6 +95,7 @@ function UploadedProduct() {
                 composition: '',
                 treatment: '',
             })
+            fetchProducts()
         } catch (error) {
             console.error('Error adding product:', error);
         }
@@ -274,7 +275,7 @@ function UploadedProduct() {
                                                         </div>
                                                         <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
                                                             <label htmlFor="unit">Product Code</label>
-                                                            <input type="number" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" required />
+                                                            <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" required />
                                                         </div>
                                                     </div>
 

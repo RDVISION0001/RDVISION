@@ -2,7 +2,6 @@ import React from 'react';
 
 //Components
 import Cardinfo from '../components/cardinfo';
-import FloatingButton from '../components/FloatingButton';
 
 
 function indexs() {
@@ -15,9 +14,6 @@ function indexs() {
         <Cardinfo />
       </div>
 
-      <div>
-        <FloatingButton />
-      </div>
     </>
   );
 }
