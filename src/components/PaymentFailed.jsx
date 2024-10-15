@@ -24,7 +24,7 @@ const PaymentFailed = () => {
     try {
       const stripe = await stripePromise;
 
-      const response = await fetch(`https://rdvision.online/invoice/create-checkout-session/${orderid.orderid
+      const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid.orderid
         }`, {
         method: 'POST',
         headers: {
