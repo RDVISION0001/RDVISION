@@ -21,7 +21,7 @@ function Invoice(props) {
 
     // WebSocket for notifications
     useEffect(() => {
-        const socket = new SockJS('https://rdvision.online/ws');
+        const socket = new SockJS('https://rdvision.in/ws');
         const stompClient = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {

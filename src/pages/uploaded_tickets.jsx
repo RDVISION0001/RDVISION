@@ -203,7 +203,7 @@ function uploaded_tickets() {
 
   //websocket for notification
   useEffect(() => {
-    const socket = new SockJS('https://rdvision.online/ws');
+    const socket = new SockJS('https://rdvision.in/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {

@@ -88,7 +88,7 @@ const ViewInvoice = () => {
             try {
                 const stripe = await stripePromise;
 
-                const response = await fetch(`https://rdvision.online/invoice/create-checkout-session/${orderid}`, {
+                const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
