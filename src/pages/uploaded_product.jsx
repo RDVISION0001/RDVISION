@@ -321,29 +321,13 @@ function UploadedProduct() {
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Strength</label>
                                                 <div className="col-sm-9">
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="radio" name="strength" id="strength" value="5mg" onChange={handleInputChange} />
-                                                        <label className="form-check-label">5 mg</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="radio" name="strength" id="strength" value="10mg" onChange={handleInputChange} />
-                                                        <label className="form-check-label">10 mg</label>
-                                                    </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <input className="form-check-input" type="radio" name="strength" id="strength" value="50mg" onChange={handleInputChange} />
-                                                        <label className="form-check-label">50 mg</label>
-                                                    </div>
+                                                    <input type="text" className="form-control" id="strength" value={advanceData.strength} onChange={handleInputChange} placeholder="Ex - 200mg 500mg." required />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Packaging Type</label>
                                                 <div className="col-sm-9">
-                                                    <select className="form-select" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange}>
-                                                        <option defaultValue>Select Packaging Type</option>
-                                                        <option value="plastic-bottle">Plastic Bottle</option>
-                                                        <option value="blister-pack">Blister Pack</option>
-                                                        <option value="jar">Jar</option>
-                                                    </select>
+                                                    <input type="text" className="form-control" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange} placeholder="Ex - tablets, Syrup" required />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
@@ -352,7 +336,6 @@ function UploadedProduct() {
                                                     <input type="text" className="form-control" id="packagingSize" value={advanceData.packagingSize} onChange={handleInputChange} placeholder="Ex - 20 tablets, 50ml, etc." required />
                                                 </div>
                                             </div>
-
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Brand</label>
                                                 <div className="col-sm-9">

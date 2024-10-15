@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'https://crmbackend.rdvision.in/',
+  baseURL: 'https://rdvision.in',
   // baseURL:'http://localhost:8080'
 });
 
