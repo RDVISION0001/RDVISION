@@ -202,9 +202,9 @@ function InNegotiation() {
 
   // Define stages
   const stages = [
-    { name: "Stage 1", color: "#ed1c24", stage: 1 },
-    { name: "Stage 2", color: "#f7941e", stage: 2 },
-    { name: "Stage 3", color: "#8dc63f", stage: 3 },
+    { name: " Not Pickup,Not Connected,Wrong Number", color: "#ed1c24", stage: 1 },
+    { name: "Palce With Others, Followup, Call Back, Interested, Not interested", color: "#f7941e", stage: 2 },
+    { name: "Sale", color: "#8dc63f", stage: 3 },
     // { name: "Stage 4", color: "#00aeef", stage: 4 },
   ];
 
@@ -443,7 +443,52 @@ function InNegotiation() {
     console.log(`Show ticket with ID: ${uniqueQueryId}`);
   };
 
+  const convertNumberToStringMonth = (number) => {
+    switch (number) {
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Ap';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return 'Invalid month';
+    }
+  };
+  function convertTo12HourFormat(time) {
+    // Split the input time into hours, minutes, and seconds
+    let [hours, minutes, seconds] = time.split(':');
 
+    // Convert the string values to numbers
+    hours = parseInt(hours);
+
+    // Determine AM or PM based on the hour
+    let period = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert the hour from 24-hour to 12-hour format
+    hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+
+    // Return the time in 12-hour format
+    return `${hours}:${minutes}:${seconds} ${period}`;
+  }
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
@@ -527,7 +572,7 @@ function InNegotiation() {
                         position: "relative",
                         width: `calc(100% / ${stages.length})`,
                         cursor: "pointer", // Add cursor pointer to indicate it's clickable
-                        fontSize: selectedStage === stage.stage ? "40px" : "inherit", // Default to inherit if not selected
+                        fontSize:  "inherit", // Default to inherit if not selected
                         color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                       }}
                     >
@@ -547,7 +592,13 @@ function InNegotiation() {
                           boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
                         }}
                       >
-                        <div>{stage.count}</div>
+                        <div
+                         style={{
+                         
+                          fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
+                          color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                        }}
+                        >Stage :{stage.stage}</div>
                         <div>{stage.name}</div>
                       </div>
 
@@ -609,7 +660,7 @@ function InNegotiation() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th tabIndex="0">Date/Time</th>
+                        <th tabIndex="0" style={{width:"120px"}}>Date/Time</th>
                         <th tabIndex="0">Country</th>
                         <th tabIndex="0">Customer Name</th>
                         <th tabIndex="0">Customer Number</th>
@@ -635,8 +686,9 @@ function InNegotiation() {
                           <td>
                             <span className="text">
                               {nego.senderMobile
-                                ? nego.queryTime
-                                : nego.uploadDate && [nego.uploadDate[2], nego.uploadDate[1], nego.uploadDate[0]].join("-")}
+                                ? <div className='d-flex flex-column'><span className="text">{nego.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(nego.queryTime.split(" ")[0].split("-")[1]))}-{nego.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(nego.queryTime.split(" ")[1])}</span></div>
+
+                                : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
                             </span>
                           </td>
                           <td>
