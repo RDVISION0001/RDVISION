@@ -215,7 +215,7 @@ const ChartWorktime = () => {
                           <tr>
                             <td className='text-center'>{teammate.userName}</td>
                             <td className='text-center'>{teammate.count}</td>
-                            <td className={`${checkuserLive(teammate.userName)?"text-success":"text-danger"} fw-bold text-center`}>{checkuserLive(teammate.userName) ? "Live" : "Offline"}</td>
+                            <td className={`${checkuserLive(teammate.userName)?"text-success":"text-danger"} fw-bold text-center`}>{checkuserLive(teammate.userName) ? "Online" : "Offline"}</td>
                           </tr>
                         </>
                       ))
