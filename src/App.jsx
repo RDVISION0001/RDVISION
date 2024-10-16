@@ -64,6 +64,8 @@ import Indexa from './closer/indexa';
 import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
 import Usersa from './closer/usersa';
+import Ass from './closer/Ass';
+
 
 // senior_supervisor 
 import Indexss from './senior_supervisor/indexss';
@@ -197,6 +199,8 @@ function App() {
                   <Route exact path="/closer_orders" element={<Ordersa />} />
                   <Route exact path="/closer_sales" element={<Salesa />} />
                   <Route exact path="/closer_users" element={<Usersa />} />
+                  <Route exact path="/after_sales_service" element={<Ass />} />
+
 
                   {/*Senior supervisor*/}
                   <Route exact path="/senior_supervisor_index" element={<Indexss />} />

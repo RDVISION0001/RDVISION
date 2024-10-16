@@ -3,13 +3,20 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
-import { useAuth } from '../auth/AuthContext';
 import { toast } from 'react-toastify';
 import Report from './Report'
 import UserWorkTimeReport from './UserWorkTimeReport';
 import LiveCalander from '../components/LiveCalander';
+// Authentication context
+import { useAuth } from '../auth/AuthContext';
+
 
 const ChartWorktime = () => {
+  const { userId } = useAuth();
+
+  const [teammates, setTeammates] = useState([]);
+  const [liveClosers, setliveClosers] = useState([])
+
   const [timeElapsed, setTimeElapsed] = useState(0); // Working time in seconds
   const [initialWorkingTime, setInitialWorkingTime] = useState(0); // Initial working time in seconds
   const [breakTime, setBreakTime] = useState(0); // Break time in seconds
@@ -98,31 +105,47 @@ const ChartWorktime = () => {
     }
   }
 
+  useEffect(() => {
+    // Function to call the API and set the data
+    const fetchBestSellingTeammates = async () => {
+      try {
+        const response = await axiosInstance.get(`/team/bestsellingTeammates/${userId}`);
+        setTeammates(response.data); // Assuming the data is in response.data
+      } catch (error) {
+        console.error("Error fetching best selling teammates", error);
+      }
+    };
+    const fetchLiveStatus = async () => {
+      try {
+        const response = await axiosInstance.get(`/user/getLiveTeammates/${userId}`);
+        setliveClosers(response.data); // Assuming the data is in response.data
+      } catch (error) {
+        console.error("Error fetching best selling teammates", error);
+      }
+    };
+    fetchLiveStatus()
+    fetchBestSellingTeammates();
+  }, [userId]);
+  const checkuserLive = (userName) => {
+    if (liveClosers.filter((closer) => closer.firstName === userName.split(" ")[0]).length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   return (
     <section className="">
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-8">
-            <div className="graph-wrapper">
-              <div className="container-fluid m-3">
-                <LiveCalander />
-              </div>
-
-            </div>
+            <LiveCalander />
           </div>
-          <div className="col-md-4">
-            <div className="bg-white border">
-              <div className='bg-light'>
-                <div className='bg-light d-flex align-items-center justify-content-between' >
-                  <div className='d-flex flex-column px-4 bg-light'>
-                    <span style={{ fontSize: "15px", fontWeight: "semibold", color: "gray" }}>Work Tracker</span>
-                    <span>
-                      <button className='' style={{ fontSize: "12px", backgroundColor: "rgb(255, 0, 0)", padding: "1px 20px", borderRadius: "5px" }} onClick={toggleBreak}>
-                        {takingBreak ? "Continue" : "Take Break"}
-                      </button>
-                    </span>
-                  </div>
+          <div className="col-md-4 " >
+            <div className="bg-white  d-flex justify-content-center align-items-center">
+              <UserWorkTimeReport user={localStorage.getItem("userId")} isShowingToUser={true} />
+              <div className='' style={{ width: "120px" }}>
+                <div className=' d-flex flex-column align-items-center justify-content-between' >
                   <div className="position-relative d-flex align-items-center justify-content-center">
                     <svg width="160" height="160">
                       <circle
@@ -145,65 +168,62 @@ const ChartWorktime = () => {
                         transform="rotate(90 80 80)" // Start from the bottom
                       />
                     </svg>
-                    <div className="position-absolute text-center d-flex flex-column">
-                      <strong style={{ fontWeight: 'bold', fontSize: '15px' }}>{hours} : {minutes}</strong>
-                      <strong>Hrs.</strong>
+                    <div className="position-absolute text-center d-flex flex-row">
+                      <strong style={{ fontWeight: 'bold', fontSize: '10px' }}>{hours} : {minutes}</strong>
+                      <strong style={{ fontWeight: 'bold', fontSize: '10px' }}>Hrs.</strong>
                     </div>
                   </div>
-                  <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${takingBreak ? "red" : "green"}` }}></div>
+                  <div className='d-flex flex-column  bg-light'>
+                    <span style={{ fontSize: "15px", fontWeight: "semibold", color: "gray" }}>Work Tracker</span>
+                    <span>
+                      <button className='' style={{ fontSize: "12px", backgroundColor: "rgb(255, 0, 0)", padding: "1px 20px", borderRadius: "5px" }} onClick={toggleBreak}>
+                        {takingBreak ? "Continue" : "Take Break"}
+                      </button>
+                    </span>
+                  </div>
+                  {/* <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${takingBreak ? "red" : "green"}` }}></div> */}
                 </div>
                 <div className="d-flex flex-column align-items-center justify-content-center  w-100">
                   <div>
-                    <div className='d-flex mt-2 items-content-center p-1'>
-                      <p className=" " style={{ fontSize: '20px' }}><strong>{hours} : {minutes} : {seconds}</strong></p>  <span className='mx-2 ' style={{ fontSize: "20px", color: "gray" }}>| </span>
+                    <div className=' mt-2 items-content-center p-1'>
+                      <p className=" " style={{ fontSize: '20px' }}><strong>{hours} : {minutes} : {seconds}</strong></p>
                       <p className='text-danger ' style={{ fontSize: '20px' }}><strong>{breakHours} : {breakMinutes} : {breakSeconds}</strong></p>
                     </div>
                     <div className='d-flex mt-2 justify-content-center' style={{ color: "gray" }}>
-                      <p className=" " style={{ fontSize: '15px' }}>Working Hours</p>  <span className='mx-2 ' style={{ fontSize: "15px", color: "gray" }}>| </span>
+                      <p className=" " style={{ fontSize: '15px' }}>Working </p>  <span className='mx-2 ' style={{ fontSize: "15px", color: "gray" }}>| </span>
                       <p className=' ' style={{ fontSize: '15px' }}>Break</p>
                     </div>
                   </div>
                 </div>
               </div>
-
-              <UserWorkTimeReport user={localStorage.getItem("userId")} isShowingToUser={true} />
-
             </div>
             <div className="rank-card top-rankers">
-              <h3 className="heading">Best Selling Department</h3>
+              <h3 className="heading">Best Selling Closer</h3>
               <div className="table-wrapper">
                 <table className="table">
+                  <thead>
+                    <tr>
+                      <th className='text-center'>Closer Name</th>
+                      <th className='text-center'>Sales Count</th>
+                      <th className='text-center'>Status</th>
+                    </tr>
+                  </thead>
                   <tbody>
-                    <tr>
-                      <td>
-                        <div className="profile-wrapper">
-                          <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                        </div>
-                      </td>
-                      <td>Flotsam</td>
-                      <td>40k+ sales</td>
-                      <td>$1.4m revenue</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="profile-wrapper">
-                          <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                        </div>
-                      </td>
-                      <td>Flotsam</td>
-                      <td>40k+ sales</td>
-                      <td>$1.4m revenue</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="profile-wrapper">
-                          <img src="../assets/img/profiles/profile1.png" alt="profile" className="img-fluid" />
-                        </div>
-                      </td>
-                      <td>Flotsam</td>
-                      <td>40k+ sales</td>
-                      <td>$1.4m revenue</td>
-                    </tr>
+                    {teammates && teammates.length > 0 ? (
+                      teammates.map((teammate, index) => (
+                        <>
+                          <tr>
+                            <td className='text-center'>{teammate.userName}</td>
+                            <td className='text-center'>{teammate.count}</td>
+                            <td className={`${checkuserLive(teammate.userName)?"text-success":"text-danger"} fw-bold text-center`}>{checkuserLive(teammate.userName) ? "Live" : "Offline"}</td>
+                          </tr>
+                        </>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="3">No data available</td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
