@@ -18,6 +18,7 @@ function Invoice(props) {
     const [dateTimeStamp, setDatetimeStamp] = useState(null)
     const [paymentStatus, setPaymentStatus] = useState(null)
     const [selectedKey, setSelectedKeuy] = useState(null)
+    const [trackingNumber,setTrackingNumber]=useState(null)
 
     // WebSocket for notifications
     useEffect(() => {
@@ -71,6 +72,7 @@ function Invoice(props) {
                     setCurrency(response.data.orderDetails.productOrders[0].currency)
                     setDatetimeStamp(response.data.orderDetails.date)
                     setPaymentStatus(response.data.orderDetails.paymentStatus)
+                    setTrackingNumber(response.data.orderDetails.trackingNumber)
                 } catch (err) {
                     console.error('Error fetching order details:', err);
                 }
@@ -247,7 +249,7 @@ function Invoice(props) {
                                     </div>
                                 </div>
 
-                                <TrackPackage />
+                                <TrackPackage trackingNumber={trackingNumber}/>
                             </div>}
                         </div>
                     </div>

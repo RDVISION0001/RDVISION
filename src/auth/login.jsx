@@ -57,6 +57,7 @@ function login() {
       Captain: "/captain_index",
       SeniorSuperVisor: "/senior_supervisor_index",
       SuperAdmin: "/super_admin_index",
+      Product_Coordinator: "/upload_products",
     };
     if (routes[status]) navigate(routes[status]);
   };

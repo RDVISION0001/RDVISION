@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [attendanceId, setAttendanceId] = useState('');
+  const [followupState,setFolowupUpdate]=useState("null")
 
 
   const [takingBreak, setTakingBreak] = useState(false)
@@ -23,6 +24,7 @@ export const AuthProvider = ({ children }) => {
     const storedFirstName = localStorage.getItem('firstName');
     const storedLastName = localStorage.getItem('lastName');
     const storedAttendanceId = localStorage.getItem('attendanceId');
+    
 
 
     if (token) {
@@ -109,7 +111,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout,followupState,setFolowupUpdate }}>
       {children}
     </AuthContext.Provider>
 

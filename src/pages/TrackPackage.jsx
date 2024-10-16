@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from "../axiosInstance";
 
-const TrackPackage = () => {
+const TrackPackage = (props) => {
   const [packageData, setPackageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +10,7 @@ const TrackPackage = () => {
   // Fetch tracking information
   const fetchApi = async () => {
     try {
-      const response = await axiosInstance.get('/auth/track/LP070431696IN');
+      const response = await axiosInstance.get(`/auth/track/${props.trackingNumber}`);
       setPackageData(response.data.data.accepted[0]);
     } catch (err) {
       setError(err.message);
@@ -21,8 +21,8 @@ const TrackPackage = () => {
 
   useEffect(() => {
     fetchApi();
-  }, []);
-
+  }, [props.trackingNumber]);
+console.log(props.trackingNumber)
   // Function to map stage key to colors
   const getStageColor = (keyStage) => {
     switch (keyStage) {

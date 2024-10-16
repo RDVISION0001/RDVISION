@@ -932,8 +932,6 @@ function InNegotiation() {
         </Modal.Body>
       </Modal>
 
-
-      // Send Quotation Mail to Customer
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
           <h1 className=" w-100 text-center" id="followUpModalLabel">
