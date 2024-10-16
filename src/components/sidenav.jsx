@@ -411,6 +411,12 @@ function Sidenav() {
                 </ul>
               )}
               <li className="nav-item">
+                <NavLink to="/after_sales_service" className="nav-link">
+                  <i class="fa-solid fa-headphones"></i>
+                  <span className="nav-text">ASS</span>
+                </NavLink>
+              </li>
+              <li className="nav-item">
                 <NavLink to="/upload_products" className="nav-link">
                   <i class="fa-solid fa-file"></i>
                   <span className="nav-text">Upload Products</span>
