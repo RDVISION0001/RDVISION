@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Cardinfo = () => {
     const { userId } = useAuth();
@@ -11,7 +12,7 @@ const Cardinfo = () => {
         totalFollow: 0,
     });
     const [showDetails, setShowDetails] = useState(false); // State to toggle the details box
-
+    const navigate = useNavigate()
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -35,8 +36,10 @@ const Cardinfo = () => {
 
         fetchData();
     }, []);
+const nevigateToNegotiation =()=>{
+    navigate("/in_negotiation")
+}
 
-    
 
     return (
         <section className="sadmin-top-section">
@@ -99,7 +102,7 @@ const Cardinfo = () => {
                         </div>
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-3" style={{cursor:"Pointer"}} onClick={nevigateToNegotiation}>
                         <div className="card">
                             <div className="div-top">
                                 <h3 className="title">Total Follow-up</h3>

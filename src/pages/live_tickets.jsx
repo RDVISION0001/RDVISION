@@ -425,7 +425,52 @@ function live_tickets() {
 
   }
 
+  const convertNumberToStringMonth = (number) => {
+    switch (number) {
+        case 1:
+            return 'Jan';
+        case 2:
+            return 'Feb';
+        case 3:
+            return 'Mar';
+        case 4:
+            return 'Ap';
+        case 5:
+            return 'May';
+        case 6:
+            return 'June';
+        case 7:
+            return 'July';
+        case 8:
+            return 'Aug';
+        case 9:
+            return 'Sep';
+        case 10:
+            return 'Oct';
+        case 11:
+            return 'Nov';
+        case 12:
+            return 'Dec';
+        default:
+            return 'Invalid month';
+    }
+};
+function convertTo12HourFormat(time) {
+  // Split the input time into hours, minutes, and seconds
+  let [hours, minutes, seconds] = time.split(':');
 
+  // Convert the string values to numbers
+  hours = parseInt(hours);
+
+  // Determine AM or PM based on the hour
+  let period = hours >= 12 ? 'PM' : 'AM';
+
+  // Convert the hour from 24-hour to 12-hour format
+  hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+
+  // Return the time in 12-hour format
+  return `${hours}:${minutes}:${seconds} ${period}`;
+}
   return (
     <>
 
@@ -558,7 +603,7 @@ function live_tickets() {
                             onClick={() => handleSelecteRow(index)}
                           >
 
-                            <td><span className="text">{item.queryTime}</span></td>
+                            <td className='d-flex flex-column'><span className="text">{item.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-{item.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(item.queryTime.split(" ")[1])}</span></td>
                             <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
                             <td> <td>
