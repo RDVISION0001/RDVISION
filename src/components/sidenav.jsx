@@ -575,7 +575,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/senior_supervisor_to_captain" className="nav-link">
                 <i className="fa-solid fa-user"></i>
-                <span className="nav-text">To Captain</span>
+                <span className="nav-text">Team</span>
               </NavLink>
             </li>
             <li className="nav-item">
