@@ -471,10 +471,7 @@ function convertTo12HourFormat(time) {
     // Return the time in 12-hour format
     return `${hours}:${minutes}:${seconds} ${period}`;
   }
-
-  // Return the time in 12-hour format
-  return `${hours}:${minutes}:${seconds} ${period}`;
-  }else{
+  else{
     return null
   }
 }
