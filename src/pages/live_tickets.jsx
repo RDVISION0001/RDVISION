@@ -24,7 +24,7 @@ import QuotationBox from '../components/QuotationBox';
 
 function live_tickets() {
   const { userId } = useAuth();
-  const {setFolowupUpdate}=useAuth()
+  const { setFolowupUpdate } = useAuth()
 
   const [selectedKey, setSelectedKey] = useState(null)
 
@@ -129,7 +129,7 @@ function live_tickets() {
       if (params.ticketStatus === 'New') {
         const newCount = response.data.totalElement;
         if (newCount > newNotifications) {
-          playNotificationSound();
+
         }
         setNewNotifications(newCount);
       }
@@ -169,13 +169,8 @@ function live_tickets() {
       onConnect: () => {
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          if (newProduct.assigntouser === parseInt(localStorage.getItem("userId"))) {
-            playNotificationSound()
-            setData((prevProducts) => [newProduct, ...prevProducts]);
-          } else if (!newProduct.assigntouser) {
-            playNotificationSound()
-            setData((prevProducts) => [newProduct, ...prevProducts]);
-          }
+          setData((prevProducts) => [newProduct, ...prevProducts]);
+          playNotificationSound()
         });
       },
       onStompError: (frame) => {
@@ -327,7 +322,7 @@ function live_tickets() {
   };
 
   const handleSubmit = async (e) => {
-    
+
     e.preventDefault();
     if (!uniqueQueryId) {
       setError('Unique Query ID is not defined');
@@ -348,7 +343,7 @@ function live_tickets() {
       fetchData(params[activeTab], currentPage, itemsPerPage);
       setError(null);
       setCallId(0)
-    setFolowupUpdate(uniqueQueryId)
+      setFolowupUpdate(uniqueQueryId)
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -427,47 +422,55 @@ function live_tickets() {
 
   const convertNumberToStringMonth = (number) => {
     switch (number) {
-        case 1:
-            return 'Jan';
-        case 2:
-            return 'Feb';
-        case 3:
-            return 'Mar';
-        case 4:
-            return 'Ap';
-        case 5:
-            return 'May';
-        case 6:
-            return 'June';
-        case 7:
-            return 'July';
-        case 8:
-            return 'Aug';
-        case 9:
-            return 'Sep';
-        case 10:
-            return 'Oct';
-        case 11:
-            return 'Nov';
-        case 12:
-            return 'Dec';
-        default:
-            return 'Invalid month';
+      case 1:
+        return 'Jan';
+      case 2:
+        return 'Feb';
+      case 3:
+        return 'Mar';
+      case 4:
+        return 'Ap';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'Aug';
+      case 9:
+        return 'Sep';
+      case 10:
+        return 'Oct';
+      case 11:
+        return 'Nov';
+      case 12:
+        return 'Dec';
+      default:
+        return 'Invalid month';
     }
-};
+
+  };
+
 function convertTo12HourFormat(time) {
   if(time){
     // Split the input time into hours, minutes, and seconds
   let [hours, minutes, seconds] = time.split(':');
 
-  // Convert the string values to numbers
-  hours = parseInt(hours);
 
-  // Determine AM or PM based on the hour
-  let period = hours >= 12 ? 'PM' : 'AM';
+    // Convert the string values to numbers
+    hours = parseInt(hours);
 
-  // Convert the hour from 24-hour to 12-hour format
-  hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+    // Determine AM or PM based on the hour
+    let period = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert the hour from 24-hour to 12-hour format
+    hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+
+
+    // Return the time in 12-hour format
+    return `${hours}:${minutes}:${seconds} ${period}`;
+  }
 
   // Return the time in 12-hour format
   return `${hours}:${minutes}:${seconds} ${period}`;
@@ -475,6 +478,7 @@ function convertTo12HourFormat(time) {
     return null
   }
 }
+
   return (
     <>
 
@@ -540,6 +544,22 @@ function convertTo12HourFormat(time) {
                   <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                   New Tickets
                 </button>
+
+                <a
+                  className='nav-link active'
+                  id="new-arrivals-tkts-tab"
+                  data-bs-toggle="tab"
+                  data-bs-target="#new-arrivals-tkts-tab-pane"
+                  type="button"
+                  role="tab"
+                  aria-controls="new-arrivals-tkts-tab-pane"
+                  aria-selected="false"
+                  tabindex="-1"
+                  target="_blank"
+                  href="/in_negotiation"
+                >
+                  In-negotation <i class="fa-solid fa-up-right-from-square"></i>
+                </a>
                 <div class="input-group mb-3 w-50">
                   <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className="form-select" id="inputGroupSelect02">
                     <option value="">All</option>
