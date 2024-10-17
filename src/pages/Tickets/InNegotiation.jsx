@@ -474,20 +474,22 @@ function InNegotiation() {
     }
   };
   function convertTo12HourFormat(time) {
-    // Split the input time into hours, minutes, and seconds
-    let [hours, minutes, seconds] = time.split(':');
+   if(time){
+     // Split the input time into hours, minutes, and seconds
+     let [hours, minutes, seconds] = time.split(':');
 
-    // Convert the string values to numbers
-    hours = parseInt(hours);
-
-    // Determine AM or PM based on the hour
-    let period = hours >= 12 ? 'PM' : 'AM';
-
-    // Convert the hour from 24-hour to 12-hour format
-    hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
-
-    // Return the time in 12-hour format
-    return `${hours}:${minutes}:${seconds} ${period}`;
+     // Convert the string values to numbers
+     hours = parseInt(hours);
+ 
+     // Determine AM or PM based on the hour
+     let period = hours >= 12 ? 'PM' : 'AM';
+ 
+     // Convert the hour from 24-hour to 12-hour format
+     hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+ 
+     // Return the time in 12-hour format
+     return `${hours}:${minutes}:${seconds} ${period}`;
+   }
   }
   return (
     <>

@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
-
+import { Button } from 'react-bootstrap';
 
 const InvoiceInfo = () => {
     const [invoices, setInvoices] = useState([]);
-
+    const [currentSrc, setCurrentSrc] = useState('');
+    const [isPlaying, setIsPlaying] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
+    const audioRef = useRef(null);
+    const [selectedIndex,setSelectedIndex]=useState(0)
+
     const [invoiceData, setInvoiceData] = useState({
         totalInvoices: null,
         totalPaidInvoices: null,
         totalPendingInvoices: null,
         totalAwaitingPaidInvoices: null,
     });
-    const [trackingNumber, setTrackingNumber] = useState("")
-    const [selectedTicket, setSelectedTicket] = useState("")
+    const [trackingNumber, setTrackingNumber] = useState("");
+    const [selectedTicket, setSelectedTicket] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -22,6 +26,7 @@ const InvoiceInfo = () => {
     useEffect(() => {
         fetchInvoiceData();
     }, []);
+
     const fetchInvoiceData = async () => {
         try {
             const response = await axiosInstance.get('/invoice/invoideCOunt');
@@ -37,6 +42,7 @@ const InvoiceInfo = () => {
             setLoading(false);
         }
     };
+
     // Fetch Invoice Details
     useEffect(() => {
         fetchInvoices();
@@ -52,64 +58,99 @@ const InvoiceInfo = () => {
         }
     };
 
-    if (loading) return <p className='text-center'>Loading...</p>;
-    if (error) return <p>{error}</p>;
-
     const convertNumberToStringMonth = (number) => {
-        switch (number) {
-            case 1:
-                return 'January';
-            case 2:
-                return 'February';
-            case 3:
-                return 'March';
-            case 4:
-                return 'April';
-            case 5:
-                return 'May';
-            case 6:
-                return 'June';
-            case 7:
-                return 'July';
-            case 8:
-                return 'August';
-            case 9:
-                return 'September';
-            case 10:
-                return 'October';
-            case 11:
-                return 'November';
-            case 12:
-                return 'December';
-            default:
-                return 'Invalid month';
-        }
+        const monthNames = [
+            'January', 'February', 'March', 'April', 'May', 'June', 'July',
+            'August', 'September', 'October', 'November', 'December'
+        ];
+        return monthNames[number - 1] || 'Invalid month';
     };
 
     const openTrackingBox = (ticketId) => {
-        setSelectedTicket(ticketId)
-        document.getElementById("trackingInput").classList.add("d-flex")
-        document.getElementById("trackingInput").showModal()
-    }
+        setSelectedTicket(ticketId);
+        document.getElementById("trackingInput").classList.add("d-flex");
+        document.getElementById("trackingInput").showModal();
+    };
+
     const closeTrackingBox = () => {
-        document.getElementById("trackingInput").classList.remove("d-flex")
-        document.getElementById("trackingInput").close()
-    }
+        document.getElementById("trackingInput").classList.remove("d-flex");
+        document.getElementById("trackingInput").close();
+    };
 
-    const addTrackingNumber = async (ticketId) => {
-        const response = await axiosInstance.post('/invoice/addTrackingNumber', {
-            ticketId:selectedTicket,
-            trackingNumber: trackingNumber
-        })
-     
-       if(response.data==="Tracking Number Added"){
-        fetchInvoices()
-        closeTrackingBox()
-        toast.success(response.data)
-        setTrackingNumber("")
-       }
-    }
+    const addTrackingNumber = async () => {
+        try {
+            const response = await axiosInstance.post('/invoice/addTrackingNumber', {
+                ticketId: selectedTicket,
+                trackingNumber
+            });
 
+            if (response.data === "Tracking Number Added") {
+                fetchInvoices();
+                closeTrackingBox();
+                toast.success(response.data);
+                setTrackingNumber("");
+            }
+        } catch (err) {
+            toast.error('Failed to add tracking number');
+        }
+    };
+
+    const handleClick = async (ticketId) => {
+        try {
+            const response = await axiosInstance.get(`/invoice/clickToCall/${ticketId}`);
+            
+        } catch (error) {
+            console.error("Error calling ticket:", error);
+        }
+    };
+
+   
+    const playRecording = useCallback((src,index) => {
+        // Construct the new URL from src
+        setSelectedIndex(index)
+        let newUrl = `https:${src.split(":")[2].split("}")[0]}`; // Ensure proper URL formation
+        newUrl = newUrl.split(`"`)[0];
+
+        // Check if the new URL is different from the current source
+        if (currentSrc !== newUrl) {
+            // Pause the audio if it's currently playing
+            if (audioRef.current) {
+                audioRef.current.pause();
+            }
+
+            // Set the new source and play
+            audioRef.current.src = newUrl;
+            setCurrentSrc(newUrl);
+
+
+            audioRef.current.play()
+                .then(() => {
+                    setIsPlaying(true); // Update playing state on successful play
+                })
+                .catch(err => console.error("Error playing audio:", err)); // Handle any play errors
+        } else {
+            // Toggle play/pause based on current playing state
+            if (isPlaying) {
+                audioRef.current.pause();
+                setIsPlaying(false);
+            } else {
+                audioRef.current.play()
+                    .then(() => setIsPlaying(true)) // Update playing state on successful play
+                    .catch(err => console.error("Error resuming audio:", err)); // Handle any play errors
+            }
+        }
+    }, [currentSrc, isPlaying]);
+
+
+    // Move loading and error checks here, after all hooks
+    if (loading) return <p className='text-center'>Loading...</p>;
+    if (error) return <p>{error}</p>;
+
+    const setFormate = (date) => {
+        let newdate = date && (JSON.stringify(date).split("[")[1]).split("]")[0]
+        return newdate && `${newdate.split(",")[2]}-${convertNumberToStringMonth(newdate.split(",")[1])}-${newdate.split(",")[0]}`;
+    }
+  
     return (
         <>
             <section className="sadmin-top-section">
@@ -127,7 +168,7 @@ const InvoiceInfo = () => {
                                 </div>
                                 <div className="d-flex justify-content-center flex-column align-items-center">
                                     <div className="icon-wrapper">
-                                        <i className="fa-solid fa-wallet" style={{ cursor: "Pointer" }} onClick={() => setShowDetails(!showDetails)}></i>
+                                        <i className="fa-solid fa-wallet" style={{ cursor: "pointer" }} onClick={() => setShowDetails(!showDetails)}></i>
                                     </div>
                                 </div>
                                 <div
@@ -158,8 +199,8 @@ const InvoiceInfo = () => {
                         </div>
 
                         {/* Pending Invoices */}
-                        <div className="col-md-3 d-flex justify-content-between align-items-center">
-                            <div className="card d-flex justify-content-between w-100">
+                        <div className="col-md-3">
+                            <div className="card">
                                 <div className="div-top">
                                     <h3 className="title">Pending Invoices</h3>
                                     <span className="sales">
@@ -192,41 +233,67 @@ const InvoiceInfo = () => {
                 </div>
             </section>
 
-
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                        <h3 className="title">Recent Transactions</h3>
+                        <h3 className="title">Invoices for after sales service</h3>
                         <table className="table">
                             <thead>
-                                <tr>
-                                    <th tabindex="0 " className='text-center'>Created Date</th>
-                                    <th tabindex="0 " className='text-center'>Ticket ID</th>
-                                    <th tabindex="0 " className='text-center'>Currency</th>
-                                    <th tabindex="0 " className='text-center'>Quoted Price</th>
-                                    <th tabindex="0 " className='text-center'>Last Update</th>
-                                    <th tabindex="0 " className='text-center'>Totel Amount</th>
-                                    <th tabindex="0 " className='text-center'>Tracking Id</th>
-                                    <th tabindex="0 " className='text-center'>Invoice Status</th>
+                                <tr className='border'>
+                                    <th className='text-center'>Created Date</th>
+                                    <th className='text-center'>Ticket ID</th>
+                                    <th className='text-center'>Currency</th>
+                                    <th className='text-center'>Quoted Price</th>
+                                    <th className='text-center'>Last Update</th>
+                                    <th className='text-center'>Total Amount</th>
+                                    <th className='text-center'>Tracking Id</th>
+                                    <th className='text-center'>Invoice Status</th>
+                                    <th className='text-center'>Delivery Status</th>
+                                    <th className='text-center'>Last Call Status</th>
+                                    <th className='text-center'>Action</th>
+                                    <th className='text-center'>Recording</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className='overflow'>
                                 {invoices.length > 0 ? (
-                                    invoices.map((invoice) => (
-                                        <tr key={invoice.id}>
-                                            <td className='text-center'>{invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}</td>
+                                    invoices.filter((invoice)=>invoice.inviceStatus==="paid").map((invoice,index) => (
+                                        <tr key={index} className='border'>
+                                            <td className='text-center'>
+                                                {invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}
+                                            </td>
                                             <td className='text-center'>{invoice.ticketId}</td>
                                             <td className='text-center'>{invoice.currency}</td>
                                             <td className='text-center'>{invoice.quotedPrice}</td>
-                                            <td className='text-center'>{invoice.lastupdateDate}</td>
+                                            <td className='text-center'>{setFormate(invoice.lastupdateDate)}</td>
                                             <td className='text-center'>{invoice.totalAmount}</td>
-                                            <td className='text-center'>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber?invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:""}</td>
-                                            <td className={`${invoice.inviceStatus === 'Pending' ? "text-danger" : "text-success"} text-center fw-bold`}>{invoice.inviceStatus}</td>
+                                            <td className='text-center'>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:"Awaiting for Tracking..." : "Awaiting For Tracking..."}</td>
+                                            <td className={`${invoice.inviceStatus === 'Pending' ? "text-danger" : "text-success"} text-center fw-bold`}>
+                                                {invoice.inviceStatus}
+                                            </td>
+                                            <td className='text-center'>{invoice.deliveryStatus}</td>
+                                            <td className='text-center'>{invoice.assCallStatus}</td>
+                                            <td className='text-center'>
+                                                <Button
+                                                    onClick={() => handleClick(invoice.ticketId)}
+                                                    className="btn-action call rounded-circle"
+                                                    title="Get connect on call"
+                                                >
+                                                    <i className="fa-solid fa-phone"></i>
+                                                </Button>
+                                            </td>
+                                            <td className='text-center'>
+                                                <Button
+                                                    className=""
+                                                    onClick={() => playRecording(invoice.callRecording,index)}
+                                                >
+                                                    {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="7" className="text-center">
+                                        <td colSpan="11" className="text-center">
                                             No invoices found.
                                         </td>
                                     </tr>
@@ -236,21 +303,31 @@ const InvoiceInfo = () => {
                     </div>
                     <div className="text-center">
                         <dialog id='trackingInput' className='w-100 h-100 bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                            <>
-                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <i class="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{color: "#ff1900",cursor:"Pointer"}}></i></div>
-
-                                    <input type="text" value={trackingNumber} onChange={(e)=>setTrackingNumber(e.target.value)} autoFocus className='p-2 bg-white text-black ' style={{ width: "500px" }} placeholder='Enter Tracking Number' />
-                                    <button className='bg-primary text-white m-2' onClick={addTrackingNumber} >Add Tracking Number</button>
+                            <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}>
+                                    <i className="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{ color: "#ff1900", cursor: "pointer" }}></i>
                                 </div>
-                            </>
+                                <input
+                                    type="text"
+                                    value={trackingNumber}
+                                    onChange={(e) => setTrackingNumber(e.target.value)}
+                                    autoFocus
+                                    className='p-2 bg-white text-black'
+                                    style={{ width: "500px" }}
+                                    placeholder='Enter Tracking Number'
+                                />
+                                <button className='bg-primary text-white m-2' onClick={addTrackingNumber}>
+                                    Add Tracking Number
+                                </button>
+                            </div>
                         </dialog>
                     </div>
                 </div>
             </section>
 
+            {/* Hidden audio element for playing recordings */}
+            <audio ref={audioRef} style={{ display: 'none' }} />
         </>
-
     );
 };
 

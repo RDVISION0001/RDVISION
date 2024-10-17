@@ -56,48 +56,52 @@ function UploadedProduct() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = {
-            productCode: basicData.productCode,
-            name: basicData.name,
-            price: basicData.price,
-            unit: basicData.unit,
-            description: basicData.description,
-            productVideo: basicData.productVideo,
-            bruchureLink: basicData.productBrochure,
-            images: imageList,
-            composition: advanceData.composition,
-            brand: advanceData.brand,
-            treatment: advanceData.treatment,
-            packagingSize: advanceData.packagingSize,
-            strength: advanceData.strength,
-            packagingType: advanceData.packagingType,
-        };
+        if (imageList.length === 0) {
+            toast.info("Add atlist one Image ")
+        } else {
+            const payload = {
+                productCode: basicData.productCode,
+                name: basicData.name,
+                price: basicData.price,
+                unit: basicData.unit,
+                description: basicData.description,
+                productVideo: basicData.productVideo,
+                bruchureLink: basicData.productBrochure,
+                images: imageList,
+                composition: advanceData.composition,
+                brand: advanceData.brand,
+                treatment: advanceData.treatment,
+                packagingSize: advanceData.packagingSize,
+                strength: advanceData.strength,
+                packagingType: advanceData.packagingType,
+            };
 
-        try {
-            const response = await axiosInstance.post('/product/addproduct', payload);
-            console.log('Product added successfully:', response.data);
-            toast.success(" Product Added ")
-            setBasicData({
-                name: '',
-                productCode: '',
-                price: '',
-                unit: '',
-                description: '',
-                productVideo: '',
-                productBrochure: ''
-            })
-            setimageList([])
-            setAdvanceData({
-                strength: '',
-                packagingType: '',
-                packagingSize: '',
-                brand: '',
-                composition: '',
-                treatment: '',
-            })
-            fetchProducts()
-        } catch (error) {
-            console.error('Error adding product:', error);
+            try {
+                const response = await axiosInstance.post('/product/addproduct', payload);
+                console.log('Product added successfully:', response.data);
+                toast.success(" Product Added ")
+                setBasicData({
+                    name: '',
+                    productCode: '',
+                    price: '',
+                    unit: '',
+                    description: '',
+                    productVideo: '',
+                    productBrochure: ''
+                })
+                setimageList([])
+                setAdvanceData({
+                    strength: '',
+                    packagingType: '',
+                    packagingSize: '',
+                    brand: '',
+                    composition: '',
+                    treatment: '',
+                })
+                fetchProducts()
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
         }
     };
     const [imageLink, setImageLink] = useState("");
@@ -275,7 +279,7 @@ function UploadedProduct() {
                                                         </div>
                                                         <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
                                                             <label htmlFor="unit">Product Code</label>
-                                                            <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" required />
+                                                            <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" />
                                                         </div>
                                                     </div>
 
@@ -286,17 +290,17 @@ function UploadedProduct() {
                                                                 <div className="input-group-prepend">
                                                                     <span className="input-group-text">$</span>
                                                                 </div>
-                                                                <input type="number" className="form-control" id="price" value={basicData.price} onChange={handleInputChange} placeholder="Ex - ₹1000" required />
+                                                                <input type="number" className="form-control" id="price" value={basicData.price} onChange={handleInputChange} placeholder="Ex - ₹1000" />
                                                             </div>
                                                         </div>
                                                         <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
                                                             <label htmlFor="unit">- per -</label>
-                                                            <input type="text" className="form-control" id="unit" value={basicData.unit} onChange={handleInputChange} placeholder="Ex - Pair, Piece etc" required />
+                                                            <input type="text" className="form-control" id="unit" value={basicData.unit} onChange={handleInputChange} placeholder="Ex - Pair, Piece etc" />
                                                         </div>
                                                     </div>
                                                     <div className="form-group">
                                                         <label htmlFor="description">Product/Service Description</label>
-                                                        <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." required></textarea>
+                                                        <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
                                                         <small className="text-muted">0 characters (maximum of 4000) including formatting.</small>
                                                     </div>
                                                 </div>
@@ -322,19 +326,19 @@ function UploadedProduct() {
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Strength</label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="strength" value={advanceData.strength} onChange={handleInputChange} placeholder="Ex - 200mg 500mg." required />
+                                                    <input type="text" className="form-control" id="strength" value={advanceData.strength} onChange={handleInputChange} placeholder="Ex - 200mg 500mg." />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Packaging Type</label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange} placeholder="Ex - tablets, Syrup" required />
+                                                    <input type="text" className="form-control" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange} placeholder="Ex - tablets, Syrup" />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">
                                                 <label className="col-sm-3 col-form-label">Packaging Size</label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="packagingSize" value={advanceData.packagingSize} onChange={handleInputChange} placeholder="Ex - 20 tablets, 50ml, etc." required />
+                                                    <input type="text" className="form-control" id="packagingSize" value={advanceData.packagingSize} onChange={handleInputChange} placeholder="Ex - 20 tablets, 50ml, etc." />
                                                 </div>
                                             </div>
                                             <div className="row mb-3">

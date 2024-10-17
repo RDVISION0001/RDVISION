@@ -70,7 +70,6 @@ function topnav() {
     const response = await axiosInstance.get(`/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`)
     setTodayFollowups(response.data)
   }
-console.log(localStorage.getItem("workTime"))
   return (
     <>
       {localStorage.getItem("userId") &&
