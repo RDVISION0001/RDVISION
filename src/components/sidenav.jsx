@@ -165,7 +165,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets <i class="fa-solid fa-circle-chevron-down" style={{color: "#06327f"}}></i></span>
               </div>
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
@@ -272,7 +272,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}> <span>Tickets</span> <i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
@@ -301,7 +301,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleInvoiceSubMenu}>
                 <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices <i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
@@ -362,7 +362,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
@@ -391,7 +391,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleInvoiceSubMenu}>
                 <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
@@ -492,7 +492,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
@@ -521,7 +521,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleInvoiceSubMenu}>
                 <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
@@ -581,7 +581,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
@@ -610,7 +610,7 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleInvoiceSubMenu}>
                 <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices<i class="fa-solid fa-caret-down fa-2xl" style={{color: "#8d8b8b"}}></i></span>
               </div>
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">

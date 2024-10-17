@@ -449,10 +449,14 @@ function live_tickets() {
       default:
         return 'Invalid month';
     }
+
   };
-  function convertTo12HourFormat(time) {
+
+function convertTo12HourFormat(time) {
+  if(time){
     // Split the input time into hours, minutes, and seconds
-    let [hours, minutes, seconds] = time.split(':');
+  let [hours, minutes, seconds] = time.split(':');
+
 
     // Convert the string values to numbers
     hours = parseInt(hours);
@@ -463,9 +467,18 @@ function live_tickets() {
     // Convert the hour from 24-hour to 12-hour format
     hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
 
+
     // Return the time in 12-hour format
     return `${hours}:${minutes}:${seconds} ${period}`;
   }
+
+  // Return the time in 12-hour format
+  return `${hours}:${minutes}:${seconds} ${period}`;
+  }else{
+    return null
+  }
+}
+
   return (
     <>
 
