@@ -174,204 +174,205 @@ function UploadedProduct() {
     return (
         <div>
             {/* Toggle between Basic and Advance Details */}
-            <section className="filter-section">
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="container mt-4">
-                            <div className="card">
-                                <div className="text-white d-flex">
-                                    <button className={`${isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(true)}>Basic Details</button>
-                                    <button className={`${!isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(false)}>Advance Details</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Conditionally render based on the state */}
-            {isBasicActive ? (
+            {localStorage.getItem("roleName")==="Product_Coordinator" && <>
                 <section className="filter-section">
                     <div className="container-fluid">
                         <div className="row">
                             <div className="container mt-4">
                                 <div className="card">
+                                    <div className="text-white d-flex">
+                                        <button className={`${isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(true)}>Basic Details</button>
+                                        <button className={`${!isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(false)}>Advance Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-                                    <div className="card-body">
-                                        <form onSubmit={handleSubmit}>
-                                            <div className="row">
-                                                <div className="col-md-5 col-sm-12">
-                                                    <div className="text-center">
-                                                        <div className="container">
-                                                            <div className="row row-cols-3">
-                                                                <div className="col">
-                                                                    {[...Array(5)].map((_, index) => (
-                                                                        <div key={index} className="form-group mb-1">
-                                                                            <label className="border rounded d-flex justify-content-center align-items-center" style={{ height: '50px', width: "50px", cursor: 'pointer' }}>
-                                                                                {imageList[index + 1] ? <img src={imageList[index + 1]} style={{ maxHeight: "50px" }} /> : <FaCamera size={10} onClick={openLinkInput} />
-                                                                                } </label>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                                <div className="col d-flex justify-content-center align-items-center">
-                                                                    <div className="form-group mb-3">
-                                                                        <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '200px', width: "200px", cursor: 'pointer' }}>
+                {/* Conditionally render based on the state */}
+                {isBasicActive ? (
+                    <section className="filter-section">
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="container mt-4">
+                                    <div className="card">
 
-                                                                            {imageList[0] ? <img src={imageList[0]} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
-                                                                            }
-                                                                        </label>
-                                                                        <div className='d-flex justify-content-between mt-2'>
-                                                                            <div className="form-group">
-                                                                                <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
-                                                                                    {basicData.productVideo.length > 0 ? "Added" : <i className="fa fa-video" aria-hidden="true" onClick={openVideoInput}></i>}
-                                                                                </label>
+                                        <div className="card-body">
+                                            <form onSubmit={handleSubmit}>
+                                                <div className="row">
+                                                    <div className="col-md-5 col-sm-12">
+                                                        <div className="text-center">
+                                                            <div className="container">
+                                                                <div className="row row-cols-3">
+                                                                    <div className="col">
+                                                                        {[...Array(5)].map((_, index) => (
+                                                                            <div key={index} className="form-group mb-1">
+                                                                                <label className="border rounded d-flex justify-content-center align-items-center" style={{ height: '50px', width: "50px", cursor: 'pointer' }}>
+                                                                                    {imageList[index + 1] ? <img src={imageList[index + 1]} style={{ maxHeight: "50px" }} /> : <FaCamera size={10} onClick={openLinkInput} />
+                                                                                    } </label>
                                                                             </div>
-                                                                            <div className="form-group">
-                                                                                <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
-                                                                                    {basicData.productBrochure.length > 0 ? "Added" : <i className="fa fa-file-pdf" aria-hidden="true" onClick={openPdfInput}></i>}
-                                                                                </label>
+                                                                        ))}
+                                                                    </div>
+                                                                    <div className="col d-flex justify-content-center align-items-center">
+                                                                        <div className="form-group mb-3">
+                                                                            <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '200px', width: "200px", cursor: 'pointer' }}>
+
+                                                                                {imageList[0] ? <img src={imageList[0]} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
+                                                                                }
+                                                                            </label>
+                                                                            <div className='d-flex justify-content-between mt-2'>
+                                                                                <div className="form-group">
+                                                                                    <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
+                                                                                        {basicData.productVideo.length > 0 ? "Added" : <i className="fa fa-video" aria-hidden="true" onClick={openVideoInput}></i>}
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div className="form-group">
+                                                                                    <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '58px', width: "90px", cursor: 'pointer' }}>
+                                                                                        {basicData.productBrochure.length > 0 ? "Added" : <i className="fa fa-file-pdf" aria-hidden="true" onClick={openPdfInput}></i>}
+                                                                                    </label>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                            <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                                <>
+                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
+
+                                                                        <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
+                                                                        <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
+                                                                    </div>
+                                                                </>
+                                                            </dialog>
+                                                            <dialog id='videoLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                                <>
+                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closevideoInput}>close</button></div>
+
+                                                                        <input name='productVideo' type="text" value={basicData.productVideo} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                                                                        <button className='bg-primary text-white m-2' onClick={closevideoInput}>Add Image</button>
+                                                                    </div>
+                                                                </>
+                                                            </dialog>
+                                                            <dialog id='pdfLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                                                                <>
+                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closePdfInput}>close</button></div>
+
+                                                                        <input type="text" name='productBrochure' value={basicData.productBrochure} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                                                                        <button className='bg-primary text-white m-2' onClick={closePdfInput}>Add Image</button>
+                                                                    </div>
+                                                                </>
+                                                            </dialog>
                                                         </div>
-                                                        <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                            <>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
-
-                                                                    <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
-                                                                    <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
-                                                                </div>
-                                                            </>
-                                                        </dialog>
-                                                        <dialog id='videoLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                            <>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closevideoInput}>close</button></div>
-
-                                                                    <input name='productVideo' type="text" value={basicData.productVideo} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
-                                                                    <button className='bg-primary text-white m-2' onClick={closevideoInput}>Add Image</button>
-                                                                </div>
-                                                            </>
-                                                        </dialog>
-                                                        <dialog id='pdfLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                            <>
-                                                                <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closePdfInput}>close</button></div>
-
-                                                                    <input type="text" name='productBrochure' value={basicData.productBrochure} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
-                                                                    <button className='bg-primary text-white m-2' onClick={closePdfInput}>Add Image</button>
-                                                                </div>
-                                                            </>
-                                                        </dialog>
                                                     </div>
-                                                </div>
 
-                                                <div className="col-md-7 col-sm-12">
-                                                    <div className="d-flex">
-                                                        <div className="form-group col-md-6 col-sm-12">
-                                                            <label htmlFor="price">Product Name</label>
-                                                            <div className="input-group">
-                                                                <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
+                                                    <div className="col-md-7 col-sm-12">
+                                                        <div className="d-flex">
+                                                            <div className="form-group col-md-6 col-sm-12">
+                                                                <label htmlFor="price">Product Name</label>
+                                                                <div className="input-group">
+                                                                    <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
+                                                                </div>
+                                                            </div>
+                                                            <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
+                                                                <label htmlFor="unit">Product Code</label>
+                                                                <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" />
                                                             </div>
                                                         </div>
-                                                        <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
-                                                            <label htmlFor="unit">Product Code</label>
-                                                            <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" />
-                                                        </div>
-                                                    </div>
 
-                                                    <div className="d-flex">
-                                                        <div className="form-group col-md-6 col-sm-12">
-                                                            <label htmlFor="price">Price</label>
-                                                            <div className="input-group">
-                                                                <div className="input-group-prepend">
-                                                                    <span className="input-group-text">$</span>
+                                                        <div className="d-flex">
+                                                            <div className="form-group col-md-6 col-sm-12">
+                                                                <label htmlFor="price">Price</label>
+                                                                <div className="input-group">
+                                                                    <div className="input-group-prepend">
+                                                                        <span className="input-group-text">$</span>
+                                                                    </div>
+                                                                    <input type="number" className="form-control" id="price" value={basicData.price} onChange={handleInputChange} placeholder="Ex - ₹1000" />
                                                                 </div>
-                                                                <input type="number" className="form-control" id="price" value={basicData.price} onChange={handleInputChange} placeholder="Ex - ₹1000" />
+                                                            </div>
+                                                            <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
+                                                                <label htmlFor="unit">- per -</label>
+                                                                <input type="text" className="form-control" id="unit" value={basicData.unit} onChange={handleInputChange} placeholder="Ex - Pair, Piece etc" />
                                                             </div>
                                                         </div>
-                                                        <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
-                                                            <label htmlFor="unit">- per -</label>
-                                                            <input type="text" className="form-control" id="unit" value={basicData.unit} onChange={handleInputChange} placeholder="Ex - Pair, Piece etc" />
+                                                        <div className="form-group">
+                                                            <label htmlFor="description">Product/Service Description</label>
+                                                            <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
+                                                            <small className="text-muted">0 characters (maximum of 4000) including formatting.</small>
                                                         </div>
                                                     </div>
-                                                    <div className="form-group">
-                                                        <label htmlFor="description">Product/Service Description</label>
-                                                        <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
-                                                        <small className="text-muted">0 characters (maximum of 4000) including formatting.</small>
-                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="text-right mt-3 d-flex justify-content-end">
-                                                <button className="btn btn-success" type="submit" onClick={() => setBasicActive(false)}>Save and Continue →</button>
-                                            </div>
-                                        </form>
+                                                <div className="text-right mt-3 d-flex justify-content-end">
+                                                    <button className="btn btn-success" type="submit" onClick={() => setBasicActive(false)}>Save and Continue →</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-            ) : (
-                <section className="filter-section">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <div className="container mt-4">
-                                <div className="card">
-                                    <div className="card-body">
-                                        <form onSubmit={handleSubmit}>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Strength</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="strength" value={advanceData.strength} onChange={handleInputChange} placeholder="Ex - 200mg 500mg." />
+                    </section>
+                ) : (
+                    <section className="filter-section">
+                        <div className="container-fluid">
+                            <div className="row">
+                                <div className="container mt-4">
+                                    <div className="card">
+                                        <div className="card-body">
+                                            <form onSubmit={handleSubmit}>
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Strength</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="strength" value={advanceData.strength} onChange={handleInputChange} placeholder="Ex - 200mg 500mg." />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Packaging Type</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange} placeholder="Ex - tablets, Syrup" />
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Packaging Type</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="packagingType" value={advanceData.packagingType} onChange={handleInputChange} placeholder="Ex - tablets, Syrup" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Packaging Size</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="packagingSize" value={advanceData.packagingSize} onChange={handleInputChange} placeholder="Ex - 20 tablets, 50ml, etc." />
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Packaging Size</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="packagingSize" value={advanceData.packagingSize} onChange={handleInputChange} placeholder="Ex - 20 tablets, 50ml, etc." />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Brand</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="brand" value={advanceData.brand} onChange={handleInputChange} placeholder="Ex - XYZ Brand" />
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Brand</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="brand" value={advanceData.brand} onChange={handleInputChange} placeholder="Ex - XYZ Brand" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Composition</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="composition" value={advanceData.composition} onChange={handleInputChange} placeholder="Ex - ABC composition" />
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Composition</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="composition" value={advanceData.composition} onChange={handleInputChange} placeholder="Ex - ABC composition" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row mb-3">
-                                                <label className="col-sm-3 col-form-label">Treatment</label>
-                                                <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="treatment" value={advanceData.treatment} onChange={handleInputChange} placeholder="Ex - ABC treatment" />
+                                                <div className="row mb-3">
+                                                    <label className="col-sm-3 col-form-label">Treatment</label>
+                                                    <div className="col-sm-9">
+                                                        <input type="text" className="form-control" id="treatment" value={advanceData.treatment} onChange={handleInputChange} placeholder="Ex - ABC treatment" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="text-right mt-3 d-flex justify-content-end">
-                                                <button className="btn btn-success" type="submit">Add Product</button>
-                                            </div>
-                                        </form>
+                                                <div className="text-right mt-3 d-flex justify-content-end">
+                                                    <button className="btn btn-success" type="submit">Add Product</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                </section>
-            )}
-
+                    </section>
+                )}
+            </>}
             {/* productb table list */}
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
@@ -393,7 +394,7 @@ function UploadedProduct() {
                                                 <th tabindex="0">Composition</th>
                                                 <th tabindex="0">Brand</th>
                                                 <th tabindex="0">Treatment</th>
-                                                <th tabindex="0">Action</th>
+                                                {localStorage.getItem("roleName")==="Product_Coordinator" &&<th tabindex="0">Action</th>}
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -414,7 +415,7 @@ function UploadedProduct() {
                                                         <td><span className="text">{product.composition}</span></td>
                                                         <td><span className="text">{product.brand}</span></td>
                                                         <td><span className="text">{product.treatment}</span></td>
-                                                        <td>
+                                                        {localStorage.getItem("roleName")==="Product_Coordinator" && <td>
                                                             <span className="actions-wrapper">
                                                                 <i
                                                                     className="fa-solid fa-trash fa-2xl"
@@ -422,7 +423,7 @@ function UploadedProduct() {
                                                                     onClick={() => handleDeleteProduct(product.productId)}
                                                                 ></i>
                                                             </span>
-                                                        </td>
+                                                        </td>}
                                                     </tr>
                                                 ))
                                             ) : (
