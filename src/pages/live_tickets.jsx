@@ -159,7 +159,7 @@ function live_tickets() {
 
   //websocket for notification
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://rdvision.in/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
@@ -605,28 +605,31 @@ function live_tickets() {
                                 {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
                                 {item.queryTime.split(" ")[0].split("-")[0]}
                               </span>
-                              <br/>
+                              <br />
                               <span>
                                 {convertTo12HourFormat(item.queryTime.split(" ")[1])}
                               </span>
-                            </td>                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                            </td>
+                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
-                            <td> <td>
+                            <td>
                               <CopyToClipboard
                                 text={item.senderMobile}
                                 onCopy={() => setCopied(true)}
                               >
                                 <button>Copy</button>
                               </CopyToClipboard>
-                            </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
-                            <td> <td>
+                              <span className="text">{maskMobileNumber(item.senderMobile)}</span>
+                            </td>
+
+                            <td>
                               <CopyToClipboard
                                 text={item.senderEmail}
-                                onCopy={() => setCopied(true)}
-                              >
+                                onCopy={() => setCopied(true)}  >
                                 <button>Copy</button>
                               </CopyToClipboard>
-                            </td><span className="text">{maskEmail(item.senderEmail)}</span></td>
+                              <span className="text">{maskEmail(item.senderEmail)}</span>
+                            </td>
 
                             <td onClick={() => handleShow(item.uniqueQueryId)} >
                               <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
