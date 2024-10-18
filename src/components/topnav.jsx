@@ -4,11 +4,12 @@ import TimezoneClocks from './TimezoneClocks';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
 import FloatingButton from './FloatingButton';
+import Enotebook from './Enotebook';
 // import TimeZone from './TimeZone';
 
 function topnav() {
   const { takingBreak } = useAuth()
-  const {followupState} =useAuth()
+  const { followupState } = useAuth()
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -16,12 +17,19 @@ function topnav() {
       dialog.showModal();
     }
   };
-
+  const handleOpenNote = () => {
+    const dialog = document.getElementById("notebook");
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
   //handle close Calender
   const handleClose = () => {
     const dialog = document.getElementById("calender");
+    const note = document.getElementById("notebook")
     if (dialog) {
       dialog.close();
+      note.close()
     }
   };
 
@@ -45,7 +53,7 @@ function topnav() {
       localStorage.setItem("breakTime", 0);
     }
   }, []);
-  
+
 
   useEffect(() => {
     if (!takingBreak) {
@@ -81,12 +89,22 @@ function topnav() {
             </div>
             <TimezoneClocks />
             <div className="right-part">
+
+
+
+            </div>
+            <div className="right-part">
               <div className="global-search">
                 <i className="fa-solid fa-magnifying-glass"></i>
                 <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
               </div>
+
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i className="fa-solid fa-calendar-days fa-xl pointer" onClick={handleOpenCalender}></i>
+                <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
+                
+              </a>
+              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
+                <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{
                   height: "32px",
                   width: "32px",
@@ -107,13 +125,70 @@ function topnav() {
           <div>
             <FloatingButton />
           </div>
-
-          <dialog id="calender" className="calender-modal bg-light text-black" style={{height:"100vh",width:"100vw"}}>
-            <div className="modal-content">
-              <i className="fa-solid fa-times fa-xl pointer close-icon" onClick={handleClose}></i>
+          <dialog
+            id="calender"
+            className="noteebook-modal bg-light text-black"
+            style={{
+              height: "80vh",
+              width: "80vw",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              border: "none",
+              borderRadius: "8px",
+              padding: "5px"
+            }}
+          >
+            <div className="modal-content" style={{ width: "100%", height: "100%" }}>
+              <i
+                className="fa-solid fa-times fa-xl pointer close-icon"
+                onClick={handleClose}
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  cursor: "pointer"
+                }}
+              ></i>
               <LiveCalander />
             </div>
           </dialog>
+
+          <dialog
+            id="notebook"
+            className="noteebook-modal bg-light text-black"
+            style={{
+              height: "70vh",
+              width: "70vw",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              border: "none",
+              borderRadius: "8px",
+              padding: "5px"
+            }}
+          >
+            <div className="modal-content" style={{ width: "100%", height: "100%" }}>
+              <i
+                className="fa-solid fa-times fa-xl pointer close-icon"
+                onClick={handleClose}
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  cursor: "pointer"
+                }}
+              ></i>
+              <Enotebook />
+            </div>
+          </dialog>
+
         </div>}
     </>
   );

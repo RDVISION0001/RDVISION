@@ -60,6 +60,7 @@ function uploaded_tickets() {
   const [files, setFiles] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
   const [callId, setCallId] = useState(0)
+  const { setFolowupUpdate } = useAuth()
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -377,6 +378,7 @@ function uploaded_tickets() {
       toast.success('Update successfully!');
       handleClose();
       fetchData(params[activeTab], currentPage, itemsPerPage);
+      setFolowupUpdate(uniqueQueryId)
       setError(null);
     } catch (err) {
       setError(err.message);
