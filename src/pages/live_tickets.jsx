@@ -159,7 +159,7 @@ function live_tickets() {
 
   //websocket for notification
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://rdvision.in/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
