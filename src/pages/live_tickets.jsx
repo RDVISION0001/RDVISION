@@ -129,7 +129,7 @@ function live_tickets() {
       if (params.ticketStatus === 'New') {
         const newCount = response.data.totalElement;
         if (newCount > newNotifications) {
-
+         
         }
         setNewNotifications(newCount);
       }
@@ -159,7 +159,7 @@ function live_tickets() {
 
   //websocket for notification
   useEffect(() => {
-    const socket = new SockJS('https://rdvision.in/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
@@ -169,8 +169,9 @@ function live_tickets() {
       onConnect: () => {
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          setData((prevProducts) => [newProduct, ...prevProducts]);
           playNotificationSound()
+          setData((prevProducts) => [newProduct, ...prevProducts]);
+          setSelectedKey((prevKey) => prevKey + 1);
         });
       },
       onStompError: (frame) => {
@@ -190,7 +191,6 @@ function live_tickets() {
 
   const handleSelecteRow = (index) => {
     setSelectedKey(index)
-    console.log(selectedKey)
   }
 
 
@@ -449,33 +449,25 @@ function live_tickets() {
       default:
         return 'Invalid month';
     }
-
   };
+  function convertTo12HourFormat(time) {
+    if (time) {
+      // Split the input time into hours, minutes, and seconds
+      let [hours, minutes, seconds] = time.split(':');
 
-function convertTo12HourFormat(time) {
-  if(time){
-    // Split the input time into hours, minutes, and seconds
-  let [hours, minutes, seconds] = time.split(':');
+      // Convert the string values to numbers
+      hours = parseInt(hours);
 
+      // Determine AM or PM based on the hour
+      let period = hours >= 12 ? 'PM' : 'AM';
 
-    // Convert the string values to numbers
-    hours = parseInt(hours);
+      // Convert the hour from 24-hour to 12-hour format
+      hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
 
-    // Determine AM or PM based on the hour
-    let period = hours >= 12 ? 'PM' : 'AM';
-
-    // Convert the hour from 24-hour to 12-hour format
-    hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
-
-
-    // Return the time in 12-hour format
-    return `${hours}:${minutes}:${seconds} ${period}`;
+      // Return the time in 12-hour format
+      return `${hours}:${minutes}:${seconds} ${period}`;
+    }
   }
-  else{
-    return null
-  }
-}
-
   return (
     <>
 
@@ -541,22 +533,6 @@ function convertTo12HourFormat(time) {
                   <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                   New Tickets
                 </button>
-
-                <a
-                  className='nav-link active'
-                  id="new-arrivals-tkts-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#new-arrivals-tkts-tab-pane"
-                  type="button"
-                  role="tab"
-                  aria-controls="new-arrivals-tkts-tab-pane"
-                  aria-selected="false"
-                  tabindex="-1"
-                  target="_blank"
-                  href="/in_negotiation"
-                >
-                  In-negotation <i class="fa-solid fa-up-right-from-square"></i>
-                </a>
                 <div class="input-group mb-3 w-50">
                   <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className="form-select" id="inputGroupSelect02">
                     <option value="">All</option>

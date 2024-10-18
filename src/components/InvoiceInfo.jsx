@@ -282,12 +282,12 @@ const InvoiceInfo = () => {
                                                 </Button>
                                             </td>
                                             <td className='text-center'>
-                                                <Button
+                                               {invoice.callRecording? <Button
                                                     className=""
                                                     onClick={() => playRecording(invoice.callRecording,index)}
                                                 >
                                                     {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
-                                                </Button>
+                                                </Button>:"Recording not Available"}
                                             </td>
                                         </tr>
                                     ))
