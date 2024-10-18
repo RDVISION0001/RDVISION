@@ -365,7 +365,6 @@ function Sidenav() {
                 <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
                 <i className={`fa-solid ${isTicketSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
               </div>
-
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
@@ -381,8 +380,7 @@ function Sidenav() {
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">
-                        ABC
-                        <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                        ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
                           {uploadedTickets.totalAssignTickets}
                         </span>
                       </span>
@@ -392,8 +390,7 @@ function Sidenav() {
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">
-                        In-Negotiation
-                        <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                        In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
                           {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
                         </span>
                       </span>

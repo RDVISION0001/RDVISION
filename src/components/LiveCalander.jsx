@@ -79,24 +79,24 @@ function LiveCalander() {
             events={events}
             startAccessor="start"
             endAccessor="end"
-            views={['day', 'week', 'month']} // Enable day, week, and month views
-            defaultView="month" // Default to month view
-            view={currentView} // Set current view based on state
-            onView={(view) => setCurrentView(view)} // Handle view change
+            views={['day', 'week', 'month']}
+            defaultView="month"
+            view={currentView}
+            onView={(view) => setCurrentView(view)}
             style={{ height: '100%' }}
             eventPropGetter={(event) => {
               let style = {};
               if (event.type === 'live') {
-                style = { backgroundColor: '#f44336', color: 'white' }; // Red for live tickets
+                style = { backgroundColor: '#f44336', color: 'white' };
               } else if (event.type === 'uploaded') {
-                style = { backgroundColor: '#ff9800', color: 'white' }; // Orange for uploaded tickets
+                style = { backgroundColor: '#ff9800', color: 'white' };
               }
               return { style };
             }}
-            onSelectEvent={(event) => alert(event.title)} // Show alert with event details
-            timeslots={2} // Configures the number of time slots per hour
-            step={30} // Sets each time slot to represent 30-minute intervals
-            showMultiDayTimes // Displays multi-day events with start and end times
+            onSelectEvent={(event) => alert(event.title)}
+            timeslots={2}
+            step={30}
+            showMultiDayTimes
           />
         </div>
       </div>

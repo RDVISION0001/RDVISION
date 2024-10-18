@@ -71,17 +71,26 @@ const Enotebook = () => {
   };
 
   return (
-    <div className="container mt-4" style={{overflow:"scroll"}}>
-      <h1 className="mb-4 text-center" style={{ color: "#183e81" }}>E-NoteBook</h1>
-
-      {/* Note Input Form */}
-      <div className='text-center mb-3'>
-        <span className='rounded-circle border border-primary' style={{ height: "100px", width: "100px", padding: "8px", cursor: "pointer" }}>
-          {!isOpened 
+    <div className="container mt-4" style={{ overflowY: "scroll" }}>
+      <div className='text-center mb-3 d-flex justify-content-around'>
+        <h3 className="mb-4 text-left" style={{ color: "#183e81" }}>E-NoteBook</h3>
+        <span
+          className='rounded-circle border border-primary'
+          style={{
+            height: "50px",
+            width: "50px",
+            padding: "8px",
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+          {!isOpened
             ? <i className="fa-solid fa-plus fa-2xl" onClick={() => setIsOpened(true)} style={{ color: "#183e81" }}></i>
             : <i className="fa-solid fa-chevron-up fa-2xl" onClick={() => setIsOpened(false)} style={{ color: "#1f4fa3" }}></i>}
         </span>
       </div>
+
 
       {isOpened && (
         <div className="card p-4 mb-4 shadow">
@@ -119,7 +128,6 @@ const Enotebook = () => {
       )}
 
       {/* Display Added Notes */}
-      <h2 className="text-center">Your Notes:</h2>
       {notes.length === 0 ? (
         <p className="text-muted text-center">No notes added yet!</p>
       ) : (
