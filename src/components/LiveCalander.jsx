@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+// Initialize localizer for moment
+const localizer = momentLocalizer(moment);
 
 function LiveCalander() {
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [calenderData, setCalenderData] = useState([]);
   const [calenderDataForUploaded, setCalenderDataForuploaded] = useState([]);
-  const [viewType, setViewType] = useState('month'); // State to manage the view type
-
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
+  const [events, setEvents] = useState([]);
+  const [currentView, setCurrentView] = useState('month'); // Default view is "month"
   const { followupState } = useAuth();
 
   useEffect(() => {
@@ -36,175 +38,66 @@ function LiveCalander() {
     }
   };
 
-  const getHighlightedDates = () => {
-    const ticketMap = new Map(
-      calenderData.map(item => [new Date(item.date).toDateString(), item['no of tickets']])
-    );
-    return ticketMap;
+  // Combine both calendar data and uploaded data into events array
+  useEffect(() => {
+    const combinedEvents = [
+      ...calenderData.map((item) => ({
+        title: `Live Follow-up: ${item['no of tickets']}`,
+        start: new Date(item.date),
+        end: new Date(item.date),
+        allDay: false, // Respect time slots
+        type: 'live',
+      })),
+      ...calenderDataForUploaded.map((item) => ({
+        title: `ABC Follow-up: ${item['no of tickets']}`,
+        start: new Date(item.date),
+        end: new Date(item.date),
+        allDay: false,
+        type: 'uploaded',
+      })),
+    ];
+    setEvents(combinedEvents);
+  }, [calenderData, calenderDataForUploaded]);
+
+  // Handle view change (Today, Week, Month)
+  const handleViewChange = (view) => {
+    setCurrentView(view);
   };
 
-  const getUploadedHighlightedDates = () => {
-    const uploadedMap = new Map(
-      calenderDataForUploaded.map(item => [new Date(item.date).toDateString(), item['no of tickets']])
-    );
-    return uploadedMap;
-  };
-
-  const highlightedDates = getHighlightedDates();
-  const uploadedHighlightedDates = getUploadedHighlightedDates();
-
-  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-
-  const calendarDays = [];
-
-  const renderCalendarDays = () => {
-    const daysToRender = [];
-    const today = new Date();
-
-    if (viewType === 'day') {
-      daysToRender.push(today.getDate());
-    } else if (viewType === 'workingWeek') {
-      const weekStart = new Date(currentDate);
-      weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1); // Set to Monday
-      for (let i = 0; i < 7; i++) { // Only push 5 days (Monday to Friday)
-        const dayToRender = new Date(weekStart);
-        dayToRender.setDate(weekStart.getDate() + i);
-        daysToRender.push(dayToRender.getDate());
-      }
-    } else if (viewType === 'week') {
-      const weekStartFull = new Date(currentDate);
-      weekStartFull.setDate(currentDate.getDate() - currentDate.getDay()); // Set to Sunday
-      for (let i = 0; i < 7; i++) {
-        const dayToRender = new Date(weekStartFull);
-        dayToRender.setDate(weekStartFull.getDate() + i);
-        daysToRender.push(dayToRender.getDate());
-      }
-    } else {
-      for (let i = 1; i <= daysInMonth; i++) {
-        daysToRender.push(i);
-      }
-    }
-
-    return daysToRender.map((day, index) => {
-      const dateString = day ? new Date(currentYear, currentMonth, day).toDateString() : '';
-      const isHighlighted = dateString && highlightedDates.has(dateString);
-      const isUploadedHighlighted = dateString && uploadedHighlightedDates.has(dateString);
-
-      const ticketCount = isHighlighted ? highlightedDates.get(dateString) : 0;
-      const uploadedTicketCount = isUploadedHighlighted ? uploadedHighlightedDates.get(dateString) : 0;
-
-      let highlightClass = '';
-      if (isHighlighted && isUploadedHighlighted) {
-        highlightClass = 'text-success'; // Both datasets highlight the cell
-      } else if (isHighlighted) {
-        highlightClass = 'text-danger'; // Only calenderData highlights the cell
-      } else if (isUploadedHighlighted) {
-        highlightClass = 'text-warning'; // Only calenderDataForUploaded highlights the cell
-      }
-
-      return (
-        <div key={index} className={`p-2 border text-center ${highlightClass}`}
-          style={{ minWidth: '100px', minHeight: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          {day ? `${day}/${currentMonth + 1}/${currentYear}` : ''}
-          {isHighlighted && (
-            <div className="text-white bg-danger px-2 rounded">
-              Live follow-up tickets: {ticketCount}
-            </div>
-          )}
-          {isUploadedHighlighted && (
-            <div className="text-white bg-warning px-2 rounded m-2">
-              ABC follow-up tickets: {uploadedTicketCount}
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
-
-  const goToPreviousMonth = () => {
-    setCurrentDate(new Date(currentYear, currentMonth - 1));
-  };
-
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(currentYear, currentMonth + 1));
-  };
-
-  const handleDateClick = (day) => {
-    setCurrentDate(new Date(currentYear, currentMonth, day));
-  };
-
-  const handleViewChange = (type) => {
-    setViewType(type);
-    const today = new Date();
-    switch (type) {
-      case 'day':
-        setCurrentDate(today);
-        break;
-      case 'workingWeek':
-        const weekStart = new Date(today);
-        weekStart.setDate(today.getDate() - today.getDay() + 1); // Set to Monday
-        setCurrentDate(weekStart);
-        break;
-      case 'week':
-        const weekStartFull = new Date(today);
-        weekStartFull.setDate(today.getDate() - today.getDay()); // Set to Sunday
-        setCurrentDate(weekStartFull);
-        break;
-      case 'month':
-        setCurrentDate(today);
-        break;
-      default:
-        break;
-    }
+  // Move to today's date
+  const goToToday = () => {
+    handleViewChange('day');
   };
 
   return (
     <div className="container-fluid mt-4">
       <div className="row">
-
-        <div className="d-flex justify-content-between m-3">
-          <button className="btn btn-secondary" onClick={goToPreviousMonth}>Previous</button>
-          <h2>
-            {currentDate.toLocaleString('default', { month: 'long' })} {currentYear}
-          </h2>
-          <button className="btn btn-secondary" onClick={goToNextMonth}>Next</button>
-        </div>
-
-        <div className="d-flex justify-content-around mb-4">
-          <button
-            className={`btn ${viewType === 'day' ? 'bg-success text-white shadow-xl transform active:translate-y-1 transition-all' : 'btn-primary shadow-lg'} rounded`}
-            onClick={() => handleViewChange('day')}
-          >
-            Day
-          </button>
-          <button
-            className={`btn ${viewType === 'workingWeek' ? 'bg-success text-white shadow-xl transform active:translate-y-1 transition-all' : 'btn-primary shadow-lg'} rounded`}
-            onClick={() => handleViewChange('workingWeek')}
-          >
-            Working Week
-          </button>
-          <button
-            className={`btn ${viewType === 'week' ? 'bg-success text-white shadow-xl transform active:translate-y-1 transition-all' : 'btn-primary shadow-lg'} rounded`}
-            onClick={() => handleViewChange('week')}
-          >
-            Week
-          </button>
-          <button
-            className={`btn ${viewType === 'month' ? 'bg-success text-white shadow-xl transform active:translate-y-1 transition-all' : 'btn-primary shadow-lg '} rounded`}
-            onClick={() => handleViewChange('month')}
-          >
-            Month
-          </button>
-        </div>
-
-        <div className="text-center" style={{ marginTop: "50px" }}>
-          <div className="grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
-            {daysOfWeek.map((day) => (
-              <div key={day} className="font-weight-bold">{day}</div>
-            ))}
-            {renderCalendarDays()}
-          </div>
+        {/* Calendar */}
+        <div style={{ height: '80vh', width: '100%' }}>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            views={['day', 'week', 'month']} // Enable day, week, and month views
+            defaultView="month" // Default to month view
+            view={currentView} // Set current view based on state
+            onView={(view) => setCurrentView(view)} // Handle view change
+            style={{ height: '100%' }}
+            eventPropGetter={(event) => {
+              let style = {};
+              if (event.type === 'live') {
+                style = { backgroundColor: '#f44336', color: 'white' }; // Red for live tickets
+              } else if (event.type === 'uploaded') {
+                style = { backgroundColor: '#ff9800', color: 'white' }; // Orange for uploaded tickets
+              }
+              return { style };
+            }}
+            onSelectEvent={(event) => alert(event.title)} // Show alert with event details
+            timeslots={2} // Configures the number of time slots per hour
+            step={30} // Sets each time slot to represent 30-minute intervals
+            showMultiDayTimes // Displays multi-day events with start and end times
+          />
         </div>
       </div>
     </div>
