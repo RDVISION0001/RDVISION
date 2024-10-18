@@ -71,7 +71,7 @@ const Enotebook = () => {
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4" style={{overflow:"scroll"}}>
       <h1 className="mb-4 text-center" style={{ color: "#183e81" }}>E-NoteBook</h1>
 
       {/* Note Input Form */}
