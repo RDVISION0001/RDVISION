@@ -129,8 +129,8 @@ function topnav() {
             id="calender"
             className="noteebook-modal bg-light text-black"
             style={{
-              height: "85%",
-              width: "85%",
+              height: "80vh",
+              width: "80vw",
               alignItems: "center",
               justifyContent: "center",
               position: "fixed",

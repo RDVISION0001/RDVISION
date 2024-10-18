@@ -129,7 +129,7 @@ function live_tickets() {
       if (params.ticketStatus === 'New') {
         const newCount = response.data.totalElement;
         if (newCount > newNotifications) {
-         
+
         }
         setNewNotifications(newCount);
       }
@@ -159,7 +159,7 @@ function live_tickets() {
 
   //websocket for notification
   useEffect(() => {
-    const socket = new SockJS('https://rdvision.in/ws');
+    const socket = new SockJS('http://localhost:8080/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
@@ -599,9 +599,17 @@ function live_tickets() {
                             }}
                             onClick={() => handleSelecteRow(index)}
                           >
-
-                            <td className='d-flex flex-column'><span className="text">{item.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-{item.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(item.queryTime.split(" ")[1])}</span></td>
-                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                            <td>
+                              <span className="text">
+                                {item.queryTime.split(" ")[0].split("-")[2]}-
+                                {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
+                                {item.queryTime.split(" ")[0].split("-")[0]}
+                              </span>
+                              <br/>
+                              <span>
+                                {convertTo12HourFormat(item.queryTime.split(" ")[1])}
+                              </span>
+                            </td>                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
                             <td> <td>
                               <CopyToClipboard
@@ -611,7 +619,6 @@ function live_tickets() {
                                 <button>Copy</button>
                               </CopyToClipboard>
                             </td><span className="text">{maskMobileNumber(item.senderMobile)}</span></td>
-
                             <td> <td>
                               <CopyToClipboard
                                 text={item.senderEmail}
