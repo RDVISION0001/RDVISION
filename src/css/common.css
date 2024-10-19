@@ -500,3 +500,26 @@
   .progress-bar {
     background-color: #28a745;
   }
+
+
+  .hover-cell {
+    position: relative;
+  }
+  
+  .message {
+    visibility: hidden;
+    position: absolute;
+    background-color: #f9f9f9; /* Light background for the message */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    top: -10%; /* Position below the td */
+    left: 10%;
+    z-index: 1;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+  
+  .hover-cell:hover .message {
+    visibility: visible;
+  }
+  

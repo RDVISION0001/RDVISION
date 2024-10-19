@@ -682,8 +682,10 @@ function uploaded_tickets() {
                                 {item.ticketstatus}
                               </a>
                             </td>
-                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
-
+                            <td className="hover-cell"><span className="comment">{item.productEnquiry.slice(0,15)}<br />
+                            <span className="message">{item.productEnquiry}</span>
+                            </span></td>
+                           
                             <td>
                               <span className="actions-wrapper">
                                 <Button

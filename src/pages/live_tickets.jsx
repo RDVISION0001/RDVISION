@@ -638,7 +638,14 @@ function live_tickets() {
                               </a>
                             </td>
 
-                            <td><span className="comment">{item.subject}<br /></span></td>
+                            <td className="hover-cell">
+                              <span className="comment">{item.subject.slice(15, 30)}<br /></span>
+
+                              {/* Hidden message span that will show on hover */}
+                              <span className="message">{item.subject}</span>
+                            </td>
+
+                            {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
 
                             <td>
                               <span className="actions-wrapper">
