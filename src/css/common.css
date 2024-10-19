@@ -523,3 +523,6 @@
     visibility: visible;
   }
   
+  .custom-modal-width .modal-dialog {
+    max-width: 80%; /* Set modal width to 80% of the screen */
+}

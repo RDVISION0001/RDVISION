@@ -6,7 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import UserReport from '../components/UserReport';
 
 
-function toCaptain() {
+function toCaptain(props) {
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -160,14 +160,11 @@ function toCaptain() {
     }
   };
 
+  console.log("Props user Id is ",props.userId)
 
   return (
     <>
-      <section className="data-table-bgs_02x24 py-3">
-        <div className="container-fluid">
-          <UserReport />
-        </div>
-      </section>
+     
 
 
       <section className="data-table-bgs_02x24 py-3">

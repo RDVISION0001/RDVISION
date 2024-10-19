@@ -717,7 +717,7 @@ function InNegotiation() {
                               </a>
                             </div>
                           </td>
-                          <td  className="hover-cell"><span className="comment">{nego.queryProductName.slice(0,10) || nego.productEnquiry.slice(0,10)}</span>
+                          <td  className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0,10)) || (nego.productEnquiry && nego.productEnquiry.slice(0,10))}</span>
                             <span className="message">{nego.queryProductName || nego.productEnquiry}</span>
                           </td>
                           {selectedStage === 2 && <td><span className="text">{nego.followupDateTime && [nego.followupDateTime[2], nego.followupDateTime[1], nego.followupDateTime[0]].join("-")}/{nego.followupDateTime ? nego.followupDateTime[3] : ""}:{nego.followupDateTime ? nego.followupDateTime[4] : ""}</span></td>
