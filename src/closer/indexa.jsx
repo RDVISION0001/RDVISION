@@ -4,7 +4,7 @@ import React from 'react';
 import Cardinfo from '../components/cardinfo';
 import TaskProgress from '../components/TaskProgress';
 import ChartWorktime from '../components/ChartWorktime';
-import LiveCalander from '../components/LiveCalander';
+import TicketHouse from '../components/TicketHouse';
 
 
 function indexa() {
@@ -15,6 +15,10 @@ function indexa() {
     <>
       <div className="container-fluid mt-3">
         <Cardinfo />
+      </div>
+
+      <div className="container-fluid mt-3">
+        <TicketHouse />
       </div>
 
       <div className="container-fluid mt-3">

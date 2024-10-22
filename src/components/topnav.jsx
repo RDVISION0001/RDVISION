@@ -134,16 +134,7 @@ function topnav() {
             </div>
             <TimezoneClocks />
             <div className="right-part">
-
-
-
-            </div>
-            <div className="right-part">
-              <div className="global-search">
-                <i className="fa-solid fa-magnifying-glass"></i>
-                <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
-              </div>
-                <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+              <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-ticket fa-2xl pointer"></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{
                   height: "32px",
@@ -160,7 +151,7 @@ function topnav() {
               </a>
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
-                
+
               </a>
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>

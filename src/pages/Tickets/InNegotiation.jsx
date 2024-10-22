@@ -209,7 +209,8 @@ function InNegotiation() {
     { name: " Not Pickup,Not Connected,Wrong Number", color: "#ed1c24", stage: 1 },
     { name: "Palce With Others, Followup, Call Back, Interested, Not interested", color: "#f7941e", stage: 2 },
     { name: "Sale", color: "#8dc63f", stage: 3 },
-    // { name: "Stage 4", color: "#00aeef", stage: 4 },
+    { name: "ASS", color: "#00aeef", stage: 4 },
+    { name: "Tracking", color: "#d6009b", stage: 5 },
   ];
 
   // Fetch data from API
