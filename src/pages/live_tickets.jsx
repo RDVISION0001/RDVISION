@@ -63,7 +63,7 @@ function live_tickets() {
   const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
   const [filterdate, setFilterDate] = useState(null)
-
+  const { noOfNweticketsRecevied,setNoOfnewticketsReceived } = useAuth()
   const [countryFilter, setCountryFilter] = useState(null)
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -169,7 +169,6 @@ function live_tickets() {
       onConnect: () => {
         stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
           const newProduct = JSON.parse(message.body);
-          playNotificationSound()
           setData((prevProducts) => [newProduct, ...prevProducts]);
           setSelectedKey((prevKey) => prevKey + 1);
         });
@@ -572,6 +571,7 @@ function live_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
+                      <th tabindex="0">S.No.</th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -599,6 +599,7 @@ function live_tickets() {
                             }}
                             onClick={() => handleSelecteRow(index)}
                           >
+                            <td>{index+1}.</td>
                             <td>
                               <span className="text">
                                 {item.queryTime.split(" ")[0].split("-")[2]}-

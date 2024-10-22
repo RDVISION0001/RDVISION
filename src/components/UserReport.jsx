@@ -13,10 +13,14 @@ const UserReport = () => {
     const [showModal, setShowModal] = useState(false); // State to control modal visibility
     const [loading, setLoading] = useState(false); // State to handle loading text
     const [fetchingUsers, setFetchingUsers] = useState(true); // Loading state for fetchUsers
+    const [todayCalls, setTodayCalls] = useState([])
+    const [totalCalls, setTotalCalls] = useState([])
     const [Closer, setCloser] = useState("")
     useEffect(() => {
         fetchUsers();
         fetchNoOfAssigned();
+        fetchNoIfCallsTotal()
+        fetChNoOfCallsToday()
     }, []);
 
     const fetchUsers = async () => {
@@ -42,6 +46,34 @@ const UserReport = () => {
         }
     };
 
+    const fetChNoOfCallsToday = async () => {
+        const response = await axiosInstance.get(`/user/getnoofCallsToday`);
+        setTodayCalls(response.data)
+    }
+
+    const fetchNoIfCallsTotal = async () => {
+        const response = await axiosInstance.get("/user/getnoofCallsTotal")
+        setTotalCalls(response.data)
+    }
+
+    function getUsersCallToday(username) {
+        for (let i = 0; i < todayCalls.length; i++) {
+            if (todayCalls[i][0].toLowerCase() === username.toLowerCase()) {
+                return todayCalls[i][1]; // Return the count for the matching username
+            }
+        }
+        return 0; // Return 0 if the username is not found
+    }
+
+
+    function getTotalCallOfUser(username) {
+        for (let i = 0; i < totalCalls.length; i++) {
+            if (totalCalls[i][0].toLowerCase() === username.toLowerCase()) {
+                return totalCalls[i][1]; // Return the count for the matching username
+            }
+        }
+        return 0; // Return 0 if the username is not found
+    }
     // Function to convert byte code to image URL
     function convertToImage(imageString) {
         if (!imageString) return null;
@@ -61,7 +93,7 @@ const UserReport = () => {
     };
 
     // Function to open the modal and set the selected user
-    const openModal = (userId,user) => {
+    const openModal = (userId, user) => {
         setSelectedUser(userId);
         setCloser(user)
         setShowModal(true); // Show the modal
@@ -69,8 +101,10 @@ const UserReport = () => {
 
     // Function to close the modal
     const closeModal = () => {
+
         setShowModal(false); // Hide the modal
         setSelectedUser(0); // Reset selected user
+        fetchNoOfAssigned()
     };
 
     return (
@@ -114,14 +148,29 @@ const UserReport = () => {
                                             <span style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", marginTop: "5px" }}>
                                                 Today Assigned: {findNoOfAssignedTicketsToUser(user.userId)}
                                             </span>
-                                            <span className='text-primary ' onClick={() => openModal(user.userId,user.firstName)} style={{ cursor: "pointer" }}>Assign more....</span>
+                                            <span className='text-primary mb-3 ' onClick={() => openModal(user.userId, user.firstName)} style={{ cursor: "pointer" }}>Assign more....</span>
                                         </div>
                                     ) : (
-                                        <button style={{ backgroundColor: "rgb(15,7,76)" }} onClick={() => openModal(user.userId,user.firstName)}>
+                                        <button style={{ backgroundColor: "rgb(15,7,76)" }} onClick={() => openModal(user.userId, user.firstName)}>
                                             Assign Now
                                         </button>
                                     )}
                                 </div>
+                                <div class="d-flex justify-content-between border">
+                                    <div className=" p-3 me-2" style={{ minWidth: '120px' }}>
+                                        <h5 className="card-title">Total Calls</h5>
+                                        <span className="badge bg-success fw-bold text-white">
+                                            {getTotalCallOfUser(user.firstName)}
+                                        </span>
+                                    </div>
+                                    <div className=" p-3" style={{ minWidth: '120px' }}>
+                                        <h5 className="card-title">Today Calls</h5>
+                                        <span className="badge bg-info fw-bold text-white">
+                                            {getUsersCallToday(user.firstName)}
+                                        </span>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     ))

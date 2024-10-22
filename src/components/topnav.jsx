@@ -5,11 +5,17 @@ import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
 import FloatingButton from './FloatingButton';
 import Enotebook from './Enotebook';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { toast } from 'react-toastify';
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+
 // import TimeZone from './TimeZone';
 
 function topnav() {
   const { takingBreak } = useAuth()
   const { followupState } = useAuth()
+  const { noOfNweticketsRecevied,setNoOfnewticketsReceived } = useAuth()
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -33,6 +39,45 @@ function topnav() {
     }
   };
 
+  //websocket for notification
+  useEffect(() => {
+    const socket = new SockJS('https://rdvision.in/ws');
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      debug: (str) => {
+        console.log("Message string is " < str);
+
+      },
+      onConnect: () => {
+        stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
+          const newProduct = JSON.parse(message.body);
+          toast.info("New Ticket Recevived")
+          setNoOfnewticketsReceived(prevCount => prevCount + 1);
+          playNotificationSound()
+          // setData((prevProducts) => [newProduct, ...prevProducts]);
+          // setSelectedKey((prevKey) => prevKey + 1);
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+    });
+
+    stompClient.activate();
+
+    return () => {
+      if (stompClient) {
+        stompClient.deactivate();
+      }
+    };
+  }, []);
+
+
+  const playNotificationSound = () => {
+    const audio = new Audio(R2ZWYCP);
+    audio.play();
+  };
   //working time api
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
@@ -98,7 +143,21 @@ function topnav() {
                 <i className="fa-solid fa-magnifying-glass"></i>
                 <input type="text" name="search" id="globalSearch" className="form-control" placeholder="Search" />
               </div>
-
+                <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+                <i className="fa-solid fa-ticket fa-2xl pointer"></i>
+                <span className='bg-danger text-white rounded-circle text-center' style={{
+                  height: "32px",
+                  width: "32px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "absolute",
+                  top: "-20px",
+                  right: "-20px"
+                }}>
+                  {noOfNweticketsRecevied}
+                </span>
+              </a>
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
                 

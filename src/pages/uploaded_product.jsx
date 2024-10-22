@@ -399,9 +399,9 @@ function UploadedProduct() {
                                         </thead>
                                         <tbody>
                                             {products.length > 0 ? (
-                                                products.map((product) => (
+                                                products.map((product,index) => (
                                                     <tr>
-                                                        <td><span className="text">1.</span></td>
+                                                        <td><span className="text">{index+1}.</span></td>
                                                         <td><span className="text">{product.productCode}</span></td>
                                                         <td><span className="text">{product.name}</span></td>
                                                         <td>

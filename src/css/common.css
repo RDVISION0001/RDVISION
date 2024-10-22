@@ -510,13 +510,15 @@
     visibility: hidden;
     position: absolute;
     background-color: #f9f9f9; /* Light background for the message */
+    width: 250px;
     padding: 5px;
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     border-radius: 5px;
     top: -10%; /* Position below the td */
-    left: 10%;
+    left: 40%;
     z-index: 1;
-    white-space: nowrap; /* Prevent text wrapping */
+    white-space: wrap; /* Prevent text wrapping */
+    
   }
   
   .hover-cell:hover .message {
