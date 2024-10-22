@@ -15,6 +15,7 @@ import QuotationBox from '../../components/QuotationBox';
 function InNegotiation() {
 
   const [selectedKey, setSelectedKey] = useState(null)
+  const { setFolowupUpdate } = useAuth()
 
   const [list, setlist] = useState(true)
   const [ticketData, setTicketData] = useState([]);
@@ -90,10 +91,12 @@ function InNegotiation() {
       };
       const res = await axiosInstance.post(`/${uniqueQueryId.length < 15 ? "third_party_api/ticket" : "upload"}/updateTicketResponse/${uniqueQueryId}`, {}, { params }); setResponse(res.data.dtoList);
       toast.success('Update successfully!');
+      setFolowupUpdate(uniqueQueryId)
       handleClose();
       fetchData(params[activeTab], currentPage, negosPerPage);
       setError(null);
       setCallId(0)
+
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -104,6 +107,7 @@ function InNegotiation() {
       fetchDatas3()
     }
     setDropedinStage(null)
+
   };
 
   // Update handleStatusChange function
@@ -474,23 +478,46 @@ function InNegotiation() {
     }
   };
   function convertTo12HourFormat(time) {
-   if(time){
-     // Split the input time into hours, minutes, and seconds
-     let [hours, minutes, seconds] = time.split(':');
+    if (time) {
+      // Split the input time into hours, minutes, and seconds
+      let [hours, minutes, seconds] = time.split(':');
 
-     // Convert the string values to numbers
-     hours = parseInt(hours);
- 
-     // Determine AM or PM based on the hour
-     let period = hours >= 12 ? 'PM' : 'AM';
- 
-     // Convert the hour from 24-hour to 12-hour format
-     hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
- 
-     // Return the time in 12-hour format
-     return `${hours}:${minutes}:${seconds} ${period}`;
-   }
+      // Convert the string values to numbers
+      hours = parseInt(hours);
+
+      // Determine AM or PM based on the hour
+      let period = hours >= 12 ? 'PM' : 'AM';
+
+      // Convert the hour from 24-hour to 12-hour format
+      hours = hours % 12 || 12; // Use 12 for 0 (midnight) and 12 (noon)
+
+      // Return the time in 12-hour format
+      return `${hours}:${minutes}:${seconds} ${period}`;
+    }
   }
+
+  const formatLocalDateTime = (localDateTimeArray) => {
+    // Destructure the input array into individual date components
+    const [year, month, day, hours, minutes] = localDateTimeArray;
+
+    // Define month names in a short form (JAN, FEB, etc.)
+    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+    // Determine AM or PM
+    const period = hours >= 12 ? 'PM' : 'AM';
+
+    // Convert hours from 24-hour format to 12-hour format
+    const formattedHours = hours % 12 || 12;
+
+    // Format minutes to always have two digits
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+
+    // Construct the formatted date string
+    const formattedDate = `${day}-${monthNames[month - 1]}-${year} ${formattedHours}:${formattedMinutes} ${period}`;
+
+    return formattedDate;
+  };
+
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
@@ -574,7 +601,7 @@ function InNegotiation() {
                         position: "relative",
                         width: `calc(100% / ${stages.length})`,
                         cursor: "pointer", // Add cursor pointer to indicate it's clickable
-                        fontSize:  "inherit", // Default to inherit if not selected
+                        fontSize: "inherit", // Default to inherit if not selected
                         color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                       }}
                     >
@@ -595,11 +622,11 @@ function InNegotiation() {
                         }}
                       >
                         <div
-                         style={{
-                         
-                          fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
-                          color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
-                        }}
+                          style={{
+
+                            fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
+                            color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                          }}
                         >Stage :{stage.stage}</div>
                         <div>{stage.name}</div>
                       </div>
@@ -662,7 +689,8 @@ function InNegotiation() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                        <th tabIndex="0" style={{width:"120px"}}>Date/Time</th>
+                        <th tabIndex="0" >S.No.</th>
+                        <th tabIndex="0" style={{ width: "120px" }}>Date/Time</th>
                         <th tabIndex="0">Country</th>
                         <th tabIndex="0">Customer Name</th>
                         <th tabIndex="0">Customer Number</th>
@@ -685,6 +713,7 @@ function InNegotiation() {
                           }}
                           onClick={() => handleSelecteRow(index)}
                         >
+                          <td>{index + 1}.</td>
                           <td>
                             <span className="text">
                               {nego.senderMobile
@@ -717,8 +746,10 @@ function InNegotiation() {
                               </a>
                             </div>
                           </td>
-                          <td><span className="comment">{nego.queryProductName || nego.productEnquiry}</span></td>
-                          {selectedStage === 2 && <td><span className="text">{nego.followupDateTime && [nego.followupDateTime[2], nego.followupDateTime[1], nego.followupDateTime[0]].join("-")}/{nego.followupDateTime ? nego.followupDateTime[3] : ""}:{nego.followupDateTime ? nego.followupDateTime[4] : ""}</span></td>
+                          <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
+                            <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
+                          </td>
+                          {selectedStage === 2 && <td><span className="text">{nego.followupDateTime ? formatLocalDateTime(nego.followupDateTime) : ""}</span></td>
                           }
                           <td>{nego.comment}</td>
                           <td>

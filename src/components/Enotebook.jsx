@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 const Enotebook = () => {
   const [notes, setNotes] = useState([]); // State to store all notes
   const [isOpened, setIsOpened] = useState(false);
+  const [searchValue, setSearchValue] = useState(""); // State for search input
   const [noteDetails, setNoteDetails] = useState({
     title: "",
     noteContent: "",
@@ -70,6 +71,14 @@ const Enotebook = () => {
     return formattedDate;
   };
 
+  // Filtering logic
+  const filteredNotes = notes.filter((note) => {
+    if (searchValue.length > 1) {
+      return note.title.toLowerCase().includes(searchValue.toLowerCase());
+    }
+    return true; // Return all notes if searchValue length is 1 or less
+  });
+
   return (
     <div className="container mt-4" style={{ overflowY: "scroll" }}>
       <div className='text-center mb-3 d-flex justify-content-around'>
@@ -127,12 +136,24 @@ const Enotebook = () => {
         </div>
       )}
 
-      {/* Display Added Notes */}
-      {notes.length === 0 ? (
-        <p className="text-muted text-center">No notes added yet!</p>
+      {/* Search Input */}
+      <div className='d-flex flex-column' style={{ marginBottom: "5px" }}>
+        <label htmlFor="searchInput">Search By Title</label>
+        <input
+          type="text"
+          id="searchInput"
+          onChange={(e) => setSearchValue(e.target.value)} // Corrected input change
+          className='border p-2 w-50 bg-white text-black'
+          placeholder='Enter text to search'
+        />
+      </div>
+
+      {/* Display Notes */}
+      {filteredNotes.length === 0 ? (
+        <p className="text-muted text-center">No notes found!</p>
       ) : (
         <div className="row">
-          {notes.slice().reverse().map((note) => (
+          {filteredNotes.slice().reverse().map((note) => (
             <div className="col-md-4 mb-3" key={note.noteId}>
               <div className="card shadow" style={{ borderRadius: "10px" }}>
                 <div className="card-body">

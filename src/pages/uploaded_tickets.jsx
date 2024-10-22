@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 
@@ -56,7 +54,7 @@ function uploaded_tickets() {
   const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
   const [user, setUser] = useState([])
   const [productArray, setProductArray] = useState([]);
-  const [showAlltickets, setShowAllTiuckets] = useState(false)
+  const [showAlltickets, setShowAllTiuckets] = useState(localStorage.getItem("roleName"))
   const [files, setFiles] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
   const [callId, setCallId] = useState(0)
@@ -84,15 +82,15 @@ function uploaded_tickets() {
   //hnadling multiple selection
   const handleMultipleTicketSelection = (e) => {
     setSelectedTickets([])
-    const checked = e.target.checked; 
+    const checked = e.target.checked;
     if (checked) {
-      let newSelectedTickets = [...selectedTickets]; 
+      let newSelectedTickets = [...selectedTickets];
       for (let i = 0; i < data.length; i++) {
-        newSelectedTickets.push(data[i].uniqueQueryId); 
+        newSelectedTickets.push(data[i].uniqueQueryId);
       }
-      setSelectedTickets(newSelectedTickets); 
+      setSelectedTickets(newSelectedTickets);
     } else {
-      setSelectedTickets([]); 
+      setSelectedTickets([]);
     }
   };
 
@@ -141,25 +139,35 @@ function uploaded_tickets() {
   };
 
   const fetchData = async (params, page, perPage) => {
-    try {
-      const response = await axiosInstance.get(`/upload/getByDate/${selectedDate ? selectedDate : ""}`, {
-        params: { ...params, page, size: perPage }
-      });
+    if (localStorage.getItem("roleName") !== "Closer") {
+      try {
+        const response = await axiosInstance.get(`/upload/getByDate/${selectedDate ? selectedDate : ""}`, {
+          params: { ...params, page, size: perPage }
+        });
+        setData(response.data.dtoList);
+        setCurrentPage(response.data.currentPage);
+        setTotalPages(response.data.totalPages);
+
+        // Update notification count based on totalElement
+        if (params.ticketStatus === 'New') {
+          const newCount = response.data.totalElement;
+          if (newCount > newNotifications) {
+            playNotificationSound();
+          }
+          setNewNotifications(newCount);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    } else {
+      const response = await axiosInstance.get("upload/getAssignedTickets", {
+        params: { ...params, userId, page, size: perPage }
+      })
       setData(response.data.dtoList);
       setCurrentPage(response.data.currentPage);
       setTotalPages(response.data.totalPages);
-
-      // Update notification count based on totalElement
-      if (params.ticketStatus === 'New') {
-        const newCount = response.data.totalElement;
-        if (newCount > newNotifications) {
-          playNotificationSound();
-        }
-        setNewNotifications(newCount);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
     }
+
   };
 
   //click to call
@@ -201,38 +209,6 @@ function uploaded_tickets() {
   const handleShortDataValue = (e) => {
     setShortValue(e.target.value)
   }
-
-  //websocket for notification
-  useEffect(() => {
-    const socket = new SockJS('https://rdvision.in/ws');
-    const stompClient = new Client({
-      webSocketFactory: () => socket,
-      debug: (str) => {
-        console.log("Message string is " < str);
-
-      },
-      onConnect: () => {
-        stompClient.subscribe('/topic/third_party_api/ticket/', (message) => {
-          const newProduct = JSON.parse(message.body);
-          playNotificationSound()
-          setData((prevProducts) => [newProduct, ...prevProducts]);
-        });
-      },
-      onStompError: (frame) => {
-        console.error('Broker reported error: ' + frame.headers['message']);
-        console.error('Additional details: ' + frame.body);
-      },
-    });
-
-    stompClient.activate();
-
-    return () => {
-      if (stompClient) {
-        stompClient.deactivate();
-      }
-    };
-  }, []);
-
 
   // Masking mobile number
   const maskMobileNumber = (mobileNumber) => {
@@ -338,6 +314,10 @@ function uploaded_tickets() {
     axiosInstance.get(`/upload/filesByDate`).then((resp) => {
       setFiles(resp.data.response)
     })
+
+    if (localStorage.getItem("roleName" === "Closer")) {
+      fetchData()
+    }
   }, [])
 
   //Open file
@@ -510,7 +490,7 @@ function uploaded_tickets() {
     <>
 
       {/* <!-- Tabbed Ticket Table --> */}
-      <section className="card-body m-3">
+      {localStorage.getItem("roleName") !== "Closer" && <section className="card-body m-3">
         <div className="row ">
           {files.map((file, index) => (
             <div className="col-12 col-md-8 col-lg-6 col-xl-4 mb-3" onClick={() => setDateToOpenFile(file)}>
@@ -526,234 +506,238 @@ function uploaded_tickets() {
             </div>
           ))}
         </div>
-      </section>
+      </section>}
       {/* //Filter input */}
-      {showAlltickets && <section class="filter-section">
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-5">
-              <div className="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
-                <div className="search-icon">
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                </div>
-              </div>
-            </div>
-            {
-              activeTab === "followUp" && <div className="col-md-5">
-                <div className="search-wrapper d-flex justify-content-center align-items-center">
-                  <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+      {showAlltickets &&
+        <section class="filter-section">
+          <div className="container-fluid">
+            <div className="row">
+              <div className="col-md-5">
+                <div className="search-wrapper">
+                  <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
                   <div className="search-icon">
                     <i className="fa-solid fa-magnifying-glass"></i>
                   </div>
-                  <i
-                    className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
-                    onClick={() => setFilterDate(null)}
-                  ></i>
                 </div>
               </div>
-            }
-          </div>
-        </div>
-      </section>}
-      {showAlltickets ? <section className="followup-table-section py-3">
-        <div className="container-fluid">
-          <div className="table-wrapper tabbed-table">
-            <h3 className="title">Uploaded Tickets</h3>
-            <div className="d-flex justify-content-between align-items-center">
-              {localStorage.getItem("roleName") === "Admin" && (
-                <Button
-                  onClick={handleOpenAssignTicket}
-                  className="btn btn-assign"
-                  data-bs-toggle="modal"
-                  data-bs-target="#assignTicketModal"
-                  id="assignButton"
-                >
-                  Assign Ticket
-                </Button>
-              )}
-            </div>            <ul
-              className="nav recent-transactions-tab-header nav-tabs"
-              id="followUp"
-              role="tablist"
-            >
-
-              <li className="nav-item" role="presentation">
-                <button
-                  className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                  onClick={() => handleRowClick("newTickets")}
-                  // className="nav-link"
-                  id="new-arrivals-tkts-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#new-arrivals-tkts-tab-pane"
-                  type="button"
-                  role="tab"
-                  aria-controls="new-arrivals-tkts-tab-pane"
-                  aria-selected="false"
-                  tabindex="-1"
-                >
-                  {/* <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
-                  <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
-                  New Tickets
-                </button>
-              </li>
-            </ul>
-            <div
-              className="tab-content recent-transactions-tab-body"
-              id="followUpContent"
-            >
-
-              <div
-                className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
-                // className="tab-pane fade"
-                id="new-arrivals-tkts-tab-pane"
-                role="tabpanel"
-                aria-labelledby="new-arrivals-tkts-tab"
-                tabindex="0"
-              >
-                <div className="followups-table table-responsive table-height">
-                  <table className="table">
-                    <thead className="sticky-header">
-                      <tr>
-                        {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
-                          <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                        </th> : ""}
-                        <th tabindex="0">Se n.</th>
-                        <th tabindex="0">Date/Time</th>
-                        <th tabindex="0">Country</th>
-                        <th tabindex="0">Customer Name</th>
-                        <th tabindex="0">Customer Number</th>
-                        <th tabindex="0">Customer Email</th>
-                        <th tabindex="0">Status</th>
-                        <th tabindex="0">Requirement</th>
-                        <th tabindex="0">Action</th>
-                        <th tabindex="0">Ticket ID</th>
-                      </tr>
-                    </thead>
-                    {data ? (
-                      <tbody>
-                        {data.filter(
-                          (item) =>
-                            item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).map((item, index) => (
-                          <tr key={index}
-                            style={{
-                              boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
-                              zIndex: index === selectedKey ? 1 : "auto",
-                              position: index === selectedKey ? "relative" : "static"
-                            }}
-                            onClick={() => handleSelecteRow(index)}
-                          >
-                            {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
-                              <input
-                                type="checkbox"
-                                checked={selectedTickets.includes(item.uniqueQueryId)}
-                                onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
-                              />
-                            </td> : ""}
-                            <td><span className="text">{index + 1}.</span></td>
-
-                            <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
-                            <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
-                            <td><span className="text">{item.firstName} {item.lastName}</span></td>
-                            <td> <td>
-                              <CopyToClipboard
-                                text={item.mobileNumber}
-                                onCopy={() => setCopied(true)}
-                              >
-                                <button>Copy</button>
-                              </CopyToClipboard>
-                            </td><span className="text">{maskMobileNumber(item.mobileNumber)}</span></td>
-
-                            <td> <td>
-                              <CopyToClipboard
-                                text={item.email}
-                                onCopy={() => setCopied(true)}
-                              >
-                                <button>Copy</button>
-                              </CopyToClipboard>
-                            </td><span className="text">{maskEmail(item.email)}</span></td>
-
-                            <td onClick={() => handleShow(item.uniqueQueryId)} >
-                              <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                {item.ticketstatus}
-                              </a>
-                            </td>
-                            <td><span className="comment">{item.productEnquiry}<br /></span></td>
-
-                            <td>
-                              <span className="actions-wrapper">
-                                <Button
-                                  onClick={() => handleClick(item.mobileNumber)}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-phone"></i>
-                                </Button>
-                                <a
-                                  href={`sms:${item.mobileNumber}?&body=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                  className="btn-action message"
-                                  title="Get connect on message"
-                                ><i className="fa-solid fa-message"></i></a>
-                                <Button
-                                  onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.productEnquiry)}
-                                  // href="mailto:someone@example.com"
-                                  className="btn-action email"
-                                  title="Get connect on email"
-                                ><i className="fa-solid fa-envelope"></i
-                                ></Button>
-                                <a href={`https://wa.me/${item.mobileNumber.split("-")[1]}?text=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                  target='_blank'
-                                  className="btn-action whatsapp"
-                                  title="Get connect on whatsapp"
-                                ><i className="fa-brands fa-whatsapp"></i></a>
-                              </span>
-                            </td>
-                            <td className="ticket-id">
-                              <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    ) : (
-                      <p>Loading...</p>
-                    )}
-                  </table>
+              {
+                activeTab === "followUp" && <div className="col-md-5">
+                  <div className="search-wrapper d-flex justify-content-center align-items-center">
+                    <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                    <div className="search-icon">
+                      <i className="fa-solid fa-magnifying-glass"></i>
+                    </div>
+                    <i
+                      className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                      onClick={() => setFilterDate(null)}
+                    ></i>
+                  </div>
                 </div>
-              </div>
-
+              }
             </div>
           </div>
-          <div className="pagination-controls">
-            <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-            {generatePageNumbers().map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`next_prev ${page === currentPage ? 'active' : ''}`}
+        </section>}
+      {showAlltickets ?
+        <section className="followup-table-section py-3">
+          <div className="container-fluid">
+            <div className="table-wrapper tabbed-table">
+              <h3 className="title">Uploaded Tickets</h3>
+              <div className="d-flex justify-content-between align-items-center">
+                {localStorage.getItem("roleName") === "Admin" && (
+                  <Button
+                    onClick={handleOpenAssignTicket}
+                    className="btn btn-assign"
+                    data-bs-toggle="modal"
+                    data-bs-target="#assignTicketModal"
+                    id="assignButton"
+                  >
+                    Assign Ticket
+                  </Button>
+                )}
+              </div>            <ul
+                className="nav recent-transactions-tab-header nav-tabs"
+                id="followUp"
+                role="tablist"
               >
-                {page + 1}
-              </button>
-            ))}
-            <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
 
-            <span> Items per page:</span>{' '}
-            <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="1000">1000</option>
-            </select>
+                <li className="nav-item" role="presentation">
+                  <button
+                    className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
+                    onClick={() => handleRowClick("newTickets")}
+                    // className="nav-link"
+                    id="new-arrivals-tkts-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#new-arrivals-tkts-tab-pane"
+                    type="button"
+                    role="tab"
+                    aria-controls="new-arrivals-tkts-tab-pane"
+                    aria-selected="false"
+                    tabindex="-1"
+                  >
+                    {/* <span> {newNotifications} <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                    <i class="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
+                    New Tickets
+                  </button>
+                </li>
+              </ul>
+              <div
+                className="tab-content recent-transactions-tab-body"
+                id="followUpContent"
+              >
+
+                <div
+                  className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
+                  // className="tab-pane fade"
+                  id="new-arrivals-tkts-tab-pane"
+                  role="tabpanel"
+                  aria-labelledby="new-arrivals-tkts-tab"
+                  tabindex="0"
+                >
+                  <div className="followups-table table-responsive table-height">
+                    <table className="table">
+                      <thead className="sticky-header">
+                        <tr>
+                          {localStorage.getItem("roleName") === "Admin" ? <th className="selection-cell-header" data-row-selection="true">
+                            <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
+                          </th> : ""}
+                          <th tabindex="0">Se n.</th>
+                          <th tabindex="0">Date/Time</th>
+                          <th tabindex="0">Country</th>
+                          <th tabindex="0">Customer Name</th>
+                          <th tabindex="0">Customer Number</th>
+                          <th tabindex="0">Customer Email</th>
+                          <th tabindex="0">Status</th>
+                          <th tabindex="0">Requirement</th>
+                          <th tabindex="0">Action</th>
+                          <th tabindex="0">Ticket ID</th>
+                        </tr>
+                      </thead>
+                      {data ? (
+                        <tbody>
+                          {data.filter(
+                            (item) =>
+                              item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
+                              item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
+                              item.firstName.toLowerCase().includes(shortValue.toLowerCase())
+                          ).map((item, index) => (
+                            <tr key={index}
+                              style={{
+                                boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                                zIndex: index === selectedKey ? 1 : "auto",
+                                position: index === selectedKey ? "relative" : "static"
+                              }}
+                              onClick={() => handleSelecteRow(index)}
+                            >
+                              {localStorage.getItem("roleName") === "Admin" ? <td className="selection-cell">
+                                <input
+                                  type="checkbox"
+                                  checked={selectedTickets.includes(item.uniqueQueryId)}
+                                  onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
+                                />
+                              </td> : ""}
+                              <td><span className="text">{index + 1}.</span></td>
+
+                              <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
+                              <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                              <td><span className="text">{item.firstName} {item.lastName}</span></td>
+                              <td> <td>
+                                <CopyToClipboard
+                                  text={item.mobileNumber}
+                                  onCopy={() => setCopied(true)}
+                                >
+                                  <button>Copy</button>
+                                </CopyToClipboard>
+                              </td><span className="text">{maskMobileNumber(item.mobileNumber)}</span></td>
+
+                              <td> <td>
+                                <CopyToClipboard
+                                  text={item.email}
+                                  onCopy={() => setCopied(true)}
+                                >
+                                  <button>Copy</button>
+                                </CopyToClipboard>
+                              </td><span className="text">{maskEmail(item.email)}</span></td>
+
+                              <td onClick={() => handleShow(item.uniqueQueryId)} >
+                                <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                  style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                  {item.ticketstatus}
+                                </a>
+                              </td>
+                              <td className="hover-cell"><span className="comment">{item.productEnquiry.slice(0, 15)}<br />
+                                <span className="message">{item.productEnquiry}</span>
+                              </span></td>
+
+                              <td>
+                                <span className="actions-wrapper">
+                                  <Button
+                                    onClick={() => handleClick(item.mobileNumber)}
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#followUpModal"
+                                    className="btn-action call"
+                                    title="Get connect on call"
+                                  ><i className="fa-solid fa-phone"></i>
+                                  </Button>
+                                  <a
+                                    href={`sms:${item.mobileNumber}?&body=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                    className="btn-action message"
+                                    title="Get connect on message"
+                                  ><i className="fa-solid fa-message"></i></a>
+                                  <Button
+                                    onClick={() => handleOn(item.uniqueQueryId, item.senderName, item.senderEmail, item.senderMobile, item.productEnquiry)}
+                                    // href="mailto:someone@example.com"
+                                    className="btn-action email"
+                                    title="Get connect on email"
+                                  ><i className="fa-solid fa-envelope"></i
+                                  ></Button>
+                                  <a href={`https://wa.me/${item.mobileNumber.split("-")[1]}?text=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                    target='_blank'
+                                    className="btn-action whatsapp"
+                                    title="Get connect on whatsapp"
+                                  ><i className="fa-brands fa-whatsapp"></i></a>
+                                </span>
+                              </td>
+                              <td className="ticket-id">
+                                <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      ) : (
+                        <p>Loading...</p>
+                      )}
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div className="pagination-controls">
+              <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+              {generatePageNumbers().map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                >
+                  {page + 1}
+                </button>
+              ))}
+              <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
+
+              <span> Items per page:</span>{' '}
+              <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+            </div>
           </div>
-        </div>
-      </section> : ""}
+        </section> : ""}
       <Modal show={isOpendAssign} onHide={handleClose} centered>
         <Modal.Header closeButton>
           <Modal.Title>Assign Tickets to Team</Modal.Title>

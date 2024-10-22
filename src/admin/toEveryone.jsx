@@ -6,7 +6,7 @@ import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function toEveryone() {
+function toEveryone(props) {
     const params = {
         allTickets: {},
         ongoing: { ticketStatus: 'Sale' },
@@ -20,10 +20,12 @@ function toEveryone() {
     const [team, setTeam] = useState([]);
     const [selectedTeam, setSelectedTeam] = useState('');
     const [data, setData] = useState([]);
-    const [seletedUserType, setSelectedUserType] = useState(0)
+    const [uploadedData, setUploadedData] = useState([])
+    const [seletedUserType, setSelectedUserType] = useState(4)
     const [user, setUser] = useState([])
-    const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(0)
+    const [selectedUserOfSelectedUserType, setSelectedUserOfSelectedUserType] = useState(props.userId)
     const handleClose = () => setShow(false);
+    const [isLive, setIsLive] = useState(false)
 
 
     // Pagination state
@@ -58,6 +60,7 @@ function toEveryone() {
 
     //hnadling multiple selection
     const handleMultipleTicketSelection = (e) => {
+       if(isLive){
         const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
         if (checked) {
             let newSelectedTickets = [...selectedTickets]; // Start with the current state
@@ -68,27 +71,69 @@ function toEveryone() {
         } else {
             setSelectedTickets([]); // Reset to an empty array
         }
+       }else{
+        handleMultipleUploadTicketSelection(e)
+       }
     };
 
-    const sendPostRequest = async () => {
-        try {
-            const payload = selectedTickets;
-            const config = {
-                headers: {
-                    // 'teamId': parseInt(selectedTeam)
-                }
-            };
-            const url = `/third_party_api/ticket/assignToUser/${selectedUserOfSelectedUserType}`;
-            const response = await axiosInstance.post(url, payload, config);
-            setApiResponse(response.data);
-            console.log("Response is :", response.data)
-            toast.success('Tickets assigned successfully!');
-            handleClose();
+    //hnadling multiple selection
+    const handleMultipleUploadTicketSelection = (e) => {
+        const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
+        if (checked) {
+            let newSelectedTickets = [...selectedTickets]; // Start with the current state
+            for (let i = 0; i < uploadedData.length; i++) {
+                newSelectedTickets.push(uploadedData[i].uniqueQueryId); // Add the new elements
+            }
+            setSelectedTickets(newSelectedTickets); // Update the state once with the new array
+        } else {
+            setSelectedTickets([]); // Reset to an empty array
+        }
+    };
 
-            fetchTickets()
-        } catch (error) {
-            console.error('Error:', error);
-            toast.error('Failed to assign tickets.');
+
+    const sendPostRequest = async () => {
+        if(isLive){
+            try {
+                const payload = selectedTickets;
+                const config = {
+                    headers: {
+                        // 'teamId': parseInt(selectedTeam)
+                    }
+                };
+                const url = `/third_party_api/ticket/assignToUser/${selectedUserOfSelectedUserType}`;
+                const response = await axiosInstance.post(url, payload, config);
+                setApiResponse(response.data);
+                console.log("Response is :", response.data)
+                toast.success('Tickets assigned successfully!');
+                handleClose();
+    
+                fetchTickets()
+                setSelectedTickets([])
+            } catch (error) {
+                console.error('Error:', error);
+                toast.error('Failed to assign tickets.');
+            }
+        }else{
+            try {
+                const payload = selectedTickets;
+                const config = {
+                    headers: {
+                        // 'teamId': parseInt(selectedTeam)
+                    }
+                };
+                const url = `/upload/assignToUser/${selectedUserOfSelectedUserType}`;
+                const response = await axiosInstance.post(url, payload, config);
+                setApiResponse(response.data);
+                console.log("Response is :", response.data)
+                toast.success('Uploaded Tickets assigned successfully!');
+                handleClose();
+    
+                fetchUploadedTickets()
+                setSelectedTickets([])
+            } catch (error) {
+                console.error('Error:', error);
+                toast.error('Failed to assign tickets.');
+            }
         }
     };
 
@@ -121,10 +166,29 @@ function toEveryone() {
         }
     };
 
-    //iteam par page
+    const fetchUploadedTickets = async (page, perPage) => {
+        try {
+            const response = await axiosInstance.get('/upload/getABCTicketsNotAssigned', {
+                params: { page, size: perPage }
+            });
+            setUploadedData(response.data.dtoList);
+            setCurrentPage(response.data.currentPage);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Error fetching tickets:', error);
+        }
+    };
+
+
     useEffect(() => {
-        fetchTickets(params[activeTab], currentPage, itemsPerPage);
-    }, [activeTab, currentPage, itemsPerPage]);
+        const fetchData = async () => {
+            await fetchTickets(params[activeTab], currentPage, itemsPerPage);
+
+        };
+
+        fetchData();
+    }, [activeTab, currentPage, itemsPerPage]); // Ensure these dependencies are correct
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -135,7 +199,11 @@ function toEveryone() {
         };
 
         fetchData();
-    }, [seletedUserType]);
+    }, []);
+
+    useEffect(() => {
+        fetchUploadedTickets(currentPage, itemsPerPage);
+    }, [itemsPerPage])
 
 
     //handle row click
@@ -143,6 +211,7 @@ function toEveryone() {
         setActiveTab(tabName);
         setCurrentPage(0);
         fetchTickets(params[tabName], 0, itemsPerPage);
+        fetchUploadedTickets(0, itemsPerPage);
     };
 
     //handle Previous Page
@@ -184,101 +253,48 @@ function toEveryone() {
         return pageNumbers;
     };
 
-    const disableTcket = () => {
-        return selectedTickets.length === 0 ? "disabled" : ""
-    }
-
-
-
+    const maskEmail = (email) => {
+        const [user, domain] = email.split('@');
+        const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+        return `${maskedUser}@${domain}`;
+    };
+    // Masking mobile number
+    const maskMobileNumber = (number) => {
+        if (number.length < 4) return number;
+        return number.slice(0, -4) + 'XXXX';
+    };
     return (
         <>
+            <div className='w-25 d-flex justify-content-center' >
+
+                <div className="form-check" style={{ marginLeft: "10px" }}>
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="flexCheckDefault"
+                        checked={isLive}
+                        onChange={() => setIsLive(true)} // Call toggle method on change
+                    />
+                    <label className="form-check-label" htmlFor="flexCheckDefault">
+                        Live Tickets
+                    </label>
+                </div>
+                <div className="form-check" style={{ marginLeft: "10px" }}>
+                    <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id="flexCheckChecked"
+                        checked={!isLive} // Checked if 'list' is false
+                        onChange={() => setIsLive(false)} // Call toggle method on change
+                    />
+                    <label className="form-check-label" htmlFor="flexCheckChecked">
+                        Uploaded Tickets
+                    </label>
+                </div>
+            </div>
             <div className="admin-page tickets-page">
                 <div className="my-container main-content-block2658">
                     <div className="container-fluid mt-3">
-                        <section className="sadmin-top-section">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col-md-3">
-                                        <div className="card">
-                                            <div className="div-top">
-                                                <h3 className="title">Total Tickets</h3>
-                                                <span className="sales"
-                                                >0<span className="indicators">0%</span></span
-                                                >
-                                            </div>
-                                            <div className="icon-wrapper">
-                                                <i className="fa-solid fa-wallet"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3">
-                                        <div className="card">
-                                            <div className="div-top">
-                                                <h3 className="title">In negotation</h3>
-                                                <span className="sales"
-                                                >0<span className="indicators">0%</span></span
-                                                >
-                                            </div>
-                                            <div className="icon-wrapper">
-                                                <i className="fa-solid fa-wallet"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3">
-                                        <div className="card">
-                                            <div className="div-top">
-                                                <h3 className="title">Total Sales</h3>
-                                                <span className="sales"
-                                                >0<span className="indicators">0%</span></span
-                                                >
-                                            </div>
-                                            <div className="icon-wrapper">
-                                                <i className="fa-solid fa-wallet"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3">
-                                        <div className="card">
-                                            <div className="div-top">
-                                                <h3 className="title">Projected Sales</h3>
-                                                <span className="sales"
-                                                >0<span className="indicators">0%</span></span
-                                                >
-                                            </div>
-                                            <div className="icon-wrapper">
-                                                <i className="fa-solid fa-wallet"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-                        <section className="sadmin-top-section">
-                            <div className="container-fluid">
-                                <div className="row g-3">
-                                    {/* Cards here */}
-                                </div>
-                            </div>
-                        </section>
-                        <section className="filter-section">
-                            <div className="container-fluid">
-                                <div className="row">
-                                    <div className="col-md-5">
-                                        <div className="search-wrapper">
-                                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                                            <div className="search-icon">
-                                                <i className="fa-solid fa-magnifying-glass"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-7">
-                                        <div className="filter-wrapper d-flex gap-3">
-                                            {/* Filters here */}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
                         <section className="data-table-bgs_02x24 py-3">
                             <div className="container-fluid">
                                 <div className="table-wrapper tabbed-table">
@@ -286,20 +302,7 @@ function toEveryone() {
                                         <h3 className="title">All Tickets</h3>
                                         <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal" id="assignButton">Assign Ticket</Button>
                                     </div>
-                                    <ul className="nav recent-transactions-tab-header nav-tabs" id="myTab" role="tablist">
-                                        <li className="nav-item" role="presentation">
-                                            <button className={`nav-link ${activeTab === "allTickets" ? "active" : ""}`}
-                                                onClick={() => handleRowClick("allTickets")} id="all-transactions-tab" data-bs-toggle="tab" data-bs-target="#all-transactions-tab-pane" type="button" role="tab" aria-controls="all-transactions-tab-pane" aria-selected="true">All Tickets</button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className={`nav-link ${activeTab === "ongoing" ? "active" : ""}`}
-                                                onClick={() => handleRowClick("ongoing")} id="pendings-tab" data-bs-toggle="tab" data-bs-target="#pendings-tab-pane" type="button" role="tab" aria-controls="pendings-tab-pane" aria-selected="false" tabIndex="-1">Ongoing</button>
-                                        </li>
-                                        <li className="nav-item" role="presentation">
-                                            <button className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                                                onClick={() => handleRowClick("newTickets")} id="new-arrivals-tab" data-bs-toggle="tab" data-bs-target="#new-arrivals-tab-pane" type="button" role="tab" aria-controls="new-arrivals-tab-pane" aria-selected="false" tabIndex="-1">New Tickets</button>
-                                        </li>
-                                    </ul>
+
                                     <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                                         <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
                                             <div className="tickets-table table-responsive">
@@ -307,26 +310,21 @@ function toEveryone() {
                                                     <thead>
                                                         <tr>
                                                             <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
+                                                                <input type="checkbox" id='checkedInput' className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                                                             </th>
                                                             <th tabindex="0">Date/Time</th>
                                                             <th tabindex="0">Country</th>
                                                             <th tabIndex="0">Customer Name</th>
                                                             <th tabIndex="0">Customer Number</th>
                                                             <th tabIndex="0">Customer Email</th>
-                                                            <th tabIndex="0">Ticket ID</th>
-                                                            <th tabIndex="0">Requirement</th>
-                                                            <th tabIndex="0">Product Name</th>
+                                                            {/* <th tabIndex="0">Ticket ID</th> */}
+                                                            {/* <th tabIndex="0">Requirement</th> */}
+                                                            {isLive && <th tabIndex="0">Product Name</th>}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {data.filter(
-                                                            (item) =>
-                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                                                        ).map((item) => (
-                                                            <tr key={item.uniqueQueryId}>
+                                                        {isLive && data.map((item, index) => (
+                                                            <tr key={index}>
                                                                 <td className="selection-cell">
                                                                     <input
                                                                         type="checkbox"
@@ -337,42 +335,14 @@ function toEveryone() {
                                                                 <td>{item.queryTime}</td>
                                                                 <td>{item.senderCountryIso}</td>
                                                                 <td>{item.senderName}</td>
-                                                                <td>{item.senderMobile}</td>
-                                                                <td>{item.senderEmail}</td>
-                                                                <td>{item.uniqueQueryId}</td>
-                                                                <td>{item.subject}</td>
+                                                                <td>{maskMobileNumber(item.senderMobile)}</td>
+                                                                <td>{maskEmail(item.senderEmail)}</td>
+                                                                {/* <td>{item.uniqueQueryId}</td> */}
+                                                                {/* <td>{item.subject}</td> */}
                                                                 <td>{item.queryProductName}</td>
                                                             </tr>
                                                         ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        {/* Pending tab */}
-                                        <div className="tab-pane fade" id="pendings-tab-pane" role="tabpanel" aria-labelledby="pendings-tab" tabIndex="0">
-                                            <div className="tickets-table table-responsive">
-                                                <table className="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                                                            </th>
-                                                            <th tabIndex="0">Query ID</th>
-                                                            <th tabIndex="0">Query McatName</th>
-                                                            <th tabIndex="0">Sender Company</th>
-                                                            <th tabIndex="0">Sender Name</th>
-                                                            <th tabIndex="0">Sender Mobile</th>
-                                                            <th tabIndex="0">Sender Address</th>
-                                                            <th tabIndex="0">Query Message</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {data.filter(
-                                                            (item) =>
-                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                                                        ).map((item) => (
+                                                        {!isLive && uploadedData.map((item) => (
                                                             <tr key={item.uniqueQueryId}>
                                                                 <td className="selection-cell">
                                                                     <input
@@ -381,61 +351,14 @@ function toEveryone() {
                                                                         onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                                                     />
                                                                 </td>
-                                                                <td>{item.uniqueQueryId}</td>
-                                                                <td>{item.queryMcatName}</td>
-                                                                <td>{item.senderCompany}</td>
-                                                                <td>{item.senderName}</td>
-                                                                <td>{item.senderMobile}</td>
-                                                                <td>{item.senderAddress}</td>
-                                                                <td>{item.queryMessage}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        {/* New tab */}
-                                        <div className="tab-pane fade" id="new-arrivals-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tab" tabIndex="0">
-                                            <div className="tickets-table table-responsive">
-                                                <table className="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th className="selection-cell-header" data-row-selection="true">
-                                                                <input type="checkbox" className="" onChange={(e) => handleMultipleTicketSelection(e)} />
-                                                            </th>
-                                                            <th tabindex="0">Date/Time</th>
-                                                            <th tabindex="0">Country</th>
-                                                            <th tabIndex="0">Customer Name</th>
-                                                            <th tabIndex="0">Customer Number</th>
-                                                            <th tabIndex="0">Query ID</th>
-                                                            <th tabIndex="0">Requirement</th>
-                                                            <th tabIndex="0">Product Name</th>
-                                                            <th tabIndex="0">Customer Email</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {data.filter(
-                                                            (item) =>
-                                                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                                                        ).map((item) => (
-                                                            <tr key={item.uniqueQueryId}>
-                                                                <td className="selection-cell">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        checked={selectedTickets.includes(item.uniqueQueryId)}
-                                                                        onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
-                                                                    />
-                                                                </td>
-                                                                <td>{item.queryTime}</td>
-                                                                <td>{item.senderCountryIso}</td>
-                                                                <td>{item.senderName}</td>
-                                                                <td>{item.senderMobile}</td>
-                                                                <td>{item.uniqueQueryId}</td>
-                                                                <td>{item.queryMessage}</td>
+                                                                <td>{item.uploadDate}</td>
+                                                                <td>NA</td>
+                                                                <td>{item.firstName}</td>
+                                                                <td>{maskMobileNumber(item.mobileNumber)}</td>
+                                                                <td>{maskEmail(item.email)}</td>
+                                                                {/* <td>{item.uniqueQueryId}</td> */}
+                                                                {/* <td>{item.subject}</td> */}
                                                                 <td>{item.queryProductName}</td>
-                                                                <td>{item.senderEmail}</td>
                                                             </tr>
                                                         ))}
                                                     </tbody>
@@ -465,6 +388,7 @@ function toEveryone() {
                                         <option value="20">20</option>
                                         <option value="50">50</option>
                                         <option value="100">100</option>
+                                        <option value="500">500</option>
                                     </select>
                                 </div>
                             </div>
@@ -482,11 +406,7 @@ function toEveryone() {
                         <div className="form-group">
                             <label htmlFor="teamSelect">Select User Type</label>
                             <select className="form-control" id="teamSelect" onChange={handleSelectUserType} value={seletedUserType}>
-                                <option value="">Choose...</option>
-                                <option value="3">Captain</option>
                                 <option value="4">Closer</option>
-                                <option value="5">Senior SuperVisor</option>
-
                             </select>
                             <label htmlFor="teamSelect">Select Team</label>
                             <select className="form-control" id="teamSelect" onChange={handleSelectUserOfSelectedUserType} value={selectedUserOfSelectedUserType}>
