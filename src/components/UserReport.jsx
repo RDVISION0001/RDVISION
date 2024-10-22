@@ -116,7 +116,7 @@ const UserReport = () => {
                 ) : (
                     users.filter((user) => user.roleId === 4).map((user, index) => (
                         <div key={index} className="">
-                            <div className="shadow-sm py-3 d-flex align-items-center flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
+                            <div className="shadow-sm p-3 d-flex align-items-center flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
                                 <div
                                     className="d-flex justify-content-center align-items-center"
                                     style={{
@@ -171,7 +171,7 @@ const UserReport = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className='border' style={{height:"350px",width:"100%",overflow:"scroll",padding:"10px"}}>
+                                <div className='border rounded' style={{height:"350px",width:"100%",overflow:"scroll",padding:"10px",marginTop:"2px"}}>
                                     <Report user={user.userId} />
                                 </div>
                             </div>

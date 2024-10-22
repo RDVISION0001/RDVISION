@@ -120,6 +120,7 @@ import PaymentSuccess from './components/PaymentSuccess';
 import PaymentFailed from './components/PaymentFailed';
 import Terms_Conditions from './components/Terms_Conditions';
 import Team from './senior_supervisor/Team';
+import TicketHouse from './components/TicketHouse';
 
 
 
@@ -209,6 +210,8 @@ function App() {
                   <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
                   <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
                   <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
+                  <Route exact path="/ticket_house" element={<TicketHouse />} />
+
 
                 </Route>
               </Routes>

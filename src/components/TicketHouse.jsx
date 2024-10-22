@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HighchartsReact from "highcharts-react-official";
 import Highcharts from "highcharts";
 import funnel from "highcharts/modules/funnel";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Container } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import axiosInstance from "../axiosInstance";
 
 // Initialize the funnel module
 funnel(Highcharts);
@@ -13,14 +14,56 @@ funnel(Highcharts);
 const TicketHouse = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [ticketData, setTicketData] = useState([])
+    const [ticketDataByCountry, setTicketDataByCountry] = useState([])
 
+    // for sales with country line chart
+    const [countryList, setCpuntryList] = useState([])
+    const [saleCount, setSaleCount] = useState([])
+
+    useEffect(() => {
+        fetchTicketDataByStatus()
+        fetchTicketCountsByCountry()
+        fetchSlaesByCountry()
+    }, [])
+
+    const fetchTicketDataByStatus = async () => {
+        const response = await axiosInstance.get('/third_party_api/ticket/ticketswithstatus')
+        setTicketData(response.data.ticketCounts)
+    }
+
+    const fetchTicketCountsByCountry = async () => {
+        const response = await axiosInstance.get("/third_party_api/ticket/ticketsCountByCountry")
+        setTicketDataByCountry(response.data)
+    }
+
+    const fetchSlaesByCountry = async () => {
+        const response = await axiosInstance.get('/third_party_api/ticket/salesByCountry')
+        const result =  response.data;
+       
+        // Assuming the response is an array of arrays like [["US", 30], ["MY", 1], ...]
+        const countriesList = result.map(item => item[0]); // Extract the first element from each subarray (countries)
+        const dataList = result.map(item => item[1]); // Extract the second element from each subarray (data counts)
+      
+        setCpuntryList(countriesList);
+        setSaleCount(dataList);
+    }
+
+    const funnelData = ticketData.map(ticket => {
+        const key = Object.keys(ticket)[0]; // Get the first key
+        const value = ticket[key]; // Get the corresponding value
+        return {
+            name: key,
+            y: value
+        };
+    }).filter(item => item.y > 0);
     // Funnel chart options
     const funnelOptions = {
         chart: {
             type: "funnel"
         },
         title: {
-            text: ""
+            text: "Tickets Status"
         },
         plotOptions: {
             series: {
@@ -28,24 +71,14 @@ const TicketHouse = () => {
                     enabled: true,
                     format: "{point.name}: {point.y}"
                 },
-                neckWidth: "30%",
+                neckWidth: "40%",
                 neckHeight: "25%"
             }
         },
         series: [
             {
-                name: "Conversion",
-                data: [
-                    ["Qualification", 71],
-                    ["Nurturing", 26],
-                    ["Handoff to Sales", 14],
-                    ["Awaiting Sale", 5],
-                    ["Qualification", 3],
-                    ["Presentation", 0],
-                    ["Proposal", 0],
-                    ["Contracting", 2],
-                    ["Closed Won", 5]
-                ]
+                name: "Tickets",
+                data: funnelData
             }
         ]
     };
@@ -56,18 +89,13 @@ const TicketHouse = () => {
             type: "pie"
         },
         title: {
-            text: "Lead Distribution"
+            text: "Tickets By Country"
         },
         series: [
             {
                 name: "Leads",
                 colorByPoint: true,
-                data: [
-                    { name: "New", y: 40 },
-                    { name: "Contacted", y: 30 },
-                    { name: "Qualified", y: 20 },
-                    { name: "Unqualified", y: 10 }
-                ]
+                data: ticketDataByCountry
             }
         ]
     };
@@ -78,28 +106,28 @@ const TicketHouse = () => {
             type: "bar"
         },
         title: {
-            text: "Sales Stages"
+            text: "Sales by Country"
         },
         xAxis: {
-            categories: ["Qualification", "Nurturing", "Proposal", "Contracting", "Closed"]
+            categories: countryList
         },
         yAxis: {
             min: 0,
             title: {
-                text: "Number of Deals"
+                text: "Number of Sales"
             }
         },
         series: [
             {
-                name: "Deals",
-                data: [71, 26, 14, 5, 2]
+                name: "converted Leadds",
+                data: saleCount
             }
         ]
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-2">
+        <Container fluid className="p-0" style={{ height: "100vh", overflow: "hidden" }}>
+            <div className="d-flex justify-content-between align-items-center p-3 bg-light">
                 <h5>Current month lead conversion rate</h5>
                 <div className="d-flex">
                     <DatePicker
@@ -116,23 +144,31 @@ const TicketHouse = () => {
                 </div>
             </div>
 
-            <Row>
-                <Col md={4} className="mb-4">
+            {/* Two Column Layout */}
+            <Row className="h-100">
+                {/* First Column with Funnel Chart */}
+                <Col lg={6} md={6} sm={12} className="d-flex flex-column p-3">
                     <h6>Funnel Chart</h6>
-                    <HighchartsReact highcharts={Highcharts} options={funnelOptions} />
+                    <div style={{ flex: 1 }}>
+                        <HighchartsReact highcharts={Highcharts} options={funnelOptions} />
+                    </div>
                 </Col>
-                <Col md={4} className="mb-4">
+
+                {/* Second Column with Pie Chart and Bar Chart */}
+                <Col lg={6} md={6} sm={12} className="d-flex flex-column p-3">
                     <h6>Pie Chart</h6>
-                    <HighchartsReact highcharts={Highcharts} options={pieOptions} />
-                </Col>
-                <Col md={4} className="mb-4">
+                    <div style={{ flex: 1 }}>
+                        <HighchartsReact highcharts={Highcharts} options={pieOptions} />
+                    </div>
                     <h6>Bar Chart</h6>
-                    <HighchartsReact highcharts={Highcharts} options={barOptions} />
+                    <div style={{ flex: 1 }}>
+                        <HighchartsReact highcharts={Highcharts} options={barOptions} />
+                    </div>
                 </Col>
             </Row>
 
-            <div className="legend mt-4">
-                <div>
+            <div className="legend p-3 d-flex justify-content-center bg-light">
+                <div className="mr-4">
                     <span
                         style={{
                             display: "inline-block",
@@ -157,7 +193,7 @@ const TicketHouse = () => {
                     Opportunity
                 </div>
             </div>
-        </div>
+        </Container>
     );
 };
 
