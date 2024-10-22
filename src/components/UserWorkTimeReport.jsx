@@ -154,43 +154,33 @@ function UserWorkTimeReport(props) {
 
     return (
         <div style={{ margin: "0", padding: "0" }}>
-            <div className='d-flex justify-content-between'style={{padding:"0px 20px"}} >
+            <div className='d-flex justify-content-between' style={{ padding: "0px 20px" }} >
                 <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hours</span></div>
                 <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hours</span></div>
             </div>
-            <Container fluid style={{border:"none"}}>
-                <Col md={12}>
-                    <Card >
-                        <Card.Header className='d-flex justify-content-between'>
-                            <p style={{ fontSize: "12px" }}>Work report</p>
-                            <div className='d-flex justify-content-center align-items-center'>
-                                <select
-                                    className="form-select w-100 "
-                                    style={{ fontSize: "10px" }}
-                                    value={workData.weeks}
-                                    onChange={(e) =>
-                                        setWorkData(prevData => ({
-                                            ...prevData,
-                                            weeks: e.target.value,
-                                        }))
-                                    }
-                                >
-                                    <option value="1">1 Week</option>
-                                    <option value="2">2 Week</option>
-                                    <option value="3">3 Week</option>
-                                    <option value="4">4 Week</option>
-                                </select>
-                            </div>
-                        </Card.Header>
-                        <Card.Body>
-                            <div style={{ height: '130px' }}> {/* Adjust height here */}
-                                <Bar data={chartData} options={chartOptions} />
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Container>
+            <p style={{ fontSize: "12px" }}>Work report</p>
+            <div className='d-flex justify-content-center align-items-center'>
+                <select
+                    className="form-select w-100 "
+                    style={{ fontSize: "10px" }}
+                    value={workData.weeks}
+                    onChange={(e) =>
+                        setWorkData(prevData => ({
+                            ...prevData,
+                            weeks: e.target.value,
+                        }))
+                    }
+                >
+                    <option value="1">1 Week</option>
+                    <option value="2">2 Week</option>
+                    <option value="3">3 Week</option>
+                    <option value="4">4 Week</option>
+                </select>
+            </div>
 
+            <div style={{ height: '130px' }}> {/* Adjust height here */}
+                <Bar data={chartData} options={chartOptions} />
+            </div>
         </div>
     );
 }

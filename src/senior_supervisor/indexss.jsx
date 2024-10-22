@@ -4,6 +4,7 @@ import axiosInstance from '../axiosInstance';
 //components
 import Cardinfo from '../components/cardinfo';
 import FloatingButton from '../components/FloatingButton';
+import InvoiceInfo from '../components/InvoiceInfo';
 
 
 
@@ -43,10 +44,6 @@ function indexss() {
         <Cardinfo />
       </div>
 
-      <div>
-        <FloatingButton />
-      </div>
-
       {/* <!-- Tabbed Ticket Table --> */}
       <section className="followup-table-section py-3">
         <div className="container-fluid">
@@ -78,8 +75,8 @@ function indexss() {
                       <tr key={item.id}>
                         <td className="text-center"><span className="text">{item.userName}</span></td>
                         <td className="text-center"><span className="text">{item.month}</span></td>
-                        <td className="text-center"><span className="text">{item.totalBreakTime}</span></td>
-                        <td className="text-center"><span className="text">{item.totalWorkTime}</span></td>
+                        <td className="text-center"><span className="text">{item.totalBreakTime/3600} hrs</span></td>
+                        <td className="text-center"><span className="text">{item.totalWorkTime/3600} hrs</span></td>
                         <td className="text-center"><span className="text">{item.year}</span></td>
                       </tr>
                     ))}
@@ -90,6 +87,7 @@ function indexss() {
           </div>
         </div>
       </section>
+      <InvoiceInfo/>
 
 
     </>

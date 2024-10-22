@@ -33,6 +33,7 @@ function InNegotiation() {
   const [senderMobile, setSenderMobile] = useState("");
   const [productArray, setProductArray] = useState([]);
   const [assignedTo, setAssignedTo] = useState(0)
+  const [buttonFilterValue, setbuttonFilterValue] = useState("")
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -206,8 +207,8 @@ function InNegotiation() {
 
   // Define stages
   const stages = [
-    { name: " Not Pickup,Not Connected,Wrong Number", color: "#ed1c24", stage: 1 },
-    { name: "Palce With Others, Followup, Call Back, Interested, Not interested", color: "#f7941e", stage: 2 },
+    { name: " Not Pickup, Not interested,Wrong Number", color: "#ed1c24", stage: 1 },
+    { name: "Palce With Others, Followup, Call Back, Interested,", color: "#f7941e", stage: 2 },
     { name: "Sale", color: "#8dc63f", stage: 3 },
     // { name: "Stage 4", color: "#00aeef", stage: 4 },
   ];
@@ -383,7 +384,14 @@ function InNegotiation() {
     .filter((item) =>
       !filterdate ||
       formatFollowUpDate(item.followupDateTime ? item.followupDateTime : "") === filterdate
-    )
+    ).filter((ticket) => {
+      // If buttonFilterValue is an empty string, return all tickets
+      if (buttonFilterValue === "") {
+        return true;
+      }
+      // Otherwise, filter based on ticketStatus
+      return ticket.ticketstatus.toLowerCase() === buttonFilterValue.toLowerCase();
+    })
     .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
 
@@ -518,6 +526,11 @@ function InNegotiation() {
     return formattedDate;
   };
 
+  const stageSelection=(stage)=>{
+    setbuttonFilterValue("");
+    setSelectedStage(stage)
+  }
+
   return (
     <>
       <div className='d-flex justify-content-end w-100'>
@@ -594,7 +607,7 @@ function InNegotiation() {
                   {stages.map((stage, index) => (
                     <div
                       key={index}
-                      onClick={() => setSelectedStage(stage.stage)} // Set selected stage
+                      onClick={() => stageSelection(stage.stage)} // Set selected stage
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -681,6 +694,22 @@ function InNegotiation() {
               </div>
             </div>
           </section>
+          {/*Filters*/}
+
+          <section className='d-flex justify-content-center'>
+            <div className=' w-50 d-flex justify-content-around p-3'>
+              {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
+              {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
+              <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button>
+                <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
+                <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
+               </>}
+              {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
+                <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
+                <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button></>}
+            </div>
+          </section>
+
           {/* Table */}
           <section className="followup-table-section py-3">
             <div className="container-fluid">
