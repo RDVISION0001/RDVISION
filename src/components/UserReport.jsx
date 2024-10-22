@@ -5,6 +5,7 @@ import axiosInstance from '../axiosInstance';
 import ToEveryOne from '../admin/toEveryone';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Report from '../components/Report'
 
 const UserReport = () => {
     const [users, setUsers] = useState([]);
@@ -109,13 +110,13 @@ const UserReport = () => {
 
     return (
         <>
-            <div className="d-flex justify-content-center p-3">
+            <div className="d-flex justify-content-center" style={{overflowX:"scroll",paddingLeft:"100px"}}>
                 {fetchingUsers ? ( // Show loading text if users are still being fetched
                     <div>Loading users, please wait...</div>
                 ) : (
                     users.filter((user) => user.roleId === 4).map((user, index) => (
-                        <div key={index} className="text-center w-25">
-                            <div className="shadow-sm py-3 d-flex align-items-center flex-column" style={{ height: "70vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
+                        <div key={index} className="">
+                            <div className="shadow-sm py-3 d-flex align-items-center flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
                                 <div
                                     className="d-flex justify-content-center align-items-center"
                                     style={{
@@ -138,7 +139,7 @@ const UserReport = () => {
                                     )}
                                 </div>
 
-                                <div>
+                                <div style={{height:"120px"}}>
                                     <div className="fw-bold" style={{ fontSize: '30px' }}>
                                         {user.firstName}
                                     </div>
@@ -156,7 +157,7 @@ const UserReport = () => {
                                         </button>
                                     )}
                                 </div>
-                                <div class="d-flex justify-content-between border">
+                                <div class="d-flex justify-content-between border" style={{width:"100%"}}>
                                     <div className=" p-3 me-2" style={{ minWidth: '120px' }}>
                                         <h5 className="card-title">Total Calls</h5>
                                         <span className="badge bg-success fw-bold text-white">
@@ -170,8 +171,11 @@ const UserReport = () => {
                                         </span>
                                     </div>
                                 </div>
-
+                                <div className='border' style={{height:"350px",width:"100%",overflow:"scroll",padding:"10px"}}>
+                                    <Report user={user.userId} />
+                                </div>
                             </div>
+
                         </div>
                     ))
                 )}

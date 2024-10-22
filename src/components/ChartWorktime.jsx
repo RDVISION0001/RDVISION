@@ -142,7 +142,7 @@ const ChartWorktime = () => {
             <LiveCalander />
           </div>
           <div className="col-md-4 " >
-            <div className="bg-white  d-flex justify-content-center align-items-center">
+            <div className="bg-white  d-flex justify-content-between align-items-center p-3">
               <UserWorkTimeReport user={localStorage.getItem("userId")} isShowingToUser={true} />
               <div className='' style={{ width: "120px" }}>
                 <div className=' d-flex flex-column align-items-center justify-content-between' >

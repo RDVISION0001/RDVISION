@@ -213,7 +213,7 @@ function Report(props) {
         } else {
             loadAssignTickets();
         }
-    }, [monthly, workDataTickets,defaultUrl]);
+    }, [monthly, workDataTickets, defaultUrl]);
 
     const numberToMonthName = (number) => {
         const months = [
@@ -224,66 +224,50 @@ function Report(props) {
     };
 
     return (
-        <Container fluid>
+        <div>
             <div className='d-flex justify-content-center fw-semibold'>
                 <span>{useDetails.firstName} {useDetails.lastName}</span>
             </div>
-            <Col md={12}>
-                <Card className="mb-4">
-                    <Card.Header className='d-flex justify-content-between'>
-                        <p>Work and Break Category - Bar Chart</p>
-                        <div className='d-flex justify-content-center align-items-center'>
-                            <button className='btn btn-success m-1' onClick={toggleMonthly}>
-                                {monthly ? "Yearly" : "Weekly"}
-                            </button>
-                            <select
-                                className="form-select  w-100"
-                                value={workData.weeks}
-                                onChange={(e) =>
-                                    setWorkData(prevData => ({
-                                        ...prevData,
-                                        weeks: e.target.value,
-                                    }))
-                                }
-                            >
-                                <option value="1">1 {monthly ? "Year" : "Week"}</option>
-                                <option value="2">2 {monthly ? "Years" : "Weeks"}</option>
-                                <option value="3">3 {monthly ? "Years" : "Weeks"}</option>
-                                <option value="4">4 {monthly ? "Years" : "Weeks"}</option>
-                            </select>
-                        </div>
+            <p>Work and Break Chart</p>
+            <div className='d-flex justify-content-center align-items-center'>
+                <button className='btn btn-success m-1' onClick={toggleMonthly}>
+                    {monthly ? "Yearly" : "Weekly"}
+                </button>
+                <select
+                    className="form-select  w-100"
+                    value={workData.weeks}
+                    onChange={(e) =>
+                        setWorkData(prevData => ({
+                            ...prevData,
+                            weeks: e.target.value,
+                        }))
+                    }
+                >
+                    <option value="1">1 {monthly ? "Year" : "Week"}</option>
+                    <option value="2">2 {monthly ? "Years" : "Weeks"}</option>
+                    <option value="3">3 {monthly ? "Years" : "Weeks"}</option>
+                    <option value="4">4 {monthly ? "Years" : "Weeks"}</option>
+                </select>
+            </div>
+            <div className='d-flex justify-content-between'>
+                <div> Total Work Time:
+                    <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hours</span>
+                </div>
+                <div>Total Break Time:
+                    <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hours</span>
+                </div>
+            </div>
+            <Bar data={chartData} />
+            <div className='d-flex justify-content-between'>
+                <p>Assigned Tickets Chart</p>
+                <select name={defaultUrl} className='form-select  w-25' onChange={(e) => setDefaultUrl(e.target.value)} id="">
+                    <option value="/third_party_api/ticket">Live</option>
+                    <option value="/upload">(ABC)Assigned By Captain</option>
+                </select>
+            </div>
+            <Line data={lineData} />
 
-                    </Card.Header>
-                    <Card.Body>
-                        <div className='d-flex justify-content-between'>
-                            <div> Total Work Time:
-                                <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hours</span>
-                            </div>
-                            <div>Total Break Time:
-                                <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hours</span>
-                            </div>
-                        </div>
-                        <Bar data={chartData} />
-                    </Card.Body>
-                </Card>
-            </Col>
-            <Col md={12}>
-                <Card className="mb-4">
-                    <Card.Header>
-                        <div className='d-flex justify-content-between'>
-                            <p>Assigned Tickets Categories - Line Chart</p>
-                            <select name={defaultUrl}className='form-select  w-25' onChange={(e) => setDefaultUrl(e.target.value)} id="">
-                                <option value="/third_party_api/ticket">Live</option>
-                                <option value="/upload">(ABC)Assigned By Captain</option>
-                            </select>
-                        </div>
-                    </Card.Header>
-                    <Card.Body>
-                        <Line data={lineData} />
-                    </Card.Body>
-                </Card>
-            </Col>
-        </Container>
+        </div>
     );
 }
 
