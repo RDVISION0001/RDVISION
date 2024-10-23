@@ -17,6 +17,7 @@
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.4",
+    "date-fns": "^4.1.0",
     "global": "^4.4.0",
     "highcharts": "^11.4.8",
     "highcharts-exporting": "^0.1.7",
