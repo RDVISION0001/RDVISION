@@ -259,7 +259,7 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/ticket_house" className="nav-link">
-              <i class="fa-solid fa-house-laptop"></i>
+                <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
             </li>
@@ -477,10 +477,8 @@ function Sidenav() {
               </NavLink>
             </li>
           </>
-
-
-
         )}
+
         {/* captain/Manager */}
         {roleName === 'Captain' && (
           localStorage.getItem("userId") && <>
@@ -602,26 +600,38 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleTicketSubMenu}>
                 <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets<i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
+                <i className={`fa-solid ${isTicketSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
               </div>
               {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4 ">
+                <ul className="nav flex-column px-4">
                   <li className="nav-item">
                     <NavLink to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
+                      <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                        {liveTickets.totalAssignTickets}
+                      </span>
+                      </span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
+                      <span className="nav-text">
+                        ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                          {uploadedTickets.totalAssignTickets}
+                        </span>
+                      </span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
                     <NavLink to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
+                      <span className="nav-text">
+                        In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                          {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
+                        </span>
+                      </span>
                     </NavLink>
                   </li>
                 </ul>
@@ -629,7 +639,7 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink to="/ticket_house" className="nav-link">
-              <i class="fa-solid fa-house-laptop"></i>
+                <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
             </li>
@@ -637,8 +647,10 @@ function Sidenav() {
             <li className="nav-item">
               <div className="nav-link" onClick={toggleInvoiceSubMenu}>
                 <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices<i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
+                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
+                <i className={`fa-solid ${isInvoiceSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
               </div>
+
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
