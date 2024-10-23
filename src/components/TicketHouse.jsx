@@ -39,12 +39,12 @@ const TicketHouse = () => {
 
     const fetchSlaesByCountry = async () => {
         const response = await axiosInstance.get('/third_party_api/ticket/salesByCountry')
-        const result =  response.data;
-       
+        const result = response.data;
+
         // Assuming the response is an array of arrays like [["US", 30], ["MY", 1], ...]
         const countriesList = result.map(item => item[0]); // Extract the first element from each subarray (countries)
         const dataList = result.map(item => item[1]); // Extract the second element from each subarray (data counts)
-      
+
         setCpuntryList(countriesList);
         setSaleCount(dataList);
     }
@@ -144,14 +144,67 @@ const TicketHouse = () => {
                 </div>
             </div>
 
-            {/* Two Column Layout */}
             <Row className="h-100">
                 {/* First Column with Funnel Chart */}
                 <Col lg={6} md={6} sm={12} className="d-flex flex-column p-3">
-                    <h6>Funnel Chart</h6>
-                    <div style={{ flex: 1 }}>
-                        <HighchartsReact highcharts={Highcharts} options={funnelOptions} />
+                    <div>
+                        <h6>Funnel Chart</h6>
+                        <div style={{ flex: 1 }}>
+                            <HighchartsReact highcharts={Highcharts} options={funnelOptions} />
+                        </div>
                     </div>
+
+                    <div className="container mt-3" style={{ marginTop: "100px" }}>
+                        <div className="row">
+                            {/* # of lost leads */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-warning text-center" style={{ borderRadius: '8px', backgroundColor: '#fff8e1' }}>
+                                    <h6 style={{ color: '#ff6f00' }}># of lost leads</h6>
+                                    <h3>2</h3>
+                                </div>
+                            </div>
+
+                            {/* Lost leads budget */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-warning text-center" style={{ borderRadius: '8px', backgroundColor: '#fff8e1' }}>
+                                    <h6 style={{ color: '#ff6f00' }}>Lost leads budget</h6>
+                                    <h3>$ 14,400.00</h3>
+                                </div>
+                            </div>
+
+                            {/* Average leads budget */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
+                                    <h6 style={{ color: '#43a047' }}>Average leads budget</h6>
+                                    <h3>$ 3,315.85</h3>
+                                </div>
+                            </div>
+
+                            {/* Current month average leads budget */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
+                                    <h6 style={{ color: '#43a047' }}>Current month average leads budget</h6>
+                                    <h3>$ 15,740.90</h3>
+                                </div>
+                            </div>
+                            {/* Average leads budget */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
+                                    <h6 style={{ color: '#43a047' }}>Average leads budget</h6>
+                                    <h3>$ 3,315.85</h3>
+                                </div>
+                            </div>
+
+                            {/* Current month average leads budget */}
+                            <div className="col-md-6 mb-4">
+                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
+                                    <h6 style={{ color: '#43a047' }}>Current month average leads budget</h6>
+                                    <h3>$ 15,740.90</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </Col>
 
                 {/* Second Column with Pie Chart and Bar Chart */}
