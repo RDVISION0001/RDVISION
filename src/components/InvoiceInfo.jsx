@@ -3,7 +3,7 @@ import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
 
-const InvoiceInfo = () => {
+const InvoiceInfo = (props) => {
     const [invoices, setInvoices] = useState([]);
     const [currentSrc, setCurrentSrc] = useState('');
     const [isPlaying, setIsPlaying] = useState(false);
@@ -46,12 +46,19 @@ const InvoiceInfo = () => {
     // Fetch Invoice Details
     useEffect(() => {
         fetchInvoices();
-    }, []);
+    }, [props.stage]);
 
     const fetchInvoices = async () => {
         try {
             const response = await axiosInstance.get("/invoice/getinvoices");
+           if(props.stage===4){
+            setInvoices(response.data.filter((invoice)=>invoice.deliveryStatus!=="Delivered" && invoice.inviceStatus==="paid"))
+           }else if(props.stage===5){
+            setInvoices(response.data.filter((invoice)=>invoice.deliveryStatus==="Delivered"))
+           }
+           else{
             setInvoices(response.data);
+           }
         } catch (error) {
             console.error("Error fetching invoices:", error);
             setError("Failed to fetch invoices");
@@ -153,7 +160,7 @@ const InvoiceInfo = () => {
   
     return (
         <>
-            <section className="sadmin-top-section">
+            {props.stage !==4 && <section className="sadmin-top-section">
                 <div className="container-fluid">
                     <div className="row">
                         {/* Total Invoices */}
@@ -218,7 +225,7 @@ const InvoiceInfo = () => {
                         <div className="col-md-3">
                             <div className="card">
                                 <div className="div-top">
-                                    <h3 className="title">Awaiting Invoices</h3>
+                                    <h3 className="title">Awaiting Tracking</h3>
                                     <span className="sales">
                                         {invoiceData.totalAwaitingPaidInvoices !== null ? invoiceData.totalAwaitingPaidInvoices : 'N/A'}
                                         <span className="indicators"></span>
@@ -231,21 +238,20 @@ const InvoiceInfo = () => {
                         </div>
                     </div>
                 </div>
-            </section>
+            </section>}
 
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                        <h3 className="title">Invoices for after sales service</h3>
+                       {props.stage===4?<h3 className="title">Delivery  Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
                         <table className="table">
                             <thead>
                                 <tr className='border'>
                                     <th className='text-center'>Created Date</th>
                                     <th className='text-center'>Ticket ID</th>
-                                    <th className='text-center'>Currency</th>
+                                    <th className='text-center'>Total Amount</th>
                                     <th className='text-center'>Quoted Price</th>
                                     <th className='text-center'>Last Update</th>
-                                    <th className='text-center'>Total Amount</th>
                                     <th className='text-center'>Tracking Id</th>
                                     <th className='text-center'>Invoice Status</th>
                                     <th className='text-center'>Delivery Status</th>
@@ -256,16 +262,15 @@ const InvoiceInfo = () => {
                             </thead>
                             <tbody className='overflow'>
                                 {invoices.length > 0 ? (
-                                    invoices.filter((invoice)=>invoice.inviceStatus==="paid").map((invoice,index) => (
+                                    invoices.map((invoice,index) => (
                                         <tr key={index} className='border'>
                                             <td className='text-center'>
                                                 {invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}
                                             </td>
                                             <td className='text-center'>{invoice.ticketId}</td>
-                                            <td className='text-center'>{invoice.currency}</td>
+                                            <td className='text-center'>{invoice.currency} {invoice.totalAmount}</td>
                                             <td className='text-center'>{invoice.quotedPrice}</td>
                                             <td className='text-center'>{setFormate(invoice.lastupdateDate)}</td>
-                                            <td className='text-center'>{invoice.totalAmount}</td>
                                             <td className='text-center'>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:"Awaiting for Tracking..." : "Awaiting For Tracking..."}</td>
                                             <td className={`${invoice.inviceStatus === 'Pending' ? "text-danger" : "text-success"} text-center fw-bold`}>
                                                 {invoice.inviceStatus}

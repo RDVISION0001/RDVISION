@@ -40,12 +40,10 @@ function indexss() {
 
   return (
     <>
-      <div className="container-fluid mt-3">
-        <Cardinfo />
-      </div>
+   
 
       {/* <!-- Tabbed Ticket Table --> */}
-      <section className="followup-table-section py-3">
+      {/* <section className="followup-table-section py-3">
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
             <h3 className="title">
@@ -86,7 +84,7 @@ function indexss() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       <InvoiceInfo/>
 
 

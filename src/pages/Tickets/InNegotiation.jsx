@@ -10,6 +10,7 @@ import InvoiceBox from '../../components/InvoiceBox';
 
 import { toast } from 'react-toastify';
 import QuotationBox from '../../components/QuotationBox';
+import InvoiceInfo from '../../components/InvoiceInfo'
 
 
 function InNegotiation() {
@@ -210,8 +211,8 @@ function InNegotiation() {
     { name: " Not Pickup, Not interested,Wrong Number", color: "#ed1c24", stage: 1 },
     { name: "Palce With Others, Followup, Call Back, Interested,", color: "#f7941e", stage: 2 },
     { name: "Sale", color: "#8dc63f", stage: 3 },
-    { name: "ASS", color: "#00aeef", stage: 4 },
-    { name: "Tracking", color: "#d6009b", stage: 5 },
+    { name: "Tracking", color: "#d6009b", stage: 4 },
+    { name: "ASS", color: "#00aeef", stage: 5 }
   ];
 
   // Fetch data from API
@@ -527,7 +528,7 @@ function InNegotiation() {
     return formattedDate;
   };
 
-  const stageSelection=(stage)=>{
+  const stageSelection = (stage) => {
     setbuttonFilterValue("");
     setSelectedStage(stage)
   }
@@ -590,346 +591,352 @@ function InNegotiation() {
           </div>
         </div>
       </div>
-      {list &&
-        <div>
-          {/* Stages */}
-          <section className="followup-table-section py-3">
-            <div className="container-fluid">
-              <div className="table-wrapper tabbed-table">
-                <div
-                  className="pipeline-container"
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  {stages.map((stage, index) => (
-                    <div
-                      key={index}
-                      onClick={() => stageSelection(stage.stage)} // Set selected stage
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        position: "relative",
-                        width: `calc(100% / ${stages.length})`,
-                        cursor: "pointer", // Add cursor pointer to indicate it's clickable
-                        fontSize: "inherit", // Default to inherit if not selected
-                        color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
-                      }}
-                    >
+      <div>
+        {list &&
+          <div>
+            {/* Stages */}
+            <section className="followup-table-section py-3">
+              <div className="container-fluid">
+                <div className="table-wrapper tabbed-table">
+                  <div
+                    className="pipeline-container"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {stages.map((stage, index) => (
                       <div
+                        key={index}
+                        onClick={() => stageSelection(stage.stage)} // Set selected stage
                         style={{
-                          backgroundColor: stage.color, // Highlight selected stage
-                          width: "100%",
-                          height: "100px",
                           display: "flex",
                           alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: "bold",
-                          flexDirection: "column",
-                          clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
-                          marginRight: "-25px",
-                          zIndex: 1,
-                          boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
+                          position: "relative",
+                          width: `calc(100% / ${stages.length})`,
+                          cursor: "pointer", // Add cursor pointer to indicate it's clickable
+                          fontSize: "inherit", // Default to inherit if not selected
+                          color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                         }}
                       >
                         <div
                           style={{
-
-                            fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
-                            color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                            backgroundColor: stage.color, // Highlight selected stage
+                            width: "100%",
+                            height: "100px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: "bold",
+                            flexDirection: "column",
+                            clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
+                            marginRight: "-25px",
+                            zIndex: 1,
+                            boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
                           }}
-                        >Stage :{stage.stage}</div>
-                        <div>{stage.name}</div>
-                      </div>
-
-                      {index < stages.length - 1 && (
-                        <div
-                          style={{
-                            width: "0",
-                            height: "0",
-                            borderTop: "50px solid transparent",
-                            borderBottom: "50px solid transparent",
-                            borderLeft: `25px solid ${stages[index + 1].color}`,
-                            position: "absolute",
-                            right: "-25px",
-                            zIndex: 0,
-                          }}
-                        ></div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-            </div>
-          </section>
-          <section className="filter-section">
-            <div className="container-fluid">
-              <div className="row">
-                <div className="col-md-5">
-                  <div className="search-wrapper">
-                    <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                    <div className="search-icon">
-                      <i className="fa-solid fa-magnifying-glass"></i>
-                    </div>
-                  </div>
-                </div>
-                {selectedStage === 2 && <div className="col-md-5">
-                  <div className="search-wrapper d-flex justify-content-center align-items-center">
-                    <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
-                    <div className="search-icon">
-                      <i className="fa-solid fa-magnifying-glass"></i>
-
-                    </div>
-                    <i
-                      className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
-                      onClick={() => setFilterDate(null)}
-                    ></i>
-
-                  </div>
-
-                </div>}
-              </div>
-            </div>
-          </section>
-          {/*Filters*/}
-
-          <section className='d-flex justify-content-center'>
-            <div className=' w-50 d-flex justify-content-around p-3'>
-              {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
-              {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
-              <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button>
-                <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
-                <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
-               </>}
-              {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
-                <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
-                <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button></>}
-            </div>
-          </section>
-
-          {/* Table */}
-          <section className="followup-table-section py-3">
-            <div className="container-fluid">
-              <div className="table-wrapper tabbed-table">
-                <div className="followups-table table-responsive table-height">
-                  <table className="table">
-                    <thead className="sticky-header">
-                      <tr>
-                        <th tabIndex="0" >S.No.</th>
-                        <th tabIndex="0" style={{ width: "120px" }}>Date/Time</th>
-                        <th tabIndex="0">Country</th>
-                        <th tabIndex="0">Customer Name</th>
-                        <th tabIndex="0">Customer Number</th>
-                        <th tabIndex="0">Customer Email</th>
-                        <th tabIndex="0">Status</th>
-                        <th tabIndex="0">Requirement</th>
-                        {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
-                        <th tabIndex="0">Follow Comment</th>
-                        <th tabIndex="0">Action</th>
-                        <th tabIndex="0">Ticket ID</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentData.map((nego, index) => (
-                        <tr key={index}
-                          style={{
-                            boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
-                            zIndex: index === selectedKey ? 1 : "auto",
-                            position: index === selectedKey ? "relative" : "static"
-                          }}
-                          onClick={() => handleSelecteRow(index)}
                         >
-                          <td>{index + 1}.</td>
-                          <td>
-                            <span className="text">
-                              {nego.senderMobile
-                                ? <div className='d-flex flex-column'><span className="text">{nego.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(nego.queryTime.split(" ")[0].split("-")[1]))}-{nego.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(nego.queryTime.split(" ")[1])}</span></div>
+                          <div
+                            style={{
 
-                                : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
-                            </span>
-                          </td>
-                          <td>
-                            <img src={`https://flagcdn.com/${nego.country && nego.country.toLowerCase()}.svg`} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
-                            <span className="text">{nego.country}</span>
-                          </td>
-                          <td><span className="text">{nego.senderName || nego.firstName}</span></td>
-                          <td>
-                            <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
-                              <button>Copy</button>
-                            </CopyToClipboard>
-                            <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
-                          </td>
-                          <td>
-                            <CopyToClipboard text={nego.email}>
-                              <button>Copy</button>
-                            </CopyToClipboard>
-                            <span className="text">{maskEmail(nego.email)}</span>
-                          </td>
-                          <td>
-                            <div className="dropdown" onClick={() => handleShow(nego.uniqueQueryId)}>
-                              <a className="btn btn-info dropdown-toggle" role="button" data-bs-toggle="dropdown" style={{ backgroundColor: getColorByStatus(nego.ticketstatus) }}>
-                                {nego.ticketstatus}
-                              </a>
-                            </div>
-                          </td>
-                          <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
-                            <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
-                          </td>
-                          {selectedStage === 2 && <td><span className="text">{nego.followupDateTime ? formatLocalDateTime(nego.followupDateTime) : ""}</span></td>
-                          }
-                          <td>{nego.comment}</td>
-                          <td>
-                            <span className="actions-wrapper">
-                              <Button
-                                onClick={() => openTicketJourney(nego.uniqueQueryId)}
-                                // onClick={handleView}
-                                data-bs-toggle="modal"
-                                data-bs-target="#followUpModal"
-                                className="btn-action call bg-danger"
-                                title="Get connect on call"
-                              ><i className="fa-solid fa-info "></i>
-                              </Button>
-                              <Button
-                                onClick={() => handleClick(nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}
-                                data-bs-toggle="modal"
-                                data-bs-target="#followUpModal"
-                                className="btn-action call"
-                                title="Get connected on call"
-                              >
-                                <i className="fa-solid fa-phone"></i>
-                              </Button>
+                              fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
+                              color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                            }}
+                          >Stage :{stage.stage}</div>
+                          <div>{stage.name}</div>
+                        </div>
 
-                              <a
-                                href={`sms:${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
-                                className="btn-action message"
-                                title="Get connected on message"
-                              >
-                                <i className="fa-solid fa-message"></i>
-                              </a>
+                        {index < stages.length - 1 && (
+                          <div
+                            style={{
+                              width: "0",
+                              height: "0",
+                              borderTop: "50px solid transparent",
+                              borderBottom: "50px solid transparent",
+                              borderLeft: `25px solid ${stages[index + 1].color}`,
+                              position: "absolute",
+                              right: "-25px",
+                              zIndex: 0,
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
 
-                              <Button
-                                onClick={() => handleOn(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile, nego.queryProductName)}
-                                // href="mailto:someone@example.com"
-                                className="btn-action email"
-                                title="Get connect on email"
-                              ><i className="fa-solid fa-envelope"></i
-                              ></Button>
-                              <a href={`https://wa.me/${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. if you're looking for a good deal please type YES👍`}`}
-                                target='_blank'
-                                className="btn-action whatsapp"
-                                title="Get connect on whatsapp"
-                              ><i className="fa-brands fa-whatsapp"></i></a>
-                              <Button
-                                onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
-                                className="rounded-circle "
-                                title="Get connect on"
-                              >
-                                <i className="fa-solid fa-file-invoice"></i>
-                              </Button>
-                            </span>
-                          </td>
+                </div>
+              </div>
+            </section>
+            <section className="filter-section">
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-md-5">
+                    <div className="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+                      </div>
+                    </div>
+                  </div>
+                  {selectedStage === 2 && <div className="col-md-5">
+                    <div className="search-wrapper d-flex justify-content-center align-items-center">
+                      <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
 
-                          <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
+                      </div>
+                      <i
+                        className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                        onClick={() => setFilterDate(null)}
+                      ></i>
+
+                    </div>
+
+                  </div>}
+                </div>
+              </div>
+            </section>
+            {/*Filters*/}
+
+            {selectedStage < 4 && <section className='d-flex justify-content-center'>
+              <div className=' w-50 d-flex justify-content-around p-3'>
+                {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
+                {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
+                  <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button>
+                  <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
+                  <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
+                </>}
+                {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
+                  <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
+                  <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button></>}
+              </div>
+            </section>
+            }
+            {/* Table */}
+            {selectedStage < 4 && <section className="followup-table-section py-3">
+              <div className="container-fluid">
+                <div className="table-wrapper tabbed-table">
+                  <div className="followups-table table-responsive table-height">
+                    <table className="table">
+                      <thead className="sticky-header">
+                        <tr>
+                          <th tabIndex="0" >S.No.</th>
+                          <th tabIndex="0" style={{ width: "120px" }}>Date/Time</th>
+                          <th tabIndex="0">Country</th>
+                          <th tabIndex="0">Customer Name</th>
+                          <th tabIndex="0">Customer Number</th>
+                          <th tabIndex="0">Customer Email</th>
+                          <th tabIndex="0">Status</th>
+                          <th tabIndex="0">Requirement</th>
+                          {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
+                          <th tabIndex="0">Follow Comment</th>
+                          <th tabIndex="0">Action</th>
+                          <th tabIndex="0">Ticket ID</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody>
+                        {currentData.map((nego, index) => (
+                          <tr key={index}
+                            style={{
+                              boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                              zIndex: index === selectedKey ? 1 : "auto",
+                              position: index === selectedKey ? "relative" : "static"
+                            }}
+                            onClick={() => handleSelecteRow(index)}
+                          >
+                            <td>{index + 1}.</td>
+                            <td>
+                              <span className="text">
+                                {nego.senderMobile
+                                  ? <div className='d-flex flex-column'><span className="text">{nego.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(nego.queryTime.split(" ")[0].split("-")[1]))}-{nego.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(nego.queryTime.split(" ")[1])}</span></div>
 
-                {/* Pagination Controls */}
-                <div className='d-flex pagination-controls  align-items-center'>
-                  <div className="pagination-controls">
-                    <button
-                      className=' text-white'
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </button>
+                                  : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
+                              </span>
+                            </td>
+                            <td>
+                              <img src={`https://flagcdn.com/${nego.country && nego.country.toLowerCase()}.svg`} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
+                              <span className="text">{nego.country}</span>
+                            </td>
+                            <td><span className="text">{nego.senderName || nego.firstName}</span></td>
+                            <td>
+                              <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
+                                <button>Copy</button>
+                              </CopyToClipboard>
+                              <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
+                            </td>
+                            <td>
+                              <CopyToClipboard text={nego.email}>
+                                <button>Copy</button>
+                              </CopyToClipboard>
+                              <span className="text">{maskEmail(nego.email)}</span>
+                            </td>
+                            <td>
+                              <div className="dropdown" onClick={() => handleShow(nego.uniqueQueryId)}>
+                                <a className="btn btn-info dropdown-toggle" role="button" data-bs-toggle="dropdown" style={{ backgroundColor: getColorByStatus(nego.ticketstatus) }}>
+                                  {nego.ticketstatus}
+                                </a>
+                              </div>
+                            </td>
+                            <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
+                              <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
+                            </td>
+                            {selectedStage === 2 && <td><span className="text">{nego.followupDateTime ? formatLocalDateTime(nego.followupDateTime) : ""}</span></td>
+                            }
+                            <td>{nego.comment}</td>
+                            <td>
+                              <span className="actions-wrapper">
+                                <Button
+                                  onClick={() => openTicketJourney(nego.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
+                                  onClick={() => handleClick(nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call"
+                                  title="Get connected on call"
+                                >
+                                  <i className="fa-solid fa-phone"></i>
+                                </Button>
 
-                    <span>
-                      {Array.from({ length: totalPages }, (_, index) => index + 1).map(page => (
-                        <button
-                          key={page}
-                          onClick={() => handlePageChange(page)}
-                          className={`pagination-button  text-white ${currentPage === page ? 'active' : ''}`}
-                        >
-                          {page}
-                        </button>
-                      ))}
-                    </span>
+                                <a
+                                  href={`sms:${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                  className="btn-action message"
+                                  title="Get connected on message"
+                                >
+                                  <i className="fa-solid fa-message"></i>
+                                </a>
 
-                    <button
-                      className=' text-white'
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </button>
+                                <Button
+                                  onClick={() => handleOn(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile, nego.queryProductName)}
+                                  // href="mailto:someone@example.com"
+                                  className="btn-action email"
+                                  title="Get connect on email"
+                                ><i className="fa-solid fa-envelope"></i
+                                ></Button>
+                                <a href={`https://wa.me/${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. if you're looking for a good deal please type YES👍`}`}
+                                  target='_blank'
+                                  className="btn-action whatsapp"
+                                  title="Get connect on whatsapp"
+                                ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i className="fa-solid fa-file-invoice"></i>
+                                </Button>
+                              </span>
+                            </td>
+
+                            <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
 
-                  <div className="table-controls">
-                    <label className='ml-2'>
-                      Rows per page:
-                    </label>
-                    <select value={rowsPerPage} onChange={handleRowsPerPageChange}
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                      <option value={1000}>1000</option>
-                    </select>
+                  {/* Pagination Controls */}
+                  <div className='d-flex pagination-controls  align-items-center'>
+                    <div className="pagination-controls">
+                      <button
+                        className=' text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
 
-                  </div>
-                </div>
+                      <span>
+                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(page => (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`pagination-button  text-white ${currentPage === page ? 'active' : ''}`}
+                          >
+                            {page}
+                          </button>
+                        ))}
+                      </span>
 
-              </div>
-            </div>
-          </section>
-        </div>}
-      {
-        !list &&
-        <div className='p-3'>
-          <div className="row g-0">
-            {['stage1', 'stage2', 'stage3'].map((stage, idx) => (
-              <div className={`col-sm text-center `} key={stage}>
-                <div className='border'>
-                  <span className='fw-bold'>{`Stage ${idx + 1}`}</span>
-                  <div>{`consisting Status ${stage === 'stage1' ? 'Not Connected, wrong mobile number and Not Pickup' : stage === 'stage2' ? 'Connected follow-ups and call backs' : 'only sale'}`}</div>
-                </div>
-                <div className='d-flex flex-wrap justify-content-around' onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, stage)}>
-                  {(stage === 'stage1' ? stage1Data : stage === 'stage2' ? stage2Data : stage3Data).map((ticket) => (
-                    <div
-                      key={ticket.uniqueQueryId}
-                      className="border text-sm m-2 tktcard"
-                      style={{ width: "15rem", borderRadius: "10px", cursor: "pointer" }}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, ticket, stage)}
-                    >
-                      <div className='m-1'>
-                        <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment || "comment not available"}</div>
-                        <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry || "Enquiry not available"}</div>
-                      </div>
-                      <div className='text-primary p-1' style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShowUniqe(ticket.uniqueQueryId)}>
-                        {ticket.ticketstatus}
-                      </div>
+                      <button
+                        className=' text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
                     </div>
-                  ))}
+
+                    <div className="table-controls">
+                      <label className='ml-2'>
+                        Rows per page:
+                      </label>
+                      <select value={rowsPerPage} onChange={handleRowsPerPageChange}
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={1000}>1000</option>
+                      </select>
+
+                    </div>
+                  </div>
+
                 </div>
               </div>
-            ))}
+            </section>}
+            {
+              selectedStage > 3 &&
+              <InvoiceInfo stage={selectedStage} />
+            }
+          </div>}
+        {
+          !list &&
+          <div className='p-3'>
+            <div className="row g-0">
+              {['stage1', 'stage2', 'stage3'].map((stage, idx) => (
+                <div className={`col-sm text-center `} key={stage}>
+                  <div className='border'>
+                    <span className='fw-bold'>{`Stage ${idx + 1}`}</span>
+                    <div>{`consisting Status ${stage === 'stage1' ? 'Not Connected, wrong mobile number and Not Pickup' : stage === 'stage2' ? 'Connected follow-ups and call backs' : 'only sale'}`}</div>
+                  </div>
+                  <div className='d-flex flex-wrap justify-content-around' onDragOver={handleDragOver} onDrop={(e) => handleDrop(e, stage)}>
+                    {(stage === 'stage1' ? stage1Data : stage === 'stage2' ? stage2Data : stage3Data).map((ticket) => (
+                      <div
+                        key={ticket.uniqueQueryId}
+                        className="border text-sm m-2 tktcard"
+                        style={{ width: "15rem", borderRadius: "10px", cursor: "pointer" }}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, ticket, stage)}
+                      >
+                        <div className='m-1'>
+                          <div className='text-black' style={{ fontSize: "12px" }}>{ticket.comment || "comment not available"}</div>
+                          <div className='text-secondary' style={{ fontSize: "12px" }}>{ticket.productEnquiry || "Enquiry not available"}</div>
+                        </div>
+                        <div className='text-primary p-1' style={{ borderTop: "1px solid #D3D3D3" }} onClick={() => handleShowUniqe(ticket.uniqueQueryId)}>
+                          {ticket.ticketstatus}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      }
+        }
+      </div>
       {error && <div className="api-error"> {error.message}</div>}
       <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
