@@ -15,6 +15,10 @@ function LiveCalander() {
   const [currentView, setCurrentView] = useState('month'); // Default view is "month"
   const { followupState } = useAuth();
 
+  const openInNewTab = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   useEffect(() => {
     fetchData();
     fetchUploadedData();
@@ -93,7 +97,7 @@ function LiveCalander() {
               }
               return { style };
             }}
-            onSelectEvent={(event) => alert(event.title)}
+            onSelectEvent={(event) => openInNewTab("/in_negotiation")}            
             timeslots={2}
             step={30}
             showMultiDayTimes

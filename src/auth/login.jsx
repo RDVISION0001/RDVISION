@@ -171,6 +171,7 @@ function login() {
                           <button className="btn btn-danger" onClick={sendOtp}>Request Otp</button>
                         )
                       )}
+                      {otpSent && <button className="btn btn-danger" style={{marginLeft:"10px"}} onClick={sendOtp}>Resend Otp</button>}
                     </div>
                     <div className='custom-navlink'><NavLink to="/forgot_password">Forgot Password</NavLink></div>
                   </div>

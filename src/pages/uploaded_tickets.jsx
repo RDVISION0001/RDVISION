@@ -3,7 +3,9 @@ import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
 
-import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3';
+import emailTemp from '../assets/emailtemp/email.png';
+
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -619,7 +621,7 @@ function uploaded_tickets() {
                               item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase()) ||
                               item.email.toLowerCase().includes(shortValue.toLowerCase()) ||
                               item.firstName.toLowerCase().includes(shortValue.toLowerCase())
-                          ).map((item, index) => (
+                          ).filter((item)=>item.ticketstatus==="New").map((item, index) => (
                             <tr key={index}
                               style={{
                                 boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
@@ -868,67 +870,39 @@ function uploaded_tickets() {
 
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
-          <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Call Status
-          </h1>
+          <h4 className="w-100 text-center" id="followUpModalLabel">
+            Send Quotation Mail to Customer
+          </h4>
         </Modal.Header>
         <Modal.Body>
-          <form>
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-lg-6">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">User Detail</h5>
-                      <div className="user-info">
-                        <div><strong>Name:</strong> {senderNameForEmail}</div>
-                        <div><strong>Ticket ID:</strong> {uniqueQueryId}</div>
-                        <div><strong>Email:</strong> {emailFormail}</div>
-                        <div><strong>Mobile Number:</strong> {mobileNumber}</div>
-                      </div>
-                    </div>
+          <div className="container">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 1</p>
+                    <img src={emailTemp} alt="Template 1" className="img-fluid" />
                   </div>
                 </div>
-
-                <div className="col-lg-6 mt-4 mt-lg-0">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5 className="card-title text-center mb-4">Product Details</h5>
-                      <div className="user-info d-flex flex-wrap">
-                        {productArray.map((product, index) => (
-                          <React.Fragment key={index}>
-                            <div>{product}</div>
-                            {index !== productArray.length - 1 && <div className="comma">,</div>}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    </div>
+              </div>
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 2</p>
+                    <img src={emailTemp} alt="Template 2" className="img-fluid" />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 3</p>
+                    <img src={emailTemp} alt="Template 3" className="img-fluid" />
                   </div>
                 </div>
               </div>
             </div>
-
-            <div className="container mt-4">
-              <div className="row justify-content-center">
-                <div className="col-md-8">
-                  <div className="d-flex align-items-center justify-content-center p-3">
-                    <label htmlFor="status" className="form-label mr-3 mb-0">Add Product:</label>
-                    <select className="form-select" onChange={handleSelectProduct}>
-                      <option value="">Select products</option>
-                      {productsList.map((product, index) => (
-                        <option key={index} value={product.name}>{product.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer justify-content-center border-0">
-              <Button variant="secondary" data-bs-dismiss="modal" onClick={handleOff}>Close</Button>
-              <Button variant="primary" onClick={handleSendEmail}>Send</Button>
-            </div>
-          </form>
+          </div>
         </Modal.Body>
       </Modal>
 
