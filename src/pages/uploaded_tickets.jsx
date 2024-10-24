@@ -16,6 +16,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TicketJourney from '../components/TicketJourney';
 
+import InvoiceBox from '../components/InvoiceBox';
+import QuotationBox from '../components/QuotationBox';
+
 function uploaded_tickets() {
   const { userId } = useAuth();
 
@@ -34,6 +37,12 @@ function uploaded_tickets() {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [uniqueQueryId, setUniqueQueryId] = useState(null);
+
+  const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
+  const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
+  const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
+  const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
+
 
   // Modal state
   const [show, setShow] = useState(false);
@@ -131,6 +140,15 @@ function uploaded_tickets() {
     setProductArray(prevArray => [...prevArray, product]);
     setOn(true);
   };
+
+  const [isInvoiceOn, setIsInvoiceOn] = useState(false)
+  const handleInvoice = (ticketId, name, email, mobile) => {
+    setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
+    setIsInvoiceOn(!isInvoiceOn)
+  }
 
   const handleCloses = () => setView(false);
   const handleView = (queryId) => {
@@ -695,6 +713,13 @@ function uploaded_tickets() {
                                     className="btn-action whatsapp"
                                     title="Get connect on whatsapp"
                                   ><i className="fa-brands fa-whatsapp"></i></a>
+                                  <Button
+                                    onClick={() => handleInvoice(item.uniqueQueryId)}
+                                    className="rounded-circle "
+                                    title="Get connect on"
+                                  >
+                                    <i className="fa-solid fa-file-invoice"></i>
+                                  </Button>
                                 </span>
                               </td>
                               <td className="ticket-id">
@@ -1020,6 +1045,27 @@ function uploaded_tickets() {
           <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
         </div>
       </dialog>
+
+      {/* //invoice modal */}
+      <Modal
+        show={isInvoiceOn}
+        onHide={handleInvoice}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal" // Add a custom class here
+      >
+        <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+          <u> Raise Invoice</u>
+        </h1>
+        <InvoiceBox
+          ticketId={selectTicketForInvoice}
+          name={selectNameForInvoice}
+          email={selectEmailForInvoice}
+          mobile={selectMobileForInvoice}
+        />
+      </Modal>
     </>
   )
 }

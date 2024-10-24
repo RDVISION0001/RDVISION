@@ -210,7 +210,7 @@ function InNegotiation() {
   // Define stages
   const stages = [
     { name: " Not Pickup, Not interested,Wrong Number", color: "#ed1c24", stage: 1 },
-    { name: "Palce With Others, Followup, Call Back, Interested,", color: "#f7941e", stage: 2 },
+    { name: "Palce With Others, Followup, Interested,", color: "#f7941e", stage: 2 },
     { name: "Sale", color: "#8dc63f", stage: 3 },
     { name: "Tracking", color: "#d6009b", stage: 4 },
     { name: "ASS", color: "#00aeef", stage: 5 }
