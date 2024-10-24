@@ -5,7 +5,8 @@ import axiosInstance from '../axiosInstance';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3';
+import emailTemp from '../assets/emailtemp/email.png';
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -63,7 +64,7 @@ function live_tickets() {
   const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
   const [filterdate, setFilterDate] = useState(null)
-  const { noOfNweticketsRecevied,setNoOfnewticketsReceived } = useAuth()
+  const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
   const [countryFilter, setCountryFilter] = useState(null)
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
@@ -571,7 +572,7 @@ function live_tickets() {
                   <table className="table">
                     <thead className="sticky-header">
                       <tr>
-                      <th tabindex="0">S.No.</th>
+                        <th tabindex="0">S.No.</th>
                         <th tabindex="0">Date/Time</th>
                         <th tabindex="0">Country</th>
                         <th tabindex="0">Customer Name</th>
@@ -599,7 +600,7 @@ function live_tickets() {
                             }}
                             onClick={() => handleSelecteRow(index)}
                           >
-                            <td>{index+1}.</td>
+                            <td>{index + 1}.</td>
                             <td>
                               <span className="text">
                                 {item.queryTime.split(" ")[0].split("-")[2]}-
@@ -819,20 +820,42 @@ function live_tickets() {
 
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
-          <h1 className=" w-100 text-center" id="followUpModalLabel">
+          <h4 className="w-100 text-center" id="followUpModalLabel">
             Send Quotation Mail to Customer
-          </h1>
+          </h4>
         </Modal.Header>
         <Modal.Body>
-          <div className="">
-            <div className="card shadow-sm">
-              <div>
-                <QuotationBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
+          <div className="container">
+            <div className="row">
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 1</p>
+                    <img src={emailTemp} alt="Template 1" className="img-fluid" />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 2</p>
+                    <img src={emailTemp} alt="Template 2" className="img-fluid" />
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="shadow p-3 mb-5 bg-white rounded">
+                  <div className="card-body">
+                    <p>Template 3</p>
+                    <img src={emailTemp} alt="Template 3" className="img-fluid" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </Modal.Body>
       </Modal>
+
 
 
       {/* <!-- Modal ticket popup --> */}

@@ -62,6 +62,25 @@ const ViewInvoice = () => {
         }
     };
 
+    const [address, setAddressData] = useState(null)
+
+
+    // address
+    useEffect(() => {
+        if (orderid) {
+            const fetchAddressDetails = async () => {
+                try {
+                    const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
+                    setAddressData(response.data.dto);
+                } catch (err) {
+                    console.error('Error fetching address details:', err);
+                }
+            };
+
+            fetchAddressDetails();
+        }
+    }, []);
+
     const stripePromise = loadStripe("pk_live_51KpHlnSAxOboMMomzgtOknKDOwEg9AysCqs6g0O2e9ETloartosrHcf8qOAwOsChi8s5EYN8UHzNn2VgyKirIE6K00TujZ91YB");
 
     if (error) {
@@ -77,7 +96,7 @@ const ViewInvoice = () => {
         name: orderData.ticketDetail.senderName,
         email: orderData.ticketDetail.senderEmail,
         mobile: orderData.ticketDetail.senderMobile,
-        address: `${orderData.addresss.houseNumber}, ${orderData.addresss.landmark}, ${orderData.addresss.city}, ${orderData.addresss.state}, ${orderData.addresss.zipCode}, ${orderData.addresss.country}`
+        address: orderData.address && `${orderData.addresss.houseNumber}, ${orderData.addresss.landmark}, ${orderData.addresss.city}, ${orderData.addresss.state}, ${orderData.addresss.zipCode}, ${orderData.addresss.country}`
     };
 
     const products = orderData.orderDetails.productOrders; // Extract product orders
@@ -158,7 +177,8 @@ const ViewInvoice = () => {
 
                 <p>To</p>
                 <p>{customer.name}</p>
-                <p>{customer.address}</p>
+                <p>{orderData.addresss ? customer.address:"Address Not Available"}</p>
+                {orderData.addresss ?<button type="button" class="btn btn-primary rounded" onclick="addAddress()">Edit</button>:<button type="button" class="btn btn-primary rounded" onclick="addAddress()">Add Address</button>}
                 <p>{customer.mobile}</p>
             </section>
 
