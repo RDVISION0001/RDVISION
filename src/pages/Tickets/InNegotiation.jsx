@@ -59,6 +59,7 @@ function InNegotiation() {
   const toggleCheckbox = () => {
     setlist(!list); // Toggle the state
   };
+  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
   const handleInvoice = (ticketId, name, email, mobile) => {
     setSelectTicketForInvoice(ticketId)
@@ -528,6 +529,27 @@ function InNegotiation() {
     return formattedDate;
   };
 
+  function convertDateFormat(inputDate) {
+    // Parse the input date string
+    const date = new Date(inputDate);
+  
+    // Define an array for month abbreviations
+    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  
+    // Get individual date components
+    const day = date.getUTCDate(); // Get the day of the month
+    const month = monthNames[date.getUTCMonth()]; // Get the abbreviated month
+    const year = date.getUTCFullYear(); // Get the full year
+  
+    // Get the time components and format them
+    let hours = date.getUTCHours(); // Get hours
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Get minutes and ensure two digits
+    const ampm = hours >= 12 ? 'pm' : 'am'; // Determine AM/PM
+    hours = hours % 12 || 12; // Convert 24-hour format to 12-hour format
+  
+    // Return the formatted date string
+    return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
+  }
   const stageSelection = (stage) => {
     setbuttonFilterValue("");
     setSelectedStage(stage)
@@ -748,14 +770,14 @@ function InNegotiation() {
                             <td>{index + 1}.</td>
                             <td>
                               <span className="text">
-                                {nego.senderMobile
-                                  ? <div className='d-flex flex-column'><span className="text">{nego.queryTime.split(" ")[0].split("-")[2]}-{convertNumberToStringMonth(parseInt(nego.queryTime.split(" ")[0].split("-")[1]))}-{nego.queryTime.split(" ")[0].split("-")[0]}</span><span>{convertTo12HourFormat(nego.queryTime.split(" ")[1])}</span></div>
+                                {nego.senderName
+                                  ? <div className='d-flex flex-column'><span className="text">{convertDateFormat(nego.queryTime)}</span></div>
 
                                   : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
                               </span>
                             </td>
                             <td>
-                              <img src={`https://flagcdn.com/${nego.country && nego.country.toLowerCase()}.svg`} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
+                              <img src={nego.senderCountryIso && getFlagUrl(nego.senderCountryIso)} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
                               <span className="text">{nego.country}</span>
                             </td>
                             <td><span className="text">{nego.senderName || nego.firstName}</span></td>
@@ -781,7 +803,7 @@ function InNegotiation() {
                             <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
                               <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
                             </td>
-                            {selectedStage === 2 && <td><span className="text">{nego.followupDateTime ? formatLocalDateTime(nego.followupDateTime) : ""}</span></td>
+                            {selectedStage === 2 && <td><span className="text">{nego.followUpDateTime ? formatLocalDateTime(nego.followUpDateTime) : ""}</span></td>
                             }
                             <td>{nego.comment}</td>
                             <td>
