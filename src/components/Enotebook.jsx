@@ -48,7 +48,7 @@ const Enotebook = () => {
   const fetNotes = async () => {
     const response = await axiosInstance.get(`/enote/getallByUser/${localStorage.getItem("userId")}`);
     setNotes(response.data);
-    console.log(response.data);
+   
   };
 
   const deleteNote = async (noteId) => {
