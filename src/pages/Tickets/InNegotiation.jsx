@@ -21,7 +21,7 @@ function InNegotiation() {
   const [list, setlist] = useState(true)
   const [ticketData, setTicketData] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedStage, setSelectedStage] = useState(1); // Default stage is 2
+  const [selectedStage, setSelectedStage] = useState(2); // Default stage is 2
   const { userId } = useAuth();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
