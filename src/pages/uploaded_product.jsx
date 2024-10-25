@@ -5,6 +5,12 @@ import { toast } from 'react-toastify';
 
 function UploadedProduct() {
     const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    // Filter products by search term
+    const filteredProducts = products.filter(product =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     useEffect(() => {
         // Fetch data from API
@@ -174,7 +180,7 @@ function UploadedProduct() {
     return (
         <div>
             {/* Toggle between Basic and Advance Details */}
-            {localStorage.getItem("roleName")==="Product_Coordinator" && <>
+            {localStorage.getItem("roleName") === "Product_Coordinator" && <>
                 <section className="filter-section">
                     <div className="container-fluid">
                         <div className="row">
@@ -373,89 +379,105 @@ function UploadedProduct() {
                     </section>
                 )}
             </>}
-            {/* productb table list */}
+
+            {/* Product Card List */}
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
-                        <h3 className="title">Products List<span className="d-flex justify-content-end"></span></h3>
+                        <h3 className="title">
+                            Products List</h3>
+                        <div className="col-md-5 mb-3">
+                            <div className="search-wrapper">
+                                <input
+                                    type="text"
+                                    name="search-user"
+                                    id="searchUsers"
+                                    className="form-control"
+                                    placeholder="Search products by name"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                                <div className="search-icon">
+                                    <i className="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                            </div>
+                        </div>
                         <div className="tab-content recent-transactions-tab-body" id="followUpContent">
-                            <div className="tab-pane fade show active" id="new-arrivals-tkts-tab-pane" role="tabpanel" aria-labelledby="new-arrivals-tkts-tab" tabindex="0">
-                                <div className="followups-table table-responsive table-height">
-                                    <table className="table">
-                                        <thead className="sticky-header">
-                                            <tr>
-                                                <th tabindex="0">S No.</th>
-                                                <th tabindex="0">Product Code</th>
-                                                <th tabindex="0">Name of Medicine</th>
-                                                <th tabindex="0">Product Image</th>
-                                                <th tabindex="0">Strength</th>
-                                                <th tabindex="0">Packging Size</th>
-                                                <th tabindex="0">Packging Type</th>
-                                                <th tabindex="0">Composition</th>
-                                                <th tabindex="0">Brand</th>
-                                                <th tabindex="0">Treatment</th>
-                                                {localStorage.getItem("roleName")==="Product_Coordinator" &&<th tabindex="0">Action</th>}
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {products.length > 0 ? (
-                                                products.map((product,index) => (
-                                                    <tr>
-                                                        <td><span className="text">{index+1}.</span></td>
-                                                        <td><span className="text">{product.productCode}</span></td>
-                                                        <td><span className="text">{product.name}</span></td>
-                                                        <td>
-                                                            <span className="text">
-                                                                <img src={product.images} style={{ width: "50px", height: "50px" }} />
-                                                            </span>
-                                                        </td>
-                                                        <td><span className="text">{product.strength}</span></td>
-                                                        <td><span className="text">{product.packagingSize}</span></td>
-                                                        <td><span className="text">{product.packagingType}</span></td>
-                                                        <td><span className="text">{product.composition}</span></td>
-                                                        <td><span className="text">{product.brand}</span></td>
-                                                        <td><span className="text">{product.treatment}</span></td>
-                                                        {localStorage.getItem("roleName")==="Product_Coordinator" && <td>
-                                                            <span className="actions-wrapper">
+                            <div
+                                className="tab-pane fade show active"
+                                id="new-arrivals-tkts-tab-pane"
+                                role="tabpanel"
+                                aria-labelledby="new-arrivals-tkts-tab"
+                                tabIndex="0"
+                            >
+                                <div className="row">
+                                    {filteredProducts.length > 0 ? (
+                                        filteredProducts.map((product, index) => (
+                                            <div className="col-md-2 mb-4" key={index}>
+                                                <div
+                                                    className="card product-card shadow-sm h-100"
+                                                    style={{
+                                                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                                                    }}
+                                                >
+                                                    <div className="card-header">
+                                                        <h5 className="card-title">{product.name}</h5>
+                                                    </div>
+                                                    <img
+                                                        src={product.images}
+                                                        className="card-img-top"
+                                                        alt={product.name}
+                                                        style={{ height: "200px", objectFit: "cover" }}
+                                                    />
+                                                    <div className="card-body">
+                                                        <p className="card-text">
+                                                            <strong>Product Code:</strong> {product.productCode}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Strength:</strong> {product.strength}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Packaging Size:</strong> {product.packagingSize}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Packaging Type:</strong> {product.packagingType}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Composition:</strong> {product.composition}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Brand:</strong> {product.brand}
+                                                        </p>
+                                                        <p className="card-text">
+                                                            <strong>Treatment:</strong> {product.treatment.split(' ').slice(0, 7).join(' ')}
+                                                            {product.treatment.split(' ').length > 7 && '...'}
+                                                        </p>
+
+                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && (
+                                                            <div className="actions-wrapper">
                                                                 <i
                                                                     className="fa-solid fa-trash fa-2xl"
                                                                     style={{ color: "#a8101f", cursor: "pointer" }}
                                                                     onClick={() => handleDeleteProduct(product.productId)}
                                                                 ></i>
-                                                            </span>
-                                                        </td>}
-                                                    </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan="5" className="text-center">
-                                                        No products found
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="col-12 text-center">
+                                            <p>No products found</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="pagination-controls">
-                        <button className="next_prev" disabled>Previous</button>
-                        <button className="next_prev active">1</button>
-                        <button className="next_prev">Next</button>
-                        <span> Items per page:</span>
-                        <select className="next_prev">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="15">15</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="1000">1000</option>
-                        </select>
-                    </div>
                 </div>
             </section>
+
 
         </div>
     );
