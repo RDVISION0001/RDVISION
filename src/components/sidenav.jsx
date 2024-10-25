@@ -16,6 +16,7 @@ function Sidenav() {
   const [uploadedTickets, setUploadedTickets] = useState({
     totalAssignTickets: 0,
     totalFollowupsTickets: 0,
+    totalNewTickets:0
   });
 
   // Fetch data from the API
@@ -33,6 +34,7 @@ function Sidenav() {
           setUploadedTickets({
             totalAssignTickets: uploded.totalAssignTickets,
             totalFollowupsTickets: uploded.totalFollowupsTickets,
+            totalNewTickets:uploded.totalNewTickets
           });
         }
       } catch (error) {
@@ -178,7 +180,7 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
@@ -291,7 +293,7 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
@@ -387,7 +389,7 @@ function Sidenav() {
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">
                         ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                          {uploadedTickets.totalAssignTickets}
+                          {uploadedTickets.totalNewTickets}
                         </span>
                       </span>
                     </NavLink>
@@ -524,7 +526,7 @@ function Sidenav() {
                   <li className="nav-item">
                     <NavLink to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalAssignTickets}</span></span>
+                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">

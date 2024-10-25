@@ -76,6 +76,21 @@ function live_tickets() {
   });
 
 
+
+
+  const addCopyRecord = async (ticketId, text) => {
+    toast.info("Copied"+text);
+    const response = await axiosInstance.post("/history/copyhistory", {
+      updatedBy: userId,
+      status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      ticketIdWhichUpdating: ticketId,
+      comment: 'Copied' + " " + text,
+      userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      recordingFile: null
+    })
+  }
+
+
   // Define parameters for each tab
   const params = {
     allTickets: {},
@@ -468,6 +483,9 @@ function live_tickets() {
       return `${hours}:${minutes}:${seconds} ${period}`;
     }
   }
+ 
+
+
   return (
     <>
 
@@ -600,7 +618,7 @@ function live_tickets() {
                             }}
                             onClick={() => handleSelecteRow(index)}
                           >
-                            <td>{index + 1}.</td>
+                            <td>{itemsPerPage * currentPage + (index + 1)}.</td>
                             <td>
                               <span className="text">
                                 {item.queryTime.split(" ")[0].split("-")[2]}-
@@ -619,7 +637,7 @@ function live_tickets() {
                                 text={item.senderMobile}
                                 onCopy={() => setCopied(true)}
                               >
-                                <button>Copy</button>
+                                <button onClick={() => addCopyRecord(item.uniqueQueryId, item.senderMobile)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskMobileNumber(item.senderMobile)}</span>
                             </td>
@@ -628,7 +646,7 @@ function live_tickets() {
                               <CopyToClipboard
                                 text={item.senderEmail}
                                 onCopy={() => setCopied(true)}  >
-                                <button>Copy</button>
+                                <button onClick={() => addCopyRecord(item.uniqueQueryId, item.senderEmail)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskEmail(item.senderEmail)}</span>
                             </td>
@@ -651,6 +669,15 @@ function live_tickets() {
 
                             <td>
                               <span className="actions-wrapper">
+                                <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                 <Button
                                   onClick={() => handleClick(item.senderMobile)}
                                   // onClick={handleView}

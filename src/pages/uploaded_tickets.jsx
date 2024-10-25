@@ -505,6 +505,17 @@ function uploaded_tickets() {
     console.log(selectedKey)
   }
 
+  const addCopyRecord = async (ticketId, text) => {
+    toast.info("Copied"+text);
+    const response = await axiosInstance.post("/history/copyhistory", {
+      updatedBy: userId,
+      status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      ticketIdWhichUpdating: ticketId,
+      comment: 'Copied' + " " + text,
+      userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      recordingFile: null
+    })
+  }
 
   return (
     <>
@@ -655,7 +666,7 @@ function uploaded_tickets() {
                                   onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                 />
                               </td> : ""}
-                              <td><span className="text">{index + 1}.</span></td>
+                              <td><span className="text">{itemsPerPage*currentPage+(index+1)}.</span></td>
 
                               <td><span className="text">{`${item.uploadDate[2]}-${item.uploadDate[1]}-${item.uploadDate[0]}\n${item.queryTime.split(".")[0]}`}</span></td>
                               <td><img src={getFlagUrl(item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
@@ -665,7 +676,7 @@ function uploaded_tickets() {
                                   text={item.mobileNumber}
                                   onCopy={() => setCopied(true)}
                                 >
-                                  <button>Copy</button>
+                                  <button onClick={()=>addCopyRecord(item.uniqueQueryId,item.mobileNumber)}>Copy</button>
                                 </CopyToClipboard>
                               </td><span className="text">{maskMobileNumber(item.mobileNumber)}</span></td>
 
@@ -674,7 +685,7 @@ function uploaded_tickets() {
                                   text={item.email}
                                   onCopy={() => setCopied(true)}
                                 >
-                                  <button>Copy</button>
+                                  <button onClick={()=>addCopyRecord(item.uniqueQueryId,item.email)}>Copy</button>
                                 </CopyToClipboard>
                               </td><span className="text">{maskEmail(item.email)}</span></td>
 
@@ -690,6 +701,15 @@ function uploaded_tickets() {
 
                               <td>
                                 <span className="actions-wrapper">
+                                <Button
+                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
                                   <Button
                                     onClick={() => handleClick(item.mobileNumber)}
                                     data-bs-toggle="modal"

@@ -320,6 +320,17 @@ function InNegotiation() {
     document.getElementById("ticketjourney").showModal()
   }
 
+  const addCopyRecord = async (ticketId, text) => {
+    toast.info("Copied"+text);
+    const response = await axiosInstance.post("/history/copyhistory", {
+      updatedBy: userId,
+      status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      ticketIdWhichUpdating: ticketId,
+      comment: 'Copied' + " " + text,
+      userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
+      recordingFile: null
+    })
+  }
   //color of styatus 
   const getColorByStatus = (ticketStatus) => {
     const colors = {
@@ -408,6 +419,38 @@ function InNegotiation() {
     e.dataTransfer.effectAllowed = 'move';
   };
 
+  const [followCount, setFollowupCount] = useState(0)
+  const [interestedCount, setInterestedCOunt] = useState(0)
+  const [placeWithOtherCOunt, setPlaceWithOtherCount] = useState(0)
+  const [notPickupCount, setNotPickupCount] = useState(0)
+  const [wrongNumberCount, setWrongNumberCount] = useState(0)
+  const [notInteresteCount, setNotIntrestedCount] = useState(0)
+
+  useEffect(() => {
+    fetchNoOfTickets()
+  }, [])
+
+  const fetchNoOfTickets = async () => {
+    const response = await axiosInstance.get(`/third_party_api/ticket/getcountoftcikets/${userId}`)
+    const resutl = response.data;
+    for (let i = 0; i < resutl.length; i++) {
+      if (resutl[i].Follow) {
+        setFollowupCount(resutl[i].Follow)
+      } else if (resutl[i].Not_Interested) {
+        setNotIntrestedCount(resutl[i].Not_Interested)
+      } else if (resutl[i].Not_Pickup) {
+        setNotPickupCount(resutl[i].Not_Pickup)
+      } else if (resutl[i].Wrong_Number) {
+        setWrongNumberCount(resutl[i].Wrong_Number)
+      } else if (resutl[i].Place_with_other) {
+        setPlaceWithOtherCount(resutl[i].Place_with_other)
+      } else if (resutl[i].Interested) {
+        setInterestedCOunt(resutl[i].Interested)
+      }
+
+    }
+  }
+  console.log(followCount, notPickupCount, notInteresteCount, interestedCount, placeWithOtherCOunt, wrongNumberCount)
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -532,21 +575,21 @@ function InNegotiation() {
   function convertDateFormat(inputDate) {
     // Parse the input date string
     const date = new Date(inputDate);
-  
+
     // Define an array for month abbreviations
     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  
+
     // Get individual date components
     const day = date.getUTCDate(); // Get the day of the month
     const month = monthNames[date.getUTCMonth()]; // Get the abbreviated month
     const year = date.getUTCFullYear(); // Get the full year
-  
+
     // Get the time components and format them
     let hours = date.getUTCHours(); // Get hours
     const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Get minutes and ensure two digits
     const ampm = hours >= 12 ? 'pm' : 'am'; // Determine AM/PM
     hours = hours % 12 || 12; // Convert 24-hour format to 12-hour format
-  
+
     // Return the formatted date string
     return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
   }
@@ -666,7 +709,8 @@ function InNegotiation() {
                               color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                             }}
                           >Stage :{stage.stage}</div>
-                          <div>{stage.name}</div>
+                          <div style={{ padding: "5px", fontSize: "12px" }}>{stage.name}</div>
+                         {stage.stage < 3  &&  <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 3 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}</div>}
                         </div>
 
                         {index < stages.length - 1 && (
@@ -725,7 +769,7 @@ function InNegotiation() {
               <div className=' w-50 d-flex justify-content-around p-3'>
                 {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
                 {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
-                  <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button>
+                  {/* <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button> */}
                   <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
                   <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
                 </>}
@@ -767,7 +811,7 @@ function InNegotiation() {
                             }}
                             onClick={() => handleSelecteRow(index)}
                           >
-                            <td>{index + 1}.</td>
+                            <td>{rowsPerPage * (currentPage - 1) + (index + 1)}.</td>
                             <td>
                               <span className="text">
                                 {nego.senderName
@@ -783,13 +827,13 @@ function InNegotiation() {
                             <td><span className="text">{nego.senderName || nego.firstName}</span></td>
                             <td>
                               <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
-                                <button>Copy</button>
+                                <button onClick={()=>addCopyRecord(nego.uniqueQueryId,nego.senderMobile?nego.senderMobile:nego.mobileNumber)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
                             </td>
                             <td>
                               <CopyToClipboard text={nego.email}>
-                                <button>Copy</button>
+                                <button onClick={()=>addCopyRecord(nego.uniqueQueryId,nego.senderMobile?nego.senderEmail:nego.email)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskEmail(nego.email)}</span>
                             </td>
@@ -865,56 +909,71 @@ function InNegotiation() {
                   </div>
 
                   {/* Pagination Controls */}
-                  <div className='d-flex pagination-controls  align-items-center'>
-                    <div className="pagination-controls">
-                      <button
-                        className=' text-white'
-                        style={{ backgroundColor: "#0ecdc6dd" }}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                      >
-                        Previous
-                      </button>
-
-                      <span>
-                        {Array.from({ length: totalPages }, (_, index) => index + 1).map(page => (
-                          <button
-                            key={page}
-                            onClick={() => handlePageChange(page)}
-                            className={`pagination-button  text-white ${currentPage === page ? 'active' : ''}`}
-                          >
-                            {page}
-                          </button>
-                        ))}
-                      </span>
-
-                      <button
-                        className=' text-white'
-                        style={{ backgroundColor: "#0ecdc6dd" }}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                      >
-                        Next
-                      </button>
-                    </div>
-
-                    <div className="table-controls">
-                      <label className='ml-2'>
-                        Rows per page:
-                      </label>
-                      <select value={rowsPerPage} onChange={handleRowsPerPageChange}
-                        style={{ backgroundColor: "#0ecdc6dd" }}
-                      >
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                        <option value={20}>20</option>
-                        <option value={50}>50</option>
-                        <option value={100}>100</option>
-                        <option value={1000}>1000</option>
-                      </select>
-
-                    </div>
+                  <div className='d-flex pagination-controls align-items-center'>
+                  <div className="pagination-controls">
+                    <button
+                      className='text-white'
+                      style={{ backgroundColor: "#0ecdc6dd" }}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </button>
+                
+                    <span>
+                      {Array.from({ length: totalPages }, (_, index) => index + 1)
+                        .filter(page =>
+                          page === 1 || 
+                          page === totalPages || 
+                          (page >= currentPage - 4 && page <= currentPage + 4)
+                        )
+                        .reduce((acc, page, index, array) => {
+                          // Add the page button
+                          acc.push(
+                            <button
+                              key={page}
+                              onClick={() => handlePageChange(page)}
+                              className={`pagination-button text-white ${currentPage === page ? 'active' : ''}`}
+                            >
+                              {page}
+                            </button>
+                          );
+                
+                          // Add "..." if there is a gap to the next page in the filtered array
+                          if (index < array.length - 1 && array[index + 1] !== page + 1) {
+                            acc.push(<span key={`ellipsis-${page}`} className="pagination-ellipsis">.........</span>);
+                          }
+                          return acc;
+                        }, [])}
+                    </span>
+                
+                    <button
+                      className='text-white'
+                      style={{ backgroundColor: "#0ecdc6dd" }}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
                   </div>
+                
+                  <div className="table-controls">
+                    <label className='ml-2'>
+                      Rows per page:
+                    </label>
+                    <select value={rowsPerPage} onChange={handleRowsPerPageChange}
+                      style={{ backgroundColor: "#0ecdc6dd" }}
+                    >
+                      <option value={5}>5</option>
+                      <option value={10}>10</option>
+                      <option value={20}>20</option>
+                      <option value={50}>50</option>
+                      <option value={100}>100</option>
+                      <option value={1000}>1000</option>
+                    </select>
+                  </div>
+                </div>
+                
 
                 </div>
               </div>
