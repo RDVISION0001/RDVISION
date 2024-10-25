@@ -588,9 +588,16 @@ function InvoiceBox(props) {
                                 )
                                 .map((product, index) => (
                                     <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
-                                        <div className="card p-2" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
-                                            <div className="d-flex flex-column flex-md-row align-items-center">
+                                        <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
+                                            {/* Brand Tag */}
+                                            <div
+                                                className="position-absolute top-0 start-0 bg-success text-white px-2 py-1"
+                                                style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
+                                            >
+                                                {product.brand}
+                                            </div>
 
+                                            <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
                                                     <img
