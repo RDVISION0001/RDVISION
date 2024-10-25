@@ -40,7 +40,6 @@ function login() {
     try {
       const otpValue = otp.join('');
       const status = await login(email, password, otpValue);
-      console.log("Status is ", status);
       navigateBasedOnRole(status);
       window.location.reload();
     } catch (error) {
@@ -51,6 +50,12 @@ function login() {
   };
 
   const navigateBasedOnRole = (status) => {
+    if (localStorage.getItem("workTime") === null) {
+      localStorage.setItem("workTime", 0);
+    }
+    if (localStorage.getItem("breakTime") === null) {
+      localStorage.setItem("breakTime", 0);
+    }
     const routes = {
       Closer: "/closer_index",
       Admin: "/admin_index",
@@ -171,7 +176,7 @@ function login() {
                           <button className="btn btn-danger" onClick={sendOtp}>Request Otp</button>
                         )
                       )}
-                      {otpSent && <button className="btn btn-danger" style={{marginLeft:"10px"}} onClick={sendOtp}>Resend Otp</button>}
+                      {otpSent && <button className="btn btn-danger" style={{ marginLeft: "10px" }} onClick={sendOtp}>Resend Otp</button>}
                     </div>
                     <div className='custom-navlink'><NavLink to="/forgot_password">Forgot Password</NavLink></div>
                   </div>
