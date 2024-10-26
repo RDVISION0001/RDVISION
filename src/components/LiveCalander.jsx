@@ -5,18 +5,20 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-// Initialize localizer for moment
 const localizer = momentLocalizer(moment);
 
 function LiveCalander() {
   const [calenderData, setCalenderData] = useState([]);
   const [calenderDataForUploaded, setCalenderDataForuploaded] = useState([]);
   const [events, setEvents] = useState([]);
-  const [currentView, setCurrentView] = useState('month'); // Default view is "month"
+  const [currentView, setCurrentView] = useState('month');
   const { followupState } = useAuth();
 
-  const openInNewTab = (url) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+  const openInNewTab = (url, eventDate) => {
+    // Format the event date to 'YYYY-MM-DD'
+    const formattedDate = moment(eventDate).format('YYYY-MM-DD');
+    console.log("Event Date:", formattedDate); // Log the formatted date
+    window.open(`/in_negotiation/${formattedDate}`, '_blank', 'noopener,noreferrer');
   };
 
   useEffect(() => {
@@ -42,14 +44,13 @@ function LiveCalander() {
     }
   };
 
-  // Combine both calendar data and uploaded data into events array
   useEffect(() => {
     const combinedEvents = [
       ...calenderData.map((item) => ({
         title: `Live Follow-up: ${item['no of tickets']}`,
         start: new Date(item.date),
         end: new Date(item.date),
-        allDay: false, // Respect time slots
+        allDay: false,
         type: 'live',
       })),
       ...calenderDataForUploaded.map((item) => ({
@@ -63,12 +64,10 @@ function LiveCalander() {
     setEvents(combinedEvents);
   }, [calenderData, calenderDataForUploaded]);
 
-  // Handle view change (Today, Week, Month)
   const handleViewChange = (view) => {
     setCurrentView(view);
   };
 
-  // Move to today's date
   const goToToday = () => {
     handleViewChange('day');
   };
@@ -76,7 +75,6 @@ function LiveCalander() {
   return (
     <div className="container-fluid mt-4">
       <div className="row">
-        {/* Calendar */}
         <div style={{ height: '80vh', width: '100%' }}>
           <Calendar
             localizer={localizer}
@@ -97,7 +95,7 @@ function LiveCalander() {
               }
               return { style };
             }}
-            onSelectEvent={(event) => openInNewTab("/in_negotiation")}            
+            onSelectEvent={(event) => openInNewTab("/in_negotiation", event.start)}
             timeslots={2}
             step={30}
             showMultiDayTimes

@@ -167,6 +167,7 @@ function App() {
                   <Route exact path="/invoices_pending" element={<Pending />} />
                   <Route exact path="/invoices_paid" element={<Paid />} />
                   <Route exact path="/in_negotiation" element={<InNegotiation />} />
+                  <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
                   <Route exact path="/upload_products" element={<Products />} />
 
 
