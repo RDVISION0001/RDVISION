@@ -5,7 +5,7 @@ import axiosInstance from '../axiosInstance';
 import ToEveryOne from '../admin/toEveryone';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Report from '../components/Report'
+import UserWorkTimeReport from '../components/UserWorkTimeReport'
 
 const UserReport = () => {
     const [users, setUsers] = useState([]);
@@ -110,79 +110,123 @@ const UserReport = () => {
 
     return (
         <>
-            <div className="d-flex justify-content-center" style={{overflowX:"scroll",paddingLeft:"100px"}}>
-                {fetchingUsers ? ( // Show loading text if users are still being fetched
-                    <div>Loading users, please wait...</div>
-                ) : (
-                    users.filter((user) => user.roleId === 4).map((user, index) => (
-                        <div key={index} className="">
-                            <div className="shadow-sm p-3 d-flex align-items-center flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
-                                <div
-                                    className="d-flex justify-content-center align-items-center"
-                                    style={{
-                                        height: '150px',
-                                        width: '150px',
-                                        overflow: 'hidden',
-                                        borderRadius: '50%',
-                                        backgroundColor: '#f0f0f0',
-                                    }}
-                                >
-                                    {convertToImage(user.imageData) ? (
-                                        <img
-                                            src={convertToImage(user.imageData)}
-                                            className="img-fluid"
-                                            alt={`${user.firstName} ${user.lastName}`}
-                                            style={{ maxHeight: '100%', maxWidth: '100%', borderRadius: '50%' }}
-                                        />
-                                    ) : (
-                                        <span>No Image</span>
-                                    )}
-                                </div>
-
-                                <div style={{height:"120px"}}>
-                                    <div className="fw-bold" style={{ fontSize: '30px' }}>
-                                        {user.firstName}
-                                    </div>
-
-                                    {findNoOfAssignedTicketsToUser(user.userId) > 0 ? (
-                                        <div className='d-flex flex-column'>
-                                            <span style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", marginTop: "5px" }}>
-                                                Today Assigned: {findNoOfAssignedTicketsToUser(user.userId)}
-                                            </span>
-                                            <span className='text-primary mb-3 ' onClick={() => openModal(user.userId, user.firstName)} style={{ cursor: "pointer" }}>Assign more....</span>
+            <section className="followup-table-section py-3">
+                <div className="container-fluid">
+                    <div className="d-flex justify-content-center" style={{ overflowX: "scroll", paddingLeft: "100px" }}>
+                        {fetchingUsers ? ( // Show loading text if users are still being fetched
+                            <div>Loading users, please wait...</div>
+                        ) : (
+                            users.filter((user) => user.roleId === 4).map((user, index) => (
+                                <div key={index} className="">
+                                    <div className="p-3 d-flex align-items-center border flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
+                                        <div
+                                            className="d-flex justify-content-center align-items-center"
+                                            style={{
+                                                height: '150px',
+                                                width: '150px',
+                                                overflow: 'hidden',
+                                                borderRadius: '50%',
+                                                backgroundColor: '#f0f0f0',
+                                            }}
+                                        >
+                                            {convertToImage(user.imageData) ? (
+                                                <img
+                                                    src={convertToImage(user.imageData)}
+                                                    className="img-fluid"
+                                                    alt={`${user.firstName} ${user.lastName}`}
+                                                    style={{ maxHeight: '100%', maxWidth: '100%', borderRadius: '50%' }}
+                                                />
+                                            ) : (
+                                                <span>No Image</span>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <button style={{ backgroundColor: "rgb(15,7,76)" }} onClick={() => openModal(user.userId, user.firstName)}>
-                                            Assign Now
-                                        </button>
-                                    )}
-                                </div>
-                                <div class="d-flex justify-content-between border" style={{width:"100%"}}>
-                                    <div className=" p-3 me-2" style={{ minWidth: '120px' }}>
-                                        <h5 className="card-title">Total Calls</h5>
-                                        <span className="badge bg-success fw-bold text-white">
-                                            {getTotalCallOfUser(user.firstName)}
-                                        </span>
-                                    </div>
-                                    <div className=" p-3" style={{ minWidth: '120px' }}>
-                                        <h5 className="card-title">Today Calls</h5>
-                                        <span className="badge bg-info fw-bold text-white">
-                                            {getUsersCallToday(user.firstName)}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className='border rounded' style={{height:"350px",width:"100%",overflow:"scroll",padding:"10px",marginTop:"2px"}}>
-                                    <Report user={user.userId} />
-                                </div>
-                            </div>
 
-                        </div>
-                    ))
-                )}
-            </div>
+                                        <div style={{ height: "120px" }}>
+                                            <div className="fw-bold" style={{ fontSize: '30px' }}>
+                                                {user.firstName}
+                                            </div>
+
+                                            {findNoOfAssignedTicketsToUser(user.userId) > 0 ? (
+                                                <div className='d-flex flex-column'>
+                                                    <span style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", marginTop: "5px" }}>
+                                                        Today Assigned: {findNoOfAssignedTicketsToUser(user.userId)}
+                                                    </span>
+                                                    <span className='text-primary mb-3 ' onClick={() => openModal(user.userId, user.firstName)} style={{ cursor: "pointer" }}>Assign more....</span>
+                                                </div>
+                                            ) : (
+                                                <button style={{ backgroundColor: "rgb(15,7,76)" }} onClick={() => openModal(user.userId, user.firstName)}>
+                                                    Assign Now
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="border rounded shadow mt-6">
+                                            <UserWorkTimeReport user={user.userId} />
+                                        </div>
+
+                                        <div className="d-flex border w-100 mt-4">
+                                            <div class="container shadow">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <samp> Total Calls</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        {getTotalCallOfUser(user.firstName)}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <samp>Today Calls</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        {getUsersCallToday(user.firstName)}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <samp>Total Email</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        pls send
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <samp>Total Sale</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        pls send
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <samp>Total Quation</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        pls send
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div className="col">
+                                                        <samp>Pay Link</samp>
+                                                    </div>
+                                                    <div className="col text-end text-success">
+                                                        pls send
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </section>
 
             {/* Modal for ToCaptain */}
-            <Modal show={showModal} onHide={closeModal} centered dialogClassName="custom-modal-width">
+            < Modal show={showModal} onHide={closeModal} centered dialogClassName="custom-modal-width" >
                 <Modal.Header closeButton>
                     <Modal.Title>Assign Ticket to {Closer}</Modal.Title>
                 </Modal.Header>
@@ -194,7 +238,7 @@ const UserReport = () => {
                         Close
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal >
 
             <ToastContainer />
         </>
