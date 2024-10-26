@@ -88,18 +88,6 @@ function topnav() {
     return () => clearInterval(interval);
   }, []);
 
-
-  useEffect(() => {
-    // Check if 'workTime' and 'breakTime' exist in localStorage
-    if (localStorage.getItem("workTime") === null) {
-      localStorage.setItem("workTime", 0);
-    }
-    if (localStorage.getItem("breakTime") === null) {
-      localStorage.setItem("breakTime", 0);
-    }
-  }, []);
-
-
   useEffect(() => {
     if (!takingBreak) {
       if (localStorage.getItem("userId")) {

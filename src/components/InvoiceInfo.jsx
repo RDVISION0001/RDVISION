@@ -25,7 +25,27 @@ const InvoiceInfo = (props) => {
     // Fetch Invoice Count Data
     useEffect(() => {
         fetchInvoiceData();
+        fetchTicketSaleData()
     }, []);
+
+    function formatFollowUpDate(followUpDateTime) {
+        const [year, month, day] = followUpDateTime;
+        // Convert month to 2-digit format and day to 2-digit format
+        const formattedMonth = String(month).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        return `${year}-${convertNumberToStringMonth(formattedMonth)}-${formattedDay}`;
+      }
+    
+
+const [saleTicketData,setSaleTicketData]=useState([])
+
+const fetchTicketSaleData =async()=>{
+    const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
+        user: localStorage.getItem("roleName")==="Closer"?localStorage.getItem("userId"):0,
+        stage: 3,
+      });
+      setSaleTicketData(response.data);
+}
 
     const fetchInvoiceData = async () => {
         try {
@@ -110,6 +130,16 @@ const InvoiceInfo = (props) => {
             console.error("Error calling ticket:", error);
         }
     };
+
+    const handleClickCallForticket = async (ticketId) => {
+        try {
+            const response = await axiosInstance.get(`${ticketId.length<15?"/third_party_api/ticket/":"/upload/"}clickToCall/${ticketId}`);
+            
+        } catch (error) {
+            console.error("Error calling ticket:", error);
+        }
+    };
+   
 
    
     const playRecording = useCallback((src,index) => {
@@ -243,7 +273,7 @@ const InvoiceInfo = (props) => {
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                       {props.stage===4?<h3 className="title">Delivery  Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
+                       {props.stage===4?<h3 className="title">Invoice Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
                         <table className="table">
                             <thead>
                                 <tr className='border'>
@@ -290,6 +320,88 @@ const InvoiceInfo = (props) => {
                                                {invoice.callRecording? <Button
                                                     className=""
                                                     onClick={() => playRecording(invoice.callRecording,index)}
+                                                >
+                                                    {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
+                                                </Button>:"Recording not Available"}
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="11" className="text-center">
+                                            No invoices found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="text-center">
+                        <dialog id='trackingInput' className='w-100 h-100 bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                            <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}>
+                                    <i className="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{ color: "#ff1900", cursor: "pointer" }}></i>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={trackingNumber}
+                                    onChange={(e) => setTrackingNumber(e.target.value)}
+                                    autoFocus
+                                    className='p-2 bg-white text-black'
+                                    style={{ width: "500px" }}
+                                    placeholder='Enter Tracking Number'
+                                />
+                                <button className='bg-primary text-white m-2' onClick={addTrackingNumber}>
+                                    Add Tracking Number
+                                </button>
+                            </div>
+                        </dialog>
+                    </div>
+                </div>
+            </section>
+            <section className="data-table-bgs_02x24 py-3">
+                <div className="container-fluid">
+                    <div className="table-wrapper">
+                       {props.stage===4?<h3 className="title">Ticket  Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
+                        <table className="table">
+                            <thead>
+                                <tr className='border'>
+                                    <th className='text-center'>Sale Date</th>
+                                    <th className='text-center'>Ticket ID</th>
+                                    <th className='text-center'>Name</th>
+                                    <th className='text-center'>Tracking Id</th>
+                                    <th className='text-center'>Delivery Status</th>
+                                    <th className='text-center'>Comment</th>
+                                    <th className='text-center'>Action</th>
+                                    <th className='text-center'>Recording</th>
+                                </tr>
+                            </thead>
+                            <tbody className='overflow'>
+                                {saleTicketData.length > 0 ? (
+                                    saleTicketData.map((invoice,index) => (
+                                        <tr key={index} className='border'>
+                                            <td className='text-center'>
+                                                {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate):"N/A"}
+                                            </td>
+                                            <td className='text-center'>{invoice.uniqueQueryId.slice(0,10)}</td>
+                                            <td className='text-center'>{invoice.senderName?invoice.senderName:invoice.firstName}</td>
+                                            <td className='text-center'>{ invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>:"Awaiting for Tracking..." }</td>
+                                           
+                                            <td className='text-center'>{invoice.deliveryStatus?invoice.deliveryStatus:"NA"}</td>
+                                            <td className='text-center'>{invoice.comment &&  invoice.comment.slice(0,20)}</td>
+                                            <td className='text-center'>
+                                                <Button
+                                                    onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
+                                                    className="btn-action call rounded-circle"
+                                                    title="Get connect on call"
+                                                >
+                                                    <i className="fa-solid fa-phone"></i>
+                                                </Button>
+                                            </td>
+                                            <td className='text-center'>
+                                               {invoice.recordingFile? <Button
+                                                    className=""
+                                                    onClick={() => playRecording(invoice.recordingFile,index)}
                                                 >
                                                     {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
                                                 </Button>:"Recording not Available"}

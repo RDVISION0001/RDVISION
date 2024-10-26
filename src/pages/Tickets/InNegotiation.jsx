@@ -11,10 +11,11 @@ import InvoiceBox from '../../components/InvoiceBox';
 import { toast } from 'react-toastify';
 import QuotationBox from '../../components/QuotationBox';
 import InvoiceInfo from '../../components/InvoiceInfo'
+import { useParams } from 'react-router-dom';
 
 
 function InNegotiation() {
-
+  const { date } = useParams(); // Retrieve the 'date' parameter
   const [selectedKey, setSelectedKey] = useState(null)
   const { setFolowupUpdate } = useAuth()
 
@@ -33,7 +34,7 @@ function InNegotiation() {
   const [senderEmailFormail, setSenderEmailForMail] = useState("");
   const [senderMobile, setSenderMobile] = useState("");
   const [productArray, setProductArray] = useState([]);
-  const [assignedTo, setAssignedTo] = useState(0)
+  const [assignedTo, setAssignedTo] = useState(userId)
   const [buttonFilterValue, setbuttonFilterValue] = useState("")
   const [emailData, setEmailData] = useState({
     ticketId: "",
@@ -49,12 +50,21 @@ function InNegotiation() {
   const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
   const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
-  const [filterdate, setFilterDate] = useState(null)
+  const [filterdate, setFilterDate] = useState(date)
   const [callId, setCallId] = useState(0)
   const [response, setResponse] = useState(null);
   const [shortValue, setShortValue] = useState("")
   const handleShortDataValue = (e) => {
     setShortValue(e.target.value)
+  }
+
+  const extracxtDate = (localdatetime) => {
+    if (filterdate && localdatetime) {
+      const a = parseInt(localdatetime[0]) === parseInt(filterdate && (filterdate.split("-"))[0])
+      const b = parseInt(localdatetime[1]) === parseInt(filterdate && (filterdate.split("-"))[1])
+      const c = parseInt(localdatetime[2]) === parseInt(filterdate && (filterdate.split("-"))[2])
+      return a && b && c;
+    }
   }
   const toggleCheckbox = () => {
     setlist(!list); // Toggle the state
@@ -321,7 +331,7 @@ function InNegotiation() {
   }
 
   const addCopyRecord = async (ticketId, text) => {
-    toast.info("Copied"+text);
+    toast.info("Copied" + text);
     const response = await axiosInstance.post("/history/copyhistory", {
       updatedBy: userId,
       status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
@@ -355,7 +365,7 @@ function InNegotiation() {
 
   //pagination 
   const [currentPage, setCurrentPage] = useState(1); // To manage current page
-  const [rowsPerPage, setRowsPerPage] = useState(10); // To manage rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(1000); // To manage rows per page
 
   // Calculate total pages
   const totalPages = Math.ceil(
@@ -366,11 +376,8 @@ function InNegotiation() {
         item.email && item.email.includes(shortValue) ||
         item.mobileNumber && item.mobileNumber.includes(shortValue) ||
         item.senderMobile && item.senderMobile.includes(shortValue)
-      )
-      .filter((item) =>
-        !filterdate ||
-        formatFollowUpDate(item.followupDateTime ? item.followupDateTime : "") === filterdate
-      ).length / rowsPerPage
+      ).filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data)
+      .length / rowsPerPage
   );
 
   // Handle pagination
@@ -395,10 +402,7 @@ function InNegotiation() {
       item.mobileNumber && item.mobileNumber.includes(shortValue) ||
       item.senderMobile && item.senderMobile.includes(shortValue)
     )
-    .filter((item) =>
-      !filterdate ||
-      formatFollowUpDate(item.followupDateTime ? item.followupDateTime : "") === filterdate
-    ).filter((ticket) => {
+    .filter((ticket) => {
       // If buttonFilterValue is an empty string, return all tickets
       if (buttonFilterValue === "") {
         return true;
@@ -450,7 +454,6 @@ function InNegotiation() {
 
     }
   }
-  console.log(followCount, notPickupCount, notInteresteCount, interestedCount, placeWithOtherCOunt, wrongNumberCount)
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
@@ -531,6 +534,7 @@ function InNegotiation() {
         return 'Invalid month';
     }
   };
+
   function convertTo12HourFormat(time) {
     if (time) {
       // Split the input time into hours, minutes, and seconds
@@ -710,7 +714,7 @@ function InNegotiation() {
                             }}
                           >Stage :{stage.stage}</div>
                           <div style={{ padding: "5px", fontSize: "12px" }}>{stage.name}</div>
-                         {stage.stage < 3  &&  <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 3 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}</div>}
+                          {stage.stage < 3 && <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 3 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}</div>}
                         </div>
 
                         {index < stages.length - 1 && (
@@ -802,7 +806,7 @@ function InNegotiation() {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentData.map((nego, index) => (
+                        {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
                           <tr key={index}
                             style={{
                               boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
@@ -827,13 +831,13 @@ function InNegotiation() {
                             <td><span className="text">{nego.senderName || nego.firstName}</span></td>
                             <td>
                               <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
-                                <button onClick={()=>addCopyRecord(nego.uniqueQueryId,nego.senderMobile?nego.senderMobile:nego.mobileNumber)}>Copy</button>
+                                <button onClick={() => addCopyRecord(nego.uniqueQueryId, nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
                             </td>
                             <td>
                               <CopyToClipboard text={nego.email}>
-                                <button onClick={()=>addCopyRecord(nego.uniqueQueryId,nego.senderMobile?nego.senderEmail:nego.email)}>Copy</button>
+                                <button onClick={() => addCopyRecord(nego.uniqueQueryId, nego.senderMobile ? nego.senderEmail : nego.email)}>Copy</button>
                               </CopyToClipboard>
                               <span className="text">{maskEmail(nego.email)}</span>
                             </td>
@@ -910,70 +914,70 @@ function InNegotiation() {
 
                   {/* Pagination Controls */}
                   <div className='d-flex pagination-controls align-items-center'>
-                  <div className="pagination-controls">
-                    <button
-                      className='text-white'
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                    >
-                      Previous
-                    </button>
-                
-                    <span>
-                      {Array.from({ length: totalPages }, (_, index) => index + 1)
-                        .filter(page =>
-                          page === 1 || 
-                          page === totalPages || 
-                          (page >= currentPage - 4 && page <= currentPage + 4)
-                        )
-                        .reduce((acc, page, index, array) => {
-                          // Add the page button
-                          acc.push(
-                            <button
-                              key={page}
-                              onClick={() => handlePageChange(page)}
-                              className={`pagination-button text-white ${currentPage === page ? 'active' : ''}`}
-                            >
-                              {page}
-                            </button>
-                          );
-                
-                          // Add "..." if there is a gap to the next page in the filtered array
-                          if (index < array.length - 1 && array[index + 1] !== page + 1) {
-                            acc.push(<span key={`ellipsis-${page}`} className="pagination-ellipsis">.........</span>);
-                          }
-                          return acc;
-                        }, [])}
-                    </span>
-                
-                    <button
-                      className='text-white'
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                    >
-                      Next
-                    </button>
+                    <div className="pagination-controls">
+                      <button
+                        className='text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
+
+                      <span>
+                        {Array.from({ length: totalPages }, (_, index) => index + 1)
+                          .filter(page =>
+                            page === 1 ||
+                            page === totalPages ||
+                            (page >= currentPage - 4 && page <= currentPage + 4)
+                          )
+                          .reduce((acc, page, index, array) => {
+                            // Add the page button
+                            acc.push(
+                              <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`pagination-button text-white ${currentPage === page ? 'active' : ''}`}
+                              >
+                                {page}
+                              </button>
+                            );
+
+                            // Add "..." if there is a gap to the next page in the filtered array
+                            if (index < array.length - 1 && array[index + 1] !== page + 1) {
+                              acc.push(<span key={`ellipsis-${page}`} className="pagination-ellipsis">.........</span>);
+                            }
+                            return acc;
+                          }, [])}
+                      </span>
+
+                      <button
+                        className='text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+
+                    <div className="table-controls">
+                      <label className='ml-2'>
+                        Rows per page:
+                      </label>
+                      <select value={rowsPerPage} onChange={handleRowsPerPageChange}
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={1000}>1000</option>
+                      </select>
+                    </div>
                   </div>
-                
-                  <div className="table-controls">
-                    <label className='ml-2'>
-                      Rows per page:
-                    </label>
-                    <select value={rowsPerPage} onChange={handleRowsPerPageChange}
-                      style={{ backgroundColor: "#0ecdc6dd" }}
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                      <option value={1000}>1000</option>
-                    </select>
-                  </div>
-                </div>
-                
+
 
                 </div>
               </div>
