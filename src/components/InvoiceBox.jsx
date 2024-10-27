@@ -539,7 +539,7 @@ function InvoiceBox(props) {
                 </div>
             </div>
 
-            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade rounded " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade rounded" id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
 
                 <div className="modal-header border-0">
                     <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Select Products</h1>
@@ -557,7 +557,7 @@ function InvoiceBox(props) {
                             className='p-2 bg-white text-black'
                         />
 
-                        <div className='d-flex  align-items-center'>
+                        <div className='d-flex align-items-center'>
                             <label htmlFor="Currency" className='mx-5'>Choose Currency</label>
                             <select
                                 name="currency"
@@ -588,11 +588,18 @@ function InvoiceBox(props) {
                                 )
                                 .map((product, index) => (
                                     <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
-                                        <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
-                                            {/* Brand Tag */}
+                                        <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', paddingTop: '20px', height: 'auto' }}>
+                                            {/* Brand Tag positioned at bottom-left corner */}
                                             <div
-                                                className="position-absolute top-0 start-0 bg-success text-white px-2 py-1"
-                                                style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
+                                                className="position-absolute bg-success text-white px-2 py-1"
+                                                style={{
+                                                    fontSize: '10px',
+                                                    borderTopRightRadius: '4px',
+                                                    borderBottomLeftRadius: '4px',
+                                                    bottom: '-9px', // Move to the bottom with some space
+                                                    left: '-1px', // Align to the left with some space
+                                                    zIndex: '1' // Ensure it appears above other elements
+                                                }}
                                             >
                                                 {product.brand}
                                             </div>
@@ -604,7 +611,7 @@ function InvoiceBox(props) {
                                                         src={product.images && product.images[0]}
                                                         alt="Product"
                                                         className="img-fluid rounded"
-                                                        style={{ maxWidth: '60px' }}
+                                                        style={{ maxWidth: '60px', marginTop: '10px' }}
                                                     />
                                                 </div>
 
@@ -645,12 +652,10 @@ function InvoiceBox(props) {
                                             </div>
                                         </div>
                                     </div>
-
                                 ))}
                         </div>
                     </div>
                 </>
-
             </Modal>
 
             {/* <!-- Modal --> */}
