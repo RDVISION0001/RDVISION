@@ -6,7 +6,9 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3';
-import emailTemp from '../assets/emailtemp/email.png';
+import temp1 from '../assets/emailtemp/temp1.png';
+import temp2 from '../assets/emailtemp/temp2.png';
+import temp3 from '../assets/emailtemp/temp3.png';
 
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
@@ -79,7 +81,7 @@ function live_tickets() {
 
 
   const addCopyRecord = async (ticketId, text) => {
-    toast.info("Copied"+text);
+    toast.info("Copied" + text);
     const response = await axiosInstance.post("/history/copyhistory", {
       updatedBy: userId,
       status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
@@ -179,7 +181,7 @@ function live_tickets() {
     const stompClient = new Client({
       webSocketFactory: () => socket,
       debug: (str) => {
-        console.log("Message string is " < str);
+
 
       },
       onConnect: () => {
@@ -483,7 +485,47 @@ function live_tickets() {
       return `${hours}:${minutes}:${seconds} ${period}`;
     }
   }
- 
+
+  //templates email
+  const [selectedTemplate, setSelectedTemplate] = useState(0)
+  const [text, setText] = useState("")
+  const [serchValue, setserchValue] = useState("")
+  const [productsIds, setProductIds] = useState([])
+
+
+  const handleInputChange = (e) => {
+    setserchValue(e.target.value); // Update state with the input's value
+    console.log('Input Value:', e.target.value); // Log the current input value
+  };
+
+  const handleToggleProduct = (id) => {
+    setProductIds((prevIds) => {
+      if (prevIds.includes(id)) {
+        // Remove the ID if it already exists
+        return prevIds.filter((prevId) => prevId !== id);
+      } else {
+        // Add the ID if it does not exist
+        return [...prevIds, id];
+      }
+    });
+  };
+  const handleSendTemplateMail = async () => {
+    try {
+      const response = await axiosInstance.post("/email/sendsugetionmail", {
+        ticket: {
+          uniqueQueryId: selectTicketForInvoice
+        },
+        text: text,
+        temp: selectedTemplate,
+        productsIds: productsIds
+      })
+      toast.success("Email Sent")
+    } catch (e) {
+      toast.error("Some Error Occurs")
+    }
+
+  }
+
 
 
   return (
@@ -856,29 +898,145 @@ function live_tickets() {
             <div className="row">
               <div className="col-md-4">
                 <div className="shadow p-3 mb-5 bg-white rounded">
-                  <div className="card-body">
-                    <p>Template 1</p>
-                    <img src={emailTemp} alt="Template 1" className="img-fluid" />
+                  <div className="card-body d-flex flex-column align-items-start">
+                    <input
+                      type="checkbox"
+                      className="bg-info mt-2"
+                      style={{ height: "40px", fontSize: "12px" }}
+                      checked={selectedTemplate === 1}
+                      onChange={() => handleToggleProduct(1)}
+                    />
+                    <img
+                      onClick={() => setSelectedTemplate(1)}
+                      src={temp1}
+                      style={{ height: "150px", cursor: "pointer" }}
+                      alt="Template 1"
+                      className="img-fluid hoverEffectToTemp"
+                    />
                   </div>
                 </div>
               </div>
               <div className="col-md-4">
                 <div className="shadow p-3 mb-5 bg-white rounded">
-                  <div className="card-body">
-                    <p>Template 2</p>
-                    <img src={emailTemp} alt="Template 2" className="img-fluid" />
+                  <div className="card-body d-flex flex-column align-items-start">
+                    <input
+                      type="checkbox"
+                      className="bg-info mt-2"
+                      style={{ height: "40px", fontSize: "12px" }}
+                      checked={selectedTemplate === 2}
+                      onChange={() => handleToggleProduct(2)}
+                    />
+                    <img
+                      onClick={() => setSelectedTemplate(2)}
+                      src={temp2}
+                      style={{ height: "150px", cursor: "pointer" }}
+                      alt="Template 2"
+                      className="img-fluid hoverEffectToTemp"
+                    />
                   </div>
                 </div>
               </div>
               <div className="col-md-4">
                 <div className="shadow p-3 mb-5 bg-white rounded">
-                  <div className="card-body">
-                    <p>Template 3</p>
-                    <img src={emailTemp} alt="Template 3" className="img-fluid" />
+                  <div className="card-body d-flex flex-column align-items-start">
+                    <input
+                      type="checkbox"
+                      className="bg-info mt-2"
+                      style={{ height: "40px", fontSize: "12px" }}
+                      checked={selectedTemplate === 3}
+                      onChange={() => handleToggleProduct(3)}
+                    />
+                    <img
+                      onClick={() => setSelectedTemplate(3)}
+                      src={temp3}
+                      style={{ height: "150px", cursor: "pointer" }}
+                      alt="Template 3"
+                      className="img-fluid hoverEffectToTemp"
+                    />
                   </div>
                 </div>
               </div>
             </div>
+
+
+            <div>
+              <>
+                <div className='d-flex justify-content-between px-5'>
+                  <input
+                    type='text'
+                    placeholder='Enter product Name'
+                    value={serchValue}
+                    onChange={handleInputChange}
+                    className='p-2 bg-white text-black'
+                  />
+
+
+                </div>
+
+                <div className="container mt-3">
+                  <div className="row">
+                    {productsList && productsList
+                      .filter(product =>
+                        serchValue.length > 0
+                          ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                          : true
+                      )
+                      .map((product, index) => (
+                        <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
+                          <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
+                            {/* Brand Tag */}
+                            <div
+                              className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
+                              style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
+                            >
+                              {product.brand}
+                            </div>
+
+                            <div className="d-flex flex-column flex-md-row align-items-center">
+                              <div>
+                                <img
+                                  src={product.images && product.images[0]}
+                                  alt="Product"
+                                  className="img-fluid rounded"
+                                  style={{ maxWidth: '60px' }}
+                                />
+                              </div>
+
+                              {/* Product Details Section */}
+                              <div className="ms-2 w-100 ">
+                                <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                  {product.name} {product.Price}
+                                </h6>
+
+
+                              </div>
+
+                              <input
+                                type="checkbox"
+                                className='bg-info mt-2 mt-md-0'
+                                style={{ height: "30px", fontSize: "12px" }}
+                                checked={productsIds.includes(product.productId)}
+                                onChange={() => handleToggleProduct(product.productId)}
+                              />
+
+
+                            </div>
+                          </div>
+                        </div>
+
+                      ))}
+                  </div>
+                </div>
+              </>
+
+              <div>
+                <label htmlFor="textarea fw-bold" style={{ fontSize: "15px" }}>Enter Message</label>
+                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' ></textarea>
+              </div>
+
+              <button onClick={() => handleSendTemplateMail()}>Send Mail</button>
+            </div>
+
           </div>
         </Modal.Body>
       </Modal>

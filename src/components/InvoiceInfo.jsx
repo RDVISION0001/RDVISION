@@ -362,7 +362,7 @@ const fetchTicketSaleData =async()=>{
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                       {props.stage===4?<h3 className="title">Ticket  Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
+                       {props.stage===4?<h3 className="title">Ticket Tracking</h3>: <h3 className="title">Tickets for after sales service</h3>}
                         <table className="table">
                             <thead>
                                 <tr className='border'>
@@ -411,7 +411,7 @@ const fetchTicketSaleData =async()=>{
                                 ) : (
                                     <tr>
                                         <td colSpan="11" className="text-center">
-                                            No invoices found.
+                                            No Sales found.
                                         </td>
                                     </tr>
                                 )}
