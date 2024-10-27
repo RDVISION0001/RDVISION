@@ -155,3 +155,70 @@
   padding: 1rem 0;
   border-radius: 16px;
 }/*# sourceMappingURL=admin.css.map */
+
+/* Custom styling for Candidate Table */
+.container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
+.custom-tabs .nav-link {
+  color: #555;
+  font-weight: 500;
+  padding: 0.75rem 1.25rem;
+  border-radius: 8px;
+}
+
+.custom-tabs .nav-link.active {
+  background-color: #f1f3f5;
+  color: #050d74;
+  font-weight: bold;
+}
+
+.search-input input {
+  border-radius: 20px;
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+}
+
+.candidate-table th,
+.candidate-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.candidate-table th {
+  font-weight: bold;
+  color: #666;
+}
+
+.status-badge {
+  font-size: 0.875rem;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.status-badge.completed {
+  background-color: #e0ffe0;
+  color: #28a745;
+}
+
+.status-badge.in-progress {
+  background-color: #fff4e0;
+  color: #ff9800;
+}
+
+.action-btn {
+  font-weight: 500;
+  border-radius: 16px;
+  padding: 4px 12px;
+}
+
+.container, .candidate-table {
+    max-width: 100%;
+    overflow-x: auto;
+}
+.custom-tabs .nav-item {
+  margin-right: 100px; /* Adjust the spacing as needed */
+}
