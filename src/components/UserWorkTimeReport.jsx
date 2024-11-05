@@ -14,10 +14,14 @@ function UserWorkTimeReport(props) {
     const [totalWorktime, setTotalWorktime] = useState(0);
     const [totalBeakTime, setTotalBreakTime] = useState(0);
     const [defaultUrl, setDefaultUrl] = useState("/third_party_api/ticket");
+    const [dateChange,setDateChange]=useState()
+  
 
     useEffect(() => {
         loadeUserDetails();
-    }, []);
+        setDateChange(props.start)
+        setWorkData({ userId: props.user, weeks: 1,endDate:props.start,startDate:props.end})
+    }, [props.start,props.end]);
 
     const loadeUserDetails = async () => {
         const response = await axiosInstance.get(`/user/get/${props.user}`);
@@ -45,7 +49,7 @@ function UserWorkTimeReport(props) {
     });
 
     const [apiData, setApiData] = useState([]);
-    const [workData, setWorkData] = useState({ userId: props.user, weeks: 1 });
+    const [workData, setWorkData] = useState({ userId: props.user, weeks: 1,endDate:props.start,startDate:props.end});
     const [workDataTickets, setWorkDataForTickets] = useState({ userId: props.user, weeks: 1 });
 
     const toggleMonthly = () => {
@@ -79,7 +83,7 @@ function UserWorkTimeReport(props) {
             }
         };
         fetchData();
-    }, [monthly, workData]);
+    }, [monthly, workData,props.start,props.end]);
 
     useEffect(() => {
         if (apiData.length > 0) {
@@ -155,11 +159,11 @@ function UserWorkTimeReport(props) {
     return (
         <div style={{ margin: "0", padding: "0" }}>
             <div className='d-flex justify-content-between' style={{ padding: "0px 20px" }} >
-                <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hours</span></div>
-                <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hours</span></div>
+                <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hrs.</span></div>
+                <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hrs.</span></div>
             </div>
-            <p style={{ fontSize: "12px" }}>Work report</p>
-            <div className='d-flex justify-content-center align-items-center'>
+            <p style={{ fontSize: "12px",marginLeft:"5px" }}>Work report</p>
+            {/* <div className='d-flex justify-content-center align-items-center'>
                 <select
                     className="form-select w-100 "
                     style={{ fontSize: "10px" }}
@@ -176,7 +180,7 @@ function UserWorkTimeReport(props) {
                     <option value="3">3 Week</option>
                     <option value="4">4 Week</option>
                 </select>
-            </div>
+            </div> */}
 
             <div style={{ height: '130px' }}> {/* Adjust height here */}
                 <Bar data={chartData} options={chartOptions} />

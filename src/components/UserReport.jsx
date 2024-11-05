@@ -6,6 +6,7 @@ import ToEveryOne from '../admin/toEveryone';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserWorkTimeReport from '../components/UserWorkTimeReport'
+import { useAuth } from '../auth/AuthContext';
 
 const UserReport = () => {
     const [users, setUsers] = useState([]);
@@ -16,6 +17,14 @@ const UserReport = () => {
     const [fetchingUsers, setFetchingUsers] = useState(true); // Loading state for fetchUsers
     const [todayCalls, setTodayCalls] = useState([])
     const [totalCalls, setTotalCalls] = useState([])
+    const today = new Date();
+    const formatedToday = new Date().toISOString().split('T')[0];
+    const pastDate = new Date(today); // Create a new Date object based on today
+    pastDate.setDate(pastDate.getDate() - 30); // Subtract 30 days
+    const formattedPastDate = pastDate.toISOString().split('T')[0];
+    const [startDate, setStartDate] = useState(formattedPastDate)
+    const [endDate, setEndDate] = useState(formatedToday)
+    const { userReportReloader, setUserReportReloader } = useAuth()
     const [Closer, setCloser] = useState("")
     useEffect(() => {
         fetchUsers();
@@ -23,7 +32,13 @@ const UserReport = () => {
         fetchNoIfCallsTotal()
         fetChNoOfCallsToday()
     }, []);
-
+    useEffect(() => {
+        fetchUserActiondata()
+    }, [startDate, endDate])
+    const reloadFiltered = () => {
+        fetchUserActiondata()
+        setUserReportReloader((prev) => prev + 1)
+    }
     const fetchUsers = async () => {
         setFetchingUsers(true); // Start fetching, show loading
         try {
@@ -107,18 +122,59 @@ const UserReport = () => {
         setSelectedUser(0); // Reset selected user
         fetchNoOfAssigned()
     };
+    const [usersActionData, setUsersActionData] = useState()
 
+    const fetchUserActiondata = async () => {
+        const response = await axiosInstance.post("history/getEmailSals", {
+            startDate,
+            endDate
+        })
+        setUsersActionData(response.data)
+    }
+
+    const getNumbersOfUsersAction = (usersFirstName, action) => {
+        // Check if the user exists in the usersActionData and if they have the specified action
+        return usersActionData[usersFirstName]?.[action] ?? "0";
+    };
     return (
         <>
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
-                    <div className="d-flex justify-content-center" style={{ overflowX: "scroll", paddingLeft: "100px" }}>
+                    <div className='d-flex justify-content-between items-align-center'>
+                        <div></div>
+                        <div className='d-flex '>
+                            <div className='d-flex justify-content-center align-items-center' style={{ paddingTop:"15px" }}>
+                                <i class="fa-solid fa-filter fa-xl"></i>
+                            </div>
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="startDate">From</label>
+                                <input
+                                    value={startDate}
+                                    max={formatedToday}    // Maximum date is today
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
+                                    type="date"
+                                />
+                            </div>
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="endDate">To</label>
+                                <input
+                                    value={endDate}
+                                    max={formatedToday}    // Maximum date is today
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
+                                    type="date"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="d-flex" style={{ overflowX: "auto" }}>
                         {fetchingUsers ? ( // Show loading text if users are still being fetched
                             <div>Loading users, please wait...</div>
                         ) : (
                             users.filter((user) => user.roleId === 4).map((user, index) => (
                                 <div key={index} className="">
-                                    <div className="p-3 d-flex align-items-center border flex-column" style={{ height: "100vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
+                                    <div className="p-3 d-flex align-items-center border flex-column" style={{ height: "80vh", borderTop: "2px solid rgb(211, 211, 211)" }}>
                                         <div
                                             className="d-flex justify-content-center align-items-center"
                                             style={{
@@ -160,12 +216,12 @@ const UserReport = () => {
                                             )}
                                         </div>
                                         <div className="border rounded shadow mt-6">
-                                            <UserWorkTimeReport user={user.userId} />
+                                            <UserWorkTimeReport user={user.userId} start={startDate} end={endDate} />
                                         </div>
 
                                         <div className="d-flex border w-100 mt-4">
                                             <div class="container shadow">
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div class="col">
                                                         <samp> Total Calls</samp>
                                                     </div>
@@ -173,7 +229,7 @@ const UserReport = () => {
                                                         {getTotalCallOfUser(user.firstName)}
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div class="col">
                                                         <samp>Today Calls</samp>
                                                     </div>
@@ -181,36 +237,36 @@ const UserReport = () => {
                                                         {getUsersCallToday(user.firstName)}
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div class="col">
                                                         <samp>Total Email</samp>
                                                     </div>
                                                     <div className="col text-end text-success">
-                                                        pls send
+                                                        {getNumbersOfUsersAction(user.firstName, "TotalEmail")}
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div class="col">
                                                         <samp>Total Sale</samp>
                                                     </div>
                                                     <div className="col text-end text-success">
-                                                        pls send
+                                                        {getNumbersOfUsersAction(user.firstName, "TotalSale")}
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div class="col">
                                                         <samp>Total Quation</samp>
                                                     </div>
                                                     <div className="col text-end text-success">
-                                                        pls send
+                                                        {getNumbersOfUsersAction(user.firstName, "TotalQuotation")}
                                                     </div>
                                                 </div>
-                                                <div class="row">
+                                                <div class="row border p-2">
                                                     <div className="col">
                                                         <samp>Pay Link</samp>
                                                     </div>
                                                     <div className="col text-end text-success">
-                                                        pls send
+                                                        {getNumbersOfUsersAction(user.firstName, "TotalPaymentLink")}
                                                     </div>
 
                                                 </div>

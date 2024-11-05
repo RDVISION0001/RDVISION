@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
 import { toast } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
+import AddressForm from './AddressForm';
 
 const ViewInvoice = () => {
     const { orderid } = useParams(); // Get the order ID from the URL parameters
@@ -18,6 +19,7 @@ const ViewInvoice = () => {
     const [show, setShow] = useState(false)
     const [selectedimnage, setSalectedImage] = useState(null)
     const [productOrders, setProductOrders] = useState([])
+    const [addressFrom, setAddressForm] = useState(false)
 
     const handleCheckboxChange = (event) => {
         setTerms(event.target.checked);
@@ -68,19 +70,17 @@ const ViewInvoice = () => {
     // address
     useEffect(() => {
         if (orderid) {
-            const fetchAddressDetails = async () => {
-                try {
-                    const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
-                    setAddressData(response.data.dto);
-                } catch (err) {
-                    console.error('Error fetching address details:', err);
-                }
-            };
-
             fetchAddressDetails();
         }
     }, []);
-
+    const fetchAddressDetails = async () => {
+        try {
+            const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
+            setAddressData(response.data.dto);
+        } catch (err) {
+            console.error('Error fetching address details:', err);
+        }
+    };
     const stripePromise = loadStripe("pk_live_51KpHlnSAxOboMMomzgtOknKDOwEg9AysCqs6g0O2e9ETloartosrHcf8qOAwOsChi8s5EYN8UHzNn2VgyKirIE6K00TujZ91YB");
 
     if (error) {
@@ -103,34 +103,38 @@ const ViewInvoice = () => {
     const total_price = orderData.orderDetails.totalPayableAmount; // Total price for the order
 
     const handlePay = async () => {
-        if (terms) {
-            try {
-                const stripe = await stripePromise;
+        if (address) {
+            if (terms) {
+                try {
+                    const stripe = await stripePromise;
 
-                const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        isLive: isLive
-                    })
-                });
+                    const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            isLive: isLive
+                        })
+                    });
 
-                const session = await response.json();
+                    const session = await response.json();
 
-                const { error } = await stripe.redirectToCheckout({
-                    sessionId: session.id,
-                });
+                    const { error } = await stripe.redirectToCheckout({
+                        sessionId: session.id,
+                    });
 
-                if (error) {
-                    console.error('Stripe checkout error:', error.message);
+                    if (error) {
+                        console.error('Stripe checkout error:', error.message);
+                    }
+                } catch (err) {
+                    console.error('Payment error:', err);
                 }
-            } catch (err) {
-                console.error('Payment error:', err);
+            } else {
+                toast.info("Please Agree Terms & Conditions");
             }
         } else {
-            toast.info("Please Agree Terms & Conditions");
+            toast.info("Please Add your Delivery Address First")
         }
     };
 
@@ -159,7 +163,15 @@ const ViewInvoice = () => {
     const close = () => {
         setShow(false)
     }
-    console.log(productOrders[0].product)
+    const addressRelaod = () => {
+        setAddressForm(false)
+        fetchAddressDetails();
+        fetchOrderDetails()
+    }
+
+    const closeAddress = () => {
+        setAddressForm(false)
+    }
     return (
         <div className="container-fluid p-5">
             <header className="bg-light text-left p-3">
@@ -177,8 +189,8 @@ const ViewInvoice = () => {
 
                 <p>To</p>
                 <p>{customer.name}</p>
-                <p>{orderData.addresss ? customer.address:"Address Not Available"}</p>
-                {orderData.addresss ?<button type="button" class="btn btn-primary rounded" onclick="addAddress()">Edit</button>:<button type="button" class="btn btn-primary rounded" onclick="addAddress()">Add Address</button>}
+                <p>{orderData.addresss ? customer.address : "Address Not Available"}</p>
+                {orderData.addresss ? <div>{orderData.addresss.houseNumber},{orderData.addresss.landmark},{orderData.addresss.city},{orderData.addresss.state},{orderData.addresss.country},<div>{orderData.addresss.zipCode}</div><button onClick={() => setAddressForm(true)} type="button" class="btn btn-primary rounded" >Edit</button></div> : <button type="button" class="btn btn-primary rounded" onClick={() => setAddressForm(true)}>Add Delivery Address</button>}
                 <p>{customer.mobile}</p>
             </section>
 
@@ -255,6 +267,12 @@ const ViewInvoice = () => {
             <Modal show={show} onHide={close} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
                 <div className='d-flex justify-content-center'>
                     <img src={selectedimnage} style={{ maxHeight: "400px", maxWidth: "700px" }} alt="" />
+                </div>
+            </Modal>
+            <Modal show={addressFrom} onHide={addressRelaod} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+                <div className='d-flex justify-content-center'>
+                    <AddressForm ticketId={orderid} close={closeAddress} />
+
                 </div>
             </Modal>
         </div>
