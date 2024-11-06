@@ -61,6 +61,13 @@ const ChartWorktime = () => {
   const breakHours = String(Math.floor(breakTime / 3600)).padStart(2, '0');
   const breakMinutes = String(Math.floor((breakTime % 3600) / 60)).padStart(2, '0');
   const breakSeconds = String(breakTime % 60).padStart(2, '0');
+  const today = new Date();
+  const formatedToday = new Date().toISOString().split('T')[0];
+  const pastDate = new Date(today); // Create a new Date object based on today
+  pastDate.setDate(pastDate.getDate() - 30); // Subtract 30 days
+  const formattedPastDate = pastDate.toISOString().split('T')[0];
+  const [startDate, setStartDate] = useState(formattedPastDate)
+  const [endDate, setEndDate] = useState(formatedToday)
 
   const options = {
     chart: { type: 'column' },
@@ -143,7 +150,37 @@ const ChartWorktime = () => {
           </div>
           <div className="col-md-4 " >
             <div className="bg-white  d-flex justify-content-between align-items-center p-3">
-              <UserWorkTimeReport user={localStorage.getItem("userId")} isShowingToUser={true} />
+              <div>
+            <div className='d-flex justify-content-between items-align-center'>
+                        <div></div>
+                        <div className='d-flex '>
+                            <div className='d-flex justify-content-center align-items-center' style={{ paddingTop:"15px" }}>
+                                <i class="fa-solid fa-filter fa-xl"></i>
+                            </div>
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="startDate">From</label>
+                                <input
+                                    value={startDate}
+                                    max={formatedToday}    // Maximum date is today
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
+                                    type="date"
+                                />
+                            </div>
+                            <div className='d-flex flex-column'>
+                                <label htmlFor="endDate">To</label>
+                                <input
+                                    value={endDate}
+                                    max={formatedToday}    // Maximum date is today
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
+                                    type="date"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <UserWorkTimeReport user={userId} start={startDate} end={endDate} isShowingToUser={true}/>
+                    </div>
               <div className='' style={{ width: "120px" }}>
                 <div className=' d-flex flex-column align-items-center justify-content-between' >
                   <div className="position-relative d-flex align-items-center justify-content-center">
