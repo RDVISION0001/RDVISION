@@ -605,13 +605,13 @@ function InNegotiation() {
     setSelectedStage(stage)
   }
 
-const fetchProducts = async () => {
-  const response = await axiosInstance.get("product/getAllProducts");
-  setProductsList(response.data.dtoList);
-};
-useEffect(()=>{
-  fetchProducts()
-},[])
+  const fetchProducts = async () => {
+    const response = await axiosInstance.get("product/getAllProducts");
+    setProductsList(response.data.dtoList);
+  };
+  useEffect(() => {
+    fetchProducts()
+  }, [])
   //templates email
   const [selectedTemplate, setSelectedTemplate] = useState(0)
   const [text, setText] = useState("")
@@ -645,11 +645,11 @@ useEffect(()=>{
       toast.info("Please Enter Message")
     } else {
       try {
-        const response = await axiosInstance.post(`/email/${selectTicketForInvoice.length<15?"sendsugetionmail":"ulpoadsendsugetionmail"}`, {
+        const response = await axiosInstance.post(`/email/${selectTicketForInvoice.length < 15 ? "sendsugetionmail" : "ulpoadsendsugetionmail"}`, {
           uploadTicket: {
             uniqueQueryId: selectTicketForInvoice
           },
-          ticket:{
+          ticket: {
             uniqueQueryId: selectTicketForInvoice
           },
           text: text,
@@ -843,7 +843,9 @@ useEffect(()=>{
                 </>}
                 {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
                   <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
-                  <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button></>}
+                  <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button>
+                  <button className={`${buttonFilterValue === "hang_up" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("hang_up")}>Hang_Up</button></>}
+
               </div>
             </section>
             }
@@ -1118,6 +1120,8 @@ useEffect(()=>{
                   <>
                     <option value="Not_Pickup">Not Pickup</option>
                     <option value="Wrong_Number">Wrong Number</option>
+                    <option value="hang_up">Hang_Up</option>
+
                   </>
                 }
                 {
@@ -1141,6 +1145,7 @@ useEffect(()=>{
                     <option value="Not_Interested">Not Interested</option>
                     <option value="Place_with_other">Place with other</option>
                     <option value="Sale" >Sale</option>
+                    <option value="hang_up">Hang_Up</option>
                   </>
                 }
 

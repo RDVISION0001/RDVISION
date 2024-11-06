@@ -99,6 +99,22 @@ function users() {
     }
   };
 
+  const [loading, setLoading] = useState(false);
+
+  // Delete user function
+  const handleDeleteUser = async (userId) => {
+    setLoading(true);
+    try {
+      await axiosInstance.delete(`/user/deleteUser/${userId}`);
+      toast.success('User deleted successfully!'); // Success toast message
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast.error('Failed to delete user!'); // Error toast message
+    } finally {
+      setLoading(false);
+    }
+  };
+
   //taraget assign
   const [white, setWhite] = useState(false);
   const handleBlack = () => setWhite(false);
@@ -164,7 +180,6 @@ function users() {
       // assignedToRoleId('');
       // saleTask('');
     } catch (error) {
-
       console.error('Error adding task:', error);
     }
   };
@@ -304,7 +319,7 @@ function users() {
       try {
         const response = await axiosInstance.get('/role/getAllRoles');
         setRole(response.data.dtoList);
-        console.log("Roles ",response.data.dtoList)
+        console.log("Roles ", response.data.dtoList)
       } catch (error) {
         console.error('Error fetching roles:', error);
       }
@@ -465,6 +480,10 @@ function users() {
                                   <Button className="btn-outline-secondary" onClick={() => handleOne(item.userId)}>
                                     Make Agent
                                   </Button>
+                                  <i className="fa-solid fa-trash fa-2xl mx-sm-3"
+                                    onClick={() => handleDeleteUser(item.userId)}
+                                    style={{ color: "#dd081d" }}>
+                                  </i>
                                 </td>
                               </tr>
                             ))}

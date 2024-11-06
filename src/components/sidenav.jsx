@@ -16,7 +16,7 @@ function Sidenav() {
   const [uploadedTickets, setUploadedTickets] = useState({
     totalAssignTickets: 0,
     totalFollowupsTickets: 0,
-    totalNewTickets:0
+    totalNewTickets: 0
   });
 
   // Fetch data from the API
@@ -34,7 +34,7 @@ function Sidenav() {
           setUploadedTickets({
             totalAssignTickets: uploded.totalAssignTickets,
             totalFollowupsTickets: uploded.totalFollowupsTickets,
-            totalNewTickets:uploded.totalNewTickets
+            totalNewTickets: uploded.totalNewTickets
           });
         }
       } catch (error) {
@@ -153,13 +153,13 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/super_admin_index" className="nav-link">
+              <NavLink target='_blank' to="/super_admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/super_admin_users" className="nav-link">
+              <NavLink target='_blank' to="/super_admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
               </NavLink>
@@ -172,19 +172,19 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
-                    <NavLink to="/live_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/upload_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/in_negotiation" className="nav-link">
+                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
@@ -201,13 +201,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_pending" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>
@@ -216,13 +216,13 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
-              <NavLink to="/super_admin_sales" className="nav-link">
+              <NavLink target='_blank' to="/super_admin_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/super_admin_orders" className="nav-link">
+              <NavLink target='_blank' to="/super_admin_orders" className="nav-link">
                 <i className="fa-solid fa-money-check-dollar"></i>
                 <span className="nav-text">Orders Status</span>
               </NavLink>
@@ -248,31 +248,31 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin_index" className="nav-link">
+              <NavLink target='_blank' to="/admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin_to_everyone" className="nav-link">
+              <NavLink target='_blank' to="/admin_to_everyone" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Everyone</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/ticket_house" className="nav-link">
+              <NavLink target='_blank' to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin_upload_tickets" className="nav-link">
+              <NavLink target='_blank' to="/admin_upload_tickets" className="nav-link">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/admin_users" className="nav-link">
+              <NavLink target='_blank' to="/admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
               </NavLink>
@@ -285,19 +285,19 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
-                    <NavLink to="/live_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/upload_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/in_negotiation" className="nav-link">
+                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
@@ -314,13 +314,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_pending" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>
@@ -329,7 +329,7 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
-              <NavLink to="/upload_products" className="nav-link">
+              <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
@@ -362,7 +362,7 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/closer_index" className="nav-link">
+              <NavLink target='_blank' to="/closer_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
@@ -376,7 +376,7 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/live_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
                         {liveTickets.totalAssignTickets}
@@ -385,7 +385,7 @@ function Sidenav() {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/upload_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">
                         ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -395,7 +395,7 @@ function Sidenav() {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/in_negotiation" className="nav-link">
+                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">
                         In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -418,13 +418,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_pending" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>
@@ -434,13 +434,13 @@ function Sidenav() {
             </li>
 
             <li className="nav-item">
-              <NavLink to="/after_sales_service" className="nav-link">
+              <NavLink target='_blank' to="/after_sales_service" className="nav-link">
                 <i className="fa-solid fa-headphones"></i>
                 <span className="nav-text">ASS</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/upload_products" className="nav-link">
+              <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i className="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
@@ -473,7 +473,7 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/upload_products" className="nav-link">
+              <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
@@ -499,13 +499,13 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/captain_index" className="nav-link">
+              <NavLink target='_blank' to="/captain_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/captain_to_closer" className="nav-link">
+              <NavLink target='_blank' to="/captain_to_closer" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">To Closer</span>
               </NavLink>
@@ -518,19 +518,19 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4 ">
                   <li className="nav-item">
-                    <NavLink to="/live_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/upload_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
                       <i className="fa-solid fa-upload"></i>
                       <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/in_negotiation" className="nav-link">
+                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
                     </NavLink>
@@ -547,13 +547,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_pending" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>
@@ -562,7 +562,7 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
-              <NavLink to="/captain_sales" className="nav-link">
+              <NavLink target='_blank' to="/captain_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
@@ -588,13 +588,13 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink to="/senior_supervisor_index" className="nav-link">
+              <NavLink target='_blank' to="/senior_supervisor_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/senior_supervisor_to_captain" className="nav-link">
+              <NavLink target='_blank' to="/senior_supervisor_to_captain" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">Team</span>
               </NavLink>
@@ -608,7 +608,7 @@ function Sidenav() {
               {isTicketSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/live_tickets" className="nav-link">
+                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
                       <i className="fa-solid fa-headset"></i>
                       <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
                         {liveTickets.totalAssignTickets}
@@ -617,7 +617,7 @@ function Sidenav() {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/in_negotiation" className="nav-link">
+                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
                       <i className="fa-solid fa-handshake"></i>
                       <span className="nav-text">
                         In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -630,7 +630,7 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
-              <NavLink to="/ticket_house" className="nav-link">
+              <NavLink target='_blank' to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
@@ -646,13 +646,13 @@ function Sidenav() {
               {isInvoiceSubMenuOpen && (
                 <ul className="nav flex-column px-4">
                   <li className="nav-item">
-                    <NavLink to="/invoices_pending" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
                       <i className="fa-solid fa-hourglass-half"></i>
                       <span className="nav-text">Pending</span>
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink to="/invoices_paid" className="nav-link">
+                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
                       <i className="fa-solid fa-check-circle"></i>
                       <span className="nav-text">Paid</span>
                     </NavLink>

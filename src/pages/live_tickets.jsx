@@ -78,10 +78,8 @@ function live_tickets() {
   });
 
 
-
-
   const addCopyRecord = async (ticketId, text) => {
-    toast.info("Copied" + text);
+    // toast.info("Copied" + text);
     const response = await axiosInstance.post("/history/copyhistory", {
       updatedBy: userId,
       status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
@@ -91,7 +89,6 @@ function live_tickets() {
       recordingFile: null
     })
   }
-
 
   // Define parameters for each tab
   const params = {
@@ -296,7 +293,8 @@ function live_tickets() {
       'Interested': 'orange',
       'Not_Interested': 'red',
       'Wrong_Number': 'gray',
-      'Not_Pickup': 'lightblue'
+      'Not_Pickup': 'lightblue',
+      ' hang_up': 'yellow'
     };
     return colors[ticketStatus] || 'white';
   };
@@ -533,8 +531,16 @@ function live_tickets() {
         toast.error("Some Error Occurs")
       }
     }
-
   }
+
+  const [copiedId, setCopiedId] = useState(null); // Track copied uniqueQueryId
+  const [copiedType, setCopiedType] = useState(null); // Track if mobile or email is copied
+
+  const handleCopy = (uniqueQueryId, text, type) => {
+    setCopiedId(uniqueQueryId); // Set the copied ID
+    setCopiedType(type); // Track whether it's a mobile number or email
+    addCopyRecord(uniqueQueryId, text); // Log the copied record
+  };
 
 
 
@@ -685,22 +691,41 @@ function live_tickets() {
                             <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
                             <td><span className="text">{item.senderName}</span></td>
                             <td>
+                              {/* For Mobile Number */}
                               <CopyToClipboard
                                 text={item.senderMobile}
-                                onCopy={() => setCopied(true)}
+                                onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
                               >
-                                <button onClick={() => addCopyRecord(item.uniqueQueryId, item.senderMobile)}>Copy</button>
+                                <button
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                    color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                  }}
+                                >
+                                  {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                </button>
                               </CopyToClipboard>
                               <span className="text">{maskMobileNumber(item.senderMobile)}</span>
                             </td>
 
                             <td>
+                              {/* For Email */}
                               <CopyToClipboard
                                 text={item.senderEmail}
-                                onCopy={() => setCopied(true)}  >
-                                <button onClick={() => addCopyRecord(item.uniqueQueryId, item.senderEmail)}>Copy</button>
+                                onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                    color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                  }}
+                                >
+                                  {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                </button>
                               </CopyToClipboard>
-                              <span className="text">{maskEmail(item.senderEmail)}</span>
+                              <span className="text">{item.senderEmail}</span>
                             </td>
 
                             <td onClick={() => handleShow(item.uniqueQueryId)} >
@@ -751,11 +776,16 @@ function live_tickets() {
                                   title="Get connect on email"
                                 ><i className="fa-solid fa-envelope"></i
                                 ></Button>
-                                <a href={`https://wa.me/${item.senderMobile.split("-")[1]}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                  target='_blank'
+                                <a
+                                  href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                  target="_blank"
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
-                                ><i className="fa-brands fa-whatsapp"></i></a>
+                                >
+                                  <i className="fa-brands fa-whatsapp"></i>
+                                </a>
+
+
                                 <Button
                                   onClick={() => handleInvoice(item.uniqueQueryId)}
                                   className="rounded-circle "
@@ -838,6 +868,7 @@ function live_tickets() {
                 <option value="Wrong_Number">Wrong Number</option>
                 <option value="Place_with_other">Place with other</option>
                 <option value="Not_Pickup">Not Pickup</option>
+                <option value="hang_up">Hang_up</option>
               </select>
             </div>
 
@@ -996,7 +1027,7 @@ function live_tickets() {
                 </div>
 
                 <div className="container mt-3 border p-3 rounded">
-                  <div className="row" style={{height:"500px"}}>
+                  <div className="row" style={{ height: "500px" }}>
                     {productsList && productsList
                       .filter(product =>
                         serchValue.length > 0
@@ -1004,7 +1035,7 @@ function live_tickets() {
                           : true
                       )
                       .map((product, index) => (
-                        <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center "  onClick={() => handleToggleProduct(product.productId)}>
+                        <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                           <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                             {/* Brand Tag */}
                             <div
@@ -1040,8 +1071,8 @@ function live_tickets() {
               </>
 
               <div className='mt-3'>
-                <label htmlFor="textarea fw-bold" style={{ fontSize: "20px",fontWeight:"bold" }}>Enter Message</label>
-                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3'placeholder='PLease Enter Meassage To Client' ></textarea>
+                <label htmlFor="textarea fw-bold" style={{ fontSize: "20px", fontWeight: "bold" }}>Enter Message</label>
+                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' placeholder='PLease Enter Meassage To Client' ></textarea>
               </div>
 
               <button onClick={() => handleSendTemplateMail()}>Send Mail</button>
