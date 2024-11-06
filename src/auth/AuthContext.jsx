@@ -14,6 +14,7 @@ export const AuthProvider = ({ children }) => {
   const [attendanceId, setAttendanceId] = useState('');
   const [followupState,setFolowupUpdate]=useState("null")
   const [noOfNweticketsRecevied,setNoOfnewticketsReceived]=useState(0)
+  const [userReportReloader,setUserReportReloader]=useState(0)
 
 
   const [takingBreak, setTakingBreak] = useState(false)
@@ -112,7 +113,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout,followupState,setFolowupUpdate,noOfNweticketsRecevied,setNoOfnewticketsReceived }}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout,followupState,setFolowupUpdate,noOfNweticketsRecevied,setNoOfnewticketsReceived,userReportReloader,setUserReportReloader}}>
       {children}
     </AuthContext.Provider>
 

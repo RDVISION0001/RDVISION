@@ -510,18 +510,28 @@ function live_tickets() {
     });
   };
   const handleSendTemplateMail = async () => {
-    try {
-      const response = await axiosInstance.post("/email/sendsugetionmail", {
-        ticket: {
-          uniqueQueryId: selectTicketForInvoice
-        },
-        text: text,
-        temp: selectedTemplate,
-        productsIds: productsIds
-      })
-      toast.success("Email Sent")
-    } catch (e) {
-      toast.error("Some Error Occurs")
+    if (selectedTemplate < 1) {
+      toast.info("Please Select one Template ")
+    } else if (productsIds.length < 1) {
+      toast.info("Please Select At least one Product ")
+
+    } else if (text.length < 1) {
+      toast.info("Please Enter Message")
+    } else {
+      try {
+        const response = await axiosInstance.post("/email/sendsugetionmail", {
+          ticket: {
+            uniqueQueryId: selectTicketForInvoice
+          },
+          text: text,
+          temp: selectedTemplate,
+          productsIds: productsIds,
+          userId
+        })
+        toast.success("Email Sent")
+      } catch (e) {
+        toast.error("Some Error Occurs")
+      }
     }
 
   }
@@ -905,6 +915,7 @@ function live_tickets() {
                       style={{ height: "40px", fontSize: "12px" }}
                       checked={selectedTemplate === 1}
                       onChange={() => handleToggleProduct(1)}
+                      onClick={() => setSelectedTemplate(1)}
                     />
                     <img
                       onClick={() => setSelectedTemplate(1)}
@@ -925,6 +936,7 @@ function live_tickets() {
                       style={{ height: "40px", fontSize: "12px" }}
                       checked={selectedTemplate === 2}
                       onChange={() => handleToggleProduct(2)}
+                      onClick={() => setSelectedTemplate(2)}
                     />
                     <img
                       onClick={() => setSelectedTemplate(2)}
@@ -945,6 +957,7 @@ function live_tickets() {
                       style={{ height: "40px", fontSize: "12px" }}
                       checked={selectedTemplate === 3}
                       onChange={() => handleToggleProduct(3)}
+                      onClick={() => setSelectedTemplate(3)}
                     />
                     <img
                       onClick={() => setSelectedTemplate(3)}
@@ -969,12 +982,21 @@ function live_tickets() {
                     onChange={handleInputChange}
                     className='p-2 bg-white text-black'
                   />
+                  {productsIds.length > 0 && (
+                    <div
+                      className='bg-primary text-white rounded p-2 hover:shadow-lg'
+                      style={{ height: "30px", fontSize: "12px", cursor: "Pointer" }}
+                      onClick={() => setProductIds([])}
+                    >
+                      Deselect All
+                    </div>
+                  )}
 
 
                 </div>
 
-                <div className="container mt-3">
-                  <div className="row">
+                <div className="container mt-3 border p-3 rounded">
+                  <div className="row" style={{height:"500px"}}>
                     {productsList && productsList
                       .filter(product =>
                         serchValue.length > 0
@@ -982,8 +1004,8 @@ function live_tickets() {
                           : true
                       )
                       .map((product, index) => (
-                        <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
-                          <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', height: 'auto' }}>
+                        <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center "  onClick={() => handleToggleProduct(product.productId)}>
+                          <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                             {/* Brand Tag */}
                             <div
                               className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
@@ -1007,19 +1029,7 @@ function live_tickets() {
                                 <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
                                   {product.name} {product.Price}
                                 </h6>
-
-
                               </div>
-
-                              <input
-                                type="checkbox"
-                                className='bg-info mt-2 mt-md-0'
-                                style={{ height: "30px", fontSize: "12px" }}
-                                checked={productsIds.includes(product.productId)}
-                                onChange={() => handleToggleProduct(product.productId)}
-                              />
-
-
                             </div>
                           </div>
                         </div>
@@ -1029,9 +1039,9 @@ function live_tickets() {
                 </div>
               </>
 
-              <div>
-                <label htmlFor="textarea fw-bold" style={{ fontSize: "15px" }}>Enter Message</label>
-                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' ></textarea>
+              <div className='mt-3'>
+                <label htmlFor="textarea fw-bold" style={{ fontSize: "20px",fontWeight:"bold" }}>Enter Message</label>
+                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3'placeholder='PLease Enter Meassage To Client' ></textarea>
               </div>
 
               <button onClick={() => handleSendTemplateMail()}>Send Mail</button>

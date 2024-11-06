@@ -205,7 +205,7 @@ function InvoiceBox(props) {
     // Function to handle sending invoice
     const handleSendInvoice = async () => {
         try {
-            const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}`);
+            const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}`);
             toast.success('Invoice sent successfully!');
         } catch (error) {
             console.error('Error sending invoice:', error);
@@ -215,13 +215,14 @@ function InvoiceBox(props) {
 
     const handleSendQuotation = async () => {
         try {
-            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}`);
+            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}&userId=${userId}`);
             toast.success('Quotation sent successfully!');
         } catch (error) {
             console.error('Error sending quotation:', error);
             toast.error('Failed to send quotation');
         }
     };
+
     const [isCollapsed, setIsCollapsed] = useState(false); // State to track collapse/expand
 
     const toggleCollapse = () => {
