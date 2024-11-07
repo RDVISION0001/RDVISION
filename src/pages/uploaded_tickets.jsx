@@ -484,12 +484,15 @@ function uploaded_tickets() {
 
   //ticket journey
   const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+  const [isTicketJourneyOpen, setIsTicketJourneyOpen] = useState(false)
   const openTicketJourney = (ticketId) => {
     setSelectedTicketInfo(ticketId)
-    document.getElementById("ticketjourney").showModal()
+    setIsTicketJourneyOpen(true)
+    // document.getElementById("ticketjourney").showModal()
   }
   const closeTicketJourney = () => {
-    document.getElementById("ticketjourney").close()
+    // document.getElementById("ticketjourney").close()
+    setIsTicketJourneyOpen(false)
   }
 
   const [followUpStatus, setFollowupStatus] = useState("Follow")
@@ -1227,6 +1230,17 @@ function uploaded_tickets() {
           email={selectEmailForInvoice}
           mobile={selectMobileForInvoice}
         />
+      </Modal>
+      <Modal
+        show={isTicketJourneyOpen}
+        onHide={closeTicketJourney}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
+      >
+        <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
       </Modal>
     </>
   )

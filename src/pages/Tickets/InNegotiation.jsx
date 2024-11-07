@@ -314,8 +314,15 @@ function InNegotiation() {
     }
   };
   //close ticket journey
+  const [isTicketJourneyOpen, setIsTicketJourneyOpen] = useState(false)
+  const openTicketJourney = (ticketId) => {
+    setSelectedTicketInfo(ticketId)
+    setIsTicketJourneyOpen(true)
+    // document.getElementById("ticketjourney").showModal()
+  }
   const closeTicketJourney = () => {
-    document.getElementById("ticketjourney").close()
+    // document.getElementById("ticketjourney").close()
+    setIsTicketJourneyOpen(false)
   }
 
   const formatNumberAccordingToHodu = (number) => {
@@ -327,11 +334,7 @@ function InNegotiation() {
 
   }
 
-  //openn and close ticket journey
-  const openTicketJourney = (ticketId) => {
-    setSelectedTicketInfo(ticketId)
-    document.getElementById("ticketjourney").showModal()
-  }
+
 
   const addCopyRecord = async (ticketId, text) => {
     toast.info("Copied" + text);
@@ -1469,6 +1472,17 @@ function InNegotiation() {
           </div>
 
         </Modal.Body>
+      </Modal>
+      <Modal
+        show={isTicketJourneyOpen}
+        onHide={closeTicketJourney}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
+      >
+        <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
       </Modal>
     </>
   );
