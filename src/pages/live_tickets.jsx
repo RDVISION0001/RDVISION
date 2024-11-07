@@ -420,12 +420,15 @@ function live_tickets() {
 
   //ticket journey
   const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+  const [isTicketJourneyOpen, setIsTicketJourneyOpen] = useState(false)
   const openTicketJourney = (ticketId) => {
     setSelectedTicketInfo(ticketId)
-    document.getElementById("ticketjourney").showModal()
+    setIsTicketJourneyOpen(true)
+    // document.getElementById("ticketjourney").showModal()
   }
   const closeTicketJourney = () => {
-    document.getElementById("ticketjourney").close()
+    // document.getElementById("ticketjourney").close()
+    setIsTicketJourneyOpen(false)
   }
 
   const [followUpStatus, setFollowupStatus] = useState("Follow")
@@ -541,12 +544,41 @@ function live_tickets() {
     setCopiedType(type); // Track whether it's a mobile number or email
     addCopyRecord(uniqueQueryId, text); // Log the copied record
   };
+  const [assignedTo, setAssignedTo] = useState(0)
 
 
 
   return (
     <>
+      <div className='d-flex justify-content-end '>
+        <div className='w-25 d-flex justify-content-center' >
 
+          <div className="form-check" style={{ marginLeft: "10px" }}>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="flexCheckDefault"
+              checked={assignedTo === userId}
+              onChange={() => setAssignedTo(userId)} // Call toggle method on change
+            />
+            <label className="form-check-label" htmlFor="flexCheckDefault">
+              Assigned to me
+            </label>
+          </div>
+          <div className="form-check" style={{ marginLeft: "10px" }}>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="flexCheckChecked"
+              checked={assignedTo === 0} // Checked if 'list' is false
+              onChange={() => setAssignedTo(0)} // Call toggle method on change
+            />
+            <label className="form-check-label" htmlFor="flexCheckChecked">
+              All negotiation tickets
+            </label>
+          </div>
+        </div>
+      </div>
       {/* //Filter input */}
       <section className="filter-section">
         <div className="container-fluid">
@@ -1190,6 +1222,18 @@ function live_tickets() {
           email={selectEmailForInvoice}
           mobile={selectMobileForInvoice}
         />
+      </Modal>
+
+      <Modal
+        show={isTicketJourneyOpen}
+        onHide={closeTicketJourney}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
+      >
+        <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
       </Modal>
 
     </>

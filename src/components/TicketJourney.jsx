@@ -74,9 +74,25 @@ const TicketJourney = (props) => {
             audioRef.current.removeEventListener('ended', handleEnded);
         };
     }, []);
-
+    const formatDate = (date) => {
+        return new Intl.DateTimeFormat('en-US', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+          .format(date)
+          .toUpperCase(); // Ensure 'NOV' is uppercase
+      };
+      const getMonthName = (monthNumber) => {
+        const months = [
+          "January", "February", "March", "April", "May", "June",
+          "July", "August", "September", "October", "November", "December"
+        ];
+        return months[monthNumber - 1]; // monthNumber is 1-indexed
+      };
     return (
-        <div style={{ borderRadius: "10px" }} className="container mt-5 text-black bg-white p-2 d-flex justify-content-center flex-column">
+        <div style={{ borderRadius: "10px" }} className="container  text-black bg-white p-2 d-flex justify-content-center flex-column">
+         <div className='text-center'>   <h2>Ticket journey</h2></div>
             <div className='d-flex justify-content-end'>
                 <i
                     className="fas fa-times pointer"
@@ -104,8 +120,8 @@ const TicketJourney = (props) => {
                 <ul className="events" style={{ maxHeight: '50vh', width: '95%', overflowY: 'auto' }}>
                     {stages.slice().reverse().map((stage, index) => (
                         <li className={`text-primary ${index % 2 === 0 ? "bg-light" : "bg-white"} `} key={index}>
-                            <time dateTime={`${stage.updateDate[0]}-${stage.updateDate[1]}-${stage.updateDate[2]}`} style={{ width: "130px" }}>
-                                {stage.updateDate[2]}-{stage.updateDate[1]}-{stage.updateDate[0]}
+                            <time dateTime={`${stage.updateDate[0]}-${getMonthName(stage.updateDate[1])}-${stage.updateDate[2]}`} style={{ width: "130px" }}>
+                                {stage.updateDate[2]}-{getMonthName(stage.updateDate[1])}-{stage.updateDate[0]}
                             </time>
                             <span style={{ display: 'flex', justifyContent: "space-between", width: "100%" }} >
                                 <strong>
