@@ -29,6 +29,8 @@ function ActionMode() {
     const [currentTicket, setCurrentTicket] = useState(0)
     const [totalTicket, setTotalTicket] = useState(0)
 
+    const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket")?localStorage.getItem("currentWorkingTicket"):0)
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -97,7 +99,7 @@ function ActionMode() {
     const fetchFirstTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get('/third_party_api/ticket/getFirstTicket/302');
+            const response = await axiosInstance.get(`/third_party_api/ticket/getFirstTicket/${userId}`);
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
@@ -107,13 +109,32 @@ function ActionMode() {
             setLoading(false);
         }
     };
-    const fetchNextTicket = async () => {
+    const fetchSpecifiTicketByNumber = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get('/third_party_api/ticket/next/302');
+            const response = await axiosInstance.post('/third_party_api/ticket/getSpecificTicketByNumber',{
+                userId,
+                number:ticketNumber
+            });
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
+        } catch (error) {
+            console.error("Error fetching next ticket:", error);
+        } finally {
+            setLoading(false);
+            localStorage.setItem("currentWorkingTicket",ticketNumber)
+        }
+    };
+    const fetchNextTicket = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get(`/third_party_api/ticket/next/${userId}`);
+            setTicket(response.data.ticket);
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
+            localStorage.setItem("currentWorkingTicket",response.data.currentTicketNo)
+
         } catch (error) {
             console.error("Error fetching next ticket:", error);
         } finally {
@@ -123,7 +144,7 @@ function ActionMode() {
     const fetchCurrentWorkingTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get('/third_party_api/ticket/getCurrentWorkingTicket/302');
+            const response = await axiosInstance.get(`/third_party_api/ticket/getCurrentWorkingTicket/${userId}`);
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
@@ -228,10 +249,11 @@ function ActionMode() {
     const fetchPreviousTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get('/third_party_api/ticket/previous/302');
+            const response = await axiosInstance.get(`/third_party_api/ticket/previous/${userId}`);
             setTicket(response.data.ticket); // Assuming the response contains a single ticket
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
+            localStorage.setItem("currentWorkingTicket",response.data.currentTicketNo)
         } catch (error) {
             console.error("Error fetching previous ticket:", error);
         } finally {
@@ -241,7 +263,11 @@ function ActionMode() {
 
     // Call next API by default on mount
     useEffect(() => {
-        fetchFirstTicket();
+        if(localStorage.getItem("currentWorkingTicket")){
+           fetchSpecifiTicketByNumber()
+        }else{
+            fetchFirstTicket();
+        }
         fetchProducts()
     }, []);
 
@@ -328,7 +354,7 @@ function ActionMode() {
 
                                 <div className="card-body" style={{ minHeight: "35vh" }}>
                                     {ticket && (
-                                        <div className="d-flex gap-2 justify-content-center" style={{marginBottom:"30px"}}>
+                                        <div className="d-flex gap-2 justify-content-center" style={{ marginBottom: "30px" }}>
                                             {/* Info Button */}
                                             <button
                                                 onClick={() => openTicketJourney(ticket.uniqueQueryId)}
@@ -434,6 +460,12 @@ function ActionMode() {
 
                             <div className="d-flex justify-content-between mt-3">
                                 <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
+                                <div>
+                                    <label htmlFor="number ">Enter ticket number </label>
+                                    <input value={ticketNumber} className='bg-white text-black p-2 rounded' style={{ width: "100px",margin:'5px' }} onChange={(e) => setTicketNumber(e.target.value)} type="number" />
+                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0"  disabled={ticketNumber===0}>Go To</button>
+
+                                </div>
                                 <button className="btn btn-primary" onClick={fetchNextTicket} disabled={currentTicket == totalTicket}>Next</button>
                             </div>
                         </div>
@@ -835,7 +867,7 @@ function ActionMode() {
                                                     ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                                                     : true
                                             )
-                                            .filter((product)=>product.images!==null).map((product, index) => (
+                                            .filter((product) => product.images !== null).map((product, index) => (
                                                 <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                                                     <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                                                         {/* Brand Tag */}
