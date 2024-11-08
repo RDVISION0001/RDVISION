@@ -15,7 +15,7 @@ import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
 function topnav() {
   const { takingBreak } = useAuth()
   const { followupState } = useAuth()
-  const { noOfNweticketsRecevied,setNoOfnewticketsReceived } = useAuth()
+  const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -118,10 +118,14 @@ function topnav() {
           <nav className="navbar top-navbar navbar-light bg-white container-fluid">
             <div className="left-part">
               <a className="btn border-0 ms-2" id="menu-btn"><i className="fa-solid fa-bars"></i></a>
-              <span className="page-title">Dashboard</span>
             </div>
             <TimezoneClocks />
             <div className="right-part">
+              <a href="/action_mode" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+                <span className="page-title"  >
+                  <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
+                </span>
+              </a>
               <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-ticket fa-2xl pointer"></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{

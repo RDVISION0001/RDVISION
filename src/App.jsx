@@ -121,6 +121,9 @@ import PaymentFailed from './components/PaymentFailed';
 import Terms_Conditions from './components/Terms_Conditions';
 import Team from './senior_supervisor/Team';
 import TicketHouse from './components/TicketHouse';
+import New_Products from './pages/New_Products';
+import ActionMode from './pages/ActionMode';
+
 
 
 
@@ -169,6 +172,10 @@ function App() {
                   <Route exact path="/in_negotiation" element={<InNegotiation />} />
                   <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
                   <Route exact path="/upload_products" element={<Products />} />
+                  <Route exact path="/new_products" element={<New_Products />} />
+                  <Route exact path="/action_mode" element={<ActionMode />} />
+
+
 
 
                   {/* admin */}
