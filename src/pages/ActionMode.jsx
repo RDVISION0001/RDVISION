@@ -1,11 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../axiosInstance';
+import { Button, Modal } from 'react-bootstrap';
+import { useAuth } from '../auth/AuthContext';
+import TicketJourney from '../components/TicketJourney';
+import InvoiceBox from '../components/InvoiceBox';
+import temp1 from '../assets/emailtemp/temp1.png';
+import temp2 from '../assets/emailtemp/temp2.png';
+import temp3 from '../assets/emailtemp/temp3.png';
 
 function ActionMode() {
     const [ticket, setTicket] = useState(null); // Holds the current ticket
     const [loading, setLoading] = useState(true); // To track loading state
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const [showSaleTransaction, setShowTransaction] = useState(false);
+    const [showFollowUpDate, setShowFollowUpDate] = useState(false);
+    const [error, setError] = useState(null);
+    const [selectedTemplate, setSelectedTemplate] = useState(0)
+    const [text, setText] = useState("")
+    const [serchValue, setserchValue] = useState("")
+    const [productsIds, setProductIds] = useState([])
+    const { userId } = useAuth();
+    const { setFolowupUpdate } = useAuth()
+
+    const [selectedKey, setSelectedKey] = useState(null)
+
+    // Clipboard copy
+    const [copied, setCopied] = useState(false);
+    const [filteredTickets, setFilteredTickets] = useState([]);
+
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
+
+    // Form data state
+    const [response, setResponse] = useState(null);
+    const [uniqueQueryId, setUniqueQueryId] = useState(null);
+
+    // Modal state
+    const [email, setEmail] = useState({ id: "", name: "", email: "", mobile: "" });
+    const [productsList, setProductsList] = useState([]);
+    const [on, setOn] = useState(false);
+    const [senderNameForEmail, setSenderNameForEmail] = useState("");
+    const [senderEmailFormail, setSenderEmailForMail] = useState("");
+    const [senderMobile, setSenderMobile] = useState("");
+    const [view, setView] = useState(false);
+    const [activeTab, setActiveTab] = useState("newTickets");
+    const [data, setData] = useState(null);
+    const [newNotifications, setNewNotifications] = useState(0);
+    const [callId, setCallId] = useState(0)
+    const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
+    const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
+    const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
+    const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
+    const [filterdate, setFilterDate] = useState(null)
+    const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
+    const [countryFilter, setCountryFilter] = useState(null)
+    const [productArray, setProductArray] = useState([]);
+    const [emailData, setEmailData] = useState({
+        ticketId: "",
+        name: "",
+        email: "",
+        mobile: "",
+        productList: []
+    });
+
+    const handleCloses = () => setView(false);
+    const closeTicketJourney = () => {
+        // document.getElementById("ticketjourney").close()
+        setIsTicketJourneyOpen(false)
+    }
+
+    //ticket journey
+    const [selctedTicketInfo, setSelectedTicketInfo] = useState("")
+    const [isTicketJourneyOpen, setIsTicketJourneyOpen] = useState(false)
+    const openTicketJourney = (ticketId) => {
+        setSelectedTicketInfo(ticketId)
+        setIsTicketJourneyOpen(true)
+        // document.getElementById("ticketjourney").showModal()
+    }
+
+
+    const [isInvoiceOn, setIsInvoiceOn] = useState(false)
+    const handleInvoice = (ticketId, name, email, mobile) => {
+        setSelectTicketForInvoice(ticketId)
+        setSelectNameForInvoice(name)
+        setSelectEmailForInvoice(email)
+        setSelectMobileForInvoice(mobile)
+        setIsInvoiceOn(!isInvoiceOn)
+    }
 
     // Function to fetch the next ticket
+    const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
+
     const fetchNextTicket = async () => {
         setLoading(true);
         try {
@@ -17,6 +105,96 @@ function ActionMode() {
             setLoading(false);
         }
     };
+
+    const handleInputChange = (e) => {
+        setserchValue(e.target.value); // Update state with the input's value
+        console.log('Input Value:', e.target.value); // Log the current input value
+      };
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+        if (!uniqueQueryId) {
+            setError('Unique Query ID is not defined');
+            return;
+        }
+        try {
+            const params = {
+                userId,
+                ticketStatus: formData.ticketStatus,
+                comment: formData.comment,
+                followUpDateTime: formData.followUpDateTime,
+                call_id: callId
+            };
+            const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
+            setResponse(res.data.dtoList);
+            toast.success('Update successfully!');
+            handleClose();
+            fetchData(params[activeTab], currentPage, itemsPerPage);
+            setError(null);
+            setCallId(0)
+            setFolowupUpdate(uniqueQueryId)
+        } catch (err) {
+            setError(err.message);
+            setResponse(null);
+        }
+    };
+    const handleOff = () => {
+        setOn(false)
+        setProductArray([])
+    };
+    // Update handleStatusChange function
+    const handleStatusChange = (event) => {
+        handleChange(event);
+        const { value } = event.target;
+
+        // Show folloeupdatetime input when 'Follow' is selected
+        if (value === "Follow") {
+            setShowFollowUpDate(true);
+        } else {
+            setShowFollowUpDate(false);
+        }
+
+        // Show transaction details input when 'Sale' is selected
+        if (value === "Sale") {
+            setShowTransaction(true);
+        } else {
+            setShowTransaction(false);
+        }
+    };
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleClick = async (number) => {
+        try {
+            const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
+                number: formatNumberAccordingToHodu(number),
+                userId
+            });
+            setCallId(response.data.call_id)
+        } catch (error) {
+            console.error('Error during API call:', error);
+        }
+    };
+    const handleOn = (ticketId, name, email, mobile) => {
+        setSelectTicketForInvoice(ticketId)
+        setSelectNameForInvoice(name)
+        setSelectEmailForInvoice(email)
+        setSelectMobileForInvoice(mobile)
+        setOn(!isInvoiceOn)
+    }
+
+    const formatNumberAccordingToHodu = (number) => {
+        if (number.includes("+")) {
+            return number.replace(/[+-]/g, "")
+        } else {
+            return "1" + number
+        }
+    }
+
 
     // Function to fetch the previous ticket
     const fetchPreviousTicket = async () => {
@@ -34,64 +212,630 @@ function ActionMode() {
     // Call next API by default on mount
     useEffect(() => {
         fetchNextTicket();
+        fetchProducts()
     }, []);
 
-
+    const fetchProducts = async () => {
+        const response = await axiosInstance.get("product/getAllProducts");
+        setProductsList(response.data.dtoList);
+      };
+      const handleSendTemplateMail = async () => {
+        if (selectedTemplate < 1) {
+          toast.info("Please Select one Template ")
+        } else if (productsIds.length < 1) {
+          toast.info("Please Select At least one Product ")
+    
+        } else if (text.length < 1) {
+          toast.info("Please Enter Message")
+        } else {
+          try {
+            const response = await axiosInstance.post("/email/sendsugetionmail", {
+              ticket: {
+                uniqueQueryId: selectTicketForInvoice
+              },
+              text: text,
+              temp: selectedTemplate,
+              productsIds: productsIds,
+              userId
+            })
+            toast.success("Email Sent")
+          } catch (e) {
+            toast.error("Some Error Occurs")
+          }
+        }
+      }
+      const handleToggleProduct = (id) => {
+        setProductIds((prevIds) => {
+          if (prevIds.includes(id)) {
+            // Remove the ID if it already exists
+            return prevIds.filter((prevId) => prevId !== id);
+          } else {
+            // Add the ID if it does not exist
+            return [...prevIds, id];
+          }
+        });
+      };    
+    
 
     return (
-        <section className="followup-table-section py-3">
+        <>        <section className="followup-table-section" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa', paddingTop: '30px' }}>
             <div className="container-fluid">
                 <div className="d-flex justify-content-center">
-                    <div
-                        className="card shadow border"
-                        style={{ width: "80rem", height: "auto" }}
-                    >
-                        <div className="card-body">
-                            {loading ? (
-                                <p>Loading ticket...</p>
-                            ) : ticket ? (
-                                <div className="row">
-                                    <div className="col-md-6">
-                                        <p className="card-text"><strong>Name: </strong> {ticket.senderName}</p>
-                                        <p className="card-text"><strong>Mobile: </strong> {ticket.senderMobile}</p>
-                                        <p className="card-text"><strong>Eamil: </strong> {ticket.senderEmail}</p>
-                                        <p className="card-text"><strong>Country: </strong> {ticket.senderEmail}</p>
+                    <div className="shadow border p-3 rounded bg-white" style={{ width: "100%", maxWidth: "800px", minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
 
+                        <div className="card">
+                            <div className="w-25 rounded p-2 bg-primary text-white text-center" style={{ marginTop: "-40px", marginLeft: "-40px" }}>
+                                <h5>Inquiry Ticket </h5>
+                            </div>
+                            <div className="card-body" style={{ minHeight: "35vh" }}>
+                                {ticket && (
 
+                                    <div className="actions-wrapper d-flex gap-2 d-flex justify-content-center" style={{ marginBottom: "30px" }}>
+                                        {/* Info Button */}
+                                        <Button
+                                            onClick={() => openTicketJourney(ticket.uniqueQueryId)}
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#followUpModal"
+                                            className="btn btn-light d-flex bg-danger align-items-center justify-content-center border rounded-circle"
+                                            title="Get connect on call"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-solid fa-info text-white"></i>
+                                        </Button>
+
+                                        {/* Call Button */}
+                                        <Button
+                                            onClick={() => handleClick(ticket.senderMobile)}
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#followUpModal"
+                                            className="btn btn-light d-flex align-items-center bg-success justify-content-center border rounded-circle"
+                                            title="Get connect on call"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-solid fa-phone text-white"></i>
+                                        </Button>
+
+                                        {/* SMS Button */}
+                                        <a
+                                            href={`sms:${ticket.senderMobile}?&body=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle bg-info"
+                                            title="Get connect on message"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-solid fa-message text-white"></i>
+                                        </a>
+
+                                        {/* Email Button */}
+                                        <Button
+                                            onClick={() => handleOn(ticket.uniqueQueryId)}
+                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle"
+                                            title="Get connect on email"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-solid fa-envelope text-white"></i>
+                                        </Button>
+
+                                        {/* WhatsApp Button */}
+                                        <a
+                                            href={`https://wa.me/${ticket.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                            target="_blank"
+                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle bg-success"
+                                            title="Get connect on WhatsApp"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-brands fa-whatsapp text-white"></i>
+                                        </a>
+
+                                        {/* Invoice Button */}
+                                        <Button
+                                            onClick={() => handleInvoice(ticket.uniqueQueryId)}
+                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle"
+                                            title="Get invoice"
+                                            style={{ width: "45px", height: "45px" }}
+                                        >
+                                            <i className="fa-solid fa-file-invoice text-white"></i>
+                                        </Button>
                                     </div>
-                                    <div className="col-md-6">
-                                    <p className="card-text"><strong>Ticket Id: </strong>{ticket.uniqueQueryId}</p>
-                                        <p className="card-text"><strong>Date: </strong>{ticket.queryTime}</p>
-                                        <p className="card-text"><strong>Status: </strong>{ticket.ticketstatus}</p>
-                                        <p className="card-text"><strong>Requirement: </strong>{ticket.subject}</p>
 
-                                    </div>
-                                </div>
-                            ) : (
-                                <p>No ticket data available.</p>
-                            )}
+                                )}
+
+                                {loading ? (
+                                    <p className="text-center text-muted">Loading ticket...</p>
+                                ) : ticket ? (
+                                    <>
+                                        <div className="row mb-3">
+                                            <div className="col-md-6">
+                                                <p><strong>Ticket ID:</strong> {ticket.id}</p>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <p><strong>Unique Query ID:</strong> {ticket.uniqueQueryId}</p>
+                                            </div>
+                                        </div>
+                                        <div className="row mb-3">
+                                            <div className="col-md-6">
+                                                <p><strong>Name:</strong> {ticket.senderName}</p>
+                                                <p><strong>Mobile:</strong> {ticket.senderMobile}</p>
+                                                <p><strong>Email:</strong> {ticket.senderEmail}</p>
+                                                <p><strong>Country:</strong> {ticket.senderCountry}</p>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <p><strong>Date:</strong> {ticket.queryTime}</p>
+                                                <p><strong>Status:</strong> <span className={`badge ${ticket.ticketstatus === 'Open' ? 'bg-success' : 'bg-danger'}`}>{ticket.ticketstatus}</span></p>
+                                                <p><strong>Requirement:</strong> {ticket.subject}</p>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <p className="text-center text-muted">No ticket data available.</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className="d-flex justify-content-between mt-3">
+                            <button
+                                className="btn btn-primary"
+                                onClick={fetchPreviousTicket}
+                                disabled={loading}
+                            >
+                                Prev
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={fetchNextTicket}
+                                disabled={loading}
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
                 </div>
-
-                <div className="d-flex justify-content-between mt-3">
-                    <button
-                        className="btn btn-primary"
-                        onClick={fetchPreviousTicket}
-                        disabled={loading}
-                    >
-                        Prev
-                    </button>
-                    <button
-                        className="btn btn-primary"
-                        onClick={fetchNextTicket}
-                        disabled={loading}
-                    >
-                        Next
-                    </button>
-                </div>
             </div>
         </section>
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+                <Modal.Header closeButton>
+                    <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
+                        Call Status
+                    </h1>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="status" className="form-label">Status</label>
+                            <select
+                                className="form-select"
+                                id="status"
+                                name="ticketStatus"
+                                value={formData.ticketStatus}
+                                onChange={handleStatusChange}
+                            >
+                                <option>Choose Call-Status</option>
+                                <option value="Sale">Sale</option>
+                                {/* <option value="New">New</option> */}
+                                <option value="Follow">Follow-up</option>
+                                <option value="Interested">Interested</option>
+                                <option value="Not_Interested">Not Interested</option>
+                                <option value="Wrong_Number">Wrong Number</option>
+                                <option value="Place_with_other">Place with other</option>
+                                <option value="Not_Pickup">Not Pickup</option>
+                                <option value="hang_up">Hang_up</option>
+                            </select>
+                        </div>
+
+                        {showSaleTransaction && (
+                            <div className="mb-3">
+                                <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
+                                <input
+                                    type="transaction-details"
+                                    placeholder="Enter Transaction id "
+                                    className="form-control"
+                                    id="transactionDetails"
+                                    name="transactionDetails"
+                                    value={formData.SaleTransaction}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        )}
+
+                        {showFollowUpDate && (
+                            <div className="mb-3">
+                                <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
+                                <input
+                                    type="datetime-local"
+                                    className="form-control"
+                                    id="followUpDateTime"
+                                    name="followUpDateTime"
+                                    value={formData.followUpDateTime}
+                                    onChange={handleChange}
+                                    step="2"
+                                />
+                            </div>
+                        )}
+                        <div className="col-12">
+                            <label htmlFor="comment" className="form-label">Comment</label>
+                            <textarea
+                                rows="4"
+                                className="form-control"
+                                placeholder="Discribe your conversation with client"
+                                id="comment"
+                                name="comment"
+                                value={formData.comment}
+                                onChange={handleChange}
+                                required
+                            ></textarea>
+                        </div>
+                        {error && <p className="text-danger">{error}</p>}
+                        <div className="modal-footer justify-content-center border-0">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
+                                Close
+                            </button>
+                            <button className="btn btn-primary" type="submit">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </Modal.Body>
+            </Modal>
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+                <Modal.Header closeButton>
+                    <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
+                        Call Status
+                    </h1>
+                </Modal.Header>
+                <Modal.Body>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-3">
+                            <label htmlFor="status" className="form-label">Status</label>
+                            <select
+                                className="form-select"
+                                id="status"
+                                name="ticketStatus"
+                                value={formData.ticketStatus}
+                                onChange={handleStatusChange}
+                            >
+                                <option>Choose Call-Status</option>
+                                <option value="Sale">Sale</option>
+                                {/* <option value="New">New</option> */}
+                                <option value="Follow">Follow-up</option>
+                                <option value="Interested">Interested</option>
+                                <option value="Not_Interested">Not Interested</option>
+                                <option value="Wrong_Number">Wrong Number</option>
+                                <option value="Place_with_other">Place with other</option>
+                                <option value="Not_Pickup">Not Pickup</option>
+                                <option value="hang_up">Hang_up</option>
+                            </select>
+                        </div>
+
+                        {showSaleTransaction && (
+                            <div className="mb-3">
+                                <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
+                                <input
+                                    type="transaction-details"
+                                    placeholder="Enter Transaction id "
+                                    className="form-control"
+                                    id="transactionDetails"
+                                    name="transactionDetails"
+                                    value={formData.SaleTransaction}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                        )}
+
+                        {showFollowUpDate && (
+                            <div className="mb-3">
+                                <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
+                                <input
+                                    type="datetime-local"
+                                    className="form-control"
+                                    id="followUpDateTime"
+                                    name="followUpDateTime"
+                                    value={formData.followUpDateTime}
+                                    onChange={handleChange}
+                                    step="2"
+                                />
+                            </div>
+                        )}
+                        <div className="col-12">
+                            <label htmlFor="comment" className="form-label">Comment</label>
+                            <textarea
+                                rows="4"
+                                className="form-control"
+                                placeholder="Discribe your conversation with client"
+                                id="comment"
+                                name="comment"
+                                value={formData.comment}
+                                onChange={handleChange}
+                                required
+                            ></textarea>
+                        </div>
+                        {error && <p className="text-danger">{error}</p>}
+                        <div className="modal-footer justify-content-center border-0">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
+                                Close
+                            </button>
+                            <button className="btn btn-primary" type="submit">
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </Modal.Body>
+            </Modal>
+            {/* <!-- Modal ticket popup --> */}
+            < Modal
+                show={view} onHide={handleCloses}
+                className="modal ticket-modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+            >
+                <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="ticket-content-spacing">
+                        <div className="modal-body">
+                            <div className="row">
+                                <div className="col-4">
+                                    <div className="heading-area">
+                                        <div className="vertical-write">
+                                            <h2 className="title">Jenell D. Matney</h2>
+                                            <p className="ticket-id">
+                                                <i className="fa-solid fa-ticket"></i> TKTID:MEDEQ089N
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-8">
+                                    <div
+                                        className="contact-info-row d-flex align-items-center justify-content-between"
+                                    >
+                                        <a href="" className="contact-info phone"
+                                        ><i className="fa-solid fa-phone"></i> +91 9918293747</a
+                                        >
+                                        <a className="contact-info email" href="#"
+                                        ><i className="fa-solid fa-envelope-open-text"></i>
+                                            example@email.com</a
+                                        >
+                                    </div>
+                                    <div className="main-content-area">
+                                        <form>
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                                <label className="form-check-label" for="flexCheckDefault">
+                                                    Default checkbox
+                                                </label>
+                                            </div>
+                                            <div className="form-check">
+                                                <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                                                <label className="form-check-label" for="flexCheckChecked">
+                                                    Checked checkbox
+                                                </label>
+                                            </div>
+                                            <div className="col-12">
+                                                <label htmlFor="comment" className="form-label">Comment</label>
+                                                <textarea
+                                                    rows="4"
+                                                    className="form-control"
+                                                    placeholder="Discribe your conversation with client"
+                                                    id="comment"
+                                                    name="comment"
+                                                ></textarea>
+                                            </div>
+                                            <div className="modal-footer justify-content-center border-0">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloses}>
+                                                    Close
+                                                </button>
+                                                <button className="btn btn-primary" type="submit">
+                                                    Save Changes
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
+            <dialog
+                id="ticketjourney"
+                className="bg-white rounded shadow"
+                style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+            >
+
+                <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center">
+                    <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+                </div>
+            </dialog>
+
+
+            {/* //invoice modal */}
+            <Modal
+                show={isInvoiceOn}
+                onHide={handleInvoice}
+                id="followUpModal"
+                tabindex="-1"
+                aria-labelledby="followUpModalLabel"
+                aria-hidden="true"
+                dialogClassName="fullscreen-modal" // Add a custom class here
+            >
+                <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+                    <u> Raise Invoice</u>
+                </h1>
+                <InvoiceBox
+                    ticketId={selectTicketForInvoice}
+                    name={selectNameForInvoice}
+                    email={selectEmailForInvoice}
+                    mobile={selectMobileForInvoice}
+                />
+            </Modal>
+
+            <Modal
+                show={isTicketJourneyOpen}
+                onHide={closeTicketJourney}
+                id="followUpModal"
+                tabindex="-1"
+                aria-labelledby="followUpModalLabel"
+                aria-hidden="true"
+                dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
+            >
+                <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+            </Modal>
+            <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+                <Modal.Header closeButton>
+                    <h4 className="w-100 text-center" id="followUpModalLabel">
+                        Send Quotation Mail to Customer
+                    </h4>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-md-4">
+                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                    <div className="card-body d-flex flex-column align-items-start">
+                                        <input
+                                            type="checkbox"
+                                            className="bg-info mt-2"
+                                            style={{ height: "40px", fontSize: "12px" }}
+                                            checked={selectedTemplate === 1}
+                                            onChange={() => handleToggleProduct(1)}
+                                            onClick={() => setSelectedTemplate(1)}
+                                        />
+                                        <img
+                                            onClick={() => setSelectedTemplate(1)}
+                                            src={temp1}
+                                            style={{ height: "150px", cursor: "pointer" }}
+                                            alt="Template 1"
+                                            className="img-fluid hoverEffectToTemp"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                    <div className="card-body d-flex flex-column align-items-start">
+                                        <input
+                                            type="checkbox"
+                                            className="bg-info mt-2"
+                                            style={{ height: "40px", fontSize: "12px" }}
+                                            checked={selectedTemplate === 2}
+                                            onChange={() => handleToggleProduct(2)}
+                                            onClick={() => setSelectedTemplate(2)}
+                                        />
+                                        <img
+                                            onClick={() => setSelectedTemplate(2)}
+                                            src={temp2}
+                                            style={{ height: "150px", cursor: "pointer" }}
+                                            alt="Template 2"
+                                            className="img-fluid hoverEffectToTemp"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-md-4">
+                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                    <div className="card-body d-flex flex-column align-items-start">
+                                        <input
+                                            type="checkbox"
+                                            className="bg-info mt-2"
+                                            style={{ height: "40px", fontSize: "12px" }}
+                                            checked={selectedTemplate === 3}
+                                            onChange={() => handleToggleProduct(3)}
+                                            onClick={() => setSelectedTemplate(3)}
+                                        />
+                                        <img
+                                            onClick={() => setSelectedTemplate(3)}
+                                            src={temp3}
+                                            style={{ height: "150px", cursor: "pointer" }}
+                                            alt="Template 3"
+                                            className="img-fluid hoverEffectToTemp"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div>
+                            <>
+                                <div className='d-flex justify-content-between px-5'>
+                                    <input
+                                        type='text'
+                                        placeholder='Enter product Name'
+                                        value={serchValue}
+                                        onChange={handleInputChange}
+                                        className='p-2 bg-white text-black'
+                                    />
+                                    {productsIds.length > 0 && (
+                                        <div
+                                            className='bg-primary text-white rounded p-2 hover:shadow-lg'
+                                            style={{ height: "30px", fontSize: "12px", cursor: "Pointer" }}
+                                            onClick={() => setProductIds([])}
+                                        >
+                                            Deselect All
+                                        </div>
+                                    )}
+
+
+                                </div>
+
+                                <div className="container mt-3 border p-3 rounded">
+                                    <div className="row" style={{ height: "500px" }}>
+                                        {productsList && productsList
+                                            .filter(product =>
+                                                serchValue.length > 0
+                                                    ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                                                    : true
+                                            )
+                                            .map((product, index) => (
+                                                <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
+                                                    <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
+                                                        {/* Brand Tag */}
+                                                        <div
+                                                            className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
+                                                            style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
+                                                        >
+                                                            {product.brand}
+                                                        </div>
+
+                                                        <div className="d-flex flex-column flex-md-row align-items-center">
+                                                            <div>
+                                                                <img
+                                                                    src={product.images && product.images[0]}
+                                                                    alt="Product"
+                                                                    className="img-fluid rounded"
+                                                                    style={{ maxWidth: '60px' }}
+                                                                />
+                                                            </div>
+
+                                                            {/* Product Details Section */}
+                                                            <div className="ms-2 w-100 ">
+                                                                <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                                                    {product.name} {product.Price}
+                                                                </h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            ))}
+                                    </div>
+                                </div>
+                            </>
+
+                            <div className='mt-3'>
+                                <label htmlFor="textarea fw-bold" style={{ fontSize: "20px", fontWeight: "bold" }}>Enter Message</label>
+                                <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' placeholder='PLease Enter Meassage To Client' ></textarea>
+                            </div>
+
+                            <button onClick={() => handleSendTemplateMail()}>Send Mail</button>
+                        </div>
+
+                    </div>
+                </Modal.Body>
+            </Modal>
+
+
+        </>
     );
 }
 
