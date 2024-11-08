@@ -26,16 +26,11 @@ function ActionMode() {
     const [productsIds, setProductIds] = useState([])
     const { userId } = useAuth();
     const { setFolowupUpdate } = useAuth()
-
-    const [selectedKey, setSelectedKey] = useState(null)
-
-    // Clipboard copy
-    const [copied, setCopied] = useState(false);
-    const [filteredTickets, setFilteredTickets] = useState([]);
+    const [currentTicket, setCurrentTicket] = useState(0)
+    const [totalTicket, setTotalTicket] = useState(0)
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
-    const [totalPages, setTotalPages] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(10);
 
     // Form data state
@@ -43,33 +38,15 @@ function ActionMode() {
     const [uniqueQueryId, setUniqueQueryId] = useState(null);
 
     // Modal state
-    const [email, setEmail] = useState({ id: "", name: "", email: "", mobile: "" });
     const [productsList, setProductsList] = useState([]);
     const [on, setOn] = useState(false);
-    const [senderNameForEmail, setSenderNameForEmail] = useState("");
-    const [senderEmailFormail, setSenderEmailForMail] = useState("");
-    const [senderMobile, setSenderMobile] = useState("");
     const [view, setView] = useState(false);
     const [activeTab, setActiveTab] = useState("newTickets");
-    const [data, setData] = useState(null);
-    const [newNotifications, setNewNotifications] = useState(0);
     const [callId, setCallId] = useState(0)
     const [selectTicketForInvoice, setSelectTicketForInvoice] = useState(null)
     const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
     const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
     const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
-    const [filterdate, setFilterDate] = useState(null)
-    const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-    const [countryFilter, setCountryFilter] = useState(null)
-    const [productArray, setProductArray] = useState([]);
-    const [emailData, setEmailData] = useState({
-        ticketId: "",
-        name: "",
-        email: "",
-        mobile: "",
-        productList: []
-    });
-
     const handleCloses = () => setView(false);
     const closeTicketJourney = () => {
         // document.getElementById("ticketjourney").close()
@@ -117,11 +94,39 @@ function ActionMode() {
     // Function to fetch the next ticket
     const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
 
+    const fetchFirstTicket = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get('/third_party_api/ticket/getFirstTicket/302');
+            setTicket(response.data.ticket);
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
+        } catch (error) {
+            console.error("Error fetching next ticket:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     const fetchNextTicket = async () => {
         setLoading(true);
         try {
             const response = await axiosInstance.get('/third_party_api/ticket/next/302');
-            setTicket(response.data); // Assuming the response contains a single ticket
+            setTicket(response.data.ticket);
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
+        } catch (error) {
+            console.error("Error fetching next ticket:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const fetchCurrentWorkingTicket = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.get('/third_party_api/ticket/getCurrentWorkingTicket/302');
+            setTicket(response.data.ticket);
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
         } catch (error) {
             console.error("Error fetching next ticket:", error);
         } finally {
@@ -224,7 +229,9 @@ function ActionMode() {
         setLoading(true);
         try {
             const response = await axiosInstance.get('/third_party_api/ticket/previous/302');
-            setTicket(response.data); // Assuming the response contains a single ticket
+            setTicket(response.data.ticket); // Assuming the response contains a single ticket
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
         } catch (error) {
             console.error("Error fetching previous ticket:", error);
         } finally {
@@ -234,7 +241,7 @@ function ActionMode() {
 
     // Call next API by default on mount
     useEffect(() => {
-        fetchNextTicket();
+        fetchFirstTicket();
         fetchProducts()
     }, []);
 
@@ -279,6 +286,22 @@ function ActionMode() {
         });
     };
 
+    const formatDateTime = (isoString) => {
+        const date = new Date(isoString);
+
+        // Get day, month, and year
+        const day = date.getUTCDate();
+        const month = date.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const year = date.getUTCFullYear();
+
+        // Get hours and minutes in 12-hour format
+        const hours = date.getUTCHours();
+        const minutes = date.getUTCMinutes();
+        const period = hours >= 12 ? 'pm' : 'am';
+        const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+
+        return `${day}-${month}-${year} ${formattedHours}:${minutes.toString().padStart(2, '0')}${period}`;
+    };
 
     return (
         <>
@@ -290,9 +313,22 @@ function ActionMode() {
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
                                     <h5>Inquiry Ticket</h5>
                                 </div>
+
+                                <div className='d-flex justify-content-between mt-3'>
+                                    <div className="d-flex align-items-center">
+                                        <span className='fw-bold text-muted'>Total Tickets:</span>
+                                        <span className="ms-2 h4 text-primary">{totalTicket}</span>
+                                    </div>
+                                    <div className="d-flex align-items-center">
+                                        <span className='fw-bold text-muted'>Current Ticket Number:</span>
+                                        <span className="ms-2 h4 text-success">{currentTicket} / {totalTicket}</span>
+                                    </div>
+                                </div>
+
+
                                 <div className="card-body" style={{ minHeight: "35vh" }}>
                                     {ticket && (
-                                        <div className="d-flex gap-2 justify-content-center mb-3">
+                                        <div className="d-flex gap-2 justify-content-center" style={{marginBottom:"30px"}}>
                                             {/* Info Button */}
                                             <button
                                                 onClick={() => openTicketJourney(ticket.uniqueQueryId)}
@@ -371,18 +407,21 @@ function ActionMode() {
                                                     <p><strong>Name:</strong> {ticket.senderName}</p>
                                                     <p><strong>Mobile:</strong> {ticket.senderMobile}</p>
                                                     <p><strong>Email:</strong> {ticket.senderEmail}</p>
+                                                    <p><strong>Address:</strong> {ticket.senderAddress}</p>
                                                     <p><strong>Country:</strong> {ticket.senderCountryIso}</p>
                                                 </div>
                                                 <div className="col-md-6">
-                                                    <p><strong>Date:</strong> {ticket.queryTime}</p>
+                                                    <p><strong>Enquiry Date:</strong> {formatDateTime(ticket.queryTime)}</p>
                                                     <p onClick={() => handleShow(ticket.uniqueQueryId)} >
-                                                        <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                                        <b>Status:</b> <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
                                                             style={{ backgroundColor: getColorByStatus(ticket.ticketstatus) }}>
                                                             {ticket.ticketstatus}
                                                         </a>
                                                     </p>
                                                     <p><strong>Requirement:</strong> {ticket.subject}</p>
-                                                    <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>
+                                                    <p><strong>Query Message:</strong> {ticket.queryMessage}</p>
+                                                    {ticket.lastActionDate && <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>}
+                                                    {ticket.lastActionDate && <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>}
 
                                                 </div>
                                             </div>
@@ -394,8 +433,8 @@ function ActionMode() {
                             </div>
 
                             <div className="d-flex justify-content-between mt-3">
-                                <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={loading}>Prev</button>
-                                <button className="btn btn-primary" onClick={fetchNextTicket} disabled={loading}>Next</button>
+                                <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
+                                <button className="btn btn-primary" onClick={fetchNextTicket} disabled={currentTicket == totalTicket}>Next</button>
                             </div>
                         </div>
                     </div>
@@ -796,7 +835,7 @@ function ActionMode() {
                                                     ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                                                     : true
                                             )
-                                            .map((product, index) => (
+                                            .filter((product)=>product.images!==null).map((product, index) => (
                                                 <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                                                     <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                                                         {/* Brand Tag */}

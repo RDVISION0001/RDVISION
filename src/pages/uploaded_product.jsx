@@ -412,7 +412,7 @@ function UploadedProduct() {
                             >
                                 <div className="row">
                                     {filteredProducts.length > 0 ? (
-                                        filteredProducts.map((product, index) => (
+                                        filteredProducts.filter((product)=>product.images!==null).map((product, index) => (
                                             <div className="col-md-2 mb-4" key={index}>
                                                 <div
                                                     className="card product-card shadow-sm h-100"
