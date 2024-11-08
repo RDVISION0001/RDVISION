@@ -8,6 +8,10 @@ import temp1 from '../assets/emailtemp/temp1.png';
 import temp2 from '../assets/emailtemp/temp2.png';
 import temp3 from '../assets/emailtemp/temp3.png';
 
+// Toast notification
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 function ActionMode() {
     const [ticket, setTicket] = useState(null); // Holds the current ticket
     const [loading, setLoading] = useState(true); // To track loading state
@@ -81,6 +85,25 @@ function ActionMode() {
         // document.getElementById("ticketjourney").showModal()
     }
 
+    const getColorByStatus = (ticketStatus) => {
+        const colors = {
+            'New': 'dodgerblue',
+            'Sale': 'green',
+            'Follow': 'RoyalBlue',
+            'Interested': 'orange',
+            'Not_Interested': 'red',
+            'Wrong_Number': 'gray',
+            'Not_Pickup': 'lightblue',
+            ' hang_up': 'yellow'
+        };
+        return colors[ticketStatus] || 'white';
+    };
+
+
+    const handleShow = (queryId) => {
+        setUniqueQueryId(queryId);
+        setShow(true);
+    };
 
     const [isInvoiceOn, setIsInvoiceOn] = useState(false)
     const handleInvoice = (ticketId, name, email, mobile) => {
@@ -109,7 +132,7 @@ function ActionMode() {
     const handleInputChange = (e) => {
         setserchValue(e.target.value); // Update state with the input's value
         console.log('Input Value:', e.target.value); // Log the current input value
-      };
+    };
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -218,179 +241,166 @@ function ActionMode() {
     const fetchProducts = async () => {
         const response = await axiosInstance.get("product/getAllProducts");
         setProductsList(response.data.dtoList);
-      };
-      const handleSendTemplateMail = async () => {
+    };
+    const handleSendTemplateMail = async () => {
         if (selectedTemplate < 1) {
-          toast.info("Please Select one Template ")
+            toast.info("Please Select one Template ")
         } else if (productsIds.length < 1) {
-          toast.info("Please Select At least one Product ")
-    
+            toast.info("Please Select At least one Product ")
+
         } else if (text.length < 1) {
-          toast.info("Please Enter Message")
+            toast.info("Please Enter Message")
         } else {
-          try {
-            const response = await axiosInstance.post("/email/sendsugetionmail", {
-              ticket: {
-                uniqueQueryId: selectTicketForInvoice
-              },
-              text: text,
-              temp: selectedTemplate,
-              productsIds: productsIds,
-              userId
-            })
-            toast.success("Email Sent")
-          } catch (e) {
-            toast.error("Some Error Occurs")
-          }
+            try {
+                const response = await axiosInstance.post("/email/sendsugetionmail", {
+                    ticket: {
+                        uniqueQueryId: selectTicketForInvoice
+                    },
+                    text: text,
+                    temp: selectedTemplate,
+                    productsIds: productsIds,
+                    userId
+                })
+                toast.success("Email Sent")
+            } catch (e) {
+                toast.error("Some Error Occurs")
+            }
         }
-      }
-      const handleToggleProduct = (id) => {
+    }
+    const handleToggleProduct = (id) => {
         setProductIds((prevIds) => {
-          if (prevIds.includes(id)) {
-            // Remove the ID if it already exists
-            return prevIds.filter((prevId) => prevId !== id);
-          } else {
-            // Add the ID if it does not exist
-            return [...prevIds, id];
-          }
+            if (prevIds.includes(id)) {
+                // Remove the ID if it already exists
+                return prevIds.filter((prevId) => prevId !== id);
+            } else {
+                // Add the ID if it does not exist
+                return [...prevIds, id];
+            }
         });
-      };    
-    
+    };
+
 
     return (
-        <>        <section className="followup-table-section" style={{ minHeight: '100vh', backgroundColor: '#f8f9fa', paddingTop: '30px' }}>
-            <div className="container-fluid">
-                <div className="d-flex justify-content-center">
-                    <div className="shadow border p-3 rounded bg-white" style={{ width: "100%", maxWidth: "800px", minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+        <>
+            <section className="min-vh-100 bg-light py-3">
+                <div className="container-fluid">
+                    <div className="d-flex justify-content-center">
+                        <div className="shadow border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+                            <div className="card">
+                                <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
+                                    <h5>Inquiry Ticket</h5>
+                                </div>
+                                <div className="card-body" style={{ minHeight: "35vh" }}>
+                                    {ticket && (
+                                        <div className="d-flex gap-2 justify-content-center mb-3">
+                                            {/* Info Button */}
+                                            <button
+                                                onClick={() => openTicketJourney(ticket.uniqueQueryId)}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#followUpModal"
+                                                className="btn btn-danger d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on call"
+                                            >
+                                                <i className="fa-solid fa-info text-white"></i>
+                                            </button>
 
-                        <div className="card">
-                            <div className="w-25 rounded p-2 bg-primary text-white text-center" style={{ marginTop: "-40px", marginLeft: "-40px" }}>
-                                <h5>Inquiry Ticket </h5>
-                            </div>
-                            <div className="card-body" style={{ minHeight: "35vh" }}>
-                                {ticket && (
+                                            {/* Call Button */}
+                                            <button
+                                                onClick={() => handleClick(ticket.senderMobile)}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#followUpModal"
+                                                className="btn btn-success d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on call"
+                                            >
+                                                <i className="fa-solid fa-phone text-white"></i>
+                                            </button>
 
-                                    <div className="actions-wrapper d-flex gap-2 d-flex justify-content-center" style={{ marginBottom: "30px" }}>
-                                        {/* Info Button */}
-                                        <Button
-                                            onClick={() => openTicketJourney(ticket.uniqueQueryId)}
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#followUpModal"
-                                            className="btn btn-light d-flex bg-danger align-items-center justify-content-center border rounded-circle"
-                                            title="Get connect on call"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-solid fa-info text-white"></i>
-                                        </Button>
+                                            {/* SMS Button */}
+                                            <a
+                                                href={`sms:${ticket.senderMobile}?&body=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                                className="btn btn-info d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on message"
+                                            >
+                                                <i className="fa-solid fa-message text-white"></i>
+                                            </a>
 
-                                        {/* Call Button */}
-                                        <Button
-                                            onClick={() => handleClick(ticket.senderMobile)}
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#followUpModal"
-                                            className="btn btn-light d-flex align-items-center bg-success justify-content-center border rounded-circle"
-                                            title="Get connect on call"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-solid fa-phone text-white"></i>
-                                        </Button>
+                                            {/* Email Button */}
+                                            <button
+                                                onClick={() => handleOn(ticket.uniqueQueryId)}
+                                                className="btn btn-secondary d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on email"
+                                            >
+                                                <i className="fa-solid fa-envelope text-white"></i>
+                                            </button>
 
-                                        {/* SMS Button */}
-                                        <a
-                                            href={`sms:${ticket.senderMobile}?&body=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
-                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle bg-info"
-                                            title="Get connect on message"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-solid fa-message text-white"></i>
-                                        </a>
+                                            {/* WhatsApp Button */}
+                                            <a
+                                                href={`https://wa.me/${ticket.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                                target="_blank"
+                                                className="btn btn-success d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on WhatsApp"
+                                            >
+                                                <i className="fa-brands fa-whatsapp text-white"></i>
+                                            </a>
 
-                                        {/* Email Button */}
-                                        <Button
-                                            onClick={() => handleOn(ticket.uniqueQueryId)}
-                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle"
-                                            title="Get connect on email"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-solid fa-envelope text-white"></i>
-                                        </Button>
-
-                                        {/* WhatsApp Button */}
-                                        <a
-                                            href={`https://wa.me/${ticket.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}
-                                            target="_blank"
-                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle bg-success"
-                                            title="Get connect on WhatsApp"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-brands fa-whatsapp text-white"></i>
-                                        </a>
-
-                                        {/* Invoice Button */}
-                                        <Button
-                                            onClick={() => handleInvoice(ticket.uniqueQueryId)}
-                                            className="btn btn-light d-flex align-items-center justify-content-center border rounded-circle"
-                                            title="Get invoice"
-                                            style={{ width: "45px", height: "45px" }}
-                                        >
-                                            <i className="fa-solid fa-file-invoice text-white"></i>
-                                        </Button>
-                                    </div>
-
-                                )}
-
-                                {loading ? (
-                                    <p className="text-center text-muted">Loading ticket...</p>
-                                ) : ticket ? (
-                                    <>
-                                        <div className="row mb-3">
-                                            <div className="col-md-6">
-                                                <p><strong>Ticket ID:</strong> {ticket.id}</p>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <p><strong>Unique Query ID:</strong> {ticket.uniqueQueryId}</p>
-                                            </div>
+                                            {/* Invoice Button */}
+                                            <button
+                                                onClick={() => handleInvoice(ticket.uniqueQueryId)}
+                                                className="btn btn-secondary d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get invoice"
+                                            >
+                                                <i className="fa-solid fa-file-invoice text-white"></i>
+                                            </button>
                                         </div>
-                                        <div className="row mb-3">
-                                            <div className="col-md-6">
-                                                <p><strong>Name:</strong> {ticket.senderName}</p>
-                                                <p><strong>Mobile:</strong> {ticket.senderMobile}</p>
-                                                <p><strong>Email:</strong> {ticket.senderEmail}</p>
-                                                <p><strong>Country:</strong> {ticket.senderCountry}</p>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <p><strong>Date:</strong> {ticket.queryTime}</p>
-                                                <p><strong>Status:</strong> <span className={`badge ${ticket.ticketstatus === 'Open' ? 'bg-success' : 'bg-danger'}`}>{ticket.ticketstatus}</span></p>
-                                                <p><strong>Requirement:</strong> {ticket.subject}</p>
-                                            </div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <p className="text-center text-muted">No ticket data available.</p>
-                                )}
-                            </div>
-                        </div>
+                                    )}
 
-                        <div className="d-flex justify-content-between mt-3">
-                            <button
-                                className="btn btn-primary"
-                                onClick={fetchPreviousTicket}
-                                disabled={loading}
-                            >
-                                Prev
-                            </button>
-                            <button
-                                className="btn btn-primary"
-                                onClick={fetchNextTicket}
-                                disabled={loading}
-                            >
-                                Next
-                            </button>
+                                    {loading ? (
+                                        <p className="text-center text-muted">Loading ticket...</p>
+                                    ) : ticket ? (
+                                        <>
+                                            <div className="row mb-3">
+                                                <div className="col-md-6">
+                                                    <p><strong>Ticket ID:</strong> {ticket.id}</p>
+                                                    <p><strong>Unique Query ID:</strong> {ticket.uniqueQueryId}</p>
+                                                    <p><strong>Name:</strong> {ticket.senderName}</p>
+                                                    <p><strong>Mobile:</strong> {ticket.senderMobile}</p>
+                                                    <p><strong>Email:</strong> {ticket.senderEmail}</p>
+                                                    <p><strong>Country:</strong> {ticket.senderCountryIso}</p>
+                                                </div>
+                                                <div className="col-md-6">
+                                                    <p><strong>Date:</strong> {ticket.queryTime}</p>
+                                                    <p onClick={() => handleShow(ticket.uniqueQueryId)} >
+                                                        <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                                            style={{ backgroundColor: getColorByStatus(ticket.ticketstatus) }}>
+                                                            {ticket.ticketstatus}
+                                                        </a>
+                                                    </p>
+                                                    <p><strong>Requirement:</strong> {ticket.subject}</p>
+                                                    <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>
+
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <p className="text-center text-muted">No ticket data available.</p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="d-flex justify-content-between mt-3">
+                                <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={loading}>Prev</button>
+                                <button className="btn btn-primary" onClick={fetchNextTicket} disabled={loading}>Next</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
             <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
                 <Modal.Header closeButton>
                     <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">

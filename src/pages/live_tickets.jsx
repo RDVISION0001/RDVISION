@@ -1096,7 +1096,6 @@ function live_tickets() {
                             </div>
                           </div>
                         </div>
-
                       ))}
                   </div>
                 </div>
