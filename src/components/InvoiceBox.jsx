@@ -587,7 +587,7 @@ function InvoiceBox(props) {
                                         ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                                         : true
                                 )
-                                .map((product, index) => (
+                                .filter((product)=>product.images!==null).map((product, index) => (
                                     <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
                                         <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', paddingTop: '20px', height: 'auto' }}>
                                             {/* Brand Tag positioned at bottom-left corner */}

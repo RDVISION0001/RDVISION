@@ -1317,7 +1317,7 @@ function InNegotiation() {
                           ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                           : true
                       )
-                      .map((product, index) => (
+                      .filter((product)=>product.images!==null).map((product, index) => (
                         <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                           <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                             {/* Brand Tag */}
