@@ -11,6 +11,7 @@ import temp3 from '../assets/emailtemp/temp3.png';
 // Toast notification
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 function ActionMode() {
     const [ticket, setTicket] = useState(null); // Holds the current ticket
@@ -29,7 +30,7 @@ function ActionMode() {
     const [currentTicket, setCurrentTicket] = useState(0)
     const [totalTicket, setTotalTicket] = useState(0)
 
-    const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket")?localStorage.getItem("currentWorkingTicket"):0)
+    const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket") ? localStorage.getItem("currentWorkingTicket") : 0)
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
@@ -84,6 +85,12 @@ function ActionMode() {
         setShow(true);
     };
 
+    // Masking mobile number
+    const maskMobileNumber = (number) => {
+        if (number.length < 4) return number;
+        return number.slice(0, -4) + 'XXXX';
+    };
+
     const [isInvoiceOn, setIsInvoiceOn] = useState(false)
     const handleInvoice = (ticketId, name, email, mobile) => {
         setSelectTicketForInvoice(ticketId)
@@ -112,9 +119,9 @@ function ActionMode() {
     const fetchSpecifiTicketByNumber = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.post('/third_party_api/ticket/getSpecificTicketByNumber',{
+            const response = await axiosInstance.post('/third_party_api/ticket/getSpecificTicketByNumber', {
                 userId,
-                number:ticketNumber
+                number: ticketNumber
             });
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
@@ -123,7 +130,7 @@ function ActionMode() {
             console.error("Error fetching next ticket:", error);
         } finally {
             setLoading(false);
-            localStorage.setItem("currentWorkingTicket",ticketNumber)
+            localStorage.setItem("currentWorkingTicket", ticketNumber)
         }
     };
     const fetchNextTicket = async () => {
@@ -133,7 +140,7 @@ function ActionMode() {
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
-            localStorage.setItem("currentWorkingTicket",response.data.currentTicketNo)
+            localStorage.setItem("currentWorkingTicket", response.data.currentTicketNo)
 
         } catch (error) {
             console.error("Error fetching next ticket:", error);
@@ -244,6 +251,11 @@ function ActionMode() {
         }
     }
 
+    const maskEmail = (email) => {
+        const [user, domain] = email.split('@');
+        const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+        return `${maskedUser}@${domain}`;
+    };
 
     // Function to fetch the previous ticket
     const fetchPreviousTicket = async () => {
@@ -253,7 +265,7 @@ function ActionMode() {
             setTicket(response.data.ticket); // Assuming the response contains a single ticket
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
-            localStorage.setItem("currentWorkingTicket",response.data.currentTicketNo)
+            localStorage.setItem("currentWorkingTicket", response.data.currentTicketNo)
         } catch (error) {
             console.error("Error fetching previous ticket:", error);
         } finally {
@@ -263,9 +275,9 @@ function ActionMode() {
 
     // Call next API by default on mount
     useEffect(() => {
-        if(localStorage.getItem("currentWorkingTicket")){
-           fetchSpecifiTicketByNumber()
-        }else{
+        if (localStorage.getItem("currentWorkingTicket")) {
+            fetchSpecifiTicketByNumber()
+        } else {
             fetchFirstTicket();
         }
         fetchProducts()
@@ -328,6 +340,16 @@ function ActionMode() {
 
         return `${day}-${month}-${year} ${formattedHours}:${minutes.toString().padStart(2, '0')}${period}`;
     };
+    const [copiedId, setCopiedId] = useState(null); // Track copied uniqueQueryId
+    const [copiedType, setCopiedType] = useState(null); // Track if mobile or email is copied
+
+    const handleCopy = (uniqueQueryId, text, type) => {
+        setCopiedId(uniqueQueryId); // Set the copied ID
+        setCopiedType(type); // Track whether it's a mobile number or email
+        addCopyRecord(uniqueQueryId, text); // Log the copied record
+    };
+    const [assignedTo, setAssignedTo] = useState(0)
+
 
     return (
         <>
@@ -431,8 +453,37 @@ function ActionMode() {
                                                     <p><strong>Ticket ID:</strong> {ticket.id}</p>
                                                     <p><strong>Unique Query ID:</strong> {ticket.uniqueQueryId}</p>
                                                     <p><strong>Name:</strong> {ticket.senderName}</p>
-                                                    <p><strong>Mobile:</strong> {ticket.senderMobile}</p>
-                                                    <p><strong>Email:</strong> {ticket.senderEmail}</p>
+                                                    <p><strong>Mobile:</strong> {maskMobileNumber(ticket.senderMobile)}  <CopyToClipboard
+                                                        text={ticket.senderMobile}
+                                                        onCopy={() => handleCopy(ticket.uniqueQueryId, ticket.senderMobile,
+                                                            'mobile')}
+                                                    >
+                                                        <button
+                                                            style={{
+                                                                backgroundColor:
+                                                                    copiedId === ticket.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                                                color: copiedId === ticket.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                                            }}
+                                                        >
+                                                            {copiedId === ticket.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                                        </button>
+                                                    </CopyToClipboard></p>
+                                                    <p><strong>Email:</strong> {maskEmail(ticket.senderEmail)}  {/* For Email */}
+                                                        <CopyToClipboard
+                                                            text={ticket.senderEmail}
+                                                            onCopy={() => handleCopy(ticket.uniqueQueryId, ticket.senderEmail, 'email')}
+                                                        >
+                                                            <button
+                                                                style={{
+                                                                    backgroundColor:
+                                                                        copiedId === ticket.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                                                    color: copiedId === ticket.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                                                }}
+                                                            >
+                                                                {copiedId === ticket.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                                            </button>
+                                                        </CopyToClipboard>
+                                                    </p>
                                                     <p><strong>Address:</strong> {ticket.senderAddress}</p>
                                                     <p><strong>Country:</strong> {ticket.senderCountryIso}</p>
                                                 </div>
@@ -462,8 +513,8 @@ function ActionMode() {
                                 <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
                                 <div>
                                     <label htmlFor="number ">Enter ticket number </label>
-                                    <input value={ticketNumber} className='bg-white text-black p-2 rounded' style={{ width: "100px",margin:'5px' }} onChange={(e) => setTicketNumber(e.target.value)} type="number" />
-                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0"  disabled={ticketNumber===0}>Go To</button>
+                                    <input value={ticketNumber} className='bg-white text-black p-2 rounded' style={{ width: "100px", margin: '5px' }} onChange={(e) => setTicketNumber(e.target.value)} type="number" />
+                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0" disabled={ticketNumber === 0}>Go To</button>
 
                                 </div>
                                 <button className="btn btn-primary" onClick={fetchNextTicket} disabled={currentTicket == totalTicket}>Next</button>
@@ -921,3 +972,4 @@ function ActionMode() {
 }
 
 export default ActionMode;
+
