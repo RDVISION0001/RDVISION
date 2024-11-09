@@ -21,6 +21,10 @@ import Live from './pages/Tickets/live'
 import Upticket from './pages/Tickets/upticket';
 import InNegotiation from './pages/Tickets/InNegotiation';
 import Products from './pages/Products';
+import New_Products from './pages/New_Products';
+import ActionMode from './pages/ActionMode';
+import SalesReport from './pages/SalesReport';
+
 
 // auth
 import './auth/login.css';
@@ -121,8 +125,7 @@ import PaymentFailed from './components/PaymentFailed';
 import Terms_Conditions from './components/Terms_Conditions';
 import Team from './senior_supervisor/Team';
 import TicketHouse from './components/TicketHouse';
-import New_Products from './pages/New_Products';
-import ActionMode from './pages/ActionMode';
+
 
 
 
@@ -174,9 +177,7 @@ function App() {
                   <Route exact path="/upload_products" element={<Products />} />
                   <Route exact path="/new_products" element={<New_Products />} />
                   <Route exact path="/action_mode" element={<ActionMode />} />
-
-
-
+                  <Route exact path="/sales_report" element={<SalesReport />} />
 
                   {/* admin */}
                   <Route exact path="/admin_index" element={<Index />} />
