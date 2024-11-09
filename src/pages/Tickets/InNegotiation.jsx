@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import CopyToClipboard from 'react-copy-to-clipboard';
 import { Button, Modal } from 'react-bootstrap';
 import axiosInstance from '../../axiosInstance';
 import temp1 from '../../assets/emailtemp/temp1.png';
 import temp2 from '../../assets/emailtemp/temp2.png';
 import temp3 from '../../assets/emailtemp/temp3.png';
+
+// Clipboard copy
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 // Authentication context
 import { useAuth } from '../../auth/AuthContext'
@@ -286,9 +288,10 @@ function InNegotiation() {
   useEffect(() => {
     fetchData(selectedStage);
   }, [selectedStage, assignedTo]);
+
   //masking mobile
   const maskMobileNumber = (number) => {
-    if (number.length < 4) return number;
+    if (!number || number.length < 4) return number;
     return number.slice(0, -4) + 'XXXX';
   };
 
@@ -334,10 +337,8 @@ function InNegotiation() {
 
   }
 
-
-
   const addCopyRecord = async (ticketId, text) => {
-    toast.info("Copied" + text);
+    // toast.info("Copied" + text);
     const response = await axiosInstance.post("/history/copyhistory", {
       updatedBy: userId,
       status: 'Copeid by' + localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
@@ -347,6 +348,7 @@ function InNegotiation() {
       recordingFile: null
     })
   }
+
   //color of styatus 
   const getColorByStatus = (ticketStatus) => {
     const colors = {
@@ -668,6 +670,15 @@ function InNegotiation() {
 
   }
 
+  const [copiedId, setCopiedId] = useState(null); // Track copied uniqueQueryId
+  const [copiedType, setCopiedType] = useState(null); // Track if mobile or email is copied
+
+  const handleCopy = (uniqueQueryId, text, type) => {
+    setCopiedId(uniqueQueryId); // Set the copied ID
+    setCopiedType(type); // Track whether it's a mobile number or email
+    addCopyRecord(uniqueQueryId, text); // Log the copied record
+  };
+
 
   return (
     <>
@@ -899,14 +910,39 @@ function InNegotiation() {
                             </td>
                             <td><span className="text">{nego.senderName || nego.firstName}</span></td>
                             <td>
-                              <CopyToClipboard text={nego.senderMobile ? nego.senderMobile : nego.mobileNumber}>
-                                <button onClick={() => addCopyRecord(nego.uniqueQueryId, nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}>Copy</button>
+                              {/* For Mobile Number */}
+                              <CopyToClipboard
+                                text={nego.mobileNumber}
+                                onCopy={() => handleCopy(nego.uniqueQueryId, nego.mobileNumber, 'mobile')}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                    color: copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                  }}
+                                >
+                                  {copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                </button>
                               </CopyToClipboard>
-                              <span className="text">{maskMobileNumber(nego.senderMobile || nego.mobileNumber)}</span>
+                              <span className="text"> {maskMobileNumber(nego.mobileNumber)}</span>
                             </td>
+
                             <td>
-                              <CopyToClipboard text={nego.email}>
-                                <button onClick={() => addCopyRecord(nego.uniqueQueryId, nego.senderMobile ? nego.senderEmail : nego.email)}>Copy</button>
+                              {/* For Email */}
+                              <CopyToClipboard
+                                text={nego.email}
+                                onCopy={() => handleCopy(nego.uniqueQueryId, nego.email, 'email')}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                    color: copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                  }}
+                                >
+                                  {copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                </button>
                               </CopyToClipboard>
                               <span className="text">{maskEmail(nego.email)}</span>
                             </td>
@@ -1092,66 +1128,38 @@ function InNegotiation() {
         }
       </div>
       {error && <div className="api-error"> {error.message}</div>}
+      {/* <!-- -------------- -->
+
+            <!-- ------------------------------------------------------------
+            --------------------- Call Status Ticket Modal ---------------------
+          -------------------------------------------------------------- --> */}
       <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-        <Modal.Header closeButton>
-          <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Call Status
+        <Modal.Header closeButton className="bg-primary text-white text-center">
+          <h1 className="modal-title fs-5 w-100" id="followUpModalLabel">
+            Update Ticket Status
           </h1>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '8px', boxShadow: '0px 4px 8px rgba(0,0,0,0.1)' }}>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="status" className="form-label">Status</label>
               <select
-                className="form-select"
+                className="form-select border-0 shadow-sm"
                 id="status"
                 name="ticketStatus"
                 value={formData.ticketStatus}
                 onChange={handleStatusChange}
+                style={{ borderRadius: '4px' }}
               >
                 <option>Choose Call-Status</option>
-                {
-                  dorpedInStage === "stage3" &&
-                  <>
-                    <option value="Sale" >Sale</option>
-                  </>
-                }
-
-                {/* <option value="New">New</option> */}
-                {
-                  dorpedInStage === "stage1" &&
-                  <>
-                    <option value="Not_Pickup">Not Pickup</option>
-                    <option value="Wrong_Number">Wrong Number</option>
-                    <option value="hang_up">Hang_Up</option>
-
-                  </>
-                }
-                {
-                  dorpedInStage === "stage2" &&
-                  <>
-
-                    <option value="Follow">Follow-up</option>
-                    <option value="Interested">Interested</option>
-                    <option value="Not_Interested">Not Interested</option>
-
-                    <option value="Place_with_other">Place with other</option>
-                  </>
-                }
-                {
-                  dorpedInStage == null &&
-                  <>
-                    <option value="Not_Pickup">Not Pickup</option>
-                    <option value="Wrong_Number">Wrong Number</option>
-                    <option value="Follow">Follow-up</option>
-                    <option value="Interested">Interested</option>
-                    <option value="Not_Interested">Not Interested</option>
-                    <option value="Place_with_other">Place with other</option>
-                    <option value="Sale" >Sale</option>
-                    <option value="hang_up">Hang_Up</option>
-                  </>
-                }
-
+                <option value="Sale">Sale</option>
+                <option value="Follow">Follow-up</option>
+                <option value="Interested">Interested</option>
+                <option value="Not_Interested">Not Interested</option>
+                <option value="Wrong_Number">Wrong Number</option>
+                <option value="Place_with_other">Place with other</option>
+                <option value="Not_Pickup">Not Pickup</option>
+                <option value="hang_up">Hang_up</option>
               </select>
             </div>
 
@@ -1160,13 +1168,14 @@ function InNegotiation() {
                 <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
                 <input
                   type="transaction-details"
-                  placeholder="Enter Transaction id "
-                  className="form-control"
+                  placeholder="Enter Transaction ID"
+                  className="form-control border-0 shadow-sm"
                   id="transactionDetails"
                   name="transactionDetails"
                   value={formData.SaleTransaction}
                   onChange={handleChange}
                   required
+                  style={{ borderRadius: '4px' }}
                 />
               </div>
             )}
@@ -1176,34 +1185,39 @@ function InNegotiation() {
                 <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
                 <input
                   type="datetime-local"
-                  className="form-control"
+                  className="form-control border-0 shadow-sm"
                   id="followUpDateTime"
                   name="followUpDateTime"
                   value={formData.followUpDateTime}
                   onChange={handleChange}
                   step="2"
+                  style={{ borderRadius: '4px' }}
                 />
               </div>
             )}
-            <div className="col-12">
+
+            <div className="col-12 mb-3">
               <label htmlFor="comment" className="form-label">Comment</label>
               <textarea
                 rows="4"
-                className="form-control"
-                placeholder="Discribe your conversation with client"
+                className="form-control border-0 shadow-sm"
+                placeholder="Describe your conversation with client"
                 id="comment"
                 name="comment"
                 value={formData.comment}
                 onChange={handleChange}
                 required
+                style={{ borderRadius: '4px' }}
               ></textarea>
             </div>
+
             {error && <p className="text-danger">{error}</p>}
-            <div className="modal-footer justify-content-center border-0">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
+
+            <div className="modal-footer justify-content-center border-0 mt-4">
+              <button type="button" className="btn btn-secondary px-4" data-bs-dismiss="modal" onClick={handleClose}>
                 Close
               </button>
-              <button className="btn btn-primary" type="submit">
+              <button className="btn btn-primary px-4" type="submit">
                 Save Changes
               </button>
             </div>
@@ -1317,7 +1331,7 @@ function InNegotiation() {
                           ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                           : true
                       )
-                      .filter((product)=>product.images!==null).map((product, index) => (
+                      .filter((product) => product.images !== null).map((product, index) => (
                         <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                           <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                             {/* Brand Tag */}
