@@ -377,10 +377,10 @@ function ActionMode() {
                         <div className="shadow border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
                             <div className="card " style={{minHeight:"60vh"}}>
                             <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
-                                    <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>
+                                   {ticket&& <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>}
                                 </div>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", right: "-20px" }}>
-                                    <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>
+                                   {ticket&& <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>}
                                 </div>
                                 <div className='d-flex justify-content-between mt-3'>
                                     <div className="d-flex align-items-center">
