@@ -29,7 +29,8 @@ function ActionMode() {
     const { setFolowupUpdate } = useAuth()
     const [currentTicket, setCurrentTicket] = useState(0)
     const [totalTicket, setTotalTicket] = useState(0)
-
+    const [searchString, setSearchString] = useState("")
+    const [selectedStatus, setSelectedStatus] = useState("New")
     const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket") ? localStorage.getItem("currentWorkingTicket") : 0)
 
     // Pagination state
@@ -121,7 +122,8 @@ function ActionMode() {
         try {
             const response = await axiosInstance.post('/third_party_api/ticket/getSpecificTicketByNumber', {
                 userId,
-                number: ticketNumber
+                number: ticketNumber,
+                status:selectedStatus
             });
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
@@ -136,7 +138,11 @@ function ActionMode() {
     const fetchNextTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`/third_party_api/ticket/next/${userId}`);
+            const response = await axiosInstance.post(`/third_party_api/ticket/next`,{
+                userId,
+                number: ticketNumber,
+                status:selectedStatus
+            });
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
@@ -148,20 +154,6 @@ function ActionMode() {
             setLoading(false);
         }
     };
-    const fetchCurrentWorkingTicket = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.get(`/third_party_api/ticket/getCurrentWorkingTicket/${userId}`);
-            setTicket(response.data.ticket);
-            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
-            setCurrentTicket(response.data.currentTicketNo)
-        } catch (error) {
-            console.error("Error fetching next ticket:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleInputChange = (e) => {
         setserchValue(e.target.value); // Update state with the input's value
         console.log('Input Value:', e.target.value); // Log the current input value
@@ -261,7 +253,11 @@ function ActionMode() {
     const fetchPreviousTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`/third_party_api/ticket/previous/${userId}`);
+            const response = await axiosInstance.post(`/third_party_api/ticket/previous`,{
+                userId,
+                number: ticketNumber,
+                status:selectedStatus
+            });
             setTicket(response.data.ticket); // Assuming the response contains a single ticket
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)
@@ -273,6 +269,24 @@ function ActionMode() {
         }
     };
 
+    const searchbyNameOrEmailOfNumber = async () => {
+        setLoading(true);
+        try {
+            const response = await axiosInstance.post(`/third_party_api/ticket/getBySearchQuery`, {
+                userId,
+                searchQuery: searchString,
+                status:selectedStatus
+            });
+            setTicket(response.data.ticket); // Assuming the response contains a single ticket
+            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
+            setCurrentTicket(response.data.currentTicketNo)
+            localStorage.setItem("currentWorkingTicket", response.data.currentTicketNo)
+        } catch (error) {
+            console.error("Error fetching previous ticket:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     // Call next API by default on mount
     useEffect(() => {
         if (localStorage.getItem("currentWorkingTicket")) {
@@ -281,7 +295,7 @@ function ActionMode() {
             fetchFirstTicket();
         }
         fetchProducts()
-    }, []);
+    }, [selectedStatus]);
 
     const fetchProducts = async () => {
         const response = await axiosInstance.get("product/getAllProducts");
@@ -348,20 +362,26 @@ function ActionMode() {
         setCopiedType(type); // Track whether it's a mobile number or email
         addCopyRecord(uniqueQueryId, text); // Log the copied record
     };
-    const [assignedTo, setAssignedTo] = useState(0)
+    const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
 
     return (
         <>
-            <section className="min-vh-100 bg-light py-3">
+            <section className="min-vh-100 bg-light py-3 ">
                 <div className="container-fluid">
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center flex-column">
+                        <div className='text-center d-flex justify-content-center m-3'>
+                            <button className="bg-light text-success border"  onClick={()=>setSelectedStatus("New")}>{selectedStatus==="New" && "✅"} New Tickets</button>
+                            <button className="bg-light text-success border" style={{marginLeft:"15px"}} onClick={()=>setSelectedStatus("Follow")}>{selectedStatus!=="New" && "✅"} Negotiations</button>
+                        </div>
                         <div className="shadow border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
-                            <div className="card">
-                                <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
-                                    <h5>Inquiry Ticket</h5>
+                            <div className="card " style={{minHeight:"60vh"}}>
+                            <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
+                                    <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>
                                 </div>
-
+                                <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", right: "-20px" }}>
+                                    <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>
+                                </div>
                                 <div className='d-flex justify-content-between mt-3'>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Total Tickets:</span>
@@ -448,7 +468,7 @@ function ActionMode() {
                                         <p className="text-center text-muted">Loading ticket...</p>
                                     ) : ticket ? (
                                         <>
-                                            <div className="row mb-3">
+                                            <div className="row mb-3" style={{marginTop:"50px"}}>
                                                 <div className="col-md-6">
                                                     <p><strong>Ticket ID:</strong> {ticket.id}</p>
                                                     <p><strong>Unique Query ID:</strong> {ticket.uniqueQueryId}</p>
@@ -484,8 +504,8 @@ function ActionMode() {
                                                             </button>
                                                         </CopyToClipboard>
                                                     </p>
-                                                    <p><strong>Address:</strong> {ticket.senderAddress}</p>
-                                                    <p><strong>Country:</strong> {ticket.senderCountryIso}</p>
+                                                    {ticket.senderAddress &&<p><strong>Address:</strong> {ticket.senderAddress}</p>}
+                                                    <p><strong>Country:</strong> {ticket.senderCountryIso}  <img src={getFlagUrl(ticket.senderCountryIso === "UK" ? "gb" : ticket.senderCountryIso)} alt={`${ticket.senderCountryIso} flag`} /></p>
                                                 </div>
                                                 <div className="col-md-6">
                                                     <p><strong>Enquiry Date:</strong> {formatDateTime(ticket.queryTime)}</p>
@@ -499,6 +519,7 @@ function ActionMode() {
                                                     <p><strong>Query Message:</strong> {ticket.queryMessage}</p>
                                                     {ticket.lastActionDate && <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>}
                                                     {ticket.lastActionDate && <p><strong>Last Action:</strong> {ticket.lastActionDate}</p>}
+                                                    {ticket.comment &&<p><strong>Last Comment:</strong> {ticket.comment}</p>}
 
                                                 </div>
                                             </div>
@@ -514,7 +535,13 @@ function ActionMode() {
                                 <div>
                                     <label htmlFor="number ">Enter ticket number </label>
                                     <input value={ticketNumber} className='bg-white text-black p-2 rounded' style={{ width: "100px", margin: '5px' }} onChange={(e) => setTicketNumber(e.target.value)} type="number" />
-                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0" disabled={ticketNumber === 0}>Go To</button>
+                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0" disabled={ticketNumber < 1}>Go To</button>
+
+                                </div>
+                                <div>
+                                    <label htmlFor="search "><i class="fa-solid fa-magnifying-glass fa-2xl"></i></label>
+                                    <input value={searchString} className='bg-white text-black p-2 rounded' style={{ width: "200px", margin: '5px' }} onChange={(e) => setSearchString(e.target.value)} type="text" placeholder='enter number/email/name' />
+                                    <button className="btn btn-primary" onClick={searchbyNameOrEmailOfNumber} min="0" disabled={searchString.length === 0}>Search</button>
 
                                 </div>
                                 <button className="btn btn-primary" onClick={fetchNextTicket} disabled={currentTicket == totalTicket}>Next</button>
