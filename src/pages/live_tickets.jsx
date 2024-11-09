@@ -235,6 +235,14 @@ function live_tickets() {
     return number.slice(0, -4) + 'XXXX';
   };
 
+  // Masking email
+  const maskEmail = (email) => {
+    const [user, domain] = email.split('@');
+    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
+    return `${maskedUser}@${domain}`;
+  };
+
+
   const fetchProducts = async () => {
     const response = await axiosInstance.get("product/getAllProducts");
     setProductsList(response.data.dtoList);
@@ -277,12 +285,6 @@ function live_tickets() {
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  };
-
-  const maskEmail = (email) => {
-    const [user, domain] = email.split('@');
-    const maskedUser = user.length > 4 ? `${user.slice(0, 4)}****` : `${user}****`;
-    return `${maskedUser}@${domain}`;
   };
 
   const getColorByStatus = (ticketStatus) => {
@@ -757,7 +759,7 @@ function live_tickets() {
                                   {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
                                 </button>
                               </CopyToClipboard>
-                              <span className="text">{item.senderEmail}</span>
+                              <span className="text">{maskEmail(item.senderEmail)}</span>
                             </td>
 
                             <td onClick={() => handleShow(item.uniqueQueryId)} >
@@ -875,25 +877,25 @@ function live_tickets() {
             --------------------- Call Status Ticket Modal ---------------------
           -------------------------------------------------------------- --> */}
       <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-        <Modal.Header closeButton>
-          <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
-            Call Status
+        <Modal.Header closeButton className="bg-primary text-white text-center">
+          <h1 className="modal-title fs-5 w-100" id="followUpModalLabel">
+            Update Ticket Status
           </h1>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '8px', boxShadow: '0px 4px 8px rgba(0,0,0,0.1)' }}>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label htmlFor="status" className="form-label">Status</label>
               <select
-                className="form-select"
+                className="form-select border-0 shadow-sm"
                 id="status"
                 name="ticketStatus"
                 value={formData.ticketStatus}
                 onChange={handleStatusChange}
+                style={{ borderRadius: '4px' }}
               >
                 <option>Choose Call-Status</option>
                 <option value="Sale">Sale</option>
-                {/* <option value="New">New</option> */}
                 <option value="Follow">Follow-up</option>
                 <option value="Interested">Interested</option>
                 <option value="Not_Interested">Not Interested</option>
@@ -909,13 +911,14 @@ function live_tickets() {
                 <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
                 <input
                   type="transaction-details"
-                  placeholder="Enter Transaction id "
-                  className="form-control"
+                  placeholder="Enter Transaction ID"
+                  className="form-control border-0 shadow-sm"
                   id="transactionDetails"
                   name="transactionDetails"
                   value={formData.SaleTransaction}
                   onChange={handleChange}
                   required
+                  style={{ borderRadius: '4px' }}
                 />
               </div>
             )}
@@ -925,40 +928,46 @@ function live_tickets() {
                 <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
                 <input
                   type="datetime-local"
-                  className="form-control"
+                  className="form-control border-0 shadow-sm"
                   id="followUpDateTime"
                   name="followUpDateTime"
                   value={formData.followUpDateTime}
                   onChange={handleChange}
                   step="2"
+                  style={{ borderRadius: '4px' }}
                 />
               </div>
             )}
-            <div className="col-12">
+
+            <div className="col-12 mb-3">
               <label htmlFor="comment" className="form-label">Comment</label>
               <textarea
                 rows="4"
-                className="form-control"
-                placeholder="Discribe your conversation with client"
+                className="form-control border-0 shadow-sm"
+                placeholder="Describe your conversation with client"
                 id="comment"
                 name="comment"
                 value={formData.comment}
                 onChange={handleChange}
                 required
+                style={{ borderRadius: '4px' }}
               ></textarea>
             </div>
+
             {error && <p className="text-danger">{error}</p>}
-            <div className="modal-footer justify-content-center border-0">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
+
+            <div className="modal-footer justify-content-center border-0 mt-4">
+              <button type="button" className="btn btn-secondary px-4" data-bs-dismiss="modal" onClick={handleClose}>
                 Close
               </button>
-              <button className="btn btn-primary" type="submit">
+              <button className="btn btn-primary px-4" type="submit">
                 Save Changes
               </button>
             </div>
           </form>
         </Modal.Body>
       </Modal>
+
 
       <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
         <Modal.Header closeButton>
@@ -1066,7 +1075,7 @@ function live_tickets() {
                           ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                           : true
                       )
-                      .filter((product)=>product.images!==null).map((product, index) => (
+                      .filter((product) => product.images !== null).map((product, index) => (
                         <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
                           <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                             {/* Brand Tag */}
