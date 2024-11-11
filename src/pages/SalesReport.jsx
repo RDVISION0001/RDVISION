@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { Modal, Button } from "react-bootstrap";
 import { toast } from 'react-toastify';  // Ensure toast is imported correctly if not already
+import Swal from 'sweetalert2';
 
 function SalesReport() {
     const [invoices, setInvoices] = useState([]);
@@ -9,12 +10,6 @@ function SalesReport() {
     const [showCustomerModal, setShowCustomerModal] = useState(false); // For Customer Details modal
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [selectedInvoiceId, setSelectedInvoiceId] = useState(null); // Store the selected invoice ID for verification
-
-    const handleCloses = () => setView(false);
-    const handleView = (invoiceId) => {
-        setSelectedInvoiceId(invoiceId); // Store the selected invoice ID
-        setView(true);
-    };
 
     const handleCloseCustomerModal = () => setShowCustomerModal(false);
     const handleShowCustomerModal = (invoice) => {
@@ -26,39 +21,121 @@ function SalesReport() {
         });
         setShowCustomerModal(true);
     };
+    //VerificationModel States 
+    const [selectedInvoiceIdForVerification, setSelectedInvoiceforVerification] = useState("")
+    const [selectedCloser, setSelectedCloser] = useState('')
+    const [selectedtSaleDate, setSelectedSaleDtae] = useState('')
+    const [selectedPropductOrders, setSelectedProductOrders] = useState()
+    const [selectedCustomerName, setSelectedCustomerName] = useState("")
+    const [selectedCustomerEmal, setSelectedCustomerEmail] = useState("")
+    const [selectedCustomerMObile, setSelectedCustomerMobile] = useState("")
+    const [selectedOrderAmount, setSelectedOrderAmount] = useState(0)
+    const [selectedAddress, setSelectedAddress] = useState()
+    const [paymnet, setSelectedPaymnet] = useState()
 
-    const handleVerify = () => {
-        if (selectedInvoiceId) {
-            // Send the invoiceId as part of the URL
-            axiosInstance.get(`/invoice/setVerified/${selectedInvoiceId}`)
-                .then((response) => {
-                    toast.success("Verified successfully");
-                    console.log('Invoice verified:', response.data);
-                    setView(false); // Close the modal after verification
-                })
-                .catch((error) => {
-                    console.error('Error verifying invoice:', error);
-                    toast.error("Failed to verify the invoice"); // Optional error notification
-                });
-        }
+
+    const handleCloses = () => setView(false);
+    const handleView = (invoiceId, closerName, saleDate, productOrders, cMobile, cEmail, Cname, orderAmount, address, payment) => {
+        setSelectedInvoiceforVerification(invoiceId)
+        setSelectedCloser(closerName)
+        setSelectedSaleDtae(saleDate)
+        setSelectedProductOrders(productOrders)
+        setSelectedCustomerName(Cname)
+        setSelectedCustomerEmail(cEmail)
+        setSelectedCustomerMobile(cMobile)
+        setSelectedInvoiceId(invoiceId); // Store the selected invoice ID
+        setSelectedOrderAmount(orderAmount)
+        setSelectedAddress(address)
+        setSelectedPaymnet(payment)
+        setView(true);
     };
 
+
     useEffect(() => {
-        axiosInstance.get('/invoice/verificationList')
+        fetchVerificationList()
+    }, []);
+
+
+    const fetchVerificationList = async () => {
+        await axiosInstance.get('/invoice/verificationList')
             .then((response) => {
                 setInvoices(response.data);
             })
             .catch((error) => {
                 console.error('Error fetching invoices:', error);
             });
-    }, []);
-
+    }
     const formatDate = (timestamp) => {
         if (!timestamp) return 'N/A';
+
         const date = new Date(timestamp);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+        // Array of month names for easy formatting
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+
+        // Array of weekday names for easy formatting
+        const weekdays = [
+            'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+        ];
+
+        const day = date.getDate().toString().padStart(2, '0');  // Add leading zero if day is single digit
+        const month = months[date.getMonth()];  // Get the full month name
+        const year = date.getFullYear();  // Get the year
+        const weekday = weekdays[date.getDay()];  // Get the weekday name
+
+        return `${weekday}, ${day}-${month}-${year}`;
+    };
+    const handleVerify = () => {
+
+        Swal.fire({
+            title: "Have you checked all details?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Verified!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (selectedInvoiceId) {
+                    // Send the invoiceId as part of the URL
+                    axiosInstance.get(`/invoice/setVerified/${selectedInvoiceId}`)
+                        .then((response) => {
+                            toast.success("Verified successfully");
+                            console.log('Invoice verified:', response.data);
+                            setView(false); // Close the modal after verification
+                        })
+                        .catch((error) => {
+                            console.error('Error verifying invoice:', error);
+                            toast.error("Failed to verify the invoice"); // Optional error notification
+                        });
+                }
+            }
+        });
+        fetchVerificationList()
     };
 
+    function formatDateFromArray(dateArray) {
+        // Create a new Date object from the array (Note: month is zero-indexed)
+        const date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5], dateArray[6]);
+        
+        // Define options for the formatting
+        const options = {
+            weekday: 'long', // "Monday"
+            year: 'numeric', // "2024"
+            month: 'long',   // "November"
+            day: 'numeric',  // "3"
+            hour: 'numeric', // "3"
+            minute: '2-digit', // "30"
+            hour12: true // 12-hour format (AM/PM)
+        };
+    
+        // Format the date using `toLocaleString` with the options
+        return date.toLocaleString('en-GB', options);
+    }
     return (
         <>
             <section className="followup-table-section py-3">
@@ -109,8 +186,10 @@ function SalesReport() {
                                                     {invoice.currency || 'USD'} {invoice.orderAmount}
                                                 </td>
                                                 <td>
-                                                    <button type="button" onClick={() => handleView(invoice.invoiceId)} className="btn btn-success">Verify</button>
+                                                    <button type="button" onClick={() => handleView(invoice.invoiceId, invoice.closerName, invoice.saleDate, invoice.orderDto.productOrders, invoice.customerMobile, invoice.customerEmail, invoice.customerName, invoice.orderAmount, invoice.address, invoice.payment)} className="btn btn-success">Verify</button>
                                                 </td>
+
+
                                             </tr>
                                         ))}
                                     </tbody>
@@ -148,47 +227,93 @@ function SalesReport() {
                 </div>
             </Modal>
 
-            {/* Verify Modal */}
-            <Modal show={view} onHide={handleCloses} className="modal ticket-modal fade" tabIndex="-1" aria-labelledby="exampleModalLabel">
-                <div className="modal-dialog modal-dialog-centered modal-lg">
-                    <div className="ticket-content-spacing">
-                        <div className="modal-body">
-                            <div className="row">
-                                <div className="col-4">
-                                    <div className="heading-area">
-                                        <div className="vertical-write">
-                                            <h2 className="title">{selectedCustomer?.customerName}</h2>
-                                            <p className="ticket-id">
-                                                <i className="fa-solid fa-ticket"></i> TKTID: {selectedCustomer?.ticketId}
-                                            </p>
-                                        </div>
-                                    </div>
+
+            <Modal show={view} onHide={handleCloses} centered>
+                <div className="d-flex justify-content-between w-100" style={{ fontSize: "20px" }}>
+                    <div className="border p-2 flex-fill text-center">
+                        Close By :- {selectedCloser}
+                    </div>
+                    <div className="border p-2 flex-fill text-center">
+                        Close Date :- {formatDate(selectedtSaleDate)}
+                    </div>
+                    {selectedPropductOrders && <div className="border p-2 flex-fill text-center">
+                        Total Amount :- <span className="text-blue-600">{selectedPropductOrders[0].currency} {selectedOrderAmount}</span>
+                    </div>}
+                </div>
+
+                <div className="text-muted m-3">Invoice ID: {selectedInvoiceIdForVerification}</div>
+
+                <Modal.Body>
+                    <div className="d-flex flex-column ">
+                        <div className="contact-info">
+                            <div className='d-flex justify-content-between'>
+                                <div>
+                                    <div style={{ fontWeight: "bold" }}>Customer Details </div>
+                                    <div>Name:-{selectedCustomerName}</div>
+                                    <div>Email:- {selectedCustomerEmal}</div>
+                                    <div>Mobile :- {selectedCustomerMObile}</div>
                                 </div>
-                                <div className="col-8">
-                                    <div className="contact-info-row d-flex align-items-center justify-content-between">
-                                        <a href={`tel:${selectedCustomer?.customerMobile}`} className="contact-info phone">
-                                            <i className="fa-solid fa-phone"></i> {selectedCustomer?.customerMobile}
-                                        </a>
-                                        <a className="contact-info email" href={`mailto:${selectedCustomer?.customerEmail}`}>
-                                            <i className="fa-solid fa-envelope-open-text"></i> {selectedCustomer?.customerEmail}
-                                        </a>
+                                {selectedAddress && <div>
+                                    <div style={{ fontWeight: "bold" }}>Customer Shipping Address </div>
+                                    <div>House Number:-{selectedAddress.houseNumber}</div>
+                                    <div>Landmark:- {selectedAddress.landmark}</div>
+                                    <div>City :- {selectedAddress.city}</div>
+                                    <div>State :- {selectedAddress.state}</div>
+                                    <div>Country :- {selectedAddress.country}</div>
+                                    <div>Zip Code :- {selectedAddress.zipCode}</div>
+                                </div>}
+                            </div>
+                            <div class="container mt-4">
+                                <div>Order Details</div>
+                                <table class="table table-striped table-bordered">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th className='text-center' scope="col">Image</th>
+                                            <th className='text-center' scope="col">Product Name</th>
+                                            <th className='text-center' scope="col">Quantity</th>
+                                            <th className='text-center' scope="col">Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selectedPropductOrders && selectedPropductOrders.map((product, index) => (
+                                            <tr key={index}>
+                                                <td className='text-center'>
+                                                    <img style={{ height: "50px" }} src={product.product[0].images[0]} alt="Product Image" class="img-fluid" />
+                                                </td>
+                                                <td className='text-center'>{product.product[0].name}</td>
+                                                <td className='text-center'>{product.quantity}</td>
+                                                <td className='text-center'>{product.currency} {product.totalAmount}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+
+                                {paymnet && <div className='m-3'>
+                                    <div>Payment Information</div>
+                                    <div>
+                                        <div>Payment Date :- {formatDateFromArray(paymnet.paymentDate)}</div>
+                                        <div>Payment Intent id :- {paymnet.paymentIntentId}</div>
+                                        <div>Payment Status :- <span className="text-green-600">{paymnet.paymentStatus}</span></div>
+                                        <div>Payment Amount :- <span className="text-green-600">{paymnet.currency} {paymnet.amount}</span></div>
                                     </div>
-                                    <div className="main-content-area">
-                                        <div className="modal-footer justify-content-center border-0">
-                                            <Button variant="secondary" onClick={handleCloses}>
-                                                Close
-                                            </Button>
-                                            <Button variant="primary" onClick={handleVerify} >
-                                                Verify Invoice
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
+                                </div>}
                             </div>
                         </div>
                     </div>
-                </div>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloses}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleVerify}>
+                        Verify Invoice
+                    </Button>
+                </Modal.Footer>
             </Modal>
+
+
+
         </>
     );
 }
