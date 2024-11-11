@@ -565,3 +565,26 @@
     cursor: pointer;  
 
   }
+
+  /* //progreess bar css
+   */
+
+   .progress-bar-custom-1 {
+    background-color: #3498db;
+}
+
+.progress-bar-custom-2 {
+    background-color: #e74c3c;
+}
+
+.progress-bar-custom-3 {
+    background-color: #2ecc71;
+}
+
+.progress-bar-custom-4 {
+    background-color: #f39c12;
+}
+
+.progress-bar-custom-5 {
+    background-color: #8e44ad;
+}
