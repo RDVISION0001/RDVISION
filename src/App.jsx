@@ -24,6 +24,8 @@ import Products from './pages/Products';
 import New_Products from './pages/New_Products';
 import ActionMode from './pages/ActionMode';
 import SalesReport from './pages/SalesReport';
+import VerifyedSales from './pages/VerifyedSales';
+
 
 
 // auth
@@ -178,6 +180,8 @@ function App() {
                   <Route exact path="/new_products" element={<New_Products />} />
                   <Route exact path="/action_mode" element={<ActionMode />} />
                   <Route exact path="/sales_report" element={<SalesReport />} />
+                  <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
+
 
                   {/* admin */}
                   <Route exact path="/admin_index" element={<Index />} />
