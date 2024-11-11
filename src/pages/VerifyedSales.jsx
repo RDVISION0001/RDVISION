@@ -64,64 +64,61 @@ function VerifiedSales() {
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
-                        <h1>Verified Sales</h1>
-                        {invoices.length === 0 ? (
-                            <p>No verified invoices found</p>
-                        ) : (
-                            <div className="bg-white mx-3">
-                                <div className="followups-table table-responsive table-height">
-                                    <table className="table table-borderless table-hover">
-                                        <thead className="text-dark" style={{ backgroundColor: 'gray' }}>
-                                            <tr>
-                                                <th scope="col">Closed By</th>
-                                                <th scope="col">Sale Date</th>
-                                                <th scope="col">Customer Name</th>
-                                                <th scope="col">Customer Order</th>
-                                                <th scope="col">Invoice ID</th>
-                                                <th scope="col">Ticket ID</th>
-                                                <th scope="col">Issue Date</th>
-                                                <th scope="col">Total Payable Amount</th>
-                                                <th scope="col">Payment Status</th>
+                        <h3 className="title">Verifyed Sales</h3>
+                        <div className="bg-white mx-3">
+                            <div className="followups-table table-responsive table-height">
+
+                                <table className="table table-borderless table-hover">
+                                    <thead className="text-dark" style={{ backgroundColor: 'gray' }}>
+                                        <tr>
+                                            <th scope="col">Closed By</th>
+                                            <th scope="col">Sale Date</th>
+                                            <th scope="col">Customer Name</th>
+                                            <th scope="col">Customer Order</th>
+                                            <th scope="col">Invoice ID</th>
+                                            <th scope="col">Ticket ID</th>
+                                            <th scope="col">Issue Date</th>
+                                            <th scope="col">Total Payable Amount</th>
+                                            <th scope="col">Payment Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {invoices.map((invoice) => (
+                                            <tr className="border" key={invoice.invoiceId}>
+                                                <td>
+                                                    {invoice.closerName}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleShowCustomerModal(invoice)}
+                                                        className="btn btn-link p-0">....
+                                                    </button>
+                                                </td>
+                                                <td>{formatDate(invoice.saleDate) || 'N/A'}</td> {/* Handle null saleDate */}
+                                                <td>{invoice.customerName}</td>
+                                                <td>
+                                                    {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                        invoice.orderDto.productOrders.map(order =>
+                                                            order.product?.map((p, index) => (
+                                                                <div key={index}>{p.name}</div>
+                                                            ))
+                                                        )
+                                                    ) : (
+                                                        'No Products Available'
+                                                    )}
+                                                </td>
+                                                <td>{invoice.invoiceId || 'N/A'}</td> {/* Display invoiceId */}
+                                                <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
+                                                <td>{formatDate(invoice.date)}</td> {/* Use issueDate or date */}
+                                                <td className="text-success bold-text">
+                                                    {invoice.currency || 'USD'} {invoice.orderAmount}
+                                                </td>
+                                                <td className="text-success bold-text">{invoice.orderDto?.paymentStatus}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {invoices.map((invoice) => (
-                                                <tr className="border" key={invoice.invoiceId}>
-                                                    <td>
-                                                        {invoice.closerName}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => handleShowCustomerModal(invoice)}
-                                                            className="btn btn-link p-0">....
-                                                        </button>
-                                                    </td>
-                                                    <td>{formatDate(invoice.saleDate) || 'N/A'}</td> {/* Handle null saleDate */}
-                                                    <td>{invoice.customerName}</td>
-                                                    <td>
-                                                        {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                            invoice.orderDto.productOrders.map(order =>
-                                                                order.product?.map((p, index) => (
-                                                                    <div key={index}>{p.name}</div>
-                                                                ))
-                                                            )
-                                                        ) : (
-                                                            'No Products Available'
-                                                        )}
-                                                    </td>
-                                                    <td>{invoice.invoiceId || 'N/A'}</td> {/* Display invoiceId */}
-                                                    <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
-                                                    <td>{formatDate(invoice.date)}</td> {/* Use issueDate or date */}
-                                                    <td className="text-success bold-text">
-                                                        {invoice.currency || 'USD'} {invoice.orderAmount}
-                                                    </td>
-                                                    <td className="text-success bold-text">{invoice.orderDto?.paymentStatus}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </section>
