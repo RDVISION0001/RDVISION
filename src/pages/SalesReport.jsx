@@ -1,25 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { Modal, Button } from "react-bootstrap";
+import { toast } from 'react-toastify';  // Ensure toast is imported correctly if not already
 
 function SalesReport() {
     const [invoices, setInvoices] = useState([]);
     const [view, setView] = useState(false); // For the Verify modal
     const [showCustomerModal, setShowCustomerModal] = useState(false); // For Customer Details modal
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [selectedInvoiceId, setSelectedInvoiceId] = useState(null); // Store the selected invoice ID for verification
 
     const handleCloses = () => setView(false);
-    const handleView = () => setView(true);
+    const handleView = (invoiceId) => {
+        setSelectedInvoiceId(invoiceId); // Store the selected invoice ID
+        setView(true);
+    };
 
     const handleCloseCustomerModal = () => setShowCustomerModal(false);
     const handleShowCustomerModal = (invoice) => {
         setSelectedCustomer({
             customerName: invoice.customerName,
-            customerEmail: invoice.customerEmail, // Assuming customerEmail exists in invoice
-            customerMobile: invoice.customerMobile, // Assuming customerMobile exists in invoice
+            customerEmail: invoice.customerEmail,
+            customerMobile: invoice.customerMobile,
             ticketId: invoice.orderDto?.ticketId || 'N/A',
         });
         setShowCustomerModal(true);
+    };
+
+    const handleVerify = () => {
+        if (selectedInvoiceId) {
+            // Send the invoiceId as part of the URL
+            axiosInstance.get(`/invoice/setVerified/${selectedInvoiceId}`)
+                .then((response) => {
+                    toast.success("Verified successfully");
+                    console.log('Invoice verified:', response.data);
+                    setView(false); // Close the modal after verification
+                })
+                .catch((error) => {
+                    console.error('Error verifying invoice:', error);
+                    toast.error("Failed to verify the invoice"); // Optional error notification
+                });
+        }
     };
 
     useEffect(() => {
@@ -55,7 +76,6 @@ function SalesReport() {
                                             <th scope="col">Customer Order</th>
                                             <th scope="col">Invoice ID</th>
                                             <th scope="col">Ticket ID</th>
-                                            {/* <th scope="col">Payment Status</th> */}
                                             <th scope="col">Issue Date</th>
                                             <th scope="col">Order Amount</th>
                                             <th scope="col">Action</th>
@@ -82,25 +102,14 @@ function SalesReport() {
                                                     )}
                                                     {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
                                                 </td>
-
                                                 <td>{invoice.invoiceId}</td>
                                                 <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
-                                                {/* <td
-                                                    style={{
-                                                        color: invoice.orderDto?.paymentStatus === "PENDING" ? "red" :
-                                                            invoice.orderDto?.paymentStatus === "PAID" ? "green" :dinf
-                                                                "black",
-                                                        fontWeight: "bold"
-                                                    }}
-                                                >
-                                                    {invoice.orderDto?.paymentStatus}
-                                                </td> */}
                                                 <td>{formatDate(invoice.date)}</td>
                                                 <td className="text-success bold-text">
                                                     {invoice.currency || 'USD'} {invoice.orderAmount}
                                                 </td>
                                                 <td>
-                                                    <button type="button" onClick={handleView} className="btn btn-success">Verify</button>
+                                                    <button type="button" onClick={() => handleView(invoice.invoiceId)} className="btn btn-success">Verify</button>
                                                 </td>
                                             </tr>
                                         ))}
@@ -112,7 +121,6 @@ function SalesReport() {
                 </div>
             </section>
 
-            {/* Customer Details Modal */}
             {/* Customer Details Modal */}
             <Modal show={showCustomerModal} onHide={handleCloseCustomerModal} centered>
                 <div className="modal-header" style={{ backgroundColor: '#5f6368', color: '#fff', borderBottom: '2px solid #ccc' }}>
@@ -140,7 +148,6 @@ function SalesReport() {
                 </div>
             </Modal>
 
-
             {/* Verify Modal */}
             <Modal show={view} onHide={handleCloses} className="modal ticket-modal fade" tabIndex="-1" aria-labelledby="exampleModalLabel">
                 <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -167,26 +174,14 @@ function SalesReport() {
                                         </a>
                                     </div>
                                     <div className="main-content-area">
-                                        <form>
-                                            <div className="form-check">
-                                                <input className="form-check-input" type="checkbox" id="flexCheckChecked" defaultChecked />
-                                                <label className="form-check-label" htmlFor="flexCheckChecked">
-                                                    Checked checkbox
-                                                </label>
-                                            </div>
-                                            <div className="col-12">
-                                                <label htmlFor="comment" className="form-label">Comment</label>
-                                                <textarea rows="4" className="form-control" placeholder="Describe your conversation with client" id="comment" name="comment"></textarea>
-                                            </div>
-                                            <div className="modal-footer justify-content-center border-0">
-                                                <Button variant="secondary" onClick={handleCloses}>
-                                                    Close
-                                                </Button>
-                                                <Button variant="primary" type="submit">
-                                                    Save Changes
-                                                </Button>
-                                            </div>
-                                        </form>
+                                        <div className="modal-footer justify-content-center border-0">
+                                            <Button variant="secondary" onClick={handleCloses}>
+                                                Close
+                                            </Button>
+                                            <Button variant="primary" onClick={handleVerify} >
+                                                Verify Invoice
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
