@@ -41,7 +41,8 @@
     "react-scripts": "^5.0.1",
     "react-toastify": "^10.0.5",
     "sass": "^1.75.0",
-    "sockjs-client": "^1.6.1"
+    "sockjs-client": "^1.6.1",
+    "sweetalert2": "^11.14.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
