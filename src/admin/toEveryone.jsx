@@ -60,22 +60,30 @@ function toEveryone(props) {
 
     //hnadling multiple selection
     const handleMultipleTicketSelection = (e) => {
-       if(isLive){
-        const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
-        if (checked) {
-            let newSelectedTickets = [...selectedTickets]; // Start with the current state
-            for (let i = 0; i < data.length; i++) {
-                newSelectedTickets.push(data[i].uniqueQueryId); // Add the new elements
+        if (isLive) {
+            const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
+            if (checked) {
+                let newSelectedTickets = [...selectedTickets]; // Start with the current state
+                for (let i = 0; i < data.length; i++) {
+                    newSelectedTickets.push(data[i].uniqueQueryId); // Add the new elements
+                }
+                setSelectedTickets(newSelectedTickets); // Update the state once with the new array
+            } else {
+                setSelectedTickets([]); // Reset to an empty array
             }
-            setSelectedTickets(newSelectedTickets); // Update the state once with the new array
         } else {
-            setSelectedTickets([]); // Reset to an empty array
+            handleMultipleUploadTicketSelection(e)
         }
-       }else{
-        handleMultipleUploadTicketSelection(e)
-       }
     };
 
+    const [liveNotAssigned, setLiveNotassigned] = useState(0)
+    const [uploadedNotAssigned, setUploadedNotAssigned] = useState(0)
+
+    const fetchNumbersOfUnassignedTickets = async () => {
+        const response = await axiosInstance.get("/third_party_api/ticket/numberOfNotassignedTickets")
+        setLiveNotassigned(response.data.liveCount)
+        setUploadedNotAssigned(response.data.uploadedCount)
+    }
     //hnadling multiple selection
     const handleMultipleUploadTicketSelection = (e) => {
         const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
@@ -92,7 +100,7 @@ function toEveryone(props) {
 
 
     const sendPostRequest = async () => {
-        if(isLive){
+        if (isLive) {
             try {
                 const payload = selectedTickets;
                 const config = {
@@ -106,14 +114,15 @@ function toEveryone(props) {
                 console.log("Response is :", response.data)
                 toast.success('Tickets assigned successfully!');
                 handleClose();
-    
+
                 fetchTickets()
                 setSelectedTickets([])
+                fetchNumbersOfUnassignedTickets()
             } catch (error) {
                 console.error('Error:', error);
                 toast.error('Failed to assign tickets.');
             }
-        }else{
+        } else {
             try {
                 const payload = selectedTickets;
                 const config = {
@@ -127,9 +136,11 @@ function toEveryone(props) {
                 console.log("Response is :", response.data)
                 toast.success('Uploaded Tickets assigned successfully!');
                 handleClose();
-    
+
                 fetchUploadedTickets()
                 setSelectedTickets([])
+                fetchNumbersOfUnassignedTickets()
+
             } catch (error) {
                 console.error('Error:', error);
                 toast.error('Failed to assign tickets.');
@@ -143,6 +154,7 @@ function toEveryone(props) {
             setTeam(response.data.dtoList);
         };
         fetchData();
+        fetchNumbersOfUnassignedTickets()
     }, []);
 
     const handleSelectUserOfSelectedUserType = (e) => {
@@ -300,6 +312,10 @@ function toEveryone(props) {
                                 <div className="table-wrapper tabbed-table">
                                     <div className="heading-wrapper">
                                         <h3 className="title">All Tickets</h3>
+                                        <div>
+                                           {isLive && <><span>Available Tickets:- </span> <span> {liveNotAssigned}</span></>}
+                                           {!isLive && <><span>Available Tickets:- </span> <span> {uploadedNotAssigned}</span></>}
+                                        </div>
                                         <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal" id="assignButton">Assign Ticket</Button>
                                     </div>
 

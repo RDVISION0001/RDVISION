@@ -9,6 +9,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { toast } from 'react-toastify';
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3'
+import TicketDistribution from './TicketDistribution';
 
 // import TimeZone from './TimeZone';
 
@@ -170,6 +171,7 @@ function topnav() {
 
             </div>
           </nav>
+         {localStorage.getItem("roleName")==="SeniorSuperVisor" && <TicketDistribution/>}
           <div>
             <FloatingButton />
           </div>
