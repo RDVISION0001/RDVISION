@@ -643,6 +643,12 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/assign_ticket_report" className="nav-link">
+                <i class="fa-solid fa-bug"></i>
+                <span className="nav-text">Assign Ticket Report</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
