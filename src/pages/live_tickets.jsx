@@ -23,6 +23,7 @@ import TicketJourney from '../components/TicketJourney';
 
 import InvoiceBox from '../components/InvoiceBox';
 import QuotationBox from '../components/QuotationBox';
+import TicketTrack from '../components/TicketTrack';
 
 
 function live_tickets() {
@@ -624,8 +625,13 @@ function live_tickets() {
           </div>
         </div>
       </section>
+
+
       {/* <!-- Tabbed Ticket Table --> */}
-      <section className="followup-table-section py-3">
+      <section className="followup-table-section py-4 d-flex">
+       
+              <TicketTrack />
+           
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
             <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>

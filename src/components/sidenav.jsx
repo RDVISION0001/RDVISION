@@ -272,6 +272,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span className="nav-text">Verifyed Sales</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
@@ -637,9 +643,21 @@ function Sidenav() {
               )}
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/assign_ticket_report" className="nav-link">
+                <i class="fa-solid fa-bug"></i>
+                <span className="nav-text">Assign Ticket Report</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
             {/* Invoices Sub-menu */}
