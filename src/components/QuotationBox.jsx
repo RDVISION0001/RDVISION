@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
+import ProductPriceModal from '../components/ProductPriceModal';
 
 
 import { toast, ToastContainer } from 'react-toastify';
@@ -31,8 +32,68 @@ function QuotationBox(props) {
         state: '',
         country: '',
     });
+    const [serchValue, setserchValue] = useState("")
 
+    const handleInputChange = (e) => {
+        setserchValue(e.target.value); // Update state with the input's value
+        console.log('Input Value:', e.target.value); // Log the current input value
+    };
 
+    const [listView, setListView] = useState(false)
+    const [view, setView] = useState(false)
+    const [selectedProductIdForPriceLIst, setSelectedProductIdForPriceLIst] = useState(0)
+    const [prices, setPrices] = useState([])
+    const [selectedProductName, setSelectedProductName] = useState("")
+    const toggleList = () => {
+        if (listView) {
+            setListView(false)
+        } else {
+            setListView(true)
+        }
+    }
+    const toggleModel = () => {
+        if (view) {
+            setView(false)
+            handleSubmit(selectedProductIdForPriceLIst)
+        } else {
+            if(formData.currency){
+
+                setView(true)
+            }else{
+                toast.info("Please selecte Currency First")
+            }
+        }
+
+    }
+    const viewListOfProducts = (id, name) => {
+        setSelectedProductIdForPriceLIst(id)
+        setSelectedProductName(name)
+        toggleList()
+    }
+    const fetchPriceLIst = async () => {
+        try {
+            const response = await axiosInstance.post(`/product/getProductPrices`, {
+                productId: selectedProductIdForPriceLIst,
+                ticketId: selectedTicketId
+            })
+            setPrices(response.data)
+        } catch (e) {
+            toast.error("Some Error occures")
+        }
+    }
+    useEffect(() => {
+        if (selectedProductIdForPriceLIst > 0 && listView) {
+            fetchPriceLIst()
+        }
+    }, [selectedProductIdForPriceLIst])
+
+    const openPriceAddModa = (id, name) => {
+        setSelectedProductIdForPriceLIst(id)
+        setSelectedProductName(name)
+        toggleModel()
+    }
+
+    // Fetch ticket details when selectedTicketId changes
     useEffect(() => {
         if (selectedTicketId) {
             const fetchTicketDetails = async () => {
@@ -48,6 +109,7 @@ function QuotationBox(props) {
     }, [selectedTicketId]);
 
 
+
     // Form state for adding products
     const [formData, setFormData] = useState({
         quantity: '',
@@ -58,41 +120,29 @@ function QuotationBox(props) {
         currency: ''
     });
 
-    const [selectedProductPrice, setSelectedProductPrice] = useState()
-
-    useEffect(() => {
-        fetchProductPrice()
-    }, [formData.selectedProductId])
 
 
-    const fetchProductPrice = async () => {
-        if (formData.selectedProductId) {
-            const response = await axiosInstance.get(`/product/getProduct/${formData.selectedProductId}`)
-            setSelectedProductPrice(response.data.dtoList.price)
-        }
-    }
-
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (productId) => {
+        const enteredPrice = priceValues[productId] || "";
+        const enteredQuantity = quantityValues[productId] || "";
+        const currency = formData.currency || "";
         try {
             const response = await axiosInstance.post('/order/addToOrder', {
-                quantity: formData.quantity,
-                productId: formData.selectedProductId,
+                quantity: enteredQuantity,
+                productId: productId,
                 ticketId: selectedTicketId,
                 userId: userId,
-                price: formData.price,
-                currency: formData.currency
-
+                price: enteredPrice,
+                currency: currency
             });
-            toast.success('Add order successfully!');
-            handleClose();
-            fatchaddedproduct()
+            console.log(productId)
+            toast.success('Added to order successfully!');
+            fatchaddedproduct();
         } catch (error) {
             console.error('Error submitting form:', error);
             toast.error('Failed to add order');
         }
-
+        setSelectedProductIdForPriceLIst(0)
     };
 
     const handleChange = (e) => {
@@ -118,7 +168,7 @@ function QuotationBox(props) {
         fetchData();
     }, [selectedTicketId]);
 
-    const [orderDetails, setOrderDetails] = useState(true);
+    const [orderDetails, setOrderDetails] = useState(null);
 
     // Fetch order details from apiB when selectedTicketId changes
     useEffect(() => {
@@ -140,7 +190,26 @@ function QuotationBox(props) {
         }
     }
 
+    // Create shipping address
+    useEffect(() => {
+        if (selectedTicketId) {
+            const fetchAddressDetails = async () => {
+                try {
+                    const response = await axiosInstance.get(`/address/getAddress/${selectedTicketId}`);
+                    setAddressData(response.data.dto);
+                } catch (err) {
+                    console.error('Error fetching address details:', err);
+                }
+            };
+
+            fetchAddressDetails();
+        }
+    }, [selectedTicketId]);
+
+
+
     const [response, setResponse] = useState(null);
+
     const handleshipChange = (e) => {
         setAddressData({
             ...addressData,
@@ -148,16 +217,51 @@ function QuotationBox(props) {
         });
     };
 
+    const handleshipSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axiosInstance.post('/address/createAddress', {
+                houseNumber: String(addressData ? addressData.houseNumber : ""),
+                landmark: String(addressData ? addressData.landmark : ""),
+                city: String(addressData ? addressData.city : ""),
+                zipCode: String(addressData ? addressData.zipCode : ""),
+                state: String(addressData ? addressData.state : ""),
+                country: String(addressData ? addressData.country : ""),
+                ticketId: String(selectedTicketId)
+            });
+            setResponse(response.data);
+            toast.success('Address added successfully!');
+        } catch (err) {
+            setError(err);
+            toast.error('Failed to add address');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // Function to handle sending invoice
     const handleSendInvoice = async () => {
         try {
-            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}`);
+            const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}`);
             toast.success('Invoice sent successfully!');
         } catch (error) {
             console.error('Error sending invoice:', error);
             toast.error('Failed to send invoice');
         }
     };
+
+    const handleSendQuotation = async () => {
+        try {
+            const response = await axiosInstance.post(`/invoice/sendquote?ticketId=${selectedTicketId}&userId=${userId}`);
+            toast.success('Quotation sent successfully!');
+        } catch (error) {
+            console.error('Error sending quotation:', error);
+            toast.error('Failed to send quotation');
+        }
+    };
+
     const [isCollapsed, setIsCollapsed] = useState(false); // State to track collapse/expand
 
     const toggleCollapse = () => {
@@ -181,6 +285,49 @@ function QuotationBox(props) {
 
     }
 
+
+    const [selectedProducts, setSelectedProducts] = useState([]); // State to store selected product IDs
+
+    // Handle checkbox change
+    const handleCheckboxChange = (productId) => {
+        setSelectedProducts(prevSelected => {
+            // Check if the product ID is already selected
+
+            console.log(productId)
+            if (prevSelected.includes(productId)) {
+                // If selected, remove it
+                return prevSelected.filter(id => id !== productId);
+            } else {
+                // If not selected, add it
+                return [...prevSelected, productId];
+            }
+        });
+    };
+
+    // Log selected products to console
+    React.useEffect(() => {
+        console.log(selectedProducts);
+    }, [selectedProducts]);
+
+    const [priceValues, setPriceValues] = useState({});
+    const [quantityValues, setQuantityValues] = useState({});
+
+
+    // Handle price input change
+    const handlePriceChange = (e, productId) => {
+        setPriceValues((prevState) => ({
+            ...prevState,
+            [productId]: e.target.value,
+        }));
+    };
+
+    // Handle quantity input change
+    const handleQuantityChange = (e, productId) => {
+        setQuantityValues((prevState) => ({
+            ...prevState,
+            [productId]: e.target.value,
+        }));
+    };
 
 
     return (
@@ -212,6 +359,17 @@ function QuotationBox(props) {
                                                     </address>
 
                                                 </div>
+                                                <div className="address-items">
+                                                    <small>Delivery Address</small>
+                                                    {addressData && <address>
+                                                        {addressData ? ` ${addressData && addressData.houseNumber},
+                                                        ${addressData && addressData.landmark},
+                                                        ${addressData && addressData.city},
+                                                        ${addressData && addressData.state},
+                                                        ${addressData && addressData.country},
+                                                        ${addressData && addressData.zipCode}` : "No adress added"}
+                                                    </address>}                                            </div>
+                                                <div className=""></div>
                                             </div>
                                         </div>
 
@@ -241,52 +399,55 @@ function QuotationBox(props) {
                                                             <p className="item">UserId: <span>{orderDetails.userId}</span></p>
                                                         </div> */}
                                                 </div>
-                                                {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? <table className="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Brand</th>
-                                                            <th scope="col">Composition</th>
-                                                            <th scope="col">Size</th>
-                                                            <th scope="col">Pills Qty</th>
-                                                            <th scope="col">Price</th>
-                                                            <th scope='col'>Action</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {orderDetails && orderDetails.productOrders.map((productOrder, index) => (
-                                                            productOrder.product && productOrder.product[0] ? (
-                                                                <tr key={productOrder.productorderId}> {/* Use unique id as key */}
-                                                                    <td>{productOrder.product[0].name}</td>
-                                                                    <td>{productOrder.product[0].brand}</td>
-                                                                    <td>{productOrder.product[0].composition}</td>
-                                                                    <td>{productOrder.product[0].packagingSize}</td>
-                                                                    <td>{productOrder.product[0].pillsQty}</td>
-                                                                    <td>{productOrder.totalAmount}</td>
-                                                                    <td className='h-100 text-center'>
-                                                                        <i
-                                                                            onClick={() => handleDeleteProduct(productOrder.productorderId)}
-                                                                            id={`deleteIcon-${productOrder.productorderId}`}
-                                                                            className="fa-solid fa-trash fa-lg"
-                                                                            style={{ color: "#ec2222", cursor: "pointer" }}
-                                                                        ></i>
-                                                                    </td>
+                                                {orderDetails && orderDetails.productOrders && orderDetails.productOrders.length > 0 ? (
+                                                    <div className="overflow-x-auto d-flex justify-content-center">
+                                                        <table className="min-w-full table-auto border-collapse border border-gray-200">
+                                                            <thead>
+                                                                <tr className="bg-gray-100">
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Name</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Brand</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Composition</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-left">Price List</th>
+                                                                    <th className="border border-gray-300 px-3 py-2  text-center">Action</th>
                                                                 </tr>
-                                                            ) : (
-                                                                <tr key={index}>
-                                                                    <td colSpan="7">Product details not available</td> {/* Ensure colSpan matches number of columns */}
-                                                                </tr>
-                                                            )
-                                                        ))}
-                                                    </tbody>
-                                                </table> : <div className='d-flex justify-content-center'>No prduct Adedd</div>}
-                                                {orderDetails && <div className="total d-flex justify-content-end">
-                                                    <div className='d-flex'>
-                                                        <p className='fw-semibold'>Total:- </p>
-                                                        <p>$ {orderDetails.totalPayableAmount}</p>
+                                                            </thead>
+                                                            <tbody>
+                                                                {orderDetails.productOrders.map((productOrder, index) => (
+                                                                    productOrder.product && productOrder.product[0] ? (
+                                                                        <tr key={productOrder.productorderId} className="hover:bg-gray-50">
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].name}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].brand}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 ">{productOrder.product[0].composition}</td>
+                                                                            <td className="border border-gray-300 py-2 px-3 text-center"><div onClick={() => viewListOfProducts(productOrder.product[0].productId, productOrder.product[0].name)}><i class="fa-solid fa-table-list fa-xl" style={{ cursor: "Pointer" }}></i></div></td>
+                                                                            <td className='h-100 border border-gray-300 py-2 px-3 text-center'>
+                                                                                <i
+                                                                                    onClick={() => handleDeleteProduct(productOrder.productorderId)}
+                                                                                    id={`deleteIcon-${productOrder.productorderId}`}
+                                                                                    className="fa-solid fa-trash fa-lg"
+                                                                                    style={{ color: "#ec2222", cursor: "pointer" }}
+                                                                                ></i>
+                                                                            </td>
+                                                                        </tr>
+                                                                    ) : (
+                                                                        <tr key={index}>
+                                                                            <td colSpan="7" className="border border-gray-300 px-3  text-center">Product details not available</td>
+                                                                        </tr>
+                                                                    )
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
+                                                ) : (
+                                                    <div className='d-flex justify-content-center'>No product Added</div>
+                                                )}
+
+                                                {orderDetails && <div className="total d-flex justify-content-end">
+                                                    {/* <div className='d-flex'>
+                                                        <p className='fw-semibold'>Total:- </p>
+                                                        <p>{orderDetails.productOrders[0] && orderDetails.productOrders[0].currency}  {orderDetails.totalPayableAmount}</p>
+                                                    </div> */}
                                                 </div>}
-                                                <div className="add-more-products-wrapper ">
+                                                <div className="add-more-products-wrapper m-3">
                                                     <Button onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addMoreItemsModal" className="btn btn-primary">Add Product</Button>
                                                 </div>
                                             </div>
@@ -294,9 +455,119 @@ function QuotationBox(props) {
                                     </div>
                                 </div>
 
+
+                                {/* /////////////////shipping address */}
+                                {/* <div className="accordion-item">
+                                    <h2 className="accordion-header">
+                                        <button
+                                            className="accordion-button"
+                                            type="button"
+                                            onClick={toggleCollapse} // Handle click to toggle collapse
+                                            aria-expanded={!isCollapsed}
+                                            aria-controls="shippingDetils">
+                                            Sales/Invoice Details
+                                        </button>
+                                    </h2>
+
+                                    <div
+                                        id="shippingDetils"
+                                        className={`accordion-collapse collapse ${isCollapsed ? '' : 'show'}`}
+                                        data-bs-parent="#accordionAddressDetails">
+                                        {true && ( // Adjust condition if necessary
+                                            <div className="p-3">
+                                                <form onSubmit={handleshipSubmit}>
+                                                    <div className="row g-3 p-3">
+                                                        <div className="col-12">
+                                                            <label htmlFor="name" className="form-label">Shipping To :</label>
+                                                            <input type="text" id="name" className="form-control" placeholder="Eg. Jane Kapoor" />
+                                                        </div>
+                                                        <div className="col-12">
+                                                            <h3 className="fieldset-heading">Shipping Address</h3>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="hNo" className="form-label">House No./ Street</label>
+                                                            <input
+                                                                name="houseNumber"
+                                                                value={addressData ? addressData.houseNumber : ""}
+                                                                onChange={handleshipChange}
+                                                                id="hNo"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="landmark" className="form-label">Landmark</label>
+                                                            <input
+                                                                type="text"
+                                                                name="landmark"
+                                                                value={addressData ? addressData.landmark : ""}
+                                                                onChange={handleshipChange}
+                                                                id="landmark"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="city" className="form-label">City</label>
+                                                            <input
+                                                                type="text"
+                                                                name="city"
+                                                                value={addressData ? addressData.city : ""}
+                                                                onChange={handleshipChange}
+                                                                id="city"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="zipCode" className="form-label">Zip Code</label>
+                                                            <input
+                                                                type="text"
+                                                                name="zipCode"
+                                                                value={addressData ? addressData.zipCode : ""}
+                                                                onChange={handleshipChange}
+                                                                id="zipCode"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="state" className="form-label">State</label>
+                                                            <input
+                                                                type="text"
+                                                                name="state"
+                                                                value={addressData ? addressData.state : ""}
+                                                                onChange={handleshipChange}
+                                                                id="state"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <label htmlFor="country" className="form-label">Country</label>
+                                                            <input
+                                                                type="text"
+                                                                name="country"
+                                                                value={addressData ? addressData.country : ""}
+                                                                onChange={handleshipChange}
+                                                                id="country"
+                                                                className="form-control"
+                                                            />
+                                                        </div>
+                                                        <div className="col-12">
+                                                            <input type="checkbox" id="checkSame" className="form-check-inline" />
+                                                            <label htmlFor="checkSame" className="form-label checkSame-Address">Billing address is same as shipping</label>
+                                                        </div>
+                                                        <div className="col-12">
+                                                            <button className="btn btn-primary w-100">Submit Address</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div> */}
+
                                 {/* <!-- order items details ends here --> */}
                                 <div className='d-flex justify-content-center '>
-                                    <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Mail</button>
+                                    <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
+                                    {/* <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Invoice</button> */}
+
                                 </div>
                             </div>
                         </div>
@@ -304,69 +575,180 @@ function QuotationBox(props) {
                 </div>
             </div>
 
-            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header border-0">
-                            <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Add Items</h1>
-                            <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <form action="#" onSubmit={handleSubmit}>
-                                <div className="row g-3">
-                                    <div className="col-6">
-                                        <label htmlFor="Varient" className="form-label">Product Name</label>
-                                        <select
-                                            name="selectedProductId"
-                                            value={formData.selectedProductId}
-                                            onChange={handleChange}
-                                            id="varient"
-                                            className="form-select">
-                                            <option value="">Choose...</option>
-                                            {products.map((productname) => (
-                                                <option key={productname.productId} value={productname.productId}>{productname.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="Quantity" className="form-label">Quantity</label>
-                                        <input type="number" min="0" name="quantity" value={formData.quantity} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="price" className="form-label">Add Total Price</label>
-                                        <input type="number" name="price" min="0" value={formData.price} onChange={handleChange} id="Quantity" className="form-control" placeholder="0" />
-                                    </div>
-                                    <div className="col-6">
-                                        <label htmlFor="currency" className="form-label">Currency</label>
-                                        <select
-                                            name="currency"
-                                            value={formData.currency}
-                                            onChange={handleChange}
-                                            id="currency"
-                                            className="form-control"
-                                        >
-                                            <option value="" disabled>Select Currency</option>
-                                            <option value="INR">INR - Indian Rupee</option>
-                                            <option value="USD">USD - US Dollar</option>
-                                            <option value="GBP">GBP - British Pound</option>
-                                            <option value="AUD">AUD - Australian Dollar</option>
-                                            <option value="EUR">EUR - Euro</option>
-                                            <option value="JPY">JPY - Japanese Yen</option>
-                                        </select>
-                                    </div>
-                                    <div className='w-100 d-flex justify-content-between p-4 text-primary'>
-                                    </div>
-                                    <div className="modal-footer justify-content-center border-0">
-                                        <button type="button" onClick={handleClose} className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="submit" disabled={formData.price === "0" ? true : false} className="btn btn-primary">Add</button>
-                                    </div>
-                                </div>
-                            </form>
+            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade rounded" id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+
+                <div className="modal-header border-0">
+                    <h1 className="modal-title fs-5 w-100 text-center" id="addMoreItemsLabel">Select Products</h1>
+                    <button type="button" onClick={handleClose} className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+
+                <>
+                    <div className='d-flex justify-content-between px-5'>
+                        <input
+                            type='text'
+                            placeholder='Enter product Name'
+                            value={serchValue}
+                            onChange={handleInputChange}
+                            className='p-2 bg-white text-black'
+                        />
+
+                        <div className='d-flex align-items-center'>
+                            <label htmlFor="Currency" className='mx-5'>Choose Currency</label>
+                            <select
+                                name="currency"
+                                value={formData.currency}
+                                onChange={handleChange}
+                                id="currency"
+                                className="form-control"
+                                style={{ maxWidth: '100px', fontSize: '15px' }}
+                            >
+                                <option value="" disabled>Select Currency</option>
+                                <option value="INR">INR - Indian Rupee</option>
+                                <option value="USD">USD - US Dollar</option>
+                                <option value="GBP">GBP - British Pound</option>
+                                <option value="AUD">AUD - Australian Dollar</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="JPY">JPY - Japanese Yen</option>
+                            </select>
                         </div>
                     </div>
-                </div>
+
+                    <div className="container mt-3">
+                        <div className="row">
+                            {products && products
+                                .filter(product =>
+                                    serchValue.length > 0
+                                        ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                                        : true
+                                )
+                                .filter((product) => product.images !== null).map((product, index) => (
+                                    <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
+                                        <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', paddingTop: '20px', height: 'auto' }}>
+                                            {/* Brand Tag positioned at bottom-left corner */}
+                                            <div
+                                                className="position-absolute bg-success text-white px-2 py-1"
+                                                style={{
+                                                    fontSize: '10px',
+                                                    borderTopRightRadius: '4px',
+                                                    borderBottomLeftRadius: '4px',
+                                                    bottom: '-9px', // Move to the bottom with some space
+                                                    left: '-1px', // Align to the left with some space
+                                                    zIndex: '1' // Ensure it appears above other elements
+                                                }}
+                                            >
+                                                {product.brand}
+                                            </div>
+
+                                            <div className="d-flex flex-column flex-md-row align-items-center">
+                                                {/* Image Section */}
+                                                <div>
+                                                    <img
+                                                        src={product.images && product.images[0]}
+                                                        alt="Product"
+                                                        className="img-fluid rounded"
+                                                        style={{ maxWidth: '60px', marginTop: '10px' }}
+                                                    />
+                                                </div>
+
+                                                {/* Product Details Section */}
+                                                <div className="ms-2 w-100 ">
+                                                    <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                                        {product.name} {product.Price}
+                                                    </h6>
+
+                                                    {/* Price and Quantity Input Section */}
+                                                    {/* <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control form-control-sm mx-2"
+                                                            placeholder="Price"
+                                                            style={{ maxWidth: '70px' }}
+                                                            value={priceValues[product.productId] || ''}
+                                                            onChange={(e) => handlePriceChange(e, product.productId)}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="form-control form-control-sm mx-2"
+                                                            placeholder="Quantity"
+                                                            style={{ maxWidth: '70px' }}
+                                                            value={quantityValues[product.productId] || ''}
+                                                            onChange={(e) => handleQuantityChange(e, product.productId)}
+                                                        />
+                                                    </div> */}
+                                                </div>
+
+                                                <button
+                                                    className='bg-info mt-2 mt-md-0'
+                                                    style={{ height: "30px", fontSize: "12px" }}
+                                                    onClick={() => openPriceAddModa(product.productId, product.name)}
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+                </>
             </Modal>
 
+            <Modal show={view} onHide={handleSubmit} centered>
+                <Modal.Header toggleModel>
+                    <div className='d-flex justify-content-between  w-100'>
+                        <Modal.Title>Add Price List</Modal.Title>
+
+                        <Button variant="secondary" onClick={toggleModel}>
+                            Close
+                        </Button>
+                    </div>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <ProductPriceModal
+                        productId={selectedProductIdForPriceLIst}
+                        productName={selectedProductName}
+                        onClose={toggleModel}
+                        ticketId={selectedTicketId}
+                        currency={formData.currency}
+                    />
+                </Modal.Body>
+            </Modal>
+            <Modal show={listView} onHide={toggleList} centered>
+                <Modal.Header toggleModel>
+                    <div className='d-flex justify-content-between  w-100'>
+                        <Modal.Title> Price List of :-{selectedProductName}</Modal.Title>
+                        <Button variant="secondary" onClick={toggleList}>
+                            Close
+                        </Button>
+                    </div>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <div className="container mt-3">
+                        <h3> Prices list</h3>
+                        <table className="table table-bordered table-striped">
+                            <thead className="thead-dark">
+                                <tr>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            {prices.length > 0 ? <tbody>
+                                {prices.map((price) => (
+                                    <tr key={price.priceId}>
+
+                                        <td>{price.quantity} {price.unit} </td>
+                                        <td>{price.currency} {price.price}</td>
+                                    </tr>
+                                ))}
+                            </tbody> : "No price Available"}
+                        </table>
+                    </div>
+
+                </Modal.Body>
+            </Modal>
             {/* <!-- Modal --> */}
             <div className="modal ticket-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered modal-lg">

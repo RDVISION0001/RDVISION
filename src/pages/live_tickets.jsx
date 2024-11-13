@@ -131,6 +131,15 @@ function live_tickets() {
     setIsInvoiceOn(!isInvoiceOn)
   }
 
+  const [isQuotationOn,setIsQuotationOn]=useState(false)
+  const handleQuotation = (ticketId, name, email, mobile) => {
+    setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
+    setIsQuotationOn(!isQuotationOn)
+  }
+
   const fetchData = async (params, page, perPage) => {
     try {
       const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
@@ -209,11 +218,12 @@ function live_tickets() {
 
 
   //click to call
-  const handleClick = async (number) => {
+  const handleClick = async (number,ticketId) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
         number: formatNumberAccordingToHodu(number),
-        userId
+        userId,
+        ticketId
       });
       setCallId(response.data.call_id)
     } catch (error) {
@@ -790,7 +800,7 @@ function live_tickets() {
                                 ><i className="fa-solid fa-info "></i>
                                 </Button>
                                 <Button
-                                  onClick={() => handleClick(item.senderMobile)}
+                                  onClick={() => handleClick(item.senderMobile,item.uniqueQueryId)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
@@ -818,7 +828,13 @@ function live_tickets() {
                                 >
                                   <i className="fa-brands fa-whatsapp"></i>
                                 </a>
-
+                                <Button
+                                  onClick={() => handleQuotation(item.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-share-from-square" ></i>
+                                </Button>
 
                                 <Button
                                   onClick={() => handleInvoice(item.uniqueQueryId)}
@@ -1225,6 +1241,25 @@ function live_tickets() {
           <u> Raise Invoice</u>
         </h1>
         <InvoiceBox
+          ticketId={selectTicketForInvoice}
+          name={selectNameForInvoice}
+          email={selectEmailForInvoice}
+          mobile={selectMobileForInvoice}
+        />
+      </Modal>
+      <Modal
+        show={isQuotationOn}
+        onHide={handleQuotation}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal" // Add a custom class here
+      >
+        <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+          <u> Raise Invoice</u>
+        </h1>
+        <QuotationBox
           ticketId={selectTicketForInvoice}
           name={selectNameForInvoice}
           email={selectEmailForInvoice}
