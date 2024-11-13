@@ -341,6 +341,7 @@ function InvoiceBox(props) {
                             )}
                             {/* <!-- ticket details ends here --> */}
                             <div className="accordion status-wrappers" id="accordionExample">
+                            <div className='text-danger'> !Impotent Before Sending Invoice Make sure every Product is added with proper <span className='fw-bold'>Quantity and Price</span></div>
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header">
@@ -529,8 +530,8 @@ function InvoiceBox(props) {
                                 </div>
 
                                 {/* <!-- order items details ends here --> */}
-                                <div className='d-flex justify-content-between ' style={{ paddingLeft: "30%", paddingRight: "30%" }}>
-                                    <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
+                                <div className='d-flex justify-content-center '>
+                                    {/* <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button> */}
                                     <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Invoice</button>
 
                                 </div>
