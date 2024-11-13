@@ -2,10 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
+import { Modal, Button } from 'react-bootstrap';
+
 
 function UploadedProduct() {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     // Filter products by search term
     const filteredProducts = products.filter(product =>
@@ -412,7 +418,7 @@ function UploadedProduct() {
                             >
                                 <div className="row">
                                     {filteredProducts.length > 0 ? (
-                                        filteredProducts.filter((product)=>product.images!==null).map((product, index) => (
+                                        filteredProducts.filter((product) => product.images !== null).map((product, index) => (
                                             <div className="col-md-2 mb-4" key={index}>
                                                 <div
                                                     className="card product-card shadow-sm h-100"
@@ -463,6 +469,10 @@ function UploadedProduct() {
                                                             </div>
                                                         )}
                                                     </div>
+                                                    {/* Trigger button */}
+                                                    <Button variant="info" onClick={handleShow}>
+                                                        Add
+                                                    </Button>
                                                 </div>
                                             </div>
                                         ))
@@ -478,7 +488,28 @@ function UploadedProduct() {
                 </div>
             </section>
 
-
+            {/* Modal */}
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Category</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div class="form-group">
+                            <label for="exampleFormControlInput1">Category</label>
+                            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder=" " />
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="success" onClick={handleClose}>
+                        Submit
+                    </Button>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
