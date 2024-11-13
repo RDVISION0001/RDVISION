@@ -23,6 +23,7 @@ import TicketJourney from '../components/TicketJourney';
 
 import InvoiceBox from '../components/InvoiceBox';
 import QuotationBox from '../components/QuotationBox';
+import TicketTrack from '../components/TicketTrack';
 
 
 function live_tickets() {
@@ -209,11 +210,11 @@ function live_tickets() {
 
 
   //click to call
-  const handleClick = async (number) => {
+  const handleClick = async (number,ticketId) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
         number: formatNumberAccordingToHodu(number),
-        userId
+        userId,ticketId
       });
       setCallId(response.data.call_id)
     } catch (error) {
@@ -614,8 +615,13 @@ function live_tickets() {
           </div>
         </div>
       </section>
+
+
       {/* <!-- Tabbed Ticket Table --> */}
-      <section className="followup-table-section py-3">
+      <section className="followup-table-section py-4 d-flex">
+       
+              <TicketTrack />
+           
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
             <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
@@ -790,7 +796,7 @@ function live_tickets() {
                                 ><i className="fa-solid fa-info "></i>
                                 </Button>
                                 <Button
-                                  onClick={() => handleClick(item.senderMobile)}
+                                  onClick={() => handleClick(item.senderMobile,item.uniqueQueryId)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
