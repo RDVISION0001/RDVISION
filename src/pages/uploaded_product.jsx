@@ -2,54 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
-import ProductPriceModal from '../components/ProductPriceModal';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 
 
 function UploadedProduct() {
     const [products, setProducts] = useState([]);
+    const [productId, setProductId] = useState([]);
+
     const [searchTerm, setSearchTerm] = useState('');
-    const [isCard, setIsCard] = useState(true)
-    const [view, setView] = useState(false)
-    const [selectedProductName, setSelectedProductName] = useState("")
-    const [selecteProductId, setSelectedProductId] = useState("")
-    const [selectedProductIdForPriceLIst,setSelectedProductIdForPrice]=useState(0)
-    const [listView, setListView] = useState(false)
-    const [prices, setPrices] = useState([])
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const handleShow = (id) => {
+        setShow(true)
+        setProductId(id)
+    };
 
-    const toggleList = () => {
-        if (listView) {
-            setListView(false)
-        } else {
-            setListView(true)
-        }
-        setSelectedProductIdForPrice(0)
-        setSelectedProductName("")
-    }
-
-
-    const toggleModel = () => {
-        if (view) {
-            setView(false)
-        } else {
-            setView(true)
-        }
-        setSelectedProductIdForPrice(0)
-        setSelectedProductName("")
-    }
-
-    const toggleView = () => {
-        if (isCard) {
-            setIsCard(false)
-        } else {
-            setIsCard(true)
-        }
-    }
     // Filter products by search term
     const filteredProducts = products.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -208,53 +176,33 @@ function UploadedProduct() {
 
     //delete products
     const handleDeleteProduct = async (productId) => {
-
-        Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
-                    toast.success("Product deleted successfully");
-                    fetchProducts(); // Refresh the product list after deletion
-                } catch (error) {
-                    toast.error("Failed to delete product. Please try again.");
-                }
-            }
-        });
-
+        try {
+            const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
+            toast.success("Product deleted successfully");
+            fetchProducts();
+        } catch (error) {
+            toast.error("Failed to delete product. Please try again.");
+        }
     };
 
-    const openPriceModel = (id, name) => {
-        setSelectedProductId(id)
-        setSelectedProductName(name)
-        toggleModel()
-    }
-    const openPriceList = (name, id) => {
-        setSelectedProductName(name)
-        setSelectedProductIdForPrice(id)
-        toggleList()
-    }
+    const [category, setCategory] = useState('');
 
-    const fetchPriceLIst = async () => {
+    const handleUpdateCategory = async () => {
+        console.log(productId)
         try {
-            const response = await axiosInstance.get(`/product/getProductPrices/${selectedProductIdForPriceLIst}`)
-            setPrices(response.data)
-        } catch (e) {
-            toast.error("Some Error occures")
+            const response = await axiosInstance.put('/product/updateCategory', {
+                productId: productId,
+                category
+            });
+            console.log('Category updated successfully:', response.data);
+            toast.success("Category updated successfully");
+        } catch (error) {
+            console.error('Error updating category:', error);
+            toast.error("Failed to update category. Please try again.");
         }
-    }
-    useEffect(() => {
-        if (selectedProductIdForPriceLIst > 0 && listView) {
-            fetchPriceLIst()
-        }
-    }, [selectedProductIdForPriceLIst])
+    };
+
+
 
     return (
         <div>
@@ -458,11 +406,9 @@ function UploadedProduct() {
                     </section>
                 )}
             </>}
-            <div className=" w-100 text-end" style={{paddingRight:"100px" }}>
-                <button onClick={toggleView}>{isCard ? "Card" : "Table"}</button>
-            </div>
+
             {/* Product Card List */}
-            {isCard && <section className="followup-table-section py-3">
+            <section className="followup-table-section py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
                         <h3 className="title">
@@ -545,7 +491,7 @@ function UploadedProduct() {
                                                         )}
                                                     </div>
                                                     {/* Trigger button */}
-                                                    <Button variant="info" onClick={handleShow}>
+                                                    <Button variant="info" onClick={() => handleShow(product.productId)}>
                                                         Add
                                                     </Button>
                                                 </div>
@@ -553,7 +499,7 @@ function UploadedProduct() {
                                         ))
                                     ) : (
                                         <div className="col-12 text-center">
-                                            <p>Loading ............</p>
+                                            <p>No products found</p>
                                         </div>
                                     )}
                                 </div>
@@ -561,128 +507,36 @@ function UploadedProduct() {
                         </div>
                     </div>
                 </div>
-            </section>}
+            </section>
 
-            {
-                !isCard &&
-                <div>
-                    <div className="table-responsive">
-                        <table className="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Product Code</th>
-                                    <th>Strength</th>
-                                    <th>Packaging Size</th>
-                                    <th>Packaging Type</th>
-                                    <th>Composition</th>
-                                    <th>Brand</th>
-                                    <th>Treatment</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredProducts.length > 0 ? (
-                                    filteredProducts.map((product, index) => (
-                                        <tr key={index}>
-                                            <td>{product.name}</td>
-                                            <td>{product.productCode}</td>
-                                            <td>{product.strength}</td>
-                                            <td>{product.packagingSize}</td>
-                                            <td>{product.packagingType}</td>
-                                            <td>{product.composition}</td>
-                                            <td>{product.brand}</td>
-                                            <td>{product.treatment && product.treatment.slice(0, 100)}</td>
-                                            <td className='d-flex  align-items-center h-100 p-3 gap-2'>
-                                                <button
-                                                    className="btn "
-                                                    onClick={() => handleDeleteProduct(product.productId)}
-                                                >
-                                                    <i class="fa-sharp fa-solid fa-trash fa-2xl" style={{ color: "#ff0000" }}></i>
-                                                </button>
-                                                {/* <button
-                                                    className="btn "
-                                                    onClick={() => openPriceModel(product.productId, product.name)}
-                                                >
-                                                    <i class="fa-solid fa-list-ul fa-2xl" style={{ color: "#072964" }}></i>
-                                                </button>
-                                                <button
-                                                    className="btn "
-                                                    onClick={() => openPriceList(product.name, product.productId)}
-                                                >
-                                                    <i class="fa-solid fa-table-list fa-2xl"></i>
-                                                </button> */}
-
-                                            </td>
-
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="9" className="text-center">Loading ....... </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            }
-
-            <Modal show={view} onHide={toggleModel} centered>
-                <Modal.Header toggleModel>
-                    <div className='d-flex justify-content-between  w-100'>
-                        <Modal.Title>Add Price List</Modal.Title>
-
-                        <Button variant="secondary" onClick={toggleModel}>
-                            Close
-                        </Button>
-                    </div>
+            {/* Modal */}
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Category</Modal.Title>
                 </Modal.Header>
-
                 <Modal.Body>
-                    <ProductPriceModal
-                        productId={selecteProductId}
-                        productName={selectedProductName}
-                        onClose={toggleModel}
-                    />
-
-
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="category">Category</label>
+                            <input
+                                type="text"
+                                name="category"
+                                className="form-control"
+                                value={category}
+                                id="category"
+                                placeholder="Enter category"
+                                onChange={(e) => setCategory(e.target.value)} // Add this line
+                            />
+                        </div>
+                    </form>
                 </Modal.Body>
+                <Modal.Footer>
+                    <button className='btn btn-warning' onClick={() => handleUpdateCategory(products.id)}>Add  Category</button>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
-
-
-            <Modal show={listView} onHide={toggleList} centered>
-                <Modal.Header toggleModel>
-                    <div className='d-flex justify-content-between  w-100'>
-                        <Modal.Title> Price List of :- {selectedProductName}</Modal.Title>
-                        <Button variant="secondary" onClick={toggleList}>
-                            Close
-                        </Button>
-                    </div>
-                </Modal.Header>
-
-                <Modal.Body>
-                    <div className="container mt-3">
-                        <h3> Price list</h3>
-                        <table className="table table-bordered table-striped">
-                            <thead className="thead-dark">
-                                <tr>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                           {prices.length>0? <tbody>
-                                {prices.map((price) => (
-                                    <tr key={price.priceId}>
-                                        <td>{price.quantity} {price.unit} </td>
-                                        <td>$ {price.price}</td>
-                                    </tr>
-                                ))}
-                            </tbody>:"No price Available"}
-                        </table>
-                    </div>
-
 
         </div>
     );
