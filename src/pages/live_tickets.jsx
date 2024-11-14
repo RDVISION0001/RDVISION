@@ -29,6 +29,7 @@ import TicketTrack from '../components/TicketTrack';
 function live_tickets() {
   const { userId } = useAuth();
   const { setFolowupUpdate } = useAuth()
+  const {setUserReportReloader}=useAuth()
 
   const [selectedKey, setSelectedKey] = useState(null)
 
@@ -89,6 +90,7 @@ function live_tickets() {
       userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
       recordingFile: null
     })
+    setUserReportReloader((prev)=>prev+1)
   }
 
   // Define parameters for each tab
@@ -217,8 +219,12 @@ function live_tickets() {
         userId,ticketId
       });
       setCallId(response.data.call_id)
+      setUserReportReloader((prev)=>prev+1)
+
     } catch (error) {
       console.error('Error during API call:', error);
+      setUserReportReloader((prev)=>prev+1)
+
     }
   };
 
@@ -362,6 +368,7 @@ function live_tickets() {
       setError(null);
       setCallId(0)
       setFolowupUpdate(uniqueQueryId)
+      setUserReportReloader((prev)=>prev+1)
     } catch (err) {
       setError(err.message);
       setResponse(null);

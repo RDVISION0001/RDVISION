@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext';
 
 const TicketTrack = () => {
     const { userId } = useAuth(); // Get userId from the Auth context
+    const { userReportReloader } = useAuth()
     const [data, setData] = useState([]);
     const scrollRef = useRef(null); // Reference to the container for scroll position
 
@@ -21,7 +22,7 @@ const TicketTrack = () => {
         };
 
         fetchTicketHistory();
-    }, [userId]); // Runs when userId changes
+    }, [userId, userReportReloader]); // Runs when userId changes
 
     const formatDate = (dateString) => {
         const dateObj = new Date(dateString);
@@ -52,25 +53,26 @@ const TicketTrack = () => {
             scrollRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }
     };
-
+    console.log(userReportReloader)
     return (
         <div className='text-center'>
             <button onClick={scrollToTop} className="scroll-btn">
-               <i class="fa-solid fa-angle-up fa-2xl"></i>
+                <i class="fa-solid fa-angle-up fa-2xl"></i>
             </button>
-            <div ref={scrollRef} style={{overflowY:"auto",height:"100vh"}}>
+            <div ref={scrollRef} style={{ overflowY: "auto", height: "100vh" }}>
                 {data && data.map((step, index) => (
                     <div key={index}>
                         <div className='text-center' style={{ height: "90px", width: "200px", border: "2px solid green", borderRadius: "50px", marginTop: "10px" }}>
-                            <div className='fw-bold'>{step.customerName}</div>
-                            <div>{step.status}</div>
-                            <div>{formatDate(step.queryDate)}</div>
+                            <div className='fw-bold'>{step.customerName.length>15?step.customerName.slice(0,15)+"...":step.customerName}</div>
+                            <div style={{fontSize:"12px"}}>{step.action}</div>
+                            <div>{step.ticketStatus}</div>
+                            <div style={{fontSize:"12px"}}>{formatDate(step.queryDate)}</div>
                         </div>
                     </div>
                 ))}
             </div>
             <button onClick={scrollToBottom} className="scroll-btn">
-            <i class="fa-solid fa-angle-down fa-2xl"></i>
+                <i class="fa-solid fa-angle-down fa-2xl"></i>
             </button>
         </div>
     );
