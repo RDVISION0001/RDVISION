@@ -68,7 +68,7 @@ function live_tickets() {
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
   const [filterdate, setFilterDate] = useState(null)
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-  const [countryFilter, setCountryFilter] = useState(null)
+  const [countryFilter, setCountryFilter] = useState([])
   const [productArray, setProductArray] = useState([]);
   const [emailData, setEmailData] = useState({
     ticketId: "",
@@ -210,11 +210,11 @@ function live_tickets() {
 
 
   //click to call
-  const handleClick = async (number,ticketId) => {
+  const handleClick = async (number, ticketId) => {
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
         number: formatNumberAccordingToHodu(number),
-        userId,ticketId
+        userId, ticketId
       });
       setCallId(response.data.call_id)
     } catch (error) {
@@ -550,6 +550,24 @@ function live_tickets() {
   const [assignedTo, setAssignedTo] = useState(0)
 
 
+  const handleCountryFilter = (country) => {
+    setCountryFilter((prev) => {
+      // If country is null, empty, or negative, clear the countryFilter array
+      if (!country) {
+        return [];
+      }
+
+      // If country is already in the list, remove it
+      if (prev.includes(country)) {
+        return prev.filter((c) => c !== country);
+      }
+
+      // Otherwise, add the country to the list
+      return [...prev, country];
+    });
+  };
+
+
 
   return (
     <>
@@ -619,9 +637,9 @@ function live_tickets() {
 
       {/* <!-- Tabbed Ticket Table --> */}
       <section className="followup-table-section py-4 d-flex">
-       
-              <TicketTrack />
-           
+
+        <TicketTrack />
+
         <div className="container-fluid">
           <div className="table-wrapper tabbed-table">
             <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
@@ -649,7 +667,7 @@ function live_tickets() {
                   <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
                   New Tickets
                 </button>
-                <div class="input-group mb-3 w-50">
+                {/* <div class="input-group mb-3 w-50">
                   <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className="form-select" id="inputGroupSelect02">
                     <option value="">All</option>
                     <option value="US">US</option>
@@ -658,6 +676,33 @@ function live_tickets() {
                   </select>
 
                   <label class="input-group-text" for="inputGroupSelect02">Select Country</label>
+                </div> */}
+
+                <div className="d-flex gap-4 m-3">
+                  <button
+                    className={`fixed-width-btn ${countryFilter.length === 0 ? "bg-primary" : "bg-secondary"}`}
+                    onClick={() => handleCountryFilter()}
+                  >
+                    {`${countryFilter.length === 0 ? "✅" : ""}`} All
+                  </button>
+                  <button
+                    className={`fixed-width-btn ${countryFilter.includes("US") ? "bg-primary" : "bg-secondary"}`}
+                    onClick={() => handleCountryFilter("US")}
+                  >
+                    {`${countryFilter.includes("US") ? "✅" : ""}`} US
+                  </button>
+                  <button
+                    className={`fixed-width-btn ${countryFilter.includes("UK") ? "bg-primary" : "bg-secondary"}`}
+                    onClick={() => handleCountryFilter("UK")}
+                  >
+                    {`${countryFilter.includes("UK") ? "✅" : ""}`} UK
+                  </button>
+                  <button
+                    className={`fixed-width-btn ${countryFilter.includes("AU") ? "bg-primary" : "bg-secondary"}`}
+                    onClick={() => handleCountryFilter("AU")}
+                  >
+                    {`${countryFilter.includes("AU") ? "✅" : ""}`} AU
+                  </button>
                 </div>
               </li>
 
@@ -707,8 +752,7 @@ function live_tickets() {
                             item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
                             item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                        ).filter((item) => !countryFilter || item.senderCountryIso === countryFilter).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (
-                          <tr key={index}
+                          ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (                            <tr key={index}
                             style={{
                               boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
                               zIndex: index === selectedKey ? 1 : "auto",
@@ -796,7 +840,7 @@ function live_tickets() {
                                 ><i className="fa-solid fa-info "></i>
                                 </Button>
                                 <Button
-                                  onClick={() => handleClick(item.senderMobile,item.uniqueQueryId)}
+                                  onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
                                   // onClick={handleView}
                                   data-bs-toggle="modal"
                                   data-bs-target="#followUpModal"
