@@ -294,7 +294,7 @@ function SalesReport() {
                                         <div>Payment Date :- {formatDateFromArray(paymnet.paymentDate)}</div>
                                         <div>Payment Intent id :- {paymnet.paymentIntentId}</div>
                                         <div>Payment Status :- <span className="text-green-600">{paymnet.paymentStatus}</span></div>
-                                        <div>Payment Amount :- <span className="text-green-600">{paymnet.currency} {paymnet.amount}</span></div>
+                                        <div>Paid Amount :- <span className="text-green-600">{paymnet.currency} {paymnet.amount}</span></div>
                                     </div>
                                 </div>}
                             </div>
