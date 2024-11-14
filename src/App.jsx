@@ -24,6 +24,8 @@ import Products from './pages/Products';
 import New_Products from './pages/New_Products';
 import ActionMode from './pages/ActionMode';
 import SalesReport from './pages/SalesReport';
+import VerifyedSales from './pages/VerifyedSales';
+
 
 
 // auth
@@ -77,6 +79,8 @@ import Uptickets from './senior_supervisor/uptickets';
 import Ticketsss from './senior_supervisor/ticketsss';
 import Invoicesss from './senior_supervisor/invoicesss';
 import Tocaptain from './senior_supervisor/toCaptain';
+import AssignTktReport from './components/AssignTktReport';
+
 
 
 // componenets css
@@ -178,6 +182,8 @@ function App() {
                   <Route exact path="/new_products" element={<New_Products />} />
                   <Route exact path="/action_mode" element={<ActionMode />} />
                   <Route exact path="/sales_report" element={<SalesReport />} />
+                  <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
+
 
                   {/* admin */}
                   <Route exact path="/admin_index" element={<Index />} />
@@ -220,6 +226,8 @@ function App() {
                   <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
                   <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
                   <Route exact path="/ticket_house" element={<TicketHouse />} />
+                  <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
+
 
 
                 </Route>

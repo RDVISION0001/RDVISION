@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import ProductPriceModal from '../components/ProductPriceModal';
 import { Button, Modal } from 'react-bootstrap';
 
+
 function UploadedProduct() {
     const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -16,8 +17,10 @@ function UploadedProduct() {
     const [selectedProductIdForPriceLIst,setSelectedProductIdForPrice]=useState(0)
     const [listView, setListView] = useState(false)
     const [prices, setPrices] = useState([])
+    const [show, setShow] = useState(false);
 
-
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     const toggleList = () => {
         if (listView) {
@@ -541,6 +544,10 @@ function UploadedProduct() {
                                                             </div>
                                                         )}
                                                     </div>
+                                                    {/* Trigger button */}
+                                                    <Button variant="info" onClick={handleShow}>
+                                                        Add
+                                                    </Button>
                                                 </div>
                                             </div>
                                         ))
@@ -676,8 +683,6 @@ function UploadedProduct() {
                         </table>
                     </div>
 
-                </Modal.Body>
-            </Modal>
 
         </div>
     );

@@ -162,7 +162,7 @@ function SalesReport() {
                                         {invoices.map((invoice) => (
                                             <tr className="border" key={invoice.invoiceId}>
                                                 <td>
-                                                    {invoice.customerName}
+                                                    {invoice.closerName}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
