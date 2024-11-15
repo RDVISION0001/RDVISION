@@ -12,10 +12,10 @@ function indexa() {
   return (
 
     <>
-      <div className="container-fluid mt-3">
+{/*       <div className="container-fluid mt-3">
         <Cardinfo />
       </div>
-
+ */}
       <div className="container-fluid mt-3">
         <TaskProgress />
       </div>
