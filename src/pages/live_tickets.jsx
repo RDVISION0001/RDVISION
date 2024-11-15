@@ -29,7 +29,7 @@ import TicketTrack from '../components/TicketTrack';
 function live_tickets() {
   const { userId } = useAuth();
   const { setFolowupUpdate } = useAuth()
-  const {setUserReportReloader}=useAuth()
+  const { setUserReportReloader } = useAuth()
 
   const [selectedKey, setSelectedKey] = useState(null)
 
@@ -90,7 +90,7 @@ function live_tickets() {
       userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
       recordingFile: null
     })
-    setUserReportReloader((prev)=>prev+1)
+    setUserReportReloader((prev) => prev + 1)
   }
 
   // Define parameters for each tab
@@ -134,7 +134,7 @@ function live_tickets() {
     setIsInvoiceOn(!isInvoiceOn)
   }
 
-  const [isQuotationOn,setIsQuotationOn]=useState(false)
+  const [isQuotationOn, setIsQuotationOn] = useState(false)
   const handleQuotation = (ticketId, name, email, mobile) => {
     setSelectTicketForInvoice(ticketId)
     setSelectNameForInvoice(name)
@@ -228,11 +228,11 @@ function live_tickets() {
         userId, ticketId
       });
       setCallId(response.data.call_id)
-      setUserReportReloader((prev)=>prev+1)
+      setUserReportReloader((prev) => prev + 1)
 
     } catch (error) {
       console.error('Error during API call:', error);
-      setUserReportReloader((prev)=>prev+1)
+      setUserReportReloader((prev) => prev + 1)
 
     }
   };
@@ -377,7 +377,7 @@ function live_tickets() {
       setError(null);
       setCallId(0)
       setFolowupUpdate(uniqueQueryId)
-      setUserReportReloader((prev)=>prev+1)
+      setUserReportReloader((prev) => prev + 1)
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -587,362 +587,354 @@ function live_tickets() {
 
   return (
     <>
-      <div className='d-flex justify-content-end '>
-        <div className='w-25 d-flex justify-content-center' >
-
-          <div className="form-check" style={{ marginLeft: "10px" }}>
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="flexCheckDefault"
-              checked={assignedTo === userId}
-              onChange={() => setAssignedTo(userId)} // Call toggle method on change
-            />
-            <label className="form-check-label" htmlFor="flexCheckDefault">
-              Assigned to me
-            </label>
-          </div>
-          <div className="form-check" style={{ marginLeft: "10px" }}>
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="flexCheckChecked"
-              checked={assignedTo === 0} // Checked if 'list' is false
-              onChange={() => setAssignedTo(0)} // Call toggle method on change
-            />
-            <label className="form-check-label" htmlFor="flexCheckChecked">
-              All negotiation tickets
-            </label>
-          </div>
-        </div>
-      </div>
-      {/* //Filter input */}
-      <section className="filter-section">
-        <div className="container-fluid">
-          <div className="row">
-            <div className="col-md-5">
-              <div className="search-wrapper">
-                <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
-                <div className="search-icon">
-                  <i className="fa-solid fa-magnifying-glass"></i>
-                </div>
-              </div>
-            </div>
-            {
-              activeTab === "followUp" && <div className="col-md-5">
-                <div className="search-wrapper d-flex justify-content-center align-items-center">
-                  <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
-                  <div className="search-icon">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-
-                  </div>
-                  <i
-                    className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
-                    onClick={() => setFilterDate(null)}
-                  ></i>
-
-                </div>
-
-              </div>
-            }
-
-          </div>
-        </div>
-      </section>
-
-
-      {/* <!-- Tabbed Ticket Table --> */}
-      <section className="followup-table-section py-4 d-flex">
-
+      <div className='d-flex'>
         <TicketTrack />
 
-        <div className="container-fluid">
-          <div className="table-wrapper tabbed-table">
-            <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
-            <ul
-              className="nav recent-transactions-tab-header nav-tabs"
-              id="followUp"
-              role="tablist"
-            >
+        <div>
+          <section className="filter-section">
+            <div className="container-fluid">
+              <div className="row">
 
-              <li className="nav-item d-flex justify-content-between w-100" role="presentation">
-                <button
-                  className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
-                  onClick={() => handleRowClick("newTickets")}
-                  // className="nav-link"
-                  id="new-arrivals-tkts-tab"
-                  data-bs-toggle="tab"
-                  data-bs-target="#new-arrivals-tkts-tab-pane"
-                  type="button"
-                  role="tab"
-                  aria-controls="new-arrivals-tkts-tab-pane"
-                  aria-selected="false"
-                  tabindex="-1"
+                {
+                  activeTab === "followUp" && <div className="col-md-5">
+                    <div className="search-wrapper d-flex justify-content-center align-items-center">
+                      <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
+
+                      </div>
+                      <i
+                        className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                        onClick={() => setFilterDate(null)}
+                      ></i>
+
+                    </div>
+
+                  </div>
+                }
+
+              </div>
+            </div>
+          </section>
+
+
+          {/* <!-- Tabbed Ticket Table --> */}
+          <section className="followup-table-section py-4 d-flex">
+            <div className="container-fluid">
+              <div className="table-wrapper tabbed-table">
+                <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
+                <ul
+                  className="nav recent-transactions-tab-header nav-tabs"
+                  id="followUp"
+                  role="tablist"
                 >
-                  {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
-                  <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
-                  New Tickets
-                </button>
-                {/* <div class="input-group mb-3 w-50">
-                  <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} className="form-select" id="inputGroupSelect02">
-                    <option value="">All</option>
-                    <option value="US">US</option>
-                    <option value="AU">AU</option>
-                    <option value="UK">UK</option>
-                  </select>
 
-                  <label class="input-group-text" for="inputGroupSelect02">Select Country</label>
-                </div> */}
+                  <li className="nav-item d-flex justify-content-between w-100" role="presentation">
+                    <button
+                      className={`nav-link ${activeTab === "newTickets" ? "active" : ""}`}
+                      onClick={() => handleRowClick("newTickets")}
+                      // className="nav-link"
+                      id="new-arrivals-tkts-tab"
+                      data-bs-toggle="tab"
+                      data-bs-target="#new-arrivals-tkts-tab-pane"
+                      type="button"
+                      role="tab"
+                      aria-controls="new-arrivals-tkts-tab-pane"
+                      aria-selected="false"
+                      tabindex="-1"
+                    >
+                      {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                      <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i>
+                      New Tickets
+                    </button>
+                    <div className="col-md-5">
+                      <div className="search-wrapper">
+                        <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
+                        <div className="search-icon">
+                          <i className="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="">
+                      <div className=' d-flex justify-content-center ' >
 
-                <div className="d-flex gap-4 m-3">
-                  <button
-                    className={`fixed-width-btn ${countryFilter.length === 0 ? "bg-primary" : "bg-secondary"}`}
-                    onClick={() => handleCountryFilter()}
+                        <div className="form-check" style={{ marginLeft: "10px" }}>
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="flexCheckDefault"
+                            checked={assignedTo === userId}
+                            onChange={() => setAssignedTo(userId)} // Call toggle method on change
+                          />
+                          <label className="form-check-label" htmlFor="flexCheckDefault">
+                            Assigned to me
+                          </label>
+                        </div>
+                        <div className="form-check" style={{ marginLeft: "10px" }}>
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="flexCheckChecked"
+                            checked={assignedTo === 0} // Checked if 'list' is false
+                            onChange={() => setAssignedTo(0)} // Call toggle method on change
+                          />
+                          <label className="form-check-label" htmlFor="flexCheckChecked">
+                            All negotiation tickets
+                          </label>
+                        </div>
+                      </div>
+                      <div className='d-flex gap-4 m-3'>
+                        <button
+                          className={`fixed-width-btn ${countryFilter.length === 0 ? "bg-primary" : "bg-secondary"}`}
+                          onClick={() => handleCountryFilter()}
+                        >
+                          {`${countryFilter.length === 0 ? "✅" : ""}`} All
+                        </button>
+                        <button
+                          className={`fixed-width-btn ${countryFilter.includes("US") ? "bg-primary" : "bg-secondary"}`}
+                          onClick={() => handleCountryFilter("US")}
+                        >
+                          {`${countryFilter.includes("US") ? "✅" : ""}`} US
+                        </button>
+                        <button
+                          className={`fixed-width-btn ${countryFilter.includes("UK") ? "bg-primary" : "bg-secondary"}`}
+                          onClick={() => handleCountryFilter("UK")}
+                        >
+                          {`${countryFilter.includes("UK") ? "✅" : ""}`} UK
+                        </button>
+                        <button
+                          className={`fixed-width-btn ${countryFilter.includes("AU") ? "bg-primary" : "bg-secondary"}`}
+                          onClick={() => handleCountryFilter("AU")}
+                        >
+                          {`${countryFilter.includes("AU") ? "✅" : ""}`} AU
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+
+
+                </ul>
+                {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call Back</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
+                  <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
+                </div> : ""}
+                <div
+                  className="tab-content recent-transactions-tab-body"
+                  id="followUpContent"
+                >
+                  <div
+                    className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
+                    // className="tab-pane fade"
+                    id="new-arrivals-tkts-tab-pane"
+                    role="tabpanel"
+                    aria-labelledby="new-arrivals-tkts-tab"
+                    tabindex="0"
                   >
-                    {`${countryFilter.length === 0 ? "✅" : ""}`} All
-                  </button>
-                  <button
-                    className={`fixed-width-btn ${countryFilter.includes("US") ? "bg-primary" : "bg-secondary"}`}
-                    onClick={() => handleCountryFilter("US")}
-                  >
-                    {`${countryFilter.includes("US") ? "✅" : ""}`} US
-                  </button>
-                  <button
-                    className={`fixed-width-btn ${countryFilter.includes("UK") ? "bg-primary" : "bg-secondary"}`}
-                    onClick={() => handleCountryFilter("UK")}
-                  >
-                    {`${countryFilter.includes("UK") ? "✅" : ""}`} UK
-                  </button>
-                  <button
-                    className={`fixed-width-btn ${countryFilter.includes("AU") ? "bg-primary" : "bg-secondary"}`}
-                    onClick={() => handleCountryFilter("AU")}
-                  >
-                    {`${countryFilter.includes("AU") ? "✅" : ""}`} AU
-                  </button>
-                </div>
-              </li>
-
-
-            </ul>
-            {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call Back</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
-              <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
-            </div> : ""}
-            <div
-              className="tab-content recent-transactions-tab-body"
-              id="followUpContent"
-            >
-              <div
-                className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
-                // className="tab-pane fade"
-                id="new-arrivals-tkts-tab-pane"
-                role="tabpanel"
-                aria-labelledby="new-arrivals-tkts-tab"
-                tabindex="0"
-              >
-                <div className="followups-table table-responsive table-height">
-                  <table className="table">
-                    <thead className="sticky-header">
-                      <tr>
-                        <th tabindex="0">S.No.</th>
-                        <th tabindex="0">Date/Time</th>
-                        <th tabindex="0">Country</th>
-                        <th tabindex="0">Customer Name</th>
-                        <th tabindex="0">Customer Number</th>
-                        <th tabindex="0">Customer Email</th>
-                        <th tabindex="0">Status</th>
-                        <th tabindex="0">Requirement</th>
-                        <th tabindex="0">Action</th>
-                        <th tabindex="0">Ticket ID</th>
-                      </tr>
-                    </thead>
-                    {data ? (
-                      <tbody>
-                        {data.filter(
-                          (item) =>
-                            item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                            item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                          ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (                            <tr key={index}
-                            style={{
-                              boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
-                              zIndex: index === selectedKey ? 1 : "auto",
-                              position: index === selectedKey ? "relative" : "static"
-                            }}
-                            onClick={() => handleSelecteRow(index)}
-                          >
-                            <td>{itemsPerPage * currentPage + (index + 1)}.</td>
-                            <td>
-                              <span className="text">
-                                {item.queryTime.split(" ")[0].split("-")[2]}-
-                                {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
-                                {item.queryTime.split(" ")[0].split("-")[0]}
-                              </span>
-                              <br />
-                              <span>
-                                {convertTo12HourFormat(item.queryTime.split(" ")[1])}
-                              </span>
-                            </td>
-                            <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
-                            <td><span className="text">{item.senderName}</span></td>
-                            <td>
-                              {/* For Mobile Number */}
-                              <CopyToClipboard
-                                text={item.senderMobile}
-                                onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
-                              >
-                                <button
-                                  style={{
-                                    backgroundColor:
-                                      copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
-                                    color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
-                                  }}
-                                >
-                                  {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
-                                </button>
-                              </CopyToClipboard>
-                              <span className="text">{maskMobileNumber(item.senderMobile)}</span>
-                            </td>
-
-                            <td>
-                              {/* For Email */}
-                              <CopyToClipboard
-                                text={item.senderEmail}
-                                onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
-                              >
-                                <button
-                                  style={{
-                                    backgroundColor:
-                                      copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
-                                    color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
-                                  }}
-                                >
-                                  {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
-                                </button>
-                              </CopyToClipboard>
-                              <span className="text">{maskEmail(item.senderEmail)}</span>
-                            </td>
-
-                            <td onClick={() => handleShow(item.uniqueQueryId)} >
-                              <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                {item.ticketstatus}
-                              </a>
-                            </td>
-
-                            <td className="hover-cell">
-                              <span className="comment">{item.subject.slice(15, 30)}<br /></span>
-
-                              {/* Hidden message span that will show on hover */}
-                              <span className="message">{item.subject}</span>
-                            </td>
-
-                            {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
-
-                            <td>
-                              <span className="actions-wrapper">
-                                <Button
-                                  onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                  // onClick={handleView}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call bg-danger"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-info "></i>
-                                </Button>
-                                <Button
-                                  onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
-                                  // onClick={handleView}
-                                  data-bs-toggle="modal"
-                                  data-bs-target="#followUpModal"
-                                  className="btn-action call rounded-circle"
-                                  title="Get connect on call"
-                                ><i className="fa-solid fa-phone"></i>
-                                </Button>
-                                <a
-                                  href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                  className="btn-action message"
-                                  title="Get connect on message"
-                                ><i className="fa-solid fa-message"></i></a>
-                                <Button
-                                  onClick={() => handleOn(item.uniqueQueryId)}
-                                  // href="mailto:someone@example.com"
-                                  className="btn-action email"
-                                  title="Get connect on email"
-                                ><i className="fa-solid fa-envelope"></i
-                                ></Button>
-                                <a
-                                  href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                  target="_blank"
-                                  className="btn-action whatsapp"
-                                  title="Get connect on whatsapp"
-                                >
-                                  <i className="fa-brands fa-whatsapp"></i>
-                                </a>
-                                <Button
-                                  onClick={() => handleQuotation(item.uniqueQueryId)}
-                                  className="rounded-circle "
-                                  title="Get connect on"
-                                >
-                                  <i class="fa-share-from-square" ></i>
-                                </Button>
-
-                                <Button
-                                  onClick={() => handleInvoice(item.uniqueQueryId)}
-                                  className="rounded-circle "
-                                  title="Get connect on"
-                                >
-                                  <i className="fa-solid fa-file-invoice"></i>
-                                </Button>
-                              </span>
-                            </td>
-                            <td className="ticket-id">
-                              <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                            </td>
+                    <div className="followups-table table-responsive table-height">
+                      <table className="table">
+                        <thead className="sticky-header">
+                          <tr>
+                            <th tabindex="0">S.No.</th>
+                            <th tabindex="0">Date/Time</th>
+                            <th tabindex="0">Country</th>
+                            <th tabindex="0">Customer Name</th>
+                            <th tabindex="0">Customer Number</th>
+                            <th tabindex="0">Customer Email</th>
+                            <th tabindex="0">Status</th>
+                            <th tabindex="0">Requirement</th>
+                            <th tabindex="0">Action</th>
+                            <th tabindex="0">Ticket ID</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    ) : (
-                      <p>Loading...</p>
-                    )}
-                  </table>
+                        </thead>
+                        {data ? (
+                          <tbody>
+                            {data.filter(
+                              (item) =>
+                                item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                            ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (<tr key={index}
+                              style={{
+                                boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
+                                zIndex: index === selectedKey ? 1 : "auto",
+                                position: index === selectedKey ? "relative" : "static"
+                              }}
+                              onClick={() => handleSelecteRow(index)}
+                            >
+                              <td>{itemsPerPage * currentPage + (index + 1)}.</td>
+                              <td>
+                                <span className="text">
+                                  {item.queryTime.split(" ")[0].split("-")[2]}-
+                                  {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
+                                  {item.queryTime.split(" ")[0].split("-")[0]}
+                                </span>
+                                <br />
+                                <span>
+                                  {convertTo12HourFormat(item.queryTime.split(" ")[1])}
+                                </span>
+                              </td>
+                              <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                              <td><span className="text">{item.senderName}</span></td>
+                              <td>
+                                {/* For Mobile Number */}
+                                <CopyToClipboard
+                                  text={item.senderMobile}
+                                  onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
+                                >
+                                  <button
+                                    style={{
+                                      backgroundColor:
+                                        copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                      color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                    }}
+                                  >
+                                    {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                  </button>
+                                </CopyToClipboard>
+                                <span className="text">{maskMobileNumber(item.senderMobile)}</span>
+                              </td>
+
+                              <td>
+                                {/* For Email */}
+                                <CopyToClipboard
+                                  text={item.senderEmail}
+                                  onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
+                                >
+                                  <button
+                                    style={{
+                                      backgroundColor:
+                                        copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                      color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                    }}
+                                  >
+                                    {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                  </button>
+                                </CopyToClipboard>
+                                <span className="text">{maskEmail(item.senderEmail)}</span>
+                              </td>
+
+                              <td onClick={() => handleShow(item.uniqueQueryId)} >
+                                <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                  style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                  {item.ticketstatus}
+                                </a>
+                              </td>
+
+                              <td className="hover-cell">
+                                <span className="comment">{item.subject.slice(15, 30)}<br /></span>
+
+                                {/* Hidden message span that will show on hover */}
+                                <span className="message">{item.subject}</span>
+                              </td>
+
+                              {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
+
+                              <td>
+                                <span className="actions-wrapper">
+                                  <Button
+                                    onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                    // onClick={handleView}
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#followUpModal"
+                                    className="btn-action call bg-danger"
+                                    title="Get connect on call"
+                                  ><i className="fa-solid fa-info "></i>
+                                  </Button>
+                                  <Button
+                                    onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
+                                    // onClick={handleView}
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#followUpModal"
+                                    className="btn-action call rounded-circle"
+                                    title="Get connect on call"
+                                  ><i className="fa-solid fa-phone"></i>
+                                  </Button>
+                                  <a
+                                    href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                    className="btn-action message"
+                                    title="Get connect on message"
+                                  ><i className="fa-solid fa-message"></i></a>
+                                  <Button
+                                    onClick={() => handleOn(item.uniqueQueryId)}
+                                    // href="mailto:someone@example.com"
+                                    className="btn-action email"
+                                    title="Get connect on email"
+                                  ><i className="fa-solid fa-envelope"></i
+                                  ></Button>
+                                  <a
+                                    href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                    target="_blank"
+                                    className="btn-action whatsapp"
+                                    title="Get connect on whatsapp"
+                                  >
+                                    <i className="fa-brands fa-whatsapp"></i>
+                                  </a>
+                                  <Button
+                                    onClick={() => handleQuotation(item.uniqueQueryId)}
+                                    className="rounded-circle "
+                                    title="Get connect on"
+                                  >
+                                    <i class="fa-share-from-square" ></i>
+                                  </Button>
+
+                                  <Button
+                                    onClick={() => handleInvoice(item.uniqueQueryId)}
+                                    className="rounded-circle "
+                                    title="Get connect on"
+                                  >
+                                    <i className="fa-solid fa-file-invoice"></i>
+                                  </Button>
+                                </span>
+                              </td>
+                              <td className="ticket-id">
+                                <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                              </td>
+                            </tr>
+                            ))}
+                          </tbody>
+                        ) : (
+                          <p>Loading...</p>
+                        )}
+                      </table>
+                    </div>
+                  </div>
+
+
                 </div>
               </div>
+              <div className="pagination-controls">
+                <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                {generatePageNumbers().map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                  >
+                    {page + 1}
+                  </button>
+                ))}
+                <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
 
-
+                <span> Items per page:</span>{' '}
+                <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="1000">1000</option>
+                </select>
+              </div>
             </div>
-          </div>
-          <div className="pagination-controls">
-            <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-            {generatePageNumbers().map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`next_prev ${page === currentPage ? 'active' : ''}`}
-              >
-                {page + 1}
-              </button>
-            ))}
-            <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
-
-            <span> Items per page:</span>{' '}
-            <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="15">15</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="1000">1000</option>
-            </select>
-          </div>
+          </section>
         </div>
-      </section>
+      </div>
       {/* <!-- -------------- -->
 
             <!-- ------------------------------------------------------------
