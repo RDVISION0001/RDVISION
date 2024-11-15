@@ -566,6 +566,16 @@ function Sidenav() {
           </>
         )}
 
+        {/* commom tab */}
+        <li className="nav-item">
+          <NavLink target='_blank' to="/invoice" className="nav-link">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <span className="nav-text">Invoice</span>
+          </NavLink>
+        </li>
+
+
+
         {/* <li className="nav-item">
           <NavLink to="/settings" className="nav-link">
             <i className="fa-solid fa-gear"></i>

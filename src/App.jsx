@@ -26,6 +26,9 @@ import ActionMode from './pages/ActionMode';
 import SalesReport from './pages/SalesReport';
 import VerifyedSales from './pages/VerifyedSales';
 
+import InvoiceNewTemp from './pages/InvoiceNewTemp';
+
+
 
 
 // auth
@@ -183,6 +186,9 @@ function App() {
                   <Route exact path="/action_mode" element={<ActionMode />} />
                   <Route exact path="/sales_report" element={<SalesReport />} />
                   <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
+
+                  <Route exact path="/invoice" element={<InvoiceNewTemp />} />
+
 
 
                   {/* admin */}
