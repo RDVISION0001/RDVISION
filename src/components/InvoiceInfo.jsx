@@ -278,7 +278,6 @@ const fetchTicketSaleData =async()=>{
                             <thead>
                                 <tr className='border'>
                                     <th className='text-center'>Created Date</th>
-                                    <th className='text-center'>Ticket ID</th>
                                     <th className='text-center'>Total Amount</th>
                                     <th className='text-center'>Quoted Price</th>
                                     <th className='text-center'>Last Update</th>
@@ -297,7 +296,6 @@ const fetchTicketSaleData =async()=>{
                                             <td className='text-center'>
                                                 {invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}
                                             </td>
-                                            <td className='text-center'>{invoice.ticketId}</td>
                                             <td className='text-center'>{invoice.currency} {invoice.totalAmount}</td>
                                             <td className='text-center'>{invoice.quotedPrice}</td>
                                             <td className='text-center'>{setFormate(invoice.lastupdateDate)}</td>
@@ -359,6 +357,9 @@ const fetchTicketSaleData =async()=>{
                     </div>
                 </div>
             </section>
+
+
+            {/* 2nd table */}
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
@@ -367,7 +368,6 @@ const fetchTicketSaleData =async()=>{
                             <thead>
                                 <tr className='border'>
                                     <th className='text-center'>Sale Date</th>
-                                    <th className='text-center'>Ticket ID</th>
                                     <th className='text-center'>Name</th>
                                     <th className='text-center'>Tracking Id</th>
                                     <th className='text-center'>Delivery Status</th>
@@ -383,7 +383,6 @@ const fetchTicketSaleData =async()=>{
                                             <td className='text-center'>
                                                 {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate):"N/A"}
                                             </td>
-                                            <td className='text-center'>{invoice.uniqueQueryId.slice(0,10)}</td>
                                             <td className='text-center'>{invoice.senderName?invoice.senderName:invoice.firstName}</td>
                                             <td className='text-center'>{ invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>:"Awaiting for Tracking..." }</td>
                                            
