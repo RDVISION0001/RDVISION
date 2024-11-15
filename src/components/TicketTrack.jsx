@@ -149,29 +149,42 @@ const TicketTrack = () => {
     return (
         <>
             <div className='text-center'>
-                <div ref={scrollRef} style={{ overflowY: "auto", height: "85vh" }}>
+                <div ref={scrollRef} style={{ overflowY: "auto", maxHeight: "110vh" }}>
                     {data && data.map((step, index) => (
                         <div key={index}>
-                            <div className='text-center' style={{
-                                height: "100px",
-                                width: "200px",
-                                backgroundColor: getColorbuttByStatus(step.ticketStatus), // Apply dynamic color to entire box
-                                borderRadius: "50px",
-                                marginTop: "10px",
-                                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)" // Add shadow effect
-                            }}>
+                            <div
+                                className='text-center'
+                                style={{
+                                    height: "100px",
+                                    width: "200px",
+                                    backgroundColor: getColorbuttByStatus(step.ticketStatus),
+                                    borderRadius: "50px",
+                                    marginTop: "10px",
+                                    border: "2px solid", // Ensure the border is visible
+                                    animation: "borderChange 6s ease-in-out infinite", // Smooth transition applied
+                                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)"
+                                }}
+                            >
                                 <div className='fw-bold'>
                                     {step.customerName.length > 15 ? `${step.customerName.slice(0, 15)}...` : step.customerName}
                                 </div>
-                                <div style={{ fontSize: "12px" }}>{step.action}</div>
-                                <div onClick={() => handleShow(step.ticketId)}>
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                        style={{ backgroundColor: getColorByStatus(step.ticketStatus) }}>
-                                        {step.ticketStatus}
+                                <div style={{ fontSize: "12px" }}>{step.action.slice(0,15)}</div>
+                                <div onClick={() => handleShow(step.ticketId)} >
+                                    <a
+                                        className="btn btn-info dropdown-toggle"
+                                        role="button"
+                                        id="dropdownMenuLink"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style={{ backgroundColor: getColorByStatus(step.ticketStatus),fontSize:"12px" }}
+                                    >
+                                        {step.ticketStatus.slice(0,10)}
                                     </a>
                                 </div>
                                 <div style={{ fontSize: "12px" }}>{formatDate(step.queryDate)}</div>
                             </div>
+
+
                         </div>
                     ))}
                 </div>

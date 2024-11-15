@@ -588,3 +588,35 @@
 .progress-bar-custom-5 {
     background-color: #8e44ad;
 }
+@keyframes borderChange {
+  0% {
+    border-top-color: #ff6f61; /* Soft Red */
+    border-right-color: #6b9ac4; /* Cool Blue */
+    border-bottom-color: #4b9f6f; /* Fresh Green */
+    border-left-color: #f1c6a3; /* Light Peach */
+  }
+  25% {
+    border-top-color: #6b9ac4; /* Cool Blue */
+    border-right-color: #4b9f6f; /* Fresh Green */
+    border-bottom-color: #f1c6a3; /* Light Peach */
+    border-left-color: #ff6f61; /* Soft Red */
+  }
+  50% {
+    border-top-color: #4b9f6f; /* Fresh Green */
+    border-right-color: #f1c6a3; /* Light Peach */
+    border-bottom-color: #ff6f61; /* Soft Red */
+    border-left-color: #6b9ac4; /* Cool Blue */
+  }
+  75% {
+    border-top-color: #f1c6a3; /* Light Peach */
+    border-right-color: #ff6f61; /* Soft Red */
+    border-bottom-color: #6b9ac4; /* Cool Blue */
+    border-left-color: #4b9f6f; /* Fresh Green */
+  }
+  100% {
+    border-top-color: #ff6f61; /* Soft Red */
+    border-right-color: #6b9ac4; /* Cool Blue */
+    border-bottom-color: #4b9f6f; /* Fresh Green */
+    border-left-color: #f1c6a3; /* Light Peach */
+  }
+}

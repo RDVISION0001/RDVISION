@@ -18,6 +18,7 @@ function topnav() {
   const {setUserReportReloader}=useAuth()
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
+  const [isSideBarOpen,setIsSideBarOpen]=useState(true)
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -113,13 +114,17 @@ function topnav() {
     const response = await axiosInstance.get(`/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`)
     setTodayFollowups(response.data)
   }
+
+  const toggleSidbar=()=>{
+    setIsSideBarOpen(!isSideBarOpen)
+  }
   return (
     <>
       {localStorage.getItem("userId") &&
         <div className="topnav">
           <nav className="navbar top-navbar navbar-light bg-white container-fluid">
             <div className="left-part">
-              <a className="btn border-0 ms-2" id="menu-btn"><i className="fa-solid fa-bars"></i></a>
+              <a className="btn border-0 ms-2 bg-white text-black" style={{fontSize:"30px"}} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen?<i class="fa-solid fa-chevron-left fa-xl"></i>:<i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
             </div>
             <TimezoneClocks />
             <div className="right-part">
