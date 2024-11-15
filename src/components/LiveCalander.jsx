@@ -52,6 +52,7 @@ function LiveCalander() {
         end: new Date(item.date),
         allDay: false,
         type: 'live',
+        comment: item.comments.split(","), // Add comment field
       })),
       ...calenderDataForUploaded.map((item) => ({
         title: `ABC Follow-up: ${item['no of tickets']}`,
@@ -59,10 +60,12 @@ function LiveCalander() {
         end: new Date(item.date),
         allDay: false,
         type: 'uploaded',
+        comment: item.comments.split(","), // Add comment field
       })),
     ];
     setEvents(combinedEvents);
   }, [calenderData, calenderDataForUploaded]);
+
 
   const handleViewChange = (view) => {
     setCurrentView(view);
@@ -95,11 +98,13 @@ function LiveCalander() {
               }
               return { style };
             }}
+            tooltipAccessor={(event) => `${event.title} - Comment: ${event.comment}`}
             onSelectEvent={(event) => openInNewTab("/in_negotiation", event.start)}
             timeslots={2}
             step={30}
             showMultiDayTimes
           />
+
         </div>
       </div>
     </div>
