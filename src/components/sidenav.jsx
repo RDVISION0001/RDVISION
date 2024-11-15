@@ -6,8 +6,6 @@ import axiosInstance from '../axiosInstance';
 
 function Sidenav() {
   const { roleName, firstName, lastName } = useAuth();
-  const [isTicketSubMenuOpen, setIsTicketSubMenuOpen] = useState(false);
-  const [isInvoiceSubMenuOpen, setIsInvoiceSubMenuOpen] = useState(false);
 
   const [liveTickets, setLiveTickets] = useState({
     totalAssignTickets: 0,
@@ -119,15 +117,6 @@ function Sidenav() {
 
   }
 
-  // Toggle the Tickets sub-menu for the Closer role
-  const toggleTicketSubMenu = () => {
-    setIsTicketSubMenuOpen((prev) => !prev);
-  };
-
-  // Toggle the Invoices sub-menu for the Closer role
-  const toggleInvoiceSubMenu = () => {
-    setIsInvoiceSubMenuOpen((prev) => !prev);
-  };
 
 
   return (
@@ -165,55 +154,34 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleTicketSubMenu}>
-                <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets <i class="fa-solid fa-circle-chevron-down" style={{ color: "#06327f" }}></i></span>
-              </div>
-              {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4 ">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
-                      <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
-                      <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                      <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+                <i className="fa-solid fa-headset"></i>
+                <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
+              </NavLink>
             </li>
-            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
-                <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
-              </div>
-              {isInvoiceSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                      <i className="fa-solid fa-hourglass-half"></i>
-                      <span className="nav-text">Pending</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+                <i className="fa-solid fa-upload"></i>
+                <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+                <i className="fa-solid fa-handshake"></i>
+                <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
+                <i className="fa-solid fa-hourglass-half"></i>
+                <span className="nav-text">Pending</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
+                <i className="fa-solid fa-check-circle"></i>
+                <span className="nav-text">Paid</span>
+              </NavLink>
             </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/super_admin_sales" className="nav-link">
@@ -284,55 +252,34 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleTicketSubMenu}>
-                <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}> <span>Tickets</span> <i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
-              </div>
-              {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4 ">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
-                      <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
-                      <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                      <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+                <i className="fa-solid fa-headset"></i>
+                <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
+              </NavLink>
             </li>
-            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
-                <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices <i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
-              </div>
-              {isInvoiceSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                      <i className="fa-solid fa-hourglass-half"></i>
-                      <span className="nav-text">Pending</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+                <i className="fa-solid fa-upload"></i>
+                <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+                <i className="fa-solid fa-handshake"></i>
+                <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
+                <i className="fa-solid fa-hourglass-half"></i>
+                <span className="nav-text">Pending</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
+                <i className="fa-solid fa-check-circle"></i>
+                <span className="nav-text">Paid</span>
+              </NavLink>
             </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/upload_products" className="nav-link">
@@ -373,72 +320,48 @@ function Sidenav() {
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <div className="nav-link" onClick={toggleTicketSubMenu}>
-                <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
-                <i className={`fa-solid ${isTicketSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
-              </div>
-              {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
-                      <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                        {liveTickets.totalAssignTickets}
-                      </span>
-                      </span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
-                      <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">
-                        ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                          {uploadedTickets.totalNewTickets}
-                        </span>
-                      </span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                      <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">
-                        In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                          {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
-                        </span>
-                      </span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
-            </li>
-            {/* Invoices Sub-menu */}
-            <li className="nav-item">
-              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
-                <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
-                <i className={`fa-solid ${isInvoiceSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
-              </div>
 
-              {isInvoiceSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                      <i className="fa-solid fa-hourglass-half"></i>
-                      <span className="nav-text">Pending</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+            <li className="nav-item">
+              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+                <i className="fa-solid fa-headset"></i>
+                <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                  {liveTickets.totalAssignTickets}
+                </span>
+                </span>
+              </NavLink>
             </li>
-
+            <li className="nav-item">
+              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+                <i className="fa-solid fa-upload"></i>
+                <span className="nav-text">
+                  ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                    {uploadedTickets.totalNewTickets}
+                  </span>
+                </span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+                <i className="fa-solid fa-handshake"></i>
+                <span className="nav-text">
+                  In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                    {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
+                  </span>
+                </span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
+                <i className="fa-solid fa-hourglass-half"></i>
+                <span className="nav-text">Pending</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
+                <i className="fa-solid fa-check-circle"></i>
+                <span className="nav-text">Paid</span>
+              </NavLink>
+            </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/after_sales_service" className="nav-link">
                 <i className="fa-solid fa-headphones"></i>
@@ -451,14 +374,6 @@ function Sidenav() {
                 <span className="nav-text">Products Information</span>
               </NavLink>
             </li>
-
-
-            {/* <li className="nav-item">
-              <NavLink to="/closer_sales" className="nav-link">
-                <i className="fa-solid fa-hand-holding-dollar"></i>
-                <span className="nav-text">Sale's Status</span>
-              </NavLink>
-            </li> */}
           </>
         )}
 
@@ -524,55 +439,34 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleTicketSubMenu}>
-                <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets<i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
-              </div>
-              {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4 ">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
-                      <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/upload_tickets" className="nav-link">
-                      <i className="fa-solid fa-upload"></i>
-                      <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                      <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+                <i className="fa-solid fa-headset"></i>
+                <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
+              </NavLink>
             </li>
-            {/* Invoices Sub-menu */}
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
-                <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices<i class="fa-solid fa-caret-down fa-2xl" style={{ color: "#8d8b8b" }}></i></span>
-              </div>
-              {isInvoiceSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                      <i className="fa-solid fa-hourglass-half"></i>
-                      <span className="nav-text">Pending</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+                <i className="fa-solid fa-upload"></i>
+                <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+                <i className="fa-solid fa-handshake"></i>
+                <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
+                <i className="fa-solid fa-hourglass-half"></i>
+                <span className="nav-text">Pending</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
+                <i className="fa-solid fa-check-circle"></i>
+                <span className="nav-text">Paid</span>
+              </NavLink>
             </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/captain_sales" className="nav-link">
@@ -613,34 +507,29 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <div className="nav-link" onClick={toggleTicketSubMenu}>
-                <i className="fa-solid fa-ticket"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Tickets</span>
-                <i className={`fa-solid ${isTicketSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
-              </div>
-              {isTicketSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/live_tickets" className="nav-link">
-                      <i className="fa-solid fa-headset"></i>
-                      <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                        {liveTickets.totalAssignTickets}
-                      </span>
-                      </span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                      <i className="fa-solid fa-handshake"></i>
-                      <span className="nav-text">
-                        In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
-                          {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
-                        </span>
-                      </span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+              <NavLink target='_blank' to="/sales_report" className="nav-link">
+                <i className="fa-solid fa-trophy"></i>
+                <span className="nav-text">Sales Report</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+                <i className="fa-solid fa-headset"></i>
+                <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                  {liveTickets.totalAssignTickets}
+                </span>
+                </span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+                <i className="fa-solid fa-handshake"></i>
+                <span className="nav-text">
+                  In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
+                    {liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}
+                  </span>
+                </span>
+              </NavLink>
             </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/assign_ticket_report" className="nav-link">
@@ -660,30 +549,18 @@ function Sidenav() {
                 <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
-            {/* Invoices Sub-menu */}
-            <li className="nav-item">
-              <div className="nav-link" onClick={toggleInvoiceSubMenu}>
-                <i className="fa-solid fa-file-invoice"></i>
-                <span className="nav-text" style={{ cursor: "pointer" }}>Invoices</span>
-                <i className={`fa-solid ${isInvoiceSubMenuOpen ? 'fa-chevron-up' : 'fa-chevron-down'} ml-2`}></i>
-              </div>
 
-              {isInvoiceSubMenuOpen && (
-                <ul className="nav flex-column px-4">
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                      <i className="fa-solid fa-hourglass-half"></i>
-                      <span className="nav-text">Pending</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                      <i className="fa-solid fa-check-circle"></i>
-                      <span className="nav-text">Paid</span>
-                    </NavLink>
-                  </li>
-                </ul>
-              )}
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
+                <i className="fa-solid fa-hourglass-half"></i>
+                <span className="nav-text">Pending</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
+                <i className="fa-solid fa-check-circle"></i>
+                <span className="nav-text">Paid</span>
+              </NavLink>
             </li>
 
           </>
