@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Bar, Line } from 'react-chartjs-2';
-import { Chart, CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
-import { Card, Container, Col } from 'react-bootstrap';
+import { Bar } from 'react-chartjs-2';
+import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
 
 // Register chart.js components
-Chart.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function UserWorkTimeReport(props) {
     const [monthly, setMonthly] = useState(false);
@@ -14,18 +13,18 @@ function UserWorkTimeReport(props) {
     const [totalWorktime, setTotalWorktime] = useState(0);
     const [totalBeakTime, setTotalBreakTime] = useState(0);
     const [defaultUrl, setDefaultUrl] = useState("/third_party_api/ticket");
-    const [dateChange,setDateChange]=useState()
-  
+    const [dateChange, setDateChange] = useState();
 
     useEffect(() => {
         loadeUserDetails();
-        setDateChange(props.start)
-        setWorkData({ userId: props.user, weeks: 1,endDate:props.start,startDate:props.end})
-    }, [props.start,props.end]);
+        setDateChange(props.start);
+        setWorkData({ userId: props.user, weeks: 1, endDate: props.start, startDate: props.end });
+    }, [props.start, props.end]);
 
     const loadeUserDetails = async () => {
-        const response = await axiosInstance.get(`/user/get/${props.user}`);
-        setUserDetails(response.data.dto);
+        // const response = await axiosInstance.get(`/user/get/${props.user}`);
+        // setUserDetails(response.data.dto);
+        // console.log(response.data.dto)
     };
 
     const [chartData, setChartData] = useState({
@@ -49,8 +48,7 @@ function UserWorkTimeReport(props) {
     });
 
     const [apiData, setApiData] = useState([]);
-    const [workData, setWorkData] = useState({ userId: props.user, weeks: 1,endDate:props.start,startDate:props.end});
-    const [workDataTickets, setWorkDataForTickets] = useState({ userId: props.user, weeks: 1 });
+    const [workData, setWorkData] = useState({ userId: props.user, weeks: 1, endDate: props.start, startDate: props.end });
 
     const toggleMonthly = () => {
         setMonthly(!monthly);
@@ -61,9 +59,28 @@ function UserWorkTimeReport(props) {
         setApiData(response.data);
     };
 
+    const getDayOfWeek = (dateArray) => {
+        const [year, month, day] = dateArray;
+        const date = new Date(year, month - 1, day); // JavaScript months are 0-based
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        return daysOfWeek[date.getDay()];
+    };
+
+    const processData = (data) => {
+        return data.map(item => {
+            const dayOfWeek = getDayOfWeek(item.date);
+            return {
+                totalBreakTime: item.totalBreakTime,
+                totalWorkTime: item.totalWorkTime,
+                day: dayOfWeek
+            };
+        });
+    };
+
     const loadWorks = async () => {
         const response = await axiosInstance.post("/user/userreport", workData);
-        setApiData(response.data);
+        setApiData(processData(response.data));
+        console.log(processData(response.data));
     };
 
     const numberToMonthName = (number) => {
@@ -83,13 +100,13 @@ function UserWorkTimeReport(props) {
             }
         };
         fetchData();
-    }, [monthly, workData,props.start,props.end]);
+    }, [monthly, workData, props.start, props.end]);
 
     useEffect(() => {
         if (apiData.length > 0) {
             const labels = monthly
                 ? apiData.map(item => `${numberToMonthName(item.month)}_${item.year}`)
-                : apiData.map(item => item.date && item.date.join('-'));
+                : apiData.map(item => item.day); // Use day name as the label
             const workData = apiData.map(item => item.totalWorkTime / 3600);
             const breakData = apiData.map(item => item.totalBreakTime / 3600);
             let workTimeSum = 0;
@@ -162,26 +179,7 @@ function UserWorkTimeReport(props) {
                 <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hrs.</span></div>
                 <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hrs.</span></div>
             </div>
-            <p style={{ fontSize: "12px",marginLeft:"5px" }}>Work report</p>
-            {/* <div className='d-flex justify-content-center align-items-center'>
-                <select
-                    className="form-select w-100 "
-                    style={{ fontSize: "10px" }}
-                    value={workData.weeks}
-                    onChange={(e) =>
-                        setWorkData(prevData => ({
-                            ...prevData,
-                            weeks: e.target.value,
-                        }))
-                    }
-                >
-                    <option value="1">1 Week</option>
-                    <option value="2">2 Week</option>
-                    <option value="3">3 Week</option>
-                    <option value="4">4 Week</option>
-                </select>
-            </div> */}
-
+            <p style={{ fontSize: "12px", marginLeft: "5px" }}>Work report</p>
             <div style={{ height: '130px' }}> {/* Adjust height here */}
                 <Bar data={chartData} options={chartOptions} />
             </div>

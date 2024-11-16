@@ -61,14 +61,14 @@ const TicketTrack = () => {
 
     const getColorbuttByStatus = (ticketStatus) => {
         const colors = {
-            'New': '#A3D8F4',            // Light Soft Blue
-            'Sale': '#9FE2BF',           // Light Soft Green
-            'Follow': '#A3D8F4',         // Light Soft Blue
-            'Interested': '#FFD3B5',     // Light Muted Orange
-            'Not_Interested': '#FFB6B9', // Light Soft Red
-            'Wrong_Number': '#E0E0E0',   // Lighter Gray
-            'Not_Pickup': '#E0EFF6',     // Lighter Blue
-            'hang_up': '#FFF8E1'         // Lighter Yellow
+            // 'New': '#A3D8F4',            // Light Soft Blue
+            // 'Sale': '#9FE2BF',           // Light Soft Green
+            // 'Follow': '#A3D8F4',         // Light Soft Blue
+            // 'Interested': '#FFD3B5',     // Light Muted Orange
+            // 'Not_Interested': '#FFB6B9', // Light Soft Red
+            // 'Wrong_Number': '#E0E0E0',   // Lighter Gray
+            // 'Not_Pickup': '#E0EFF6',     // Lighter Blue
+            // 'hang_up': '#FFF8E1'         // Lighter Yellow
         };
         return colors[ticketStatus] || 'white';
     };

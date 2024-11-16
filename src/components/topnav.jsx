@@ -208,7 +208,7 @@ function topnav() {
                   cursor: "pointer"
                 }}
               ></i>
-              <LiveCalander />
+              <LiveCalander  model={true}/>
             </div>
           </dialog>
 

@@ -293,7 +293,7 @@ const InvoiceInfo = (props) => {
                                             </td>
                                             <td className='text-center'>{invoice.orderDto.productOrders[0].currency} {invoice.orderDto.totalPayableAmount}</td>
                                             <td className='text-center'>{invoice.customerName}</td>
-                                            <td className='text-center'><img src={getFlagUrl(invoice.countryIso)} alt="" /></td>
+                                            <td className='text-center'><img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}</td>
                                             <td className='text-center'>{
                                                 invoice.orderDto.productOrders.map((order, index) => (
                                                     <span>{order.product[0].name}</span>

@@ -64,7 +64,7 @@ const ChartWorktime = () => {
   const today = new Date();
   const formatedToday = new Date().toISOString().split('T')[0];
   const pastDate = new Date(today); // Create a new Date object based on today
-  pastDate.setDate(pastDate.getDate() - 30); // Subtract 30 days
+  pastDate.setDate(pastDate.getDate() - 7); // Subtract 30 days
   const formattedPastDate = pastDate.toISOString().split('T')[0];
   const [startDate, setStartDate] = useState(formattedPastDate)
   const [endDate, setEndDate] = useState(formatedToday)
@@ -146,7 +146,7 @@ const ChartWorktime = () => {
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-8">
-            <LiveCalander />
+            <LiveCalander/>
           </div>
           <div className="col-md-4 " >
             <div className="bg-white  d-flex justify-content-between align-items-center p-3">
