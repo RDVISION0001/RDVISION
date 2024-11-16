@@ -153,7 +153,7 @@ const ChartWorktime = () => {
               <div>
             <div className='d-flex justify-content-between items-align-center'>
                         <div></div>
-                        <div className='d-flex '>
+                        {/* <div className='d-flex '>
                             <div className='d-flex justify-content-center align-items-center' style={{ paddingTop:"15px" }}>
                                 <i class="fa-solid fa-filter fa-xl"></i>
                             </div>
@@ -177,7 +177,7 @@ const ChartWorktime = () => {
                                     type="date"
                                 />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <UserWorkTimeReport user={userId} start={startDate} end={endDate} isShowingToUser={true}/>
                     </div>

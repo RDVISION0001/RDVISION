@@ -2,14 +2,16 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import { Button } from 'react-bootstrap';
+import { useAuth } from '../auth/AuthContext';
 
 const InvoiceInfo = (props) => {
     const [invoices, setInvoices] = useState([]);
+    const { userId } = useAuth()
     const [currentSrc, setCurrentSrc] = useState('');
     const [isPlaying, setIsPlaying] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const audioRef = useRef(null);
-    const [selectedIndex,setSelectedIndex]=useState(0)
+    const [selectedIndex, setSelectedIndex] = useState(0)
 
     const [invoiceData, setInvoiceData] = useState({
         totalInvoices: null,
@@ -21,7 +23,7 @@ const InvoiceInfo = (props) => {
     const [selectedTicket, setSelectedTicket] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
     // Fetch Invoice Count Data
     useEffect(() => {
         fetchInvoiceData();
@@ -34,18 +36,18 @@ const InvoiceInfo = (props) => {
         const formattedMonth = String(month).padStart(2, '0');
         const formattedDay = String(day).padStart(2, '0');
         return `${year}-${convertNumberToStringMonth(formattedMonth)}-${formattedDay}`;
-      }
-    
+    }
 
-const [saleTicketData,setSaleTicketData]=useState([])
 
-const fetchTicketSaleData =async()=>{
-    const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
-        user: localStorage.getItem("roleName")==="Closer"?localStorage.getItem("userId"):0,
-        stage: 3,
-      });
-      setSaleTicketData(response.data);
-}
+    const [saleTicketData, setSaleTicketData] = useState([])
+
+    const fetchTicketSaleData = async () => {
+        const response = await axiosInstance.post('/third_party_api/ticket/negotiationstagebased', {
+            user: localStorage.getItem("roleName") === "Closer" ? localStorage.getItem("userId") : 0,
+            stage: 3,
+        });
+        setSaleTicketData(response.data);
+    }
 
     const fetchInvoiceData = async () => {
         try {
@@ -70,15 +72,8 @@ const fetchTicketSaleData =async()=>{
 
     const fetchInvoices = async () => {
         try {
-            const response = await axiosInstance.get("/invoice/getinvoices");
-           if(props.stage===4){
-            setInvoices(response.data.filter((invoice)=>invoice.deliveryStatus!=="Delivered" && invoice.inviceStatus==="paid"))
-           }else if(props.stage===5){
-            setInvoices(response.data.filter((invoice)=>invoice.deliveryStatus==="Delivered"))
-           }
-           else{
-            setInvoices(response.data);
-           }
+            const response = await axiosInstance.get(`/invoice/getAssInvoice/${userId}`);
+            setInvoices(response.data)
         } catch (error) {
             console.error("Error fetching invoices:", error);
             setError("Failed to fetch invoices");
@@ -125,7 +120,7 @@ const fetchTicketSaleData =async()=>{
     const handleClick = async (ticketId) => {
         try {
             const response = await axiosInstance.get(`/invoice/clickToCall/${ticketId}`);
-            
+
         } catch (error) {
             console.error("Error calling ticket:", error);
         }
@@ -133,16 +128,16 @@ const fetchTicketSaleData =async()=>{
 
     const handleClickCallForticket = async (ticketId) => {
         try {
-            const response = await axiosInstance.get(`${ticketId.length<15?"/third_party_api/ticket/":"/upload/"}clickToCall/${ticketId}`);
-            
+            const response = await axiosInstance.get(`${ticketId.length < 15 ? "/third_party_api/ticket/" : "/upload/"}clickToCall/${ticketId}`);
+
         } catch (error) {
             console.error("Error calling ticket:", error);
         }
     };
-   
 
-   
-    const playRecording = useCallback((src,index) => {
+
+
+    const playRecording = useCallback((src, index) => {
         // Construct the new URL from src
         setSelectedIndex(index)
         let newUrl = `https:${src.split(":")[2].split("}")[0]}`; // Ensure proper URL formation
@@ -187,10 +182,10 @@ const fetchTicketSaleData =async()=>{
         let newdate = date && (JSON.stringify(date).split("[")[1]).split("]")[0]
         return newdate && `${newdate.split(",")[2]}-${convertNumberToStringMonth(newdate.split(",")[1])}-${newdate.split(",")[0]}`;
     }
-  
+    console.log(invoices)
     return (
         <>
-            {props.stage !==4 && <section className="sadmin-top-section">
+            {props.stage !== 4 && <section className="sadmin-top-section">
                 <div className="container-fluid">
                     <div className="row">
                         {/* Total Invoices */}
@@ -273,16 +268,16 @@ const fetchTicketSaleData =async()=>{
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                       {props.stage===4?<h3 className="title">Invoice Tracking</h3>: <h3 className="title">Invoices for after sales service</h3>}
+                        {props.stage === 4 ? <h3 className="title">Invoice Tracking</h3> : <h3 className="title">Invoices for after sales service</h3>}
                         <table className="table">
                             <thead>
                                 <tr className='border'>
                                     <th className='text-center'>Created Date</th>
                                     <th className='text-center'>Total Amount</th>
-                                    <th className='text-center'>Quoted Price</th>
-                                    <th className='text-center'>Last Update</th>
-                                    <th className='text-center'>Tracking Id</th>
-                                    <th className='text-center'>Invoice Status</th>
+                                    <th className='text-center'>Customer Name</th>
+                                    <th className='text-center'>Country</th>
+                                    <th className='text-center'>Order Details</th>
+                                    {localStorage.getItem("roleName") === "SeniorSuperVisor" && <th className='text-center'>Tracking Number</th>}
                                     <th className='text-center'>Delivery Status</th>
                                     <th className='text-center'>Last Call Status</th>
                                     <th className='text-center'>Action</th>
@@ -291,23 +286,26 @@ const fetchTicketSaleData =async()=>{
                             </thead>
                             <tbody className='overflow'>
                                 {invoices.length > 0 ? (
-                                    invoices.map((invoice,index) => (
+                                    invoices.map((invoice, index) => (
                                         <tr key={index} className='border'>
                                             <td className='text-center'>
-                                                {invoice.createDate[2]}-{convertNumberToStringMonth(invoice.createDate[1])}-{invoice.createDate[0]}
+                                                {invoice.saleDate && invoice.saleDate[2]}-{convertNumberToStringMonth(invoice.saleDate && invoice.saleDate[1])}-{invoice.saleDate && invoice.saleDate[0]}
                                             </td>
-                                            <td className='text-center'>{invoice.currency} {invoice.totalAmount}</td>
-                                            <td className='text-center'>{invoice.quotedPrice}</td>
-                                            <td className='text-center'>{setFormate(invoice.lastupdateDate)}</td>
-                                            <td className='text-center'>{(invoice.inviceStatus === "paid") ? invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.ticketId)}>Add Tracking Number</button>:"Awaiting for Tracking..." : "Awaiting For Tracking..."}</td>
-                                            <td className={`${invoice.inviceStatus === 'Pending' ? "text-danger" : "text-success"} text-center fw-bold`}>
-                                                {invoice.inviceStatus}
-                                            </td>
-                                            <td className='text-center'>{invoice.deliveryStatus}</td>
+                                            <td className='text-center'>{invoice.orderDto.productOrders[0].currency} {invoice.orderDto.totalPayableAmount}</td>
+                                            <td className='text-center'>{invoice.customerName}</td>
+                                            <td className='text-center'><img src={getFlagUrl(invoice.countryIso)} alt="" /></td>
+                                            <td className='text-center'>{
+                                                invoice.orderDto.productOrders.map((order, index) => (
+                                                    <span>{order.product[0].name}</span>
+                                                ))
+                                            }</td>
+                                            {localStorage.getItem("roleName") === "SeniorSuperVisor" && <td className='text-center'>{invoice.trackingNumber?invoice.trackingNumber: <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>}</td>}
+
+                                            <td className='text-center'>{invoice.deliveryStatus ? invoice.deliveryStatus : "N/A"}</td>
                                             <td className='text-center'>{invoice.assCallStatus}</td>
                                             <td className='text-center'>
                                                 <Button
-                                                    onClick={() => handleClick(invoice.ticketId)}
+                                                    onClick={() => handleClick(invoice.uniqueQueryId)}
                                                     className="btn-action call rounded-circle"
                                                     title="Get connect on call"
                                                 >
@@ -315,12 +313,12 @@ const fetchTicketSaleData =async()=>{
                                                 </Button>
                                             </td>
                                             <td className='text-center'>
-                                               {invoice.callRecording? <Button
+                                                {invoice.callRecording ? <Button
                                                     className=""
-                                                    onClick={() => playRecording(invoice.callRecording,index)}
+                                                    onClick={() => playRecording(invoice.callRecording, index)}
                                                 >
-                                                    {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
-                                                </Button>:"Recording not Available"}
+                                                    {isPlaying && selectedIndex === index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
+                                                </Button> : "Recording not Available"}
                                             </td>
                                         </tr>
                                     ))
@@ -363,7 +361,7 @@ const fetchTicketSaleData =async()=>{
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                       {props.stage===4?<h3 className="title">Ticket Tracking</h3>: <h3 className="title">Tickets for after sales service</h3>}
+                        {props.stage === 4 ? <h3 className="title">Ticket Tracking</h3> : <h3 className="title">Tickets for after sales service</h3>}
                         <table className="table">
                             <thead>
                                 <tr className='border'>
@@ -378,16 +376,16 @@ const fetchTicketSaleData =async()=>{
                             </thead>
                             <tbody className='overflow'>
                                 {saleTicketData.length > 0 ? (
-                                    saleTicketData.map((invoice,index) => (
+                                    saleTicketData.map((invoice, index) => (
                                         <tr key={index} className='border'>
                                             <td className='text-center'>
-                                                {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate):"N/A"}
+                                                {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate) : "N/A"}
                                             </td>
-                                            <td className='text-center'>{invoice.senderName?invoice.senderName:invoice.firstName}</td>
-                                            <td className='text-center'>{ invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName")==="SeniorSuperVisor"? <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>:"Awaiting for Tracking..." }</td>
-                                           
-                                            <td className='text-center'>{invoice.deliveryStatus?invoice.deliveryStatus:"NA"}</td>
-                                            <td className='text-center'>{invoice.comment &&  invoice.comment.slice(0,20)}</td>
+                                            <td className='text-center'>{invoice.senderName ? invoice.senderName : invoice.firstName}</td>
+                                            <td className='text-center'>{invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName") === "SeniorSuperVisor" ? <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button> : "Awaiting for Tracking..."}</td>
+
+                                            <td className='text-center'>{invoice.deliveryStatus ? invoice.deliveryStatus : "NA"}</td>
+                                            <td className='text-center'>{invoice.comment && invoice.comment.slice(0, 20)}</td>
                                             <td className='text-center'>
                                                 <Button
                                                     onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
@@ -398,12 +396,12 @@ const fetchTicketSaleData =async()=>{
                                                 </Button>
                                             </td>
                                             <td className='text-center'>
-                                               {invoice.recordingFile? <Button
+                                                {invoice.recordingFile ? <Button
                                                     className=""
-                                                    onClick={() => playRecording(invoice.recordingFile,index)}
+                                                    onClick={() => playRecording(invoice.recordingFile, index)}
                                                 >
-                                                    {isPlaying && selectedIndex===index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
-                                                </Button>:"Recording not Available"}
+                                                    {isPlaying && selectedIndex === index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
+                                                </Button> : "Recording not Available"}
                                             </td>
                                         </tr>
                                     ))
