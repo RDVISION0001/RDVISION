@@ -19,11 +19,22 @@ const TicketDistribution = () => {
         { backgroundColor: '#2ecc71' }, // Green
         { backgroundColor: '#f39c12' }, // Yellow
         { backgroundColor: '#8e44ad' }, // Purple
+        { backgroundColor: '#1abc9c' }, // Turquoise
+        { backgroundColor: '#d35400' }, // Orange
+        { backgroundColor: '#34495e' }, // Dark Blue
+        { backgroundColor: '#c0392b' }, // Dark Red
+        { backgroundColor: '#16a085' }, // Dark Green
+        { backgroundColor: '#f1c40f' }, // Bright Yellow
+        { backgroundColor: '#9b59b6' }, // Violet
+        { backgroundColor: '#2c3e50' }, // Midnight Blue
+        { backgroundColor: '#95a5a6' }, // Gray
+        { backgroundColor: '#ecf0f1' }, // Light Gray
     ];
+    
 
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, userId: '', userName: '', count: '' });
 
-    const handleMouseEnter = (e, userId, userName, count,ticketCount,status) => {
+    const handleMouseEnter = (e, userId, userName, count,ticketCount,status,type) => {
         const rect = e.currentTarget.getBoundingClientRect(); // Use e.currentTarget for the element the event handler is bound to
         setTooltip({
             visible: true,
@@ -33,7 +44,8 @@ const TicketDistribution = () => {
             userName: userName,
             count: count,
             status:status,
-            ticketCount:ticketCount
+            ticketCount:ticketCount,
+            type:type
         });
     };
 
@@ -67,7 +79,7 @@ const TicketDistribution = () => {
     return (
         <div className="container">
             <div className="progress" style={{ height: '50px', position: 'relative' }}>
-                {sortedData.map(({ userId, userName, ticketCount,count,status }, index) => (
+                {sortedData.map(({ userId, userName, ticketCount,count,status,type }, index) => (
                     <div
                         key={userId}
                         className="progress-bar"
@@ -80,7 +92,7 @@ const TicketDistribution = () => {
                             fontSize: '20px',
                             ...colors[index % colors.length], // Apply custom color
                         }}
-                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount,count,status)}
+                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount,count,status,type)}
                         onMouseLeave={handleMouseLeave}
                     >
                         {ticketCount}
@@ -113,6 +125,7 @@ const TicketDistribution = () => {
                     <div style={{ fontWeight: 'bold' }}>{tooltip.userId?"User:":"Status:"} {tooltip.userName?tooltip.userName:tooltip.status}</div>
                     {tooltip.userId? <div style={{ fontWeight: 'bold' }}>"ID:" {tooltip.userId?tooltip.userId:tooltip.ticketCount}</div>:""}
                    {tooltip.count && <div style={{ fontWeight: 'bold' }}>Counts: {tooltip.count}</div>}
+                   {tooltip.type && <div>Type:- {tooltip.type===1?"Live":"ABC"}</div>}
 
                     {/* Triangle pointer */}
                     <div

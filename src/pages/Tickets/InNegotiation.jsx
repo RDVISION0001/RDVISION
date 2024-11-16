@@ -749,7 +749,7 @@ function InNegotiation() {
         {list &&
           <div className='d-flex'>
             <TicketTrack/>
-            <div>
+            <div style={{ width: "100%" }}>
               {/* Stages */}
               <section className="followup-table-section py-3">
                 <div className="container-fluid">

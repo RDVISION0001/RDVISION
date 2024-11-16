@@ -31,7 +31,7 @@ function live() {
             <ChartWorktime />
           </div> */}
 
-      <div className="container-fluid mt-3">
+      <div className="container-fluid">
         <Live_tickets />
       </div>
 
