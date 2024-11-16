@@ -172,18 +172,6 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                <i className="fa-solid fa-hourglass-half"></i>
-                <span className="nav-text">Pending</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                <i className="fa-solid fa-check-circle"></i>
-                <span className="nav-text">Paid</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink target='_blank' to="/super_admin_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
@@ -193,6 +181,12 @@ function Sidenav() {
               <NavLink target='_blank' to="/super_admin_orders" className="nav-link">
                 <i className="fa-solid fa-money-check-dollar"></i>
                 <span className="nav-text">Orders Status</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
           </>
@@ -270,18 +264,6 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                <i className="fa-solid fa-hourglass-half"></i>
-                <span className="nav-text">Pending</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                <i className="fa-solid fa-check-circle"></i>
-                <span className="nav-text">Paid</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
@@ -291,6 +273,12 @@ function Sidenav() {
               <NavLink to="/admin_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
           </>
@@ -351,18 +339,6 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                <i className="fa-solid fa-hourglass-half"></i>
-                <span className="nav-text">Pending</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                <i className="fa-solid fa-check-circle"></i>
-                <span className="nav-text">Paid</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink target='_blank' to="/after_sales_service" className="nav-link">
                 <i className="fa-solid fa-headphones"></i>
                 <span className="nav-text">ASS</span>
@@ -372,6 +348,12 @@ function Sidenav() {
               <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i className="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
           </>
@@ -404,6 +386,12 @@ function Sidenav() {
               <NavLink target='_blank' to="/new_products" className="nav-link">
                 <i class="fa-solid fa-pills"></i>
                 <span className="nav-text">New Products</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
           </>
@@ -457,21 +445,15 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                <i className="fa-solid fa-hourglass-half"></i>
-                <span className="nav-text">Pending</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                <i className="fa-solid fa-check-circle"></i>
-                <span className="nav-text">Paid</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink target='_blank' to="/captain_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
           </>
@@ -506,12 +488,7 @@ function Sidenav() {
                 <span className="nav-text">Team</span>
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/sales_report" className="nav-link">
-                <i className="fa-solid fa-trophy"></i>
-                <span className="nav-text">Sales Report</span>
-              </NavLink>
-            </li>
+
             <li className="nav-item">
               <NavLink target='_blank' to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
@@ -544,37 +521,26 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/sales_report" className="nav-link">
+                <i className="fa-solid fa-trophy"></i>
+                <span className="nav-text">Sales Report</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
                 <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
-
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_pending" className="nav-link">
-                <i className="fa-solid fa-hourglass-half"></i>
-                <span className="nav-text">Pending</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/invoices_paid" className="nav-link">
-                <i className="fa-solid fa-check-circle"></i>
-                <span className="nav-text">Paid</span>
+              <NavLink target='_blank' to="/invoice" className="nav-link">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span className="nav-text">Invoice</span>
               </NavLink>
             </li>
 
           </>
         )}
-
-        {/* commom tab */}
-        <li className="nav-item">
-          <NavLink target='_blank' to="/invoice" className="nav-link">
-            <i class="fa-solid fa-file-invoice-dollar"></i>
-            <span className="nav-text">Invoice</span>
-          </NavLink>
-        </li>
-
-
 
         {/* <li className="nav-item">
           <NavLink to="/settings" className="nav-link">
