@@ -176,7 +176,7 @@ function topnav() {
 
             </div>
           </nav>
-         {localStorage.getItem("roleName")==="SeniorSuperVisor" && <TicketDistribution/>}
+         <TicketDistribution/>
           <div>
             <FloatingButton />
           </div>

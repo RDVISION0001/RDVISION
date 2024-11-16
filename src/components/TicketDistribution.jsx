@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
+import { useAuth } from '../auth/AuthContext';
 
 const TicketDistribution = () => {
     const [ticketData, setTicketData] = useState([]);
+    const {userId}=useAuth()
 
     // Sort the data in ascending order based on ticket count
     const sortedData = ticketData.sort((a, b) => a.ticketCount - b.ticketCount);
@@ -21,7 +23,7 @@ const TicketDistribution = () => {
 
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, userId: '', userName: '', count: '' });
 
-    const handleMouseEnter = (e, userId, userName, count) => {
+    const handleMouseEnter = (e, userId, userName, count,ticketCount,status) => {
         const rect = e.currentTarget.getBoundingClientRect(); // Use e.currentTarget for the element the event handler is bound to
         setTooltip({
             visible: true,
@@ -30,26 +32,42 @@ const TicketDistribution = () => {
             userId: userId,
             userName: userName,
             count: count,
+            status:status,
+            ticketCount:ticketCount
         });
     };
 
     const handleMouseLeave = () => {
         setTooltip({ visible: false, x: 0, y: 0, userId: '', userName: '', count: '' });
     };
-
+    useEffect(() => {
+        if(localStorage.getItem("roleName")==="Closer"){
+            fetchCountsOfUser()
+        }else{
+            fetchCounts();
+        }
+       
+    }, []);
     const fetchCounts = async () => {
         const response = await axiosInstance.get('/third_party_api/ticket/getticketCounts');
         setTicketData(response.data);
     };
 
-    useEffect(() => {
-        fetchCounts();
-    }, []);
+    const fetchCountsOfUser = async () => {
+        try {
+            const response = await axiosInstance.get(`/third_party_api/ticket/getTiccketCountforBar/${localStorage.getItem("userId")}`);
+            setTicketData(response.data);
+        
+        } catch (err) {
+            console.log("some error")
+        } 
+    };
+   
 
     return (
         <div className="container">
             <div className="progress" style={{ height: '50px', position: 'relative' }}>
-                {sortedData.map(({ userId, userName, ticketCount }, index) => (
+                {sortedData.map(({ userId, userName, ticketCount,count,status }, index) => (
                     <div
                         key={userId}
                         className="progress-bar"
@@ -62,7 +80,7 @@ const TicketDistribution = () => {
                             fontSize: '20px',
                             ...colors[index % colors.length], // Apply custom color
                         }}
-                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount)}
+                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount,count,status)}
                         onMouseLeave={handleMouseLeave}
                     >
                         {ticketCount}
@@ -92,9 +110,9 @@ const TicketDistribution = () => {
                         border: '1px solid rgba(255, 255, 255, 0.2)', // Light border
                     }}
                 >
-                    <div style={{ fontWeight: 'bold' }}>User: {tooltip.userName}</div>
-                    <div style={{ fontWeight: 'bold' }}>ID: {tooltip.userId}</div>
-                    <div style={{ fontWeight: 'bold' }}>Counts: {tooltip.count}</div>
+                    <div style={{ fontWeight: 'bold' }}>{tooltip.userId?"User:":"Status:"} {tooltip.userName?tooltip.userName:tooltip.status}</div>
+                    {tooltip.userId? <div style={{ fontWeight: 'bold' }}>"ID:" {tooltip.userId?tooltip.userId:tooltip.ticketCount}</div>:""}
+                   {tooltip.count && <div style={{ fontWeight: 'bold' }}>Counts: {tooltip.count}</div>}
 
                     {/* Triangle pointer */}
                     <div

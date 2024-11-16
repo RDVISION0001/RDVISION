@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from '../axiosInstance';
+import { useAuth } from "../auth/AuthContext";
 
 function InvoiceNewTemp() {
     const [invoices, setInvoices] = useState([]); // State to store invoice data
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
+    const {userId}=useAuth()
 
     // Format date to 15Nov_2024
     const formatDate = (date) => {
@@ -18,7 +20,7 @@ function InvoiceNewTemp() {
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
-                const response = await axiosInstance.get("/invoice/verificationList"); // Replace with your actual API endpoint
+                const response = await axiosInstance.get(`/invoice/getInvoiceByUser/${userId}`); // Replace with your actual API endpoint
                 setInvoices(response.data); // Assuming response.data is an array of invoices
                 setLoading(false);
             } catch (err) {
@@ -46,7 +48,7 @@ function InvoiceNewTemp() {
     return (
         <>
             {/* card */}
-            <section className="sadmin-top-section">
+            <section className="sadmin-top-section mt-3">
                 <div className="container-fluid">
                     <div className="row">
                         {/* Total Paid Amount */}
@@ -76,9 +78,9 @@ function InvoiceNewTemp() {
                                     </div>
                                     <div>
                                         <h5 className="card-title">Total Paid Amount</h5>
-                                        <h3 className="font-weight-bold">
+                                        <h5 className="font-weight-bold">
                                             {loading ? "Loading..." : `${totalPaidAmount.toFixed(2)} USD`}
-                                        </h3>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
@@ -109,9 +111,9 @@ function InvoiceNewTemp() {
                                     </div>
                                     <div>
                                         <h5 className="card-title">Total Paid Invoices</h5>
-                                        <h3 className="font-weight-bold">
+                                        <h5 className="font-weight-bold">
                                             {loading ? "Loading..." : totalPaidInvoices}
-                                        </h3>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
@@ -143,9 +145,9 @@ function InvoiceNewTemp() {
                                     </div>
                                     <div>
                                         <h5 className="card-title">Total Pending Amount</h5>
-                                        <h3 className="font-weight-bold">
+                                        <h5 className="font-weight-bold">
                                             {loading ? "Loading..." : `${totalPendingAmount.toFixed(2)} USD`}
-                                        </h3>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
@@ -177,9 +179,9 @@ function InvoiceNewTemp() {
                                     </div>
                                     <div>
                                         <h5 className="card-title">Total Pending Invoices</h5>
-                                        <h3 className="font-weight-bold">
+                                        <h5 className="font-weight-bold">
                                             {loading ? "Loading..." : totalPendingInvoices}
-                                        </h3>
+                                        </h5>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +197,7 @@ function InvoiceNewTemp() {
             <section className="followup-table-section py-4 d-flex">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
-                        <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3>
+                        <h5 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h5>
                         {loading ? (
                             <p>Loading invoices...</p>
                         ) : error ? (
@@ -211,10 +213,13 @@ function InvoiceNewTemp() {
                                         <th scope="col">Sale Date</th>
                                         <th scope="col">Customer Name</th>
                                         <th scope="col">Customer Order</th>
-                                        <th scope="col">Invoice ID</th>
+                                        {/* <th scope="col">Invoice ID</th> */}
                                         <th scope="col">Invoice Generate Date</th>
                                         <th scope="col">Order Amount</th>
                                         <th scope="col">Payment Status</th>
+                                        <th scope="col">Seen </th>
+                                        <th scope="col">ip address </th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -232,13 +237,19 @@ function InvoiceNewTemp() {
                                                 )}
                                                 {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
                                             </td>
-                                            <td>{invoice.invoiceId}</td>
+                                            {/* <td>{invoice.invoiceId}</td> */}
                                             <td>{formatDate(invoice.invoiceGenerateDate)}</td>
                                             <td className="text-success bold-text">
                                                 {invoice.currency || 'USD'} {invoice.orderAmount}
                                             </td>
                                             <td className= {invoice.paymentStatus === "paid" ? "text-success" : "text-danger"}>
                                                 {invoice.paymentStatus || "Pending"}
+                                            </td>
+                                            <td className= {invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
+                                                {invoice.opened? <i class="fa-solid fa-check fa-2xl" style={{color: "#067f30"}}></i>:<i class="fa-solid fa-xmark fa-xl" style={{color: "#ff0000"}}></i>}
+                                            </td>
+                                            <td className= {invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
+                                                {invoice.ipAddress?invoice.ipAddress:"not opned yet"}
                                             </td>
                                         </tr>
                                     ))}
