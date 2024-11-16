@@ -15,8 +15,6 @@ import Coustomer from './components/Coustomer';
 
 
 // pages
-import Paid from './pages/Invoices/Paid'
-import Pending from './pages/Invoices/Pending';
 import Live from './pages/Tickets/live'
 import Upticket from './pages/Tickets/upticket';
 import InNegotiation from './pages/Tickets/InNegotiation';
@@ -178,8 +176,6 @@ function App() {
                     {/* pages */}
                     <Route exact path="/live_tickets" element={<Live />} />
                     <Route exact path="/upload_tickets" element={<Upticket />} />
-                    <Route exact path="/invoices_pending" element={<Pending />} />
-                    <Route exact path="/invoices_paid" element={<Paid />} />
                     <Route exact path="/in_negotiation" element={<InNegotiation />} />
                     <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
                     <Route exact path="/upload_products" element={<Products />} />
