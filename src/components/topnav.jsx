@@ -15,10 +15,11 @@ import TicketDistribution from './TicketDistribution';
 
 function topnav() {
   const { takingBreak } = useAuth()
-  const {setUserReportReloader}=useAuth()
+  const { setUserReportReloader } = useAuth()
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-  const [isSideBarOpen,setIsSideBarOpen]=useState(true)
+  const [isSideBarOpen, setIsSideBarOpen] = useState(true)
+
   //handle Open Calender
   const handleOpenCalender = () => {
     const dialog = document.getElementById("calender");
@@ -26,6 +27,21 @@ function topnav() {
       dialog.showModal();
     }
   };
+  //handle Open Timezone clock
+  const handleOpenTimezone = () => {
+    const dialog = document.getElementById("timezone");
+    if (dialog) {
+      dialog.showModal();
+    }
+  };
+  //handle close Timezone
+  const handletCloseTimezone = () => {
+    const dialog = document.getElementById("timezone");
+    if (dialog) {
+      dialog.close();
+    }
+  };
+  //handle Open Calender
   const handleOpenNote = () => {
     const dialog = document.getElementById("notebook");
     if (dialog) {
@@ -115,7 +131,7 @@ function topnav() {
     setTodayFollowups(response.data)
   }
 
-  const toggleSidbar=()=>{
+  const toggleSidbar = () => {
     setIsSideBarOpen(!isSideBarOpen)
   }
   return (
@@ -124,20 +140,19 @@ function topnav() {
         <div className="topnav">
           <nav className="navbar top-navbar navbar-light bg-white container-fluid">
             <div className="left-part">
-              <a className="btn border-0 ms-2 bg-white text-black" style={{fontSize:"30px"}} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen?<i class="fa-solid fa-chevron-left fa-xl"></i>:<i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
+              <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
             </div>
-            <TimezoneClocks />
             <div className="right-part">
+              <div href="/timezone" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+                <span className="page-title"  >
+                  <i class="fa-solid fa-clock fa-2xl" onClick={handleOpenTimezone}></i>
+                </span>
+              </div>
               <a href="/action_mode" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <span className="page-title"  >
                   <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
                 </span>
               </a>
-              {/* <a href="/sales_report" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <span className="page-title">
-                <i class="fa-solid fa-trophy fa-2xl"></i>
-                </span>
-              </a> */}
               <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-ticket fa-2xl pointer"></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{
@@ -176,10 +191,12 @@ function topnav() {
 
             </div>
           </nav>
-         <TicketDistribution/>
+          <TicketDistribution />
           <div>
             <FloatingButton />
           </div>
+
+          {/* for calander */}
           <dialog
             id="calender"
             className="noteebook-modal bg-light text-black"
@@ -208,10 +225,55 @@ function topnav() {
                   cursor: "pointer"
                 }}
               ></i>
-              <LiveCalander  model={true}/>
+              <LiveCalander model={true} />
             </div>
           </dialog>
 
+          {/* for tomezone */}
+          <dialog
+            id="timezone"
+            className="noteebook-modal bg-light text-black"
+            style={{
+              height: "20vh",
+              width: "30vw",
+              // display: "flex", // Center content within the dialog
+              alignItems: "center", // Vertically center
+              justifyContent: "center", // Horizontally center
+              position: "fixed",
+              top: "30%",
+              left: "50%", // Adjusted for proper centering
+              transform: "translate(-50%, -50%)",
+              border: "none",
+              borderRadius: "8px",
+              padding: "5px",
+            }}
+          >
+            <div
+              className="modal-content"
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "relative", // Ensure proper positioning for close icon
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <i
+                className="fa-solid fa-times fa-xl pointer close-icon"
+                onClick={handletCloseTimezone}
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "10px",
+                  cursor: "pointer",
+                }}
+              ></i>
+              <TimezoneClocks />
+            </div>
+          </dialog>
+
+          {/* for notebook */}
           <dialog
             id="notebook"
             className="noteebook-modal bg-light text-black"
@@ -243,10 +305,9 @@ function topnav() {
               <Enotebook />
             </div>
           </dialog>
-
         </div>}
     </>
   );
 }
 
-export default topnav;
+export default topnav;              
