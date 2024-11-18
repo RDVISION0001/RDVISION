@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
+import Clock from 'react-clock';
+import 'react-clock/dist/Clock.css';
 
 const DigitalClock = ({ timezone, country }) => {
     const [time, setTime] = useState(moment.tz(timezone));
@@ -12,7 +14,6 @@ const DigitalClock = ({ timezone, country }) => {
         return () => clearInterval(interval);
     }, [timezone]);
 
-    // Use 'hh:mm:ss A' for 12-hour format with AM/PM
     const digitalTime = time.format('hh:mm:ss A');
     const timeDifference = (time.utcOffset() - indianTime.utcOffset()) / 60; // Difference in hours
 
@@ -31,14 +32,44 @@ const DigitalClock = ({ timezone, country }) => {
     );
 };
 
-const TimezoneClocks = () => {
+const AnalogClock = ({ timezone }) => {
+    const [time, setTime] = useState(moment.tz(timezone).toDate());
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setTime(moment.tz(timezone).toDate());
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [timezone]);
+
     return (
-        <div className="d-flex justify-content-start gap-4">
-            <DigitalClock timezone="Asia/Kolkata" country="India" />
-            <DigitalClock timezone="America/New_York" country="US" />
-            <DigitalClock timezone="Europe/London" country="UK" />
-            <DigitalClock timezone="Australia/Sydney" country="AU" />
+        <div className="d-flex flex-column align-items-center">
+            <Clock value={time} size={150} renderNumbers={true} />
         </div>
+    );
+};
+
+const TimezoneClocks = () => {
+    // Define timezones and countries
+    const clocks = [
+        { timezone: 'Asia/Kolkata', country: 'India' },
+        { timezone: 'America/New_York', country: 'US' },
+        { timezone: 'Europe/London', country: 'UK' },
+        { timezone: 'Australia/Sydney', country: 'AU' },
+    ];
+
+    return (
+        <div className="d-flex flex-wrap justify-content-start gap-4">
+            {clocks.map((clock, index) => (
+                <div key={index} className="d-flex flex-column align-items-center">
+                    {/* <AnalogClock timezone={clock.timezone} /> */}
+                    <div style={{ marginTop: '1rem' }}> {/* Add space here */}
+                        <DigitalClock timezone={clock.timezone} country={clock.country} />
+                    </div>
+                </div>
+            ))}
+        </div>
+
     );
 };
 

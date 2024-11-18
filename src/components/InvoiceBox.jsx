@@ -341,7 +341,7 @@ function InvoiceBox(props) {
                             )}
                             {/* <!-- ticket details ends here --> */}
                             <div className="accordion status-wrappers" id="accordionExample">
-                            <div className='text-danger'> !Impotent Before Sending Invoice Make sure every Product is added with proper <span className='fw-bold'>Quantity and Price</span></div>
+                                <div className='text-danger'> !Impotent Before Sending Invoice Make sure every Product is added with proper <span className='fw-bold'>Quantity and Price</span></div>
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header">
@@ -588,7 +588,7 @@ function InvoiceBox(props) {
                                         ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                                         : true
                                 )
-                                .filter((product)=>product.images!==null).map((product, index) => (
+                                .filter((product) => product.images !== null).map((product, index) => (
                                     <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
                                         <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', paddingTop: '20px', height: 'auto' }}>
                                             {/* Brand Tag positioned at bottom-left corner */}
@@ -628,18 +628,18 @@ function InvoiceBox(props) {
                                                         <input
                                                             type="text"
                                                             className="form-control form-control-sm mx-2"
-                                                            placeholder="Price"
-                                                            style={{ maxWidth: '70px' }}
-                                                            value={priceValues[product.productId] || ''}
-                                                            onChange={(e) => handlePriceChange(e, product.productId)}
-                                                        />
-                                                        <input
-                                                            type="text"
-                                                            className="form-control form-control-sm mx-2"
                                                             placeholder="Quantity"
                                                             style={{ maxWidth: '70px' }}
                                                             value={quantityValues[product.productId] || ''}
                                                             onChange={(e) => handleQuantityChange(e, product.productId)}
+                                                        />
+                                                        <input
+                                                            type="text"
+                                                            className="form-control form-control-sm mx-2"
+                                                            placeholder="Price"
+                                                            style={{ maxWidth: '70px' }}
+                                                            value={priceValues[product.productId] || ''}
+                                                            onChange={(e) => handlePriceChange(e, product.productId)}
                                                         />
                                                     </div>
                                                 </div>
