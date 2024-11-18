@@ -16,7 +16,7 @@ function InvoiceBox(props) {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
+    const [externalPaymentLink, setExternalPaymentLink] = useState("")
     // State for tickets
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -205,7 +205,7 @@ function InvoiceBox(props) {
     // Function to handle sending invoice
     const handleSendInvoice = async () => {
         try {
-            const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}`);
+            const response = await axiosInstance.post(`/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`);
             toast.success('Invoice sent successfully!');
         } catch (error) {
             console.error('Error sending invoice:', error);
@@ -215,7 +215,7 @@ function InvoiceBox(props) {
 
     const handleSendQuotation = async () => {
         try {
-            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}&userId=${userId}`);
+            const response = await axiosInstance.post(`/invoice/send_quotation?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`);
             toast.success('Quotation sent successfully!');
         } catch (error) {
             console.error('Error sending quotation:', error);
@@ -341,7 +341,7 @@ function InvoiceBox(props) {
                             )}
                             {/* <!-- ticket details ends here --> */}
                             <div className="accordion status-wrappers" id="accordionExample">
-                            <div className='text-danger'> !Impotent Before Sending Invoice Make sure every Product is added with proper <span className='fw-bold'>Quantity and Price</span></div>
+                                <div className='text-danger'> !Impotent Before Sending Invoice Make sure every Product is added with proper <span className='fw-bold'>Quantity and Price</span></div>
 
                                 <div className="accordion-item">
                                     <h2 className="accordion-header">
@@ -420,7 +420,11 @@ function InvoiceBox(props) {
                                         </div>
                                     </div>
                                 </div>
+                                <div className='d-flex justify-content-center flex-column p-3'>
+                                    <label htmlFor="paymentLink" className='fw-bold' style={{fontSize:"20px"}}>Add Payment Link</label>
+                                    <input type="text" value={externalPaymentLink} onChange={(e)=>setExternalPaymentLink(e.target.value)} placeholder='Enter External Payment link' className=' p-2 rounded bg-white text-black' />
 
+                                </div>
 
                                 {/* /////////////////shipping address */}
                                 <div className="accordion-item">
@@ -588,7 +592,7 @@ function InvoiceBox(props) {
                                         ? product.name.toLowerCase().includes(serchValue.toLowerCase())
                                         : true
                                 )
-                                .filter((product)=>product.images!==null).map((product, index) => (
+                                .filter((product) => product.images !== null).map((product, index) => (
                                     <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center">
                                         <div className="card p-2 position-relative" style={{ width: '100%', maxWidth: '300px', paddingTop: '20px', height: 'auto' }}>
                                             {/* Brand Tag positioned at bottom-left corner */}
