@@ -27,6 +27,7 @@ const ViewInvoice = () => {
 
     useEffect(() => {
         fetchOrderDetails();
+        fetchInvoice();
     }, []);
 
     const handleMouseEnter = () => {
@@ -35,6 +36,15 @@ const ViewInvoice = () => {
             backgroundColor: '#0056b3', // Darker shade for hover effect
         }));
     };
+    const fetchInvoice = async () => {
+        try {
+            const response = await axiosInstance.get(`/invoice/viewInvoice/${orderid}`);
+            console.log('Invoice viewed successfully:', response.data);
+        } catch (error) {
+            console.error('Error viewing invoice:', error);
+        }
+    };
+
 
     const handleMouseLeave = () => {
         setButtonStyle((prevStyle) => ({
@@ -108,7 +118,7 @@ const ViewInvoice = () => {
                 try {
                     const stripe = await stripePromise;
 
-                    const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
+                    const response = await fetch(`http://localhost:8080/invoice/create-checkout-session/${orderid}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -172,6 +182,7 @@ const ViewInvoice = () => {
     const closeAddress = () => {
         setAddressForm(false)
     }
+
     return (
         <div className="container-fluid p-5">
             <header className="bg-light text-left p-3">

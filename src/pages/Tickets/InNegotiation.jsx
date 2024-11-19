@@ -85,6 +85,15 @@ function InNegotiation() {
     setSelectMobileForInvoice(mobile)
     setIsInvoiceOn(!isInvoiceOn)
   }
+
+  const [isQuotationOn, setIsQuotationOn] = useState(false)
+  const handleQuotation = (ticketId, name, email, mobile) => {
+    setSelectTicketForInvoice(ticketId)
+    setSelectNameForInvoice(name)
+    setSelectEmailForInvoice(email)
+    setSelectMobileForInvoice(mobile)
+    setIsQuotationOn(!isQuotationOn)
+  }
   const [dorpedInStage, setDropedinStage] = useState(null)
   const handleClose = () => {
     setShow(false)
@@ -652,11 +661,11 @@ function InNegotiation() {
     } else if (productsIds.length < 1) {
       toast.info("Please Select At least one Product ")
 
-    } else if (text.length < 1) {
+    } else if (text.length < 1) { 
       toast.info("Please Enter Message")
     } else {
       try {
-        const response = await axiosInstance.post(`/email/${selectTicketForInvoice.length < 15 ? "sendsugetionmail" : "ulpoadsendsugetionmail"}`, {
+        const response = await axiosInstance.post(`/email/sendsugetionmail`, {
           uploadTicket: {
             uniqueQueryId: selectTicketForInvoice
           },
@@ -1009,6 +1018,13 @@ function InNegotiation() {
                                     className="btn-action whatsapp"
                                     title="Get connect on whatsapp"
                                   ><i className="fa-brands fa-whatsapp"></i></a>
+                                   <Button
+                                      onClick={() => handleQuotation(nego.uniqueQueryId)}
+                                      className="rounded-circle "
+                                      title="Get connect on"
+                                    >
+                                      <i class="fa-share-from-square" ></i>
+                                    </Button>
                                   <Button
                                     onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
                                     className="rounded-circle "
@@ -1509,6 +1525,25 @@ function InNegotiation() {
       >
         <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
       </Modal>
+      <Modal
+            show={isQuotationOn}
+            onHide={handleQuotation}
+            id="followUpModal"
+            tabindex="-1"
+            aria-labelledby="followUpModalLabel"
+            aria-hidden="true"
+            dialogClassName="fullscreen-modal" // Add a custom class here
+          >
+            <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+              <u> Raise Invoice</u>
+            </h1>
+            <QuotationBox
+              ticketId={selectTicketForInvoice}
+              name={selectNameForInvoice}
+              email={selectEmailForInvoice}
+              mobile={selectMobileForInvoice}
+            />
+          </Modal>
     </>
   );
 }
