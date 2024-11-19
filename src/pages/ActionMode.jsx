@@ -107,7 +107,13 @@ function ActionMode() {
     const fetchFirstTicket = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`/third_party_api/ticket/getFirstTicket/${userId}`);
+            const response = await axiosInstance.post(`/third_party_api/ticket/getFirstTicket`,
+                {
+                    userId,
+                    number: ticketNumber,
+                    status: selectedStatus
+                }
+            );
             setTicket(response.data.ticket);
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
             setCurrentTicket(response.data.currentTicketNo)

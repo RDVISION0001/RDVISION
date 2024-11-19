@@ -7,7 +7,7 @@ import TicketTrack from '../components/TicketTrack';
 function Dashboard() {
   return (
     <div className="d-flex" style={{ width: '100%', overflowX: 'auto' }}>
-      <TicketTrack />
+ 
       <div style={{ flex: 1 }}>
         <InvoiceInfo />
       </div>

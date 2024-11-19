@@ -118,7 +118,7 @@ const TicketTrack = () => {
     useEffect(() => {
         const fetchTicketHistory = async () => {
             try {
-                const response = await axiosInstance.get(`/history/getTickettrackhistory/${userId}`);
+                const response = await axiosInstance.get(`/history/getTickettrackhistory/${localStorage.getItem("userId")}`);
                 setData(response.data);
             } catch (error) {
                 console.error('Error fetching ticket history:', error);
@@ -176,7 +176,7 @@ const TicketTrack = () => {
     };
     return (
         <>
-            <div className='text-center' style={{ width: "200px" }}>
+            <div className='text-center' style={{ width: "200px",marginLeft:"2px" }}>
                 {/* Display ticket status counts */}
                 <div className="status-summary d-flex justify-content-center flex-wrap">
                     {/* // Example usage within the `status-summary` div */}

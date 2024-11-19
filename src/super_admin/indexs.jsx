@@ -12,7 +12,6 @@ function indexs() {
 
     <>
       <div className="d-flex" style={{ width: '100%', overflowX: 'auto' }}>
-        <TicketTrack />
         <div style={{ flex: 1 }}>
           <Cardinfo />
         </div>

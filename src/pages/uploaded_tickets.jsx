@@ -589,9 +589,7 @@ function uploaded_tickets() {
 
   return (
     <div className='d-flex'>
-      <div >
-        <TicketTrack />
-      </div>
+  
       <div style={{ width: "100vw" }}>
 
         {/* <!-- Tabbed Ticket Table --> */}

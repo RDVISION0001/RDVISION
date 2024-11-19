@@ -130,6 +130,8 @@ import PaymentFailed from './components/PaymentFailed';
 import Terms_Conditions from './components/Terms_Conditions';
 import Team from './senior_supervisor/Team';
 import TicketHouse from './components/TicketHouse';
+import TicketTrack from './components/TicketTrack';
+import TicketDistribution from './components/TicketDistribution';
 
 
 
@@ -151,90 +153,97 @@ function App() {
             <div className="my-container main-content-block2658 active-cont bg-white">
 
               {localStorage.getItem("userId") && <Topnav />}
+              <div className='d-flex'>
 
-              <div style={{overflowX:"auto"}}>
-                <Routes>
-
-                  {/* //costoumer  invoice*/}
-                  <Route exact path="/coustomer_invoice" element={<Coustomer />} />
-                  <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
-                  <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
-                  <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
-                  <Route exact path="/terms" element={<Terms_Conditions />} />
+                {localStorage.getItem("userId") && <TicketTrack />}
 
 
-                  {/* auth */}
-                  <Route exact path="/" element={<Login />} />
-                  <Route exact path="/logout" element={<Logout />} />
-                  <Route exact path="/forgot_password" element={<Forgetpassword />} />
+                <div style={{ width: "88.5%" }}>
+                  {localStorage.getItem("userId") && <TicketDistribution />}
+                  <Routes>
 
-                  <Route element={<PrivateRoute />}>
-
-                    {/* compo */}
-                    <Route exact path="/sidenav" element={<Sidenav />} />
-
-                    {/* pages */}
-                    <Route exact path="/live_tickets" element={<Live />} />
-                    <Route exact path="/upload_tickets" element={<Upticket />} />
-                    <Route exact path="/in_negotiation" element={<InNegotiation />} />
-                    <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
-                    <Route exact path="/upload_products" element={<Products />} />
-                    <Route exact path="/new_products" element={<New_Products />} />
-                    <Route exact path="/action_mode" element={<ActionMode />} />
-                    <Route exact path="/sales_report" element={<SalesReport />} />
-                    <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
-
-                  <Route exact path="/invoice" element={<InvoiceNewTemp />} />
+                    {/* //costoumer  invoice*/}
+                    <Route exact path="/coustomer_invoice" element={<Coustomer />} />
+                    <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
+                    <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
+                    <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
+                    <Route exact path="/terms" element={<Terms_Conditions />} />
 
 
+                    {/* auth */}
+                    <Route exact path="/" element={<Login />} />
+                    <Route exact path="/logout" element={<Logout />} />
+                    <Route exact path="/forgot_password" element={<Forgetpassword />} />
 
-                    {/* admin */}
-                    <Route exact path="/admin_index" element={<Index />} />
-                    <Route exact path="/admin_invoices" element={<Invoices />} />
-                    <Route exact path="/admin_orders" element={<Orders />} />
-                    <Route exact path="/admin_sales" element={<Sales />} />
-                    <Route exact path="/admin_tickets" element={<Tickets />} />
-                    <Route exact path="/admin_users" element={<Users />} />
-                    <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
-                    <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
+                    <Route element={<PrivateRoute />}>
 
-                    {/* super_admin */}
-                    <Route exact path="/super_admin_index" element={<Indexs />} />
-                    <Route exact path="/super_admin_invoices" element={<Invoicess />} />
-                    <Route exact path="/super_admin_orders" element={<Orderss />} />
-                    <Route exact path="/super_admin_sales" element={<Saless />} />
-                    <Route exact path="/super_admin_tickets" element={<Ticketss />} />
-                    <Route exact path="/super_admin_users" element={<Userss />} />
+                      {/* compo */}
+                      <Route exact path="/sidenav" element={<Sidenav />} />
 
-                    {/* caption manager*/}
-                    <Route exact path="/captain_index" element={<Indexm />} />
-                    <Route exact path="/captain_invoices" element={<Invoicesm />} />
-                    <Route exact path="/captain_orders" element={<Ordersm />} />
-                    <Route exact path="/captain_sales" element={<Salesm />} />
-                    <Route exact path="/captain_to_closer" element={<Tocloser />} />
-                    <Route exact path="/captain_tickets" element={<Ticketsm />} />
+                      {/* pages */}
+                      <Route exact path="/live_tickets" element={<Live />} />
+                      <Route exact path="/upload_tickets" element={<Upticket />} />
+                      <Route exact path="/in_negotiation" element={<InNegotiation />} />
+                      <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
+                      <Route exact path="/upload_products" element={<Products />} />
+                      <Route exact path="/new_products" element={<New_Products />} />
+                      <Route exact path="/action_mode" element={<ActionMode />} />
+                      <Route exact path="/sales_report" element={<SalesReport />} />
+                      <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
 
-                    {/* closer/agent */}
-                    <Route exact path="/closer_index" element={<Indexa />} />
-                    <Route exact path="/closer_orders" element={<Ordersa />} />
-                    <Route exact path="/closer_sales" element={<Salesa />} />
-                    <Route exact path="/closer_users" element={<Usersa />} />
-                    <Route exact path="/after_sales_service" element={<Ass />} />
-
-
-                    {/*Senior supervisor*/}
-                    <Route exact path="/senior_supervisor_index" element={<Indexss />} />
-                    <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
-                    <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
-                    <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
-                    <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
-                    <Route exact path="/ticket_house" element={<TicketHouse />} />
-                    <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
+                      <Route exact path="/invoice" element={<InvoiceNewTemp />} />
 
 
 
-                  </Route>
-                </Routes>
+                      {/* admin */}
+                      <Route exact path="/admin_index" element={<Index />} />
+                      <Route exact path="/admin_invoices" element={<Invoices />} />
+                      <Route exact path="/admin_orders" element={<Orders />} />
+                      <Route exact path="/admin_sales" element={<Sales />} />
+                      <Route exact path="/admin_tickets" element={<Tickets />} />
+                      <Route exact path="/admin_users" element={<Users />} />
+                      <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
+                      <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
+
+
+                      {/* super_admin */}
+                      <Route exact path="/super_admin_index" element={<Indexs />} />
+                      <Route exact path="/super_admin_invoices" element={<Invoicess />} />
+                      <Route exact path="/super_admin_orders" element={<Orderss />} />
+                      <Route exact path="/super_admin_sales" element={<Saless />} />
+                      <Route exact path="/super_admin_tickets" element={<Ticketss />} />
+                      <Route exact path="/super_admin_users" element={<Userss />} />
+
+                      {/* caption manager*/}
+                      <Route exact path="/captain_index" element={<Indexm />} />
+                      <Route exact path="/captain_invoices" element={<Invoicesm />} />
+                      <Route exact path="/captain_orders" element={<Ordersm />} />
+                      <Route exact path="/captain_sales" element={<Salesm />} />
+                      <Route exact path="/captain_to_closer" element={<Tocloser />} />
+                      <Route exact path="/captain_tickets" element={<Ticketsm />} />
+
+                      {/* closer/agent */}
+                      <Route exact path="/closer_index" element={<Indexa />} />
+                      <Route exact path="/closer_orders" element={<Ordersa />} />
+                      <Route exact path="/closer_sales" element={<Salesa />} />
+                      <Route exact path="/closer_users" element={<Usersa />} />
+                      <Route exact path="/after_sales_service" element={<Ass />} />
+
+
+                      {/*Senior supervisor*/}
+                      <Route exact path="/senior_supervisor_index" element={<Indexss />} />
+                      <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
+                      <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
+                      <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
+                      <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
+                      <Route exact path="/ticket_house" element={<TicketHouse />} />
+                      <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
+
+
+
+                    </Route>
+                  </Routes>
+                </div>
               </div>
             </div>
           </div>

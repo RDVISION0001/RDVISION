@@ -13,7 +13,7 @@ function indexa() {
 
     <>
       <div className="d-flex" style={{ width: '100%', overflowX: 'auto' }}>
-        <TicketTrack />
+        {/* <TicketTrack /> */}
         <div className="container-fluid mt-3">
           <TaskProgress />
           <ChartWorktime />
