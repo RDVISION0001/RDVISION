@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Draggable from 'react-draggable';
 
 const FloatingButton = () => {
-    const [isOpen, setIsOpen] = useState(true); // Whether popup is open or collapsed
+    const [isOpen, setIsOpen] = useState(false); // Default to collapsed
     const [isLoading, setIsLoading] = useState(true); // Loading state for iframe
     const popupRef = useRef(null);
 
@@ -40,17 +40,16 @@ const FloatingButton = () => {
                             textAlign: 'center',
                             fontWeight: 'bold',
                         }}
-                    >
-                        </div>
+                    ></div>
 
                     {/* Collapse/Open Button */}
                     <div
                         onClick={togglePopup}
                         style={{
                             position: 'absolute',
-                            top: '5px',
+                            top: '0px',
                             right: '5px',
-                            backgroundColor: '#ff6347',
+                            backgroundColor: '#645e64',
                             borderRadius: '50%',
                             padding: '5px 10px',
                             cursor: 'pointer',
@@ -58,7 +57,11 @@ const FloatingButton = () => {
                             fontWeight: 'bold',
                         }}
                     >
-                        {isOpen ? <i class="fa-solid fa-compress"></i> : <i class="fa-solid fa-expand"></i>} {/* Show "-" when open, "+" when collapsed */}
+                        {isOpen ? (
+                            <i className="fa-solid fa-compress"></i>
+                        ) : (
+                            <i className="fa-solid fa-expand"></i>
+                        )}
                     </div>
 
                     {/* Loading Spinner */}
