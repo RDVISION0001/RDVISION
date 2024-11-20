@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Dropdown } from "react-bootstrap";
 import axiosInstance from '../axiosInstance';
 
 import { Client } from '@stomp/stompjs';
@@ -71,6 +71,7 @@ function live_tickets() {
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
   const [countryFilter, setCountryFilter] = useState([])
   const [productArray, setProductArray] = useState([]);
+  const [dropdownCountries, setDropDownCountries] = useState([])
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -215,9 +216,9 @@ function live_tickets() {
     };
   }, []);
 
-  const handleSelecteRow = (index,ticketId) => {
+  const handleSelecteRow = (index, ticketId) => {
     setSelectedKey(index)
-    localStorage.setItem("selectedLive",ticketId)
+    localStorage.setItem("selectedLive", ticketId)
   }
 
 
@@ -338,6 +339,11 @@ function live_tickets() {
     }
   };
 
+  const fetchCountries = async () => {
+    const response = await axiosInstance.get("/third_party_api/ticket/getDistinctCountries")
+    setDropDownCountries(response.data)
+  }
+
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
   useEffect(() => {
@@ -346,6 +352,7 @@ function live_tickets() {
 
   useEffect(() => {
     fetchProducts();
+    fetchCountries()
   }, []);
 
   const handleChange = (e) => {
@@ -568,730 +575,721 @@ function live_tickets() {
 
 
   const handleCountryFilter = (country) => {
-    setCountryFilter((prev) => {
-      // If country is null, empty, or negative, clear the countryFilter array
-      if (!country) {
-        return [];
+    if (country) {
+      if (countryFilter.includes(country)) {
+        setCountryFilter(countryFilter.filter((item) => item !== country)); // Remove country
+      } else {
+        setCountryFilter([...countryFilter, country]); // Add country
       }
-
-      // If country is already in the list, remove it
-      if (prev.includes(country)) {
-        return prev.filter((c) => c !== country);
-      }
-
-      // Otherwise, add the country to the list
-      return [...prev, country];
-    });
+    } else {
+      setCountryFilter([]); // Clear selection if "All" is clicked
+    }
   };
+
 
 
 
   return (
     <>
-      <div >
-        <div className=' d-flex justify-content-end '>
-        
-          <div style={{ width: "100vw" }}>
-            <div>
+      <div>
+        <div >
+          <div>
 
-              {/* <!-- Tabbed Ticket Table --> */}
-              <section className="followup-table-section d-flex">
-                <div className="container-fluid">
-                  <div className="table-wrapper">
-                    {/* <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3> */}
-                    <ul
-                      className="nav recent-transactions-tab-header nav-tabs"
-                      id="followUp"
-                      role="tablist"
-                    >
+            {/* <!-- Tabbed Ticket Table --> */}
+            <section className="followup-table-section d-flex">
+              <div className="container-fluid">
+                <div className="table-wrapper">
+                  {/* <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3> */}
+                  <ul
+                    className="nav recent-transactions-tab-header nav-tabs"
+                    id="followUp"
+                    role="tablist"
+                  >
 
-                      <li className="nav-item d-flex justify-content-between align-items-center w-100" role="presentation">
+                    <li className="nav-item d-flex justify-content-between align-items-center w-100" role="presentation">
 
-                        {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
-                        {/* <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i> */}
-                        <div style={{ fontWeight: "bold", fontSize: "20px" }}> Live Tickets</div>
+                      {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
+                      {/* <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i> */}
+                      <div style={{ fontWeight: "bold", fontSize: "20px" }}> Live Tickets</div>
 
-                        <div className="col-md-5">
-                          <div className="search-wrapper">
-                            <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
-                            <div className="search-icon">
-                              <i className="fa-solid fa-magnifying-glass"></i>
-                            </div>
+                      <div className="col-md-5">
+                        <div className="search-wrapper">
+                          <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search by Name ,Email, Mobile" value={shortValue} onChange={handleShortDataValue} />
+                          <div className="search-icon">
+                            <i className="fa-solid fa-magnifying-glass"></i>
                           </div>
                         </div>
-                        <div className="d-flex justify-content-between align-items-center">
-                          <div className=' d-flex justify-content-center ' >
-                            <div className="form-check" style={{ marginLeft: "10px" }}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="flexCheckDefault"
-                                checked={assignedTo === userId}
-                                onChange={() => setAssignedTo(userId)} // Call toggle method on change
-                              />
-                              <label className="form-check-label" htmlFor="flexCheckDefault">
-                                Assigned to me
-                              </label>
-                            </div>
-                            <div className="form-check" style={{ marginLeft: "10px" }}>
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="flexCheckChecked"
-                                checked={assignedTo === 0} // Checked if 'list' is false
-                                onChange={() => setAssignedTo(0)} // Call toggle method on change
-                              />
-                              <label className="form-check-label" htmlFor="flexCheckChecked">
-                                All negotiation tickets
-                              </label>
-                            </div>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div className=' d-flex justify-content-center ' >
+                          <div className="form-check" style={{ marginLeft: "10px" }}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id="flexCheckDefault"
+                              checked={assignedTo === userId}
+                              onChange={() => setAssignedTo(userId)} // Call toggle method on change
+                            />
+                            <label className="form-check-label" htmlFor="flexCheckDefault">
+                              Assigned to me
+                            </label>
                           </div>
-                          <div className='d-flex gap-4 m-3'>
-                            <button
-                              className={`fixed-width-btn ${countryFilter.length === 0 ? "bg-primary" : "bg-secondary"}`}
+                          <div className="form-check" style={{ marginLeft: "10px" }}>
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              id="flexCheckChecked"
+                              checked={assignedTo === 0} // Checked if 'list' is false
+                              onChange={() => setAssignedTo(0)} // Call toggle method on change
+                            />
+                            <label className="form-check-label" htmlFor="flexCheckChecked">
+                              All negotiation tickets
+                            </label>
+                          </div>
+                        </div>
+                        <Dropdown>
+                          <Dropdown.Toggle variant="primary" id="dropdown-basic">
+                            Filter by Country
+                          </Dropdown.Toggle>
+
+                          <Dropdown.Menu style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                            <Dropdown.Item
+                              className={countryFilter.length === 0 ? "bg-primary text-white" : ""}
                               onClick={() => handleCountryFilter()}
                             >
                               {`${countryFilter.length === 0 ? "✅" : ""}`} All
-                            </button>
-                            <button
-                              className={`fixed-width-btn ${countryFilter.includes("US") ? "bg-primary" : "bg-secondary"}`}
-                              onClick={() => handleCountryFilter("US")}
-                            >
-                              {`${countryFilter.includes("US") ? "✅" : ""}`} US
-                            </button>
-                            <button
-                              className={`fixed-width-btn ${countryFilter.includes("UK") ? "bg-primary" : "bg-secondary"}`}
-                              onClick={() => handleCountryFilter("UK")}
-                            >
-                              {`${countryFilter.includes("UK") ? "✅" : ""}`} UK
-                            </button>
-                            <button
-                              className={`fixed-width-btn ${countryFilter.includes("AU") ? "bg-primary" : "bg-secondary"}`}
-                              onClick={() => handleCountryFilter("AU")}
-                            >
-                              {`${countryFilter.includes("AU") ? "✅" : ""}`} AU
-                            </button>
-                          </div>
-                        </div>
-                      </li>
-
-
-                    </ul>
-                    {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call Back</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
-                      <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
-                    </div> : ""}
-                    <div
-                      className="tab-content recent-transactions-tab-body"
-                      id="followUpContent"
-                    >
-                      <div
-                        className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
-                        // className="tab-pane fade"
-                        id="new-arrivals-tkts-tab-pane"
-                        role="tabpanel"
-                        aria-labelledby="new-arrivals-tkts-tab"
-                        tabindex="0"
-                      >
-                        <div className="followups-table table-responsive table-height">
-                          <table className="table">
-                            <thead className="sticky-header">
-                              <tr>
-                                <th tabindex="0">S.No.</th>
-                                <th tabindex="0">Date/Time</th>
-                                <th tabindex="0">Country</th>
-                                <th tabindex="0">Customer Name</th>
-                                <th tabindex="0">Customer Number</th>
-                                <th tabindex="0">Customer Email</th>
-                                <th tabindex="0">Status</th>
-                                <th tabindex="0">Requirement</th>
-                                <th tabindex="0">Action</th>
-                                <th tabindex="0">Ticket ID</th>
-                              </tr>
-                            </thead>
-                            {data ? (
-                              <tbody>
-                                {data.filter(
-                                  (item) =>
-                                    item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                    item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                    item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                                ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (<tr key={index}
-                                  style={{
-                                    boxShadow: localStorage.getItem("selectedLive")===item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
-                                    zIndex: localStorage.getItem("selectedLive")===item.uniqueQueryId ? 1 : "auto",
-                                    position:localStorage.getItem("selectedLive")===item.uniqueQueryId ? "relative" : "static"
-                                  }}
-                                  onClick={() => handleSelecteRow(index,item.uniqueQueryId)}
-                                >
-                                  <td>{itemsPerPage * currentPage + (index + 1)}.</td>
-                                  <td>
-                                    <span className="text">
-                                      {item.queryTime.split(" ")[0].split("-")[2]}-
-                                      {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
-                                      {item.queryTime.split(" ")[0].split("-")[0]}
-                                    </span>
-                                    <br />
-                                    <span>
-                                      {convertTo12HourFormat(item.queryTime.split(" ")[1])}
-                                    </span>
-                                  </td>
-                                  <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td>
-                                    {/* For Mobile Number */}
-                                    <CopyToClipboard
-                                      text={item.senderMobile}
-                                      onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
-                                    >
-                                      <button
-                                        style={{
-                                          backgroundColor:
-                                            copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
-                                          color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
-                                        }}
-                                      >
-                                        {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
-                                      </button>
-                                    </CopyToClipboard>
-                                    <span className="text">{maskMobileNumber(item.senderMobile)}</span>
-                                  </td>
-
-                                  <td>
-                                    {/* For Email */}
-                                    <CopyToClipboard
-                                      text={item.senderEmail}
-                                      onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
-                                    >
-                                      <button
-                                        style={{
-                                          backgroundColor:
-                                            copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
-                                          color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
-                                        }}
-                                      >
-                                        {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
-                                      </button>
-                                    </CopyToClipboard>
-                                    <span className="text">{maskEmail(item.senderEmail)}</span>
-                                  </td>
-
-                                  <td onClick={() => handleShow(item.uniqueQueryId)} >
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                      {item.ticketstatus}
-                                    </a>
-                                  </td>
-
-                                  <td className="hover-cell">
-                                    <span className="comment">{item.subject.slice(15, 30)}<br /></span>
-
-                                    {/* Hidden message span that will show on hover */}
-                                    <span className="message">{item.subject}</span>
-                                  </td>
-
-                                  {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
-
-                                  <td>
-                                    <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                        // onClick={handleView}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action call bg-danger"
-                                        title="Get connect on call"
-                                      ><i className="fa-solid fa-info "></i>
-                                      </Button>
-                                      <Button
-                                        onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
-                                        // onClick={handleView}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action call rounded-circle"
-                                        title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
-                                        href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                        className="btn-action message"
-                                        title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i></a>
-                                      <Button
-                                        onClick={() => handleOn(item.uniqueQueryId)}
-                                        // href="mailto:someone@example.com"
-                                        className="btn-action email"
-                                        title="Get connect on email"
-                                      ><i className="fa-solid fa-envelope"></i
-                                      ></Button>
-                                      <a
-                                        href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                        target="_blank"
-                                        className="btn-action whatsapp"
-                                        title="Get connect on whatsapp"
-                                      >
-                                        <i className="fa-brands fa-whatsapp"></i>
-                                      </a>
-                                      <Button
-                                        onClick={() => handleQuotation(item.uniqueQueryId)}
-                                        className="rounded-circle "
-                                        title="Get connect on"
-                                      >
-                                        <i class="fa-share-from-square" ></i>
-                                      </Button>
-
-                                      <Button
-                                        onClick={() => handleInvoice(item.uniqueQueryId)}
-                                        className="rounded-circle "
-                                        title="Get connect on"
-                                      >
-                                        <i className="fa-solid fa-file-invoice"></i>
-                                      </Button>
-                                    </span>
-                                  </td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
-                                </tr>
-                                ))}
-                              </tbody>
-                            ) : (
-                              <p>Loading...</p>
-                            )}
-                          </table>
-                        </div>
+                            </Dropdown.Item>
+                            {dropdownCountries.map((item, index) => (
+                              <Dropdown.Item
+                                key={index}
+                                className={countryFilter.includes(dropdownCountries[index]) ? "bg-primary text-white" : ""}
+                                onClick={() => handleCountryFilter(dropdownCountries[index])}
+                              >
+                                {`${countryFilter.includes(dropdownCountries[index]) ? "✅" : ""}`} {dropdownCountries[index]}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </div>
+                    </li>
 
 
+                  </ul>
+                  {activeTab === "followUp" ? <div className='d-flex justify-content-center'>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Call_Back")}>Call Back</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Follow")}>Follow up</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Interested")}>Interested</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Interested")}>Not Interested</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Wrong_Number")}>Wrong Number</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Place_with_other")}>Place with other</div>
+                    <div className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup" ? "bg-danger" : "bg-primary"} `} style={{ cursor: "Pointer" }} onClick={() => setFollowupStatus("Not_Pickup")}>Not Pickup</div>
+                  </div> : ""}
+                  <div
+                    className="tab-content recent-transactions-tab-body"
+                    id="followUpContent"
+                  >
+                    <div
+                      className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""}`}
+                      // className="tab-pane fade"
+                      id="new-arrivals-tkts-tab-pane"
+                      role="tabpanel"
+                      aria-labelledby="new-arrivals-tkts-tab"
+                      tabindex="0"
+                    >
+                      <div className="followups-table table-responsive table-height" style={{ overflow: "auto" }}>
+                        <table className="table">
+                          <thead className="sticky-header">
+                            <tr>
+                              <th tabindex="0">S.No.</th>
+                              <th tabindex="0">Date/Time</th>
+                              <th tabindex="0">Country</th>
+                              <th tabindex="0">Customer Name</th>
+                              <th tabindex="0">Customer Number</th>
+                              <th tabindex="0">Customer Email</th>
+                              <th tabindex="0">Status</th>
+                              <th tabindex="0">Requirement</th>
+                              <th tabindex="0">Action</th>
+                              <th tabindex="0">Ticket ID</th>
+                            </tr>
+                          </thead>
+                          {data ? (
+                            <tbody>
+                              {data.filter(
+                                (item) =>
+                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                              ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (<tr key={index}
+                                style={{
+                                  boxShadow: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
+                                  zIndex: localStorage.getItem("selectedLive") === item.uniqueQueryId ? 1 : "auto",
+                                  position: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "relative" : "static"
+                                }}
+                                onClick={() => handleSelecteRow(index, item.uniqueQueryId)}
+                              >
+                                <td>{itemsPerPage * currentPage + (index + 1)}.</td>
+                                <td>
+                                  <span className="text">
+                                    {item.queryTime.split(" ")[0].split("-")[2]}-
+                                    {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
+                                    {item.queryTime.split(" ")[0].split("-")[0]}
+                                  </span>
+                                  <br />
+                                  <span>
+                                    {convertTo12HourFormat(item.queryTime.split(" ")[1])}
+                                  </span>
+                                </td>
+                                <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                                <td><span className="text">{item.senderName}</span></td>
+                                <td>
+                                  {/* For Mobile Number */}
+                                  <CopyToClipboard
+                                    text={item.senderMobile}
+                                    onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
+                                  >
+                                    <button
+                                      style={{
+                                        backgroundColor:
+                                          copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                        color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                      }}
+                                    >
+                                      {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                    </button>
+                                  </CopyToClipboard>
+                                  <span className="text">{maskMobileNumber(item.senderMobile)}</span>
+                                </td>
+
+                                <td>
+                                  {/* For Email */}
+                                  <CopyToClipboard
+                                    text={item.senderEmail}
+                                    onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
+                                  >
+                                    <button
+                                      style={{
+                                        backgroundColor:
+                                          copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                        color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                      }}
+                                    >
+                                      {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                    </button>
+                                  </CopyToClipboard>
+                                  <span className="text">{maskEmail(item.senderEmail)}</span>
+                                </td>
+
+                                <td onClick={() => handleShow(item.uniqueQueryId)} >
+                                  <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                    style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                    {item.ticketstatus}
+                                  </a>
+                                </td>
+
+                                <td className="hover-cell">
+                                  <span className="comment">{item.subject.slice(15, 30)}<br /></span>
+
+                                  {/* Hidden message span that will show on hover */}
+                                  <span className="message">{item.subject}</span>
+                                </td>
+
+                                {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
+
+                                <td>
+                                  <span className="actions-wrapper">
+                                    <Button
+                                      onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                      // onClick={handleView}
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#followUpModal"
+                                      className="btn-action call bg-danger"
+                                      title="Get connect on call"
+                                    ><i className="fa-solid fa-info "></i>
+                                    </Button>
+                                    <Button
+                                      onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
+                                      // onClick={handleView}
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#followUpModal"
+                                      className="btn-action call rounded-circle"
+                                      title="Get connect on call"
+                                    ><i className="fa-solid fa-phone"></i>
+                                    </Button>
+                                    <a
+                                      href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                      className="btn-action message"
+                                      title="Get connect on message"
+                                    ><i className="fa-solid fa-message"></i></a>
+                                    <Button
+                                      onClick={() => handleOn(item.uniqueQueryId)}
+                                      // href="mailto:someone@example.com"
+                                      className="btn-action email"
+                                      title="Get connect on email"
+                                    ><i className="fa-solid fa-envelope"></i
+                                    ></Button>
+                                    <a
+                                      href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                      target="_blank"
+                                      className="btn-action whatsapp"
+                                      title="Get connect on whatsapp"
+                                    >
+                                      <i className="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                    <Button
+                                      onClick={() => handleQuotation(item.uniqueQueryId)}
+                                      className="rounded-circle "
+                                      title="Get connect on"
+                                    >
+                                      <i class="fa-share-from-square" ></i>
+                                    </Button>
+
+                                    <Button
+                                      onClick={() => handleInvoice(item.uniqueQueryId)}
+                                      className="rounded-circle "
+                                      title="Get connect on"
+                                    >
+                                      <i className="fa-solid fa-file-invoice"></i>
+                                    </Button>
+                                  </span>
+                                </td>
+                                <td className="ticket-id">
+                                  <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                </td>
+                              </tr>
+                              ))}
+                            </tbody>
+                          ) : (
+                            <p>Loading...</p>
+                          )}
+                        </table>
+                      </div>
                     </div>
-                  </div>
-                  <div className="pagination-controls">
-                    <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
-                    {generatePageNumbers().map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`next_prev ${page === currentPage ? 'active' : ''}`}
-                      >
-                        {page + 1}
-                      </button>
-                    ))}
-                    <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
 
-                    <span> Items per page:</span>{' '}
-                    <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
-                      <option value="5">5</option>
-                      <option value="10">10</option>
-                      <option value="15">15</option>
-                      <option value="20">20</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                      <option value="1000">1000</option>
-                    </select>
+
                   </div>
                 </div>
-              </section>
-            </div>
+                <div className="pagination-controls">
+                  <button className="next_prev" onClick={handlePreviousPage} disabled={currentPage === 0}>Previous</button>
+                  {generatePageNumbers().map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`next_prev ${page === currentPage ? 'active' : ''}`}
+                    >
+                      {page + 1}
+                    </button>
+                  ))}
+                  <button className="next_prev" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>Next</button>
 
-            {/* <!-- -------------- -->
+                  <span> Items per page:</span>{' '}
+                  <select className="next_prev" value={itemsPerPage} onChange={(e) => handleItemsPerPageChange(e.target.value)}>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="1000">1000</option>
+                  </select>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* <!-- -------------- -->
 
  <!-- ------------------------------------------------------------
  --------------------- Call Status Ticket Modal ---------------------
 -------------------------------------------------------------- --> */}
-            <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-              <Modal.Header closeButton className="bg-primary text-white text-center">
-                <h1 className="modal-title fs-5 w-100" id="followUpModalLabel">
-                  Update Ticket Status
-                </h1>
-              </Modal.Header>
-              <Modal.Body className="p-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '8px', boxShadow: '0px 4px 8px rgba(0,0,0,0.1)' }}>
-                <form onSubmit={handleSubmit}>
+          <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+            <Modal.Header closeButton className="bg-primary text-white text-center">
+              <h1 className="modal-title fs-5 w-100" id="followUpModalLabel">
+                Update Ticket Status
+              </h1>
+            </Modal.Header>
+            <Modal.Body className="p-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '8px', boxShadow: '0px 4px 8px rgba(0,0,0,0.1)' }}>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="status" className="form-label">Status</label>
+                  <select
+                    className="form-select border-0 shadow-sm"
+                    id="status"
+                    name="ticketStatus"
+                    value={formData.ticketStatus}
+                    onChange={handleStatusChange}
+                    style={{ borderRadius: '4px' }}
+                  >
+                    <option>Choose Call-Status</option>
+                    <option value="Sale">Sale</option>
+                    <option value="Follow">Follow-up</option>
+                    <option value="Interested">Interested</option>
+                    <option value="Not_Interested">Not Interested</option>
+                    <option value="Wrong_Number">Wrong Number</option>
+                    <option value="Place_with_other">Place with other</option>
+                    <option value="Not_Pickup">Not Pickup</option>
+                    <option value="hang_up">Hang_up</option>
+                  </select>
+                </div>
+
+                {showSaleTransaction && (
                   <div className="mb-3">
-                    <label htmlFor="status" className="form-label">Status</label>
-                    <select
-                      className="form-select border-0 shadow-sm"
-                      id="status"
-                      name="ticketStatus"
-                      value={formData.ticketStatus}
-                      onChange={handleStatusChange}
-                      style={{ borderRadius: '4px' }}
-                    >
-                      <option>Choose Call-Status</option>
-                      <option value="Sale">Sale</option>
-                      <option value="Follow">Follow-up</option>
-                      <option value="Interested">Interested</option>
-                      <option value="Not_Interested">Not Interested</option>
-                      <option value="Wrong_Number">Wrong Number</option>
-                      <option value="Place_with_other">Place with other</option>
-                      <option value="Not_Pickup">Not Pickup</option>
-                      <option value="hang_up">Hang_up</option>
-                    </select>
-                  </div>
-
-                  {showSaleTransaction && (
-                    <div className="mb-3">
-                      <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
-                      <input
-                        type="transaction-details"
-                        placeholder="Enter Transaction ID"
-                        className="form-control border-0 shadow-sm"
-                        id="transactionDetails"
-                        name="transactionDetails"
-                        value={formData.SaleTransaction}
-                        onChange={handleChange}
-                        required
-                        style={{ borderRadius: '4px' }}
-                      />
-                    </div>
-                  )}
-
-                  {showFollowUpDate && (
-                    <div className="mb-3">
-                      <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
-                      <input
-                        type="datetime-local"
-                        className="form-control border-0 shadow-sm"
-                        id="followUpDateTime"
-                        name="followUpDateTime"
-                        value={formData.followUpDateTime}
-                        onChange={handleChange}
-                        step="2"
-                        style={{ borderRadius: '4px' }}
-                      />
-                    </div>
-                  )}
-
-                  <div className="col-12 mb-3">
-                    <label htmlFor="comment" className="form-label">Comment</label>
-                    <textarea
-                      rows="4"
+                    <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
+                    <input
+                      type="transaction-details"
+                      placeholder="Enter Transaction ID"
                       className="form-control border-0 shadow-sm"
-                      placeholder="Describe your conversation with client"
-                      id="comment"
-                      name="comment"
-                      value={formData.comment}
+                      id="transactionDetails"
+                      name="transactionDetails"
+                      value={formData.SaleTransaction}
                       onChange={handleChange}
                       required
                       style={{ borderRadius: '4px' }}
-                    ></textarea>
+                    />
                   </div>
+                )}
 
-                  {error && <p className="text-danger">{error}</p>}
-
-                  <div className="modal-footer justify-content-center border-0 mt-4">
-                    <button type="button" className="btn btn-secondary px-4" data-bs-dismiss="modal" onClick={handleClose}>
-                      Close
-                    </button>
-                    <button className="btn btn-primary px-4" type="submit">
-                      Save Changes
-                    </button>
+                {showFollowUpDate && (
+                  <div className="mb-3">
+                    <label htmlFor="followUpDateTime" className="form-label">Follow Up Date and Time</label>
+                    <input
+                      type="datetime-local"
+                      className="form-control border-0 shadow-sm"
+                      id="followUpDateTime"
+                      name="followUpDateTime"
+                      value={formData.followUpDateTime}
+                      onChange={handleChange}
+                      step="2"
+                      style={{ borderRadius: '4px' }}
+                    />
                   </div>
-                </form>
-              </Modal.Body>
-            </Modal>
+                )}
+
+                <div className="col-12 mb-3">
+                  <label htmlFor="comment" className="form-label">Comment</label>
+                  <textarea
+                    rows="4"
+                    className="form-control border-0 shadow-sm"
+                    placeholder="Describe your conversation with client"
+                    id="comment"
+                    name="comment"
+                    value={formData.comment}
+                    onChange={handleChange}
+                    required
+                    style={{ borderRadius: '4px' }}
+                  ></textarea>
+                </div>
+
+                {error && <p className="text-danger">{error}</p>}
+
+                <div className="modal-footer justify-content-center border-0 mt-4">
+                  <button type="button" className="btn btn-secondary px-4" data-bs-dismiss="modal" onClick={handleClose}>
+                    Close
+                  </button>
+                  <button className="btn btn-primary px-4" type="submit">
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </Modal.Body>
+          </Modal>
 
 
-            <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
-              <Modal.Header closeButton>
-                <h4 className="w-100 text-center" id="followUpModalLabel">
-                  Send Quotation Mail to Customer
-                </h4>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="container">
-                  <div className="row">
-                    <div className="col-md-4">
-                      <div className="shadow p-3 mb-5 bg-white rounded">
-                        <div className="card-body d-flex flex-column align-items-start">
-                          <input
-                            type="checkbox"
-                            className="bg-info mt-2"
-                            style={{ height: "40px", fontSize: "12px" }}
-                            checked={selectedTemplate === 1}
-                            onChange={() => handleToggleProduct(1)}
-                            onClick={() => setSelectedTemplate(1)}
-                          />
-                          <img
-                            onClick={() => setSelectedTemplate(1)}
-                            src={temp1}
-                            style={{ height: "150px", cursor: "pointer" }}
-                            alt="Template 1"
-                            className="img-fluid hoverEffectToTemp"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="shadow p-3 mb-5 bg-white rounded">
-                        <div className="card-body d-flex flex-column align-items-start">
-                          <input
-                            type="checkbox"
-                            className="bg-info mt-2"
-                            style={{ height: "40px", fontSize: "12px" }}
-                            checked={selectedTemplate === 2}
-                            onChange={() => handleToggleProduct(2)}
-                            onClick={() => setSelectedTemplate(2)}
-                          />
-                          <img
-                            onClick={() => setSelectedTemplate(2)}
-                            src={temp2}
-                            style={{ height: "150px", cursor: "pointer" }}
-                            alt="Template 2"
-                            className="img-fluid hoverEffectToTemp"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-4">
-                      <div className="shadow p-3 mb-5 bg-white rounded">
-                        <div className="card-body d-flex flex-column align-items-start">
-                          <input
-                            type="checkbox"
-                            className="bg-info mt-2"
-                            style={{ height: "40px", fontSize: "12px" }}
-                            checked={selectedTemplate === 3}
-                            onChange={() => handleToggleProduct(3)}
-                            onClick={() => setSelectedTemplate(3)}
-                          />
-                          <img
-                            onClick={() => setSelectedTemplate(3)}
-                            src={temp3}
-                            style={{ height: "150px", cursor: "pointer" }}
-                            alt="Template 3"
-                            className="img-fluid hoverEffectToTemp"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-
-                  <div>
-                    <>
-                      <div className='d-flex justify-content-between px-5'>
+          <Modal show={on} onHide={handleOff} className="modal assign-ticket-modal fade" id="followUpModal" tabindex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
+            <Modal.Header closeButton>
+              <h4 className="w-100 text-center" id="followUpModalLabel">
+                Send Quotation Mail to Customer
+              </h4>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="container">
+                <div className="row">
+                  <div className="col-md-4">
+                    <div className="shadow p-3 mb-5 bg-white rounded">
+                      <div className="card-body d-flex flex-column align-items-start">
                         <input
-                          type='text'
-                          placeholder='Enter product Name'
-                          value={serchValue}
-                          onChange={handleInputChange}
-                          className='p-2 bg-white text-black'
+                          type="checkbox"
+                          className="bg-info mt-2"
+                          style={{ height: "40px", fontSize: "12px" }}
+                          checked={selectedTemplate === 1}
+                          onChange={() => handleToggleProduct(1)}
+                          onClick={() => setSelectedTemplate(1)}
                         />
-                        {productsIds.length > 0 && (
-                          <div
-                            className='bg-primary text-white rounded p-2 hover:shadow-lg'
-                            style={{ height: "30px", fontSize: "12px", cursor: "Pointer" }}
-                            onClick={() => setProductIds([])}
-                          >
-                            Deselect All
-                          </div>
-                        )}
-
-
+                        <img
+                          onClick={() => setSelectedTemplate(1)}
+                          src={temp1}
+                          style={{ height: "150px", cursor: "pointer" }}
+                          alt="Template 1"
+                          className="img-fluid hoverEffectToTemp"
+                        />
                       </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="shadow p-3 mb-5 bg-white rounded">
+                      <div className="card-body d-flex flex-column align-items-start">
+                        <input
+                          type="checkbox"
+                          className="bg-info mt-2"
+                          style={{ height: "40px", fontSize: "12px" }}
+                          checked={selectedTemplate === 2}
+                          onChange={() => handleToggleProduct(2)}
+                          onClick={() => setSelectedTemplate(2)}
+                        />
+                        <img
+                          onClick={() => setSelectedTemplate(2)}
+                          src={temp2}
+                          style={{ height: "150px", cursor: "pointer" }}
+                          alt="Template 2"
+                          className="img-fluid hoverEffectToTemp"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4">
+                    <div className="shadow p-3 mb-5 bg-white rounded">
+                      <div className="card-body d-flex flex-column align-items-start">
+                        <input
+                          type="checkbox"
+                          className="bg-info mt-2"
+                          style={{ height: "40px", fontSize: "12px" }}
+                          checked={selectedTemplate === 3}
+                          onChange={() => handleToggleProduct(3)}
+                          onClick={() => setSelectedTemplate(3)}
+                        />
+                        <img
+                          onClick={() => setSelectedTemplate(3)}
+                          src={temp3}
+                          style={{ height: "150px", cursor: "pointer" }}
+                          alt="Template 3"
+                          className="img-fluid hoverEffectToTemp"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                      <div className="container mt-3 border p-3 rounded">
-                        <div className="row" style={{ height: "500px" }}>
-                          {productsList && productsList
-                            .filter(product =>
-                              serchValue.length > 0
-                                ? product.name.toLowerCase().includes(serchValue.toLowerCase())
-                                : true
-                            )
-                            .filter((product) => product.images !== null).map((product, index) => (
-                              <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
-                                <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
-                                  {/* Brand Tag */}
-                                  <div
-                                    className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
-                                    style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
-                                  >
-                                    {product.brand}
+
+                <div>
+                  <>
+                    <div className='d-flex justify-content-between px-5'>
+                      <input
+                        type='text'
+                        placeholder='Enter product Name'
+                        value={serchValue}
+                        onChange={handleInputChange}
+                        className='p-2 bg-white text-black'
+                      />
+                      {productsIds.length > 0 && (
+                        <div
+                          className='bg-primary text-white rounded p-2 hover:shadow-lg'
+                          style={{ height: "30px", fontSize: "12px", cursor: "Pointer" }}
+                          onClick={() => setProductIds([])}
+                        >
+                          Deselect All
+                        </div>
+                      )}
+
+
+                    </div>
+
+                    <div className="container mt-3 border p-3 rounded">
+                      <div className="row" style={{ height: "500px" }}>
+                        {productsList && productsList
+                          .filter(product =>
+                            serchValue.length > 0
+                              ? product.name.toLowerCase().includes(serchValue.toLowerCase())
+                              : true
+                          )
+                          .filter((product) => product.images !== null).map((product, index) => (
+                            <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
+                              <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
+                                {/* Brand Tag */}
+                                <div
+                                  className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
+                                  style={{ fontSize: '10px', borderTopLeftRadius: '4px', borderBottomRightRadius: '4px' }}
+                                >
+                                  {product.brand}
+                                </div>
+
+                                <div className="d-flex flex-column flex-md-row align-items-center">
+                                  <div>
+                                    <img
+                                      src={product.images && product.images[0]}
+                                      alt="Product"
+                                      className="img-fluid rounded"
+                                      style={{ maxWidth: '60px' }}
+                                    />
                                   </div>
 
-                                  <div className="d-flex flex-column flex-md-row align-items-center">
-                                    <div>
-                                      <img
-                                        src={product.images && product.images[0]}
-                                        alt="Product"
-                                        className="img-fluid rounded"
-                                        style={{ maxWidth: '60px' }}
-                                      />
-                                    </div>
-
-                                    {/* Product Details Section */}
-                                    <div className="ms-2 w-100 ">
-                                      <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
-                                        {product.name} {product.Price}
-                                      </h6>
-                                    </div>
+                                  {/* Product Details Section */}
+                                  <div className="ms-2 w-100 ">
+                                    <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
+                                      {product.name} {product.Price}
+                                    </h6>
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                        </div>
+                            </div>
+                          ))}
                       </div>
-                    </>
-
-                    <div className='mt-3'>
-                      <label htmlFor="textarea fw-bold" style={{ fontSize: "20px", fontWeight: "bold" }}>Enter Message</label>
-                      <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' placeholder='PLease Enter Meassage To Client' ></textarea>
                     </div>
+                  </>
 
-                    <button onClick={() => handleSendTemplateMail()}>Send Mail</button>
+                  <div className='mt-3'>
+                    <label htmlFor="textarea fw-bold" style={{ fontSize: "20px", fontWeight: "bold" }}>Enter Message</label>
+                    <textarea style={{ height: "150px", width: "100%" }} value={text} onChange={(e) => setText(e.target.value)} className='text-black bg-white p-3' placeholder='PLease Enter Meassage To Client' ></textarea>
                   </div>
 
+                  <button onClick={() => handleSendTemplateMail()}>Send Mail</button>
                 </div>
-              </Modal.Body>
-            </Modal>
+
+              </div>
+            </Modal.Body>
+          </Modal>
 
 
 
-            {/* <!-- Modal ticket popup --> */}
-            < Modal
-              show={view} onHide={handleCloses}
-              className="modal ticket-modal fade"
-              id="exampleModal"
-              tabindex="-1"
-              aria-labelledby="exampleModalLabel"
-              aria-hidden="true"
-            >
-              <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="ticket-content-spacing">
-                  <div className="modal-body">
-                    <div className="row">
-                      <div className="col-4">
-                        <div className="heading-area">
-                          <div className="vertical-write">
-                            <h2 className="title">Jenell D. Matney</h2>
-                            <p className="ticket-id">
-                              <i className="fa-solid fa-ticket"></i> TKTID:MEDEQ089N
-                            </p>
-                          </div>
+          {/* <!-- Modal ticket popup --> */}
+          < Modal
+            show={view} onHide={handleCloses}
+            className="modal ticket-modal fade"
+            id="exampleModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered modal-lg">
+              <div className="ticket-content-spacing">
+                <div className="modal-body">
+                  <div className="row">
+                    <div className="col-4">
+                      <div className="heading-area">
+                        <div className="vertical-write">
+                          <h2 className="title">Jenell D. Matney</h2>
+                          <p className="ticket-id">
+                            <i className="fa-solid fa-ticket"></i> TKTID:MEDEQ089N
+                          </p>
                         </div>
                       </div>
-                      <div className="col-8">
-                        <div
-                          className="contact-info-row d-flex align-items-center justify-content-between"
+                    </div>
+                    <div className="col-8">
+                      <div
+                        className="contact-info-row d-flex align-items-center justify-content-between"
+                      >
+                        <a href="" className="contact-info phone"
+                        ><i className="fa-solid fa-phone"></i> +91 9918293747</a
                         >
-                          <a href="" className="contact-info phone"
-                          ><i className="fa-solid fa-phone"></i> +91 9918293747</a
-                          >
-                          <a className="contact-info email" href="#"
-                          ><i className="fa-solid fa-envelope-open-text"></i>
-                            example@email.com</a
-                          >
-                        </div>
-                        <div className="main-content-area">
-                          <form>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                              <label className="form-check-label" for="flexCheckDefault">
-                                Default checkbox
-                              </label>
-                            </div>
-                            <div className="form-check">
-                              <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
-                              <label className="form-check-label" for="flexCheckChecked">
-                                Checked checkbox
-                              </label>
-                            </div>
-                            <div className="col-12">
-                              <label htmlFor="comment" className="form-label">Comment</label>
-                              <textarea
-                                rows="4"
-                                className="form-control"
-                                placeholder="Discribe your conversation with client"
-                                id="comment"
-                                name="comment"
-                              ></textarea>
-                            </div>
-                            <div className="modal-footer justify-content-center border-0">
-                              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloses}>
-                                Close
-                              </button>
-                              <button className="btn btn-primary" type="submit">
-                                Save Changes
-                              </button>
-                            </div>
-                          </form>
-                        </div>
+                        <a className="contact-info email" href="#"
+                        ><i className="fa-solid fa-envelope-open-text"></i>
+                          example@email.com</a
+                        >
+                      </div>
+                      <div className="main-content-area">
+                        <form>
+                          <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">
+                              Default checkbox
+                            </label>
+                          </div>
+                          <div className="form-check">
+                            <input className="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked />
+                            <label className="form-check-label" for="flexCheckChecked">
+                              Checked checkbox
+                            </label>
+                          </div>
+                          <div className="col-12">
+                            <label htmlFor="comment" className="form-label">Comment</label>
+                            <textarea
+                              rows="4"
+                              className="form-control"
+                              placeholder="Discribe your conversation with client"
+                              id="comment"
+                              name="comment"
+                            ></textarea>
+                          </div>
+                          <div className="modal-footer justify-content-center border-0">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCloses}>
+                              Close
+                            </button>
+                            <button className="btn btn-primary" type="submit">
+                              Save Changes
+                            </button>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </Modal>
-            <dialog
-              id="ticketjourney"
-              className="bg-white rounded shadow"
-              style={{ width: '80%', maxWidth: '600px', border: 'none' }}
-            >
+            </div>
+          </Modal>
+          <dialog
+            id="ticketjourney"
+            className="bg-white rounded shadow"
+            style={{ width: '80%', maxWidth: '600px', border: 'none' }}
+          >
 
-              <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center">
-                <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
-              </div>
-            </dialog>
-
-
-            {/* //invoice modal */}
-            <Modal
-              show={isInvoiceOn}
-              onHide={handleInvoice}
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true"
-              dialogClassName="fullscreen-modal" // Add a custom class here
-            >
-              <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
-                <u> Raise Invoice</u>
-              </h1>
-              <InvoiceBox
-                ticketId={selectTicketForInvoice}
-                name={selectNameForInvoice}
-                email={selectEmailForInvoice}
-                mobile={selectMobileForInvoice}
-              />
-            </Modal>
-            <Modal
-              show={isQuotationOn}
-              onHide={handleQuotation}
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true"
-              dialogClassName="fullscreen-modal" // Add a custom class here
-            >
-              <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
-                <u> Raise Invoice</u>
-              </h1>
-              <QuotationBox
-                ticketId={selectTicketForInvoice}
-                name={selectNameForInvoice}
-                email={selectEmailForInvoice}
-                mobile={selectMobileForInvoice}
-              />
-            </Modal>
-
-            <Modal
-              show={isTicketJourneyOpen}
-              onHide={closeTicketJourney}
-              id="followUpModal"
-              tabindex="-1"
-              aria-labelledby="followUpModalLabel"
-              aria-hidden="true"
-              dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
-            >
+            <div className="position-fixed vh-100 vw-100 d-flex flex-coloumn justify-content-center align-items-center">
               <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
-            </Modal>
-          </div>
+            </div>
+          </dialog>
+
+
+          {/* //invoice modal */}
+          <Modal
+            show={isInvoiceOn}
+            onHide={handleInvoice}
+            id="followUpModal"
+            tabindex="-1"
+            aria-labelledby="followUpModalLabel"
+            aria-hidden="true"
+            dialogClassName="fullscreen-modal" // Add a custom class here
+          >
+            <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+              <u> Raise Invoice</u>
+            </h1>
+            <InvoiceBox
+              ticketId={selectTicketForInvoice}
+              name={selectNameForInvoice}
+              email={selectEmailForInvoice}
+              mobile={selectMobileForInvoice}
+            />
+          </Modal>
+          <Modal
+            show={isQuotationOn}
+            onHide={handleQuotation}
+            id="followUpModal"
+            tabindex="-1"
+            aria-labelledby="followUpModalLabel"
+            aria-hidden="true"
+            dialogClassName="fullscreen-modal" // Add a custom class here
+          >
+            <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+              <u> Send quotation</u>
+            </h1>
+            <QuotationBox
+              ticketId={selectTicketForInvoice}
+              name={selectNameForInvoice}
+              email={selectEmailForInvoice}
+              mobile={selectMobileForInvoice}
+            />
+          </Modal>
+
+          <Modal
+            show={isTicketJourneyOpen}
+            onHide={closeTicketJourney}
+            id="followUpModal"
+            tabindex="-1"
+            aria-labelledby="followUpModalLabel"
+            aria-hidden="true"
+            dialogClassName="fullscreen-modal rounded-modal" // Add custom classes
+          >
+            <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
+          </Modal>
         </div>
       </div>
+
 
 
 

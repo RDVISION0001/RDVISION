@@ -87,6 +87,8 @@ const ViewInvoice = () => {
         try {
             const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
             setAddressData(response.data.dto);
+            console.log(response.data.dto)
+            toast.success("Address Loaded")
         } catch (err) {
             console.error('Error fetching address details:', err);
         }

@@ -19,21 +19,8 @@ function live() {
 
     <>
 
-      {/* <div className="container-fluid mt-3">
-            <Cardinfo />
-          </div> */}
-
-      {/* <div className="container-fluid mt-3">
-            <TaskProgress />
-          </div> */}
-
-      {/* <div className="container-fluid mt-3">
-            <ChartWorktime />
-          </div> */}
-
-      <div className="container-fluid">
         <Live_tickets />
-      </div>
+  
 
 
     </>

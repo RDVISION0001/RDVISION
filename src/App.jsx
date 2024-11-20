@@ -155,32 +155,33 @@ function App() {
               {localStorage.getItem("userId") && <Topnav />}
               <div className='d-flex'>
 
-                {localStorage.getItem("userId") && <TicketTrack />}
+                <div className='d-none d-md-block'>
+                  {localStorage.getItem("userId") && <TicketTrack />}
+                </div>
 
 
-                <div style={{ width: "88.5%" }}>
+
+                <div className="w-100 overflow-auto">
                   {localStorage.getItem("userId") && <TicketDistribution />}
                   <Routes>
-
-                    {/* //costoumer  invoice*/}
+                    {/* Customer Invoice */}
                     <Route exact path="/coustomer_invoice" element={<Coustomer />} />
                     <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
                     <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
                     <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
                     <Route exact path="/terms" element={<Terms_Conditions />} />
 
-
-                    {/* auth */}
+                    {/* Authentication */}
                     <Route exact path="/" element={<Login />} />
                     <Route exact path="/logout" element={<Logout />} />
                     <Route exact path="/forgot_password" element={<Forgetpassword />} />
 
+                    {/* Private Routes */}
                     <Route element={<PrivateRoute />}>
-
-                      {/* compo */}
+                      {/* Components */}
                       <Route exact path="/sidenav" element={<Sidenav />} />
 
-                      {/* pages */}
+                      {/* Pages */}
                       <Route exact path="/live_tickets" element={<Live />} />
                       <Route exact path="/upload_tickets" element={<Upticket />} />
                       <Route exact path="/in_negotiation" element={<InNegotiation />} />
@@ -190,12 +191,9 @@ function App() {
                       <Route exact path="/action_mode" element={<ActionMode />} />
                       <Route exact path="/sales_report" element={<SalesReport />} />
                       <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
-
                       <Route exact path="/invoice" element={<InvoiceNewTemp />} />
 
-
-
-                      {/* admin */}
+                      {/* Admin */}
                       <Route exact path="/admin_index" element={<Index />} />
                       <Route exact path="/admin_invoices" element={<Invoices />} />
                       <Route exact path="/admin_orders" element={<Orders />} />
@@ -205,8 +203,7 @@ function App() {
                       <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
                       <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
 
-
-                      {/* super_admin */}
+                      {/* Super Admin */}
                       <Route exact path="/super_admin_index" element={<Indexs />} />
                       <Route exact path="/super_admin_invoices" element={<Invoicess />} />
                       <Route exact path="/super_admin_orders" element={<Orderss />} />
@@ -214,7 +211,7 @@ function App() {
                       <Route exact path="/super_admin_tickets" element={<Ticketss />} />
                       <Route exact path="/super_admin_users" element={<Userss />} />
 
-                      {/* caption manager*/}
+                      {/* Captain Manager */}
                       <Route exact path="/captain_index" element={<Indexm />} />
                       <Route exact path="/captain_invoices" element={<Invoicesm />} />
                       <Route exact path="/captain_orders" element={<Ordersm />} />
@@ -222,15 +219,14 @@ function App() {
                       <Route exact path="/captain_to_closer" element={<Tocloser />} />
                       <Route exact path="/captain_tickets" element={<Ticketsm />} />
 
-                      {/* closer/agent */}
+                      {/* Closer/Agent */}
                       <Route exact path="/closer_index" element={<Indexa />} />
                       <Route exact path="/closer_orders" element={<Ordersa />} />
                       <Route exact path="/closer_sales" element={<Salesa />} />
                       <Route exact path="/closer_users" element={<Usersa />} />
                       <Route exact path="/after_sales_service" element={<Ass />} />
 
-
-                      {/*Senior supervisor*/}
+                      {/* Senior Supervisor */}
                       <Route exact path="/senior_supervisor_index" element={<Indexss />} />
                       <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
                       <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
@@ -238,12 +234,10 @@ function App() {
                       <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
                       <Route exact path="/ticket_house" element={<TicketHouse />} />
                       <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
-
-
-
                     </Route>
                   </Routes>
                 </div>
+
               </div>
             </div>
           </div>
