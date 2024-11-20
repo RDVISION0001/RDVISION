@@ -87,6 +87,8 @@ const ViewInvoice = () => {
         try {
             const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
             setAddressData(response.data.dto);
+            console.log(response.data.dto)
+            toast.success("Address Loaded")
         } catch (err) {
             console.error('Error fetching address details:', err);
         }
@@ -118,7 +120,7 @@ const ViewInvoice = () => {
                 try {
                     const stripe = await stripePromise;
 
-                    const response = await fetch(`http://localhost:8080/invoice/create-checkout-session/${orderid}`, {
+                    const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

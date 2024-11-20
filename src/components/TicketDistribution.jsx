@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 
 const TicketDistribution = () => {
     const [ticketData, setTicketData] = useState([]);
-    const {userId}=useAuth()
+    const { userId } = useAuth()
 
     // Sort the data in ascending order based on ticket count
     const sortedData = ticketData.sort((a, b) => a.ticketCount - b.ticketCount);
@@ -30,7 +30,7 @@ const TicketDistribution = () => {
         { backgroundColor: '#95a5a6' }, // Gray
         { backgroundColor: '#ecf0f1' }, // Light Gray
     ];
-    
+
 
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, userId: '', userName: '', count: '' });
 
@@ -49,16 +49,17 @@ const TicketDistribution = () => {
         });
     };
 
+
     const handleMouseLeave = () => {
         setTooltip({ visible: false, x: 0, y: 0, userId: '', userName: '', count: '' });
     };
     useEffect(() => {
-        if(localStorage.getItem("roleName")==="Closer"){
+        if (localStorage.getItem("roleName") === "Closer") {
             fetchCountsOfUser()
-        }else{
+        } else {
             fetchCounts();
         }
-       
+
     }, []);
     const fetchCounts = async () => {
         const response = await axiosInstance.get('/third_party_api/ticket/getticketCounts');
@@ -69,17 +70,17 @@ const TicketDistribution = () => {
         try {
             const response = await axiosInstance.get(`/third_party_api/ticket/getTiccketCountforBar/${localStorage.getItem("userId")}`);
             setTicketData(response.data);
-        
+
         } catch (err) {
             console.log("some error")
-        } 
+        }
     };
-   
+
 
     return (
         <div className="container">
             <div className="progress" style={{ height: '50px', position: 'relative' }}>
-                {sortedData.map(({ userId, userName, ticketCount,count,status,type }, index) => (
+                {sortedData.map(({ userId, userName, ticketCount, count, status, type }, index) => (
                     <div
                         key={userId}
                         className="progress-bar"
@@ -92,7 +93,7 @@ const TicketDistribution = () => {
                             fontSize: '20px',
                             ...colors[index % colors.length], // Apply custom color
                         }}
-                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount,count,status,type)}
+                        onMouseEnter={(e) => handleMouseEnter(e, userId, userName, ticketCount, count, status, type)}
                         onMouseLeave={handleMouseLeave}
                     >
                         {ticketCount}
@@ -104,45 +105,46 @@ const TicketDistribution = () => {
                 <div
                     className="custom-tooltip"
                     style={{
-                        position: 'absolute',
+                        position: 'fixed', // Use 'fixed' for consistent placement
                         left: tooltip.x,
                         top: tooltip.y,
-                        transform: 'translate(-250%, -100%)',
-                        backgroundColor: '#007bff', // Blue background
-                        color: '#fff', // White text for contrast
-                        padding: '8px 16px', // Adjusted padding for better spacing
-                        borderRadius: '8px', // Rounded corners
-                        fontSize: '14px', // Font size
-                        fontWeight: 'bold', // Bold text
+                        transform: 'translate(-50%, -100%)', // Center horizontally & position above
+                        backgroundColor: '#007bff',
+                        color: '#fff',
+                        padding: '8px 16px',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
                         whiteSpace: 'nowrap',
                         zIndex: 1000,
-                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow
-                        opacity: 0.9, // Slight transparency
-                        transition: 'all 0.2s ease-in-out', // Smooth transition
-                        border: '1px solid rgba(255, 255, 255, 0.2)', // Light border
+                        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                        opacity: 0.9,
+                        transition: 'all 0.2s ease-in-out',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
                     }}
                 >
-                    <div style={{ fontWeight: 'bold' }}>{tooltip.userId?"User:":"Status:"} {tooltip.userName?tooltip.userName:tooltip.status}</div>
-                    {tooltip.userId? <div style={{ fontWeight: 'bold' }}>"ID:" {tooltip.userId?tooltip.userId:tooltip.ticketCount}</div>:""}
-                   {tooltip.count && <div style={{ fontWeight: 'bold' }}>Counts: {tooltip.count}</div>}
-                   {tooltip.type && <div>Type:- {tooltip.type===1?"Live":"ABC"}</div>}
+                    <div>{tooltip.userId ? `User: ${tooltip.userName}` : `Status: ${tooltip.status}`}</div>
+                    {tooltip.userId && <div>ID: {tooltip.userId}</div>}
+                    {tooltip.count && <div>Counts: {tooltip.count}</div>}
+                    {tooltip.type && <div>Type: {tooltip.type === 1 ? "Live" : "ABC"}</div>}
 
                     {/* Triangle pointer */}
                     <div
                         style={{
                             position: 'absolute',
-                            bottom: '-8px', // Positioning the triangle just below the tooltip
+                            bottom: '-8px',
                             left: '50%',
-                            transform: 'translateX(-50%)', // Center the triangle horizontally
+                            transform: 'translateX(-50%)',
                             width: '0',
                             height: '0',
                             borderLeft: '8px solid transparent',
                             borderRight: '8px solid transparent',
-                            borderTop: '8px solid #007bff', // Blue triangle matching the background
+                            borderTop: '8px solid #007bff',
                         }}
                     ></div>
                 </div>
             )}
+
         </div>
     );
 };
