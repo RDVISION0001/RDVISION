@@ -10,9 +10,7 @@ function InvoiceNewTemp() {
     const [invoices, setInvoices] = useState([]); // State to store invoice data
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
-
     const { userId } = useAuth();
-
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,7 +63,6 @@ function InvoiceNewTemp() {
         fetchInvoices();
     }, [userId]);
 
-
     // Format date to 15Nov_2024
     const formatDate = (date) => {
         if (!date) return "N/A";
@@ -80,7 +77,6 @@ function InvoiceNewTemp() {
         setFormData({ ...formData, uniqueQueryId: invoice.uniqueQueryId }); // Set uniqueQueryId in the form
         setIsModalOpen(true); // Open modal
     };
-
 
     // Calculations for cards
     const totalPaidAmount = invoices
@@ -100,7 +96,6 @@ function InvoiceNewTemp() {
             {/* card section (unchanged) */}
             <section className="sadmin-top-section mt-3">
                 <div className="container-fluid">
-
                     <div className="row justify-content-center">
                         {/* Total Paid Amount Card */}
                         <div className="col-md-3 col-sm-6 col-12">
@@ -108,14 +103,6 @@ function InvoiceNewTemp() {
                                 className="card border shadow text-dark"
                                 style={{
                                     width: "100%", // Make the card full width on small screens
-
-                    <div className="row">
-                        {/* Total Paid Amount */}
-                        <div className="col-12 col-md-3 mb-3">
-                            <div
-                                className="card border shadow text-dark"
-                                style={{
-
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#A8E6CF",
@@ -145,7 +132,6 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
 
-
                         {/* Total Paid Invoices Card */}
                         <div className="col-md-3 col-sm-6 col-12">
                             <div
@@ -155,16 +141,6 @@ function InvoiceNewTemp() {
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#FFCDD2",
-
-                        {/* Total Paid Invoices */}
-                        <div className="col-12 col-md-3 mb-3">
-                            <div
-                                className="card border shadow text-dark"
-                                style={{
-                                    height: "100px",
-                                    borderRadius: "10px",
-                                    backgroundColor: "#FFD3B6",
-
                                     display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
@@ -191,20 +167,12 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
 
-
                         {/* Total Pending Amount Card */}
                         <div className="col-md-3 col-sm-6 col-12">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
                                     width: "100%", // Make the card full width on smaller screens
-
-                        {/* Total Pending Amount */}
-                        <div className="col-12 col-md-3 mb-3">
-                            <div
-                                className="card border shadow text-dark"
-                                style={{
-
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#FFEB3B",
@@ -234,20 +202,12 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
 
-
                         {/* Total Pending Invoices Card */}
                         <div className="col-md-3 col-sm-6 col-12">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
                                     width: "100%", // Ensure card takes full width on smaller screens
-
-                        {/* Total Pending Invoices */}
-                        <div className="col-12 col-md-3 mb-3">
-                            <div
-                                className="card border shadow text-dark"
-                                style={{
-
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#D1C4E9",
@@ -281,6 +241,7 @@ function InvoiceNewTemp() {
             </section>
 
 
+            {/* table section */}
             <section className="followup-table-section py-4 d-flex">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
@@ -290,7 +251,6 @@ function InvoiceNewTemp() {
                         ) : error ? (
                             <p className="text-danger">{error}</p>
                         ) : (
-
                             <table className="table">
                                 <thead>
                                     <tr>
@@ -344,57 +304,10 @@ function InvoiceNewTemp() {
                                                     </button>
                                                 )}
                                             </td>
-
-                            <div className="table-responsive">
-                                <table className="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Closer Name</th>
-                                            <th scope="col">Sale Date</th>
-                                            <th scope="col">Customer Name</th>
-                                            <th scope="col">Customer Order</th>
-                                            <th scope="col">Invoice Generate Date</th>
-                                            <th scope="col">Order Amount</th>
-                                            <th scope="col">Payment Status</th>
-                                            <th scope="col">Payment Attempt</th>
-                                            <th scope="col">Seen</th>
-                                            <th scope="col">IP Address</th>
-
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {invoices.map((invoice) => (
-                                            <tr className="border" key={invoice.invoiceId}>
-                                                <td>{invoice.closerName}</td>
-                                                <td>{formatDate(invoice.saleDate)}</td>
-                                                <td>{invoice.customerName}</td>
-                                                <td>
-                                                    {invoice.orderDto?.productOrders?.map(order =>
-                                                        order.product?.map((p, index) => (
-                                                            <div key={index}>{p.name}</div>
-                                                        ))
-                                                    )}
-                                                    {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
-                                                </td>
-                                                <td>{formatDate(invoice.invoiceGenerateDate)}</td>
-                                                <td className="text-success bold-text">
-                                                    {invoice.currency || 'USD'} {invoice.orderAmount}
-                                                </td>
-                                                <td className={invoice.paymentStatus === "paid" ? "text-success" : "text-danger"}>
-                                                    {invoice.paymentStatus || "Pending"}
-                                                </td>
-                                                <td className={invoice.paymentStatus === "paid" ? "text-success text-center" : "text-danger text-center"}>
-                                                    {invoice.numberOfPaymentAttempt || 0}
-                                                </td>
-                                                <td className={invoice.isSeen ? "text-success" : "text-danger"}> 
-                                                    {invoice.isSeen ? "Seen" : "Not Seen"}
-                                                </td>
-                                                <td>{invoice.ipAddress || 'N/A'}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         )}
                     </div>
                 </div>
