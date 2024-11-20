@@ -130,12 +130,12 @@ const TicketTrack = () => {
 
     const formatDate = (dateString) => {
         const dateObj = new Date(dateString);
-    
+
         // Check if the date is valid
         if (isNaN(dateObj.getTime())) {
             return 'NA'; // Invalid date format
         }
-    
+
         const day = dateObj.getDate();
         const month = dateObj.toLocaleString('default', { month: 'short' }).toUpperCase();
         const year = dateObj.getFullYear();
@@ -143,10 +143,10 @@ const TicketTrack = () => {
         const minutes = dateObj.getMinutes().toString().padStart(2, '0');
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12 || 12;
-    
+
         return `${day}-${month}-${year} ${hours}:${minutes} ${ampm}`;
     };
-    
+
 
     // Count distinct ticket statuses
     const countStatuses = () => {
@@ -176,7 +176,7 @@ const TicketTrack = () => {
     };
     return (
         <>
-            <div className='text-center' style={{ width: "200px",marginLeft:"2px" }}>
+            <div className='text-center' style={{ width: "200px", marginLeft: "2px" }}>
                 {/* Display ticket status counts */}
                 <div className="status-summary d-flex justify-content-center flex-wrap">
                     {/* // Example usage within the `status-summary` div */}
@@ -226,8 +226,8 @@ const TicketTrack = () => {
                                 border: '1px solid rgba(255, 255, 255, 0.2)', // Light border
                             }}
                         >
-                            <div style={{ fontWeight: 'bold' }}>User: {tooltip.userName}</div>
-                            <div style={{ fontWeight: 'bold' }}>ID: {tooltip.userId}</div>
+                            {/* {localStorage.getItem("roleName") !== "Closer" && <><div style={{ fontWeight: 'bold' }}>User: {tooltip.userName}</div>
+                                <div style={{ fontWeight: 'bold' }}>ID: {tooltip.userId}</div></>} */}
                             <div style={{ fontWeight: 'bold' }}>Counts: {tooltip.count}</div>
 
                             {/* Triangle pointer */}

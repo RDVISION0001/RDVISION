@@ -158,7 +158,7 @@ function SalesReport() {
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                   {invoices.length>0? <tbody>
                                         {invoices.map((invoice) => (
                                             <tr className="border" key={invoice.invoiceId}>
                                                 <td>
@@ -192,7 +192,7 @@ function SalesReport() {
 
                                             </tr>
                                         ))}
-                                    </tbody>
+                                    </tbody>:<div className='text-center  m-3 fw-bold'>No Invioces Pending For Verification</div>}
                                 </table>
                             </div>
                         </div>

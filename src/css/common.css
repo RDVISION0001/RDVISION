@@ -621,4 +621,26 @@
   }
 }
 
+.tree-children {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease-out;
+}
+
+.tree-children.open {
+  max-height: 1000px; /* Adjust based on your expected maximum height */
+}
+
+.tree-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+
 
