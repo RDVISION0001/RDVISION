@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 
-function ProductPriceForm({ productId, productName, onClose, ticketId,currency }) {
+function ProductPriceForm({ productId, productName, onClose, ticketId, currency }) {
     const [unit, setUnit] = useState('');
-    const [entries, setEntries] = useState([{ priceId: null, quantity: '', price: '' }]); // Default row
+    const [entries, setEntries] = useState([{ priceId: null, quantity: '', price: '', paymentLink: '' }]); // Default row
     const [prices, setPrices] = useState([]);
 
     // Fetch price list and unit
@@ -17,24 +17,23 @@ function ProductPriceForm({ productId, productName, onClose, ticketId,currency }
             });
             setPrices(response.data);
 
-            // Set unit from the first price entry (assuming all entries have the same unit)
             if (response.data.length > 0) {
                 setUnit(response.data[0].unit);
             }
 
-            // Map existing prices to entries with editable fields
             const fetchedEntries = response.data.map(price => ({
                 priceId: price.priceId,
                 quantity: price.quantity,
                 price: price.price,
+                paymentLink: price.paymentLink 
             }));
 
-            // Ensure at least one row is always shown
-            setEntries(fetchedEntries.length > 0 ? fetchedEntries : [{ priceId: null, quantity: '', price: '' }]);
+            setEntries(fetchedEntries.length > 0 ? fetchedEntries : [{ priceId: null, quantity: '', price: '', paymentLink: '' }]);
         } catch (e) {
             toast.error('Some error occurred while fetching prices.');
         }
     };
+
 
     useEffect(() => {
         if (productId > 0) {
@@ -56,33 +55,35 @@ function ProductPriceForm({ productId, productName, onClose, ticketId,currency }
 
     // Add a new empty quantity and price field
     const addQuantityPriceField = () => {
-        setEntries([...entries, { priceId: null, quantity: '', price: '' }]);
+        setEntries([...entries, { priceId: null, quantity: '', price: '', paymentLink: '' }]);
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Gather all data in the required format
         const data = entries.map((entry) => ({
-            priceId: entry.priceId, // Include priceId for existing entries
+            priceId: entry.priceId,
             unit,
             quantity: parseInt(entry.quantity, 10),
             price: parseInt(entry.price, 10),
             product: { productId },
             ticketId: ticketId,
-            currency:currency
+            currency: currency,
+            paymentLink: entry.paymentLink // Corrected reference
         }));
 
         try {
             const response = await axiosInstance.post('/product/addprices', data);
-            console.log('Submitted data:', response);
             toast.success('Prices updated successfully!');
             onClose(); // Close the form after submission
         } catch (error) {
             toast.error('Failed to submit prices.');
         }
     };
+
+
+
 
     return (
         <div className="p-4 rounded">
@@ -119,6 +120,14 @@ function ProductPriceForm({ productId, productName, onClose, ticketId,currency }
                                 value={entry.price}
                                 onChange={(e) => handleEntryChange(index, 'price', e.target.value)}
                                 placeholder="Price"
+                                className="form-control"
+                                required
+                            />
+                            <input
+                                type="link"
+                                value={entry.paymentLink}
+                                onChange={(e) => handleEntryChange(index, 'paymentLink', e.target.value)}
+                                placeholder="Payment Link"
                                 className="form-control"
                                 required
                             />

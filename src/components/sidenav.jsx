@@ -154,6 +154,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+                <i class="fa-solid fa-dollar-sign"></i>
+                <span className="nav-text">Verifyed Sales</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>

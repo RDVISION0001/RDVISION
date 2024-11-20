@@ -109,8 +109,8 @@ body {
     width: 100%;
   }
   .active-nav::before {
-    position: absolute;
-    content: "";
+    /* position: absolute; */
+    /* content: ""; */
     background-color: rgba(0, 0, 0, 0.5);
     left: 0;
     right: 0;

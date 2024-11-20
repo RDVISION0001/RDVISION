@@ -57,10 +57,10 @@ function QuotationBox(props) {
             setView(false)
             handleSubmit(selectedProductIdForPriceLIst)
         } else {
-            if(formData.currency){
+            if (formData.currency) {
 
                 setView(true)
-            }else{
+            } else {
                 toast.info("Please selecte Currency First")
             }
         }
@@ -695,11 +695,11 @@ function QuotationBox(props) {
                 </>
             </Modal>
 
+            {/* add price list modal for qouatationn send */}
             <Modal show={view} onHide={handleSubmit} centered>
                 <Modal.Header toggleModel>
                     <div className='d-flex justify-content-between  w-100'>
                         <Modal.Title>Add Price List</Modal.Title>
-
                         <Button variant="secondary" onClick={toggleModel}>
                             Close
                         </Button>
