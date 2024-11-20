@@ -6,7 +6,7 @@ function InvoiceNewTemp() {
     const [invoices, setInvoices] = useState([]); // State to store invoice data
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
-    const {userId}=useAuth()
+    const {userId} = useAuth();
 
     // Format date to 15Nov_2024
     const formatDate = (date) => {
@@ -30,7 +30,7 @@ function InvoiceNewTemp() {
         };
 
         fetchInvoices();
-    }, []);
+    }, [userId]);
 
     // Calculations for cards
     const totalPaidAmount = invoices
@@ -52,11 +52,10 @@ function InvoiceNewTemp() {
                 <div className="container-fluid">
                     <div className="row">
                         {/* Total Paid Amount */}
-                        <div className="col-md-3 rponded">
+                        <div className="col-12 col-md-3 mb-3">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
-                                    width: "18rem",
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#A8E6CF",
@@ -86,14 +85,14 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
                         {/* Total Paid Invoices */}
-                        <div className="col-md-3 rponded">
+                        <div className="col-12 col-md-3 mb-3">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
-                                    width: "18rem",
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#FFD3B6",
+                                    display: "flex",
                                     flexDirection: "column",
                                     justifyContent: "center",
                                 }}
@@ -119,11 +118,10 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
                         {/* Total Pending Amount */}
-                        <div className="col-md-3 rponded">
+                        <div className="col-12 col-md-3 mb-3">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
-                                    width: "18rem",
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#FFE5B4",
@@ -153,11 +151,10 @@ function InvoiceNewTemp() {
                             </div>
                         </div>
                         {/* Total Pending Invoices */}
-                        <div className="col-md-3 rponded">
+                        <div className="col-12 col-md-3 mb-3">
                             <div
                                 className="card border shadow text-dark"
                                 style={{
-                                    width: "18rem",
                                     height: "100px",
                                     borderRadius: "10px",
                                     backgroundColor: "#FFCDD2",
@@ -190,9 +187,6 @@ function InvoiceNewTemp() {
                 </div>
             </section>
 
-
-
-
             {/* table */}
             <section className="followup-table-section py-4 d-flex">
                 <div className="container-fluid">
@@ -203,58 +197,55 @@ function InvoiceNewTemp() {
                         ) : error ? (
                             <p className="text-danger">{error}</p>
                         ) : (
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th className="selection-cell-header" data-row-selection="true">
-                                            <input type="checkbox" />
-                                        </th>
-                                        <th scope="col">Closer Name</th>
-                                        <th scope="col">Sale Date</th>
-                                        <th scope="col">Customer Name</th>
-                                        <th scope="col">Customer Order</th>
-                                        {/* <th scope="col">Invoice ID</th> */}
-                                        <th scope="col">Invoice Generate Date</th>
-                                        <th scope="col">Order Amount</th>
-                                        <th scope="col">Payment Status</th>
-                                        <th scope="col">Seen </th>
-                                        <th scope="col">ip address </th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {invoices.map((invoice) => (
-                                        <tr className="border" key={invoice.invoiceId}>
-                                            <td><input type="checkbox" /></td>
-                                            <td>{invoice.closerName}</td>
-                                            <td>{formatDate(invoice.saleDate)}</td>
-                                            <td>{invoice.customerName}</td>
-                                            <td>
-                                                {invoice.orderDto?.productOrders?.map(order =>
-                                                    order.product?.map((p, index) => (
-                                                        <div key={index}>{p.name}</div>
-                                                    ))
-                                                )}
-                                                {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
-                                            </td>
-                                            {/* <td>{invoice.invoiceId}</td> */}
-                                            <td>{formatDate(invoice.invoiceGenerateDate)}</td>
-                                            <td className="text-success bold-text">
-                                                {invoice.currency || 'USD'} {invoice.orderAmount}
-                                            </td>
-                                            <td className= {invoice.paymentStatus === "paid" ? "text-success" : "text-danger"}>
-                                                {invoice.paymentStatus || "Pending"}
-                                            </td>
-                                            <td className= {invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
-                                                {invoice.opened? <i class="fa-solid fa-check fa-2xl" style={{color: "#067f30"}}></i>:<i class="fa-solid fa-xmark fa-xl" style={{color: "#ff0000"}}></i>}
-                                            </td>
-                                            <td className= {invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
-                                                {invoice.ipAddress?invoice.ipAddress:"not opned yet"}
-                                            </td>
+                            <div className="table-responsive">
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Closer Name</th>
+                                            <th scope="col">Sale Date</th>
+                                            <th scope="col">Customer Name</th>
+                                            <th scope="col">Customer Order</th>
+                                            <th scope="col">Invoice Generate Date</th>
+                                            <th scope="col">Order Amount</th>
+                                            <th scope="col">Payment Status</th>
+                                            <th scope="col">Payment Attempt</th>
+                                            <th scope="col">Seen</th>
+                                            <th scope="col">IP Address</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {invoices.map((invoice) => (
+                                            <tr className="border" key={invoice.invoiceId}>
+                                                <td>{invoice.closerName}</td>
+                                                <td>{formatDate(invoice.saleDate)}</td>
+                                                <td>{invoice.customerName}</td>
+                                                <td>
+                                                    {invoice.orderDto?.productOrders?.map(order =>
+                                                        order.product?.map((p, index) => (
+                                                            <div key={index}>{p.name}</div>
+                                                        ))
+                                                    )}
+                                                    {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
+                                                </td>
+                                                <td>{formatDate(invoice.invoiceGenerateDate)}</td>
+                                                <td className="text-success bold-text">
+                                                    {invoice.currency || 'USD'} {invoice.orderAmount}
+                                                </td>
+                                                <td className={invoice.paymentStatus === "paid" ? "text-success" : "text-danger"}>
+                                                    {invoice.paymentStatus || "Pending"}
+                                                </td>
+                                                <td className={invoice.paymentStatus === "paid" ? "text-success text-center" : "text-danger text-center"}>
+                                                    {invoice.numberOfPaymentAttempt || 0}
+                                                </td>
+                                                <td className={invoice.isSeen ? "text-success" : "text-danger"}> 
+                                                    {invoice.isSeen ? "Seen" : "Not Seen"}
+                                                </td>
+                                                <td>{invoice.ipAddress || 'N/A'}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </div>
                 </div>
