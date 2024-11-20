@@ -299,7 +299,7 @@ const InvoiceInfo = (props) => {
                                                     <span>{order.product[0].name}</span>
                                                 ))
                                             }</td>
-                                            {localStorage.getItem("roleName") === "SeniorSuperVisor" && <td className='text-center'>{invoice.trackingNumber?invoice.trackingNumber: <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>}</td>}
+                                            {localStorage.getItem("roleName") === "SeniorSuperVisor" && <td className='text-center'>{invoice.trackingNumber ? invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>}</td>}
 
                                             <td className='text-center'>{invoice.deliveryStatus ? invoice.deliveryStatus : "N/A"}</td>
                                             <td className='text-center'>{invoice.assCallStatus}</td>
@@ -361,76 +361,97 @@ const InvoiceInfo = (props) => {
             <section className="data-table-bgs_02x24 py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper">
-                        {props.stage === 4 ? <h3 className="title">Ticket Tracking</h3> : <h3 className="title">Tickets for after sales service</h3>}
-                        <table className="table">
-                            <thead>
-                                <tr className='border'>
-                                    <th className='text-center'>Sale Date</th>
-                                    <th className='text-center'>Name</th>
-                                    <th className='text-center'>Tracking Id</th>
-                                    <th className='text-center'>Delivery Status</th>
-                                    <th className='text-center'>Comment</th>
-                                    <th className='text-center'>Action</th>
-                                    <th className='text-center'>Recording</th>
-                                </tr>
-                            </thead>
-                            <tbody className='overflow'>
-                                {saleTicketData.length > 0 ? (
-                                    saleTicketData.map((invoice, index) => (
-                                        <tr key={index} className='border'>
-                                            <td className='text-center'>
-                                                {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate) : "N/A"}
-                                            </td>
-                                            <td className='text-center'>{invoice.senderName ? invoice.senderName : invoice.firstName}</td>
-                                            <td className='text-center'>{invoice.trackingNumber ? invoice.trackingNumber : localStorage.getItem("roleName") === "SeniorSuperVisor" ? <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button> : "Awaiting for Tracking..."}</td>
+                        {props.stage === 4 ? (
+                            <h3 className="title">Ticket Tracking</h3>
+                        ) : (
+                            <h3 className="title">Tickets for after sales service</h3>
+                        )}
 
-                                            <td className='text-center'>{invoice.deliveryStatus ? invoice.deliveryStatus : "NA"}</td>
-                                            <td className='text-center'>{invoice.comment && invoice.comment.slice(0, 20)}</td>
-                                            <td className='text-center'>
-                                                <Button
-                                                    onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
-                                                    className="btn-action call rounded-circle"
-                                                    title="Get connect on call"
-                                                >
-                                                    <i className="fa-solid fa-phone"></i>
-                                                </Button>
-                                            </td>
-                                            <td className='text-center'>
-                                                {invoice.recordingFile ? <Button
-                                                    className=""
-                                                    onClick={() => playRecording(invoice.recordingFile, index)}
-                                                >
-                                                    {isPlaying && selectedIndex === index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
-                                                </Button> : "Recording not Available"}
+                        <div className="table-container" style={{ maxHeight: '800px', overflowY: 'auto' }}>
+                            <table className="table">
+                                <thead className="sticky-header">
+                                    <tr className="border">
+                                        <th className="text-center">Sale Date</th>
+                                        <th className="text-center">Name</th>
+                                        <th className="text-center">Tracking Id</th>
+                                        <th className="text-center">Delivery Status</th>
+                                        <th className="text-center">Comment</th>
+                                        <th className="text-center">Action</th>
+                                        <th className="text-center">Recording</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="overflow">
+                                    {saleTicketData.length > 0 ? (
+                                        saleTicketData.map((invoice, index) => (
+                                            <tr key={index} className="border">
+                                                <td className="text-center">
+                                                    {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate) : 'N/A'}
+                                                </td>
+                                                <td className="text-center">{invoice.senderName ? invoice.senderName : invoice.firstName}</td>
+                                                <td className="text-center">
+                                                    {invoice.trackingNumber ? (
+                                                        invoice.trackingNumber
+                                                    ) : localStorage.getItem('roleName') === 'SeniorSuperVisor' ? (
+                                                        <button className="bg-primary" onClick={() => openTrackingBox(invoice.uniqueQueryId)}>
+                                                            Add Tracking Number
+                                                        </button>
+                                                    ) : (
+                                                        'Awaiting for Tracking...'
+                                                    )}
+                                                </td>
+                                                <td className="text-center">{invoice.deliveryStatus ? invoice.deliveryStatus : 'NA'}</td>
+                                                <td className="text-center">{invoice.comment && invoice.comment.slice(0, 20)}</td>
+                                                <td className="text-center">
+                                                    <Button
+                                                        onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
+                                                        className="btn-action call rounded-circle"
+                                                        title="Get connect on call"
+                                                    >
+                                                        <i className="fa-solid fa-phone"></i>
+                                                    </Button>
+                                                </td>
+                                                <td className="text-center">
+                                                    {invoice.recordingFile ? (
+                                                        <Button className="" onClick={() => playRecording(invoice.recordingFile, index)}>
+                                                            {isPlaying && selectedIndex === index ? (
+                                                                <i className="fa-solid fa-pause"></i>
+                                                            ) : (
+                                                                <i className="fa-solid fa-play"></i>
+                                                            )}
+                                                        </Button>
+                                                    ) : (
+                                                        'Recording not Available'
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="7" className="text-center">
+                                                No Sales found.
                                             </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="11" className="text-center">
-                                            No Sales found.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div className="text-center">
-                        <dialog id='trackingInput' className='w-100 h-100 bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                            <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}>
-                                    <i className="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{ color: "#ff1900", cursor: "pointer" }}></i>
+                        <dialog id="trackingInput" className="w-100 h-100 bg-transparent justify-content-center align-items-center" style={{ height: '100vh' }}>
+                            <div className="d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded">
+                                <div style={{ width: '100%', textAlign: 'right', marginBottom: '4px' }}>
+                                    <i className="fa-solid fa-xmark fa-xl" onClick={closeTrackingBox} style={{ color: '#ff1900', cursor: 'pointer' }}></i>
                                 </div>
                                 <input
                                     type="text"
                                     value={trackingNumber}
                                     onChange={(e) => setTrackingNumber(e.target.value)}
                                     autoFocus
-                                    className='p-2 bg-white text-black'
-                                    style={{ width: "500px" }}
-                                    placeholder='Enter Tracking Number'
+                                    className="p-2 bg-white text-black"
+                                    style={{ width: '500px' }}
+                                    placeholder="Enter Tracking Number"
                                 />
-                                <button className='bg-primary text-white m-2' onClick={addTrackingNumber}>
+                                <button className="bg-primary text-white m-2" onClick={addTrackingNumber}>
                                     Add Tracking Number
                                 </button>
                             </div>
@@ -438,6 +459,8 @@ const InvoiceInfo = (props) => {
                     </div>
                 </div>
             </section>
+
+
 
             {/* Hidden audio element for playing recordings */}
             <audio ref={audioRef} style={{ display: 'none' }} />

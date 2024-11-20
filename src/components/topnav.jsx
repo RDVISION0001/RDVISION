@@ -18,7 +18,7 @@ function topnav() {
   const { setUserReportReloader } = useAuth()
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-  const [isSideBarOpen, setIsSideBarOpen] = useState(true)
+  const {isSideBarOpen, setIsSideBarOpen} = useAuth()
 
   //handle Open Calender
   const handleOpenCalender = () => {
@@ -191,7 +191,7 @@ function topnav() {
 
             </div>
           </nav>
-          <TicketDistribution />
+        
           <div>
             <FloatingButton />
           </div>

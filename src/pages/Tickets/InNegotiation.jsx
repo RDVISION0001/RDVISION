@@ -228,9 +228,9 @@ function InNegotiation() {
     }
   };
 
-  const handleSelecteRow = (index) => {
+  const handleSelecteRow = (index, ticketId) => {
     setSelectedKey(index)
-    console.log(selectedKey)
+    localStorage.setItem("selectedNego", ticketId)
   }
 
   // Define stages
@@ -357,7 +357,7 @@ function InNegotiation() {
       ticketIdWhichUpdating: ticketId,
       comment: 'Copied' + " " + text,
       userName: localStorage.getItem("firstName") + " " + localStorage.getItem("lastName"),
-      
+
       recordingFile: null
     })
     setUserReportReloader((prev) => prev + 1)
@@ -661,7 +661,7 @@ function InNegotiation() {
     } else if (productsIds.length < 1) {
       toast.info("Please Select At least one Product ")
 
-    } else if (text.length < 1) { 
+    } else if (text.length < 1) {
       toast.info("Please Enter Message")
     } else {
       try {
@@ -756,8 +756,8 @@ function InNegotiation() {
       </div>
       <div>
         {list &&
-          <div className='d-flex'>
-            <TicketTrack/>
+        
+
             <div style={{ width: "100%" }}>
               {/* Stages */}
               <section className="followup-table-section py-3">
@@ -907,11 +907,11 @@ function InNegotiation() {
                           {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
                             <tr key={index}
                               style={{
-                                boxShadow: index === selectedKey ? "0px 5px 15px 0px gray" : "",
-                                zIndex: index === selectedKey ? 1 : "auto",
-                                position: index === selectedKey ? "relative" : "static"
+                                boxShadow: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
+                                zIndex: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? 1 : "auto",
+                                position: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "relative" : "static"
                               }}
-                              onClick={() => handleSelecteRow(index)}
+                              onClick={() => handleSelecteRow(index, nego.uniqueQueryId)}
                             >
                               <td>{rowsPerPage * (currentPage - 1) + (index + 1)}.</td>
                               <td>
@@ -1018,13 +1018,13 @@ function InNegotiation() {
                                     className="btn-action whatsapp"
                                     title="Get connect on whatsapp"
                                   ><i className="fa-brands fa-whatsapp"></i></a>
-                                   <Button
-                                      onClick={() => handleQuotation(nego.uniqueQueryId)}
-                                      className="rounded-circle "
-                                      title="Get connect on"
-                                    >
-                                      <i class="fa-share-from-square" ></i>
-                                    </Button>
+                                  <Button
+                                    onClick={() => handleQuotation(nego.uniqueQueryId)}
+                                    className="rounded-circle "
+                                    title="Get connect on"
+                                  >
+                                    <i class="fa-share-from-square" ></i>
+                                  </Button>
                                   <Button
                                     onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
                                     className="rounded-circle "
@@ -1117,7 +1117,7 @@ function InNegotiation() {
                 <InvoiceInfo stage={selectedStage} />
               }
             </div>
-          </div>
+        
         }
         {
           !list &&
@@ -1526,24 +1526,24 @@ function InNegotiation() {
         <TicketJourney tktid={selctedTicketInfo} closeFun={closeTicketJourney} />
       </Modal>
       <Modal
-            show={isQuotationOn}
-            onHide={handleQuotation}
-            id="followUpModal"
-            tabindex="-1"
-            aria-labelledby="followUpModalLabel"
-            aria-hidden="true"
-            dialogClassName="fullscreen-modal" // Add a custom class here
-          >
-            <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
-              <u> Raise Invoice</u>
-            </h1>
-            <QuotationBox
-              ticketId={selectTicketForInvoice}
-              name={selectNameForInvoice}
-              email={selectEmailForInvoice}
-              mobile={selectMobileForInvoice}
-            />
-          </Modal>
+        show={isQuotationOn}
+        onHide={handleQuotation}
+        id="followUpModal"
+        tabindex="-1"
+        aria-labelledby="followUpModalLabel"
+        aria-hidden="true"
+        dialogClassName="fullscreen-modal" // Add a custom class here
+      >
+        <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
+          <u> Raise Invoice</u>
+        </h1>
+        <QuotationBox
+          ticketId={selectTicketForInvoice}
+          name={selectNameForInvoice}
+          email={selectEmailForInvoice}
+          mobile={selectMobileForInvoice}
+        />
+      </Modal>
     </>
   );
 }
