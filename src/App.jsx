@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,7 +25,7 @@ import SalesReport from './pages/SalesReport';
 import VerifyedSales from './pages/VerifyedSales';
 
 import InvoiceNewTemp from './pages/InvoiceNewTemp';
-
+import PaymentWindow from './components/PaymentWindow';
 
 
 
@@ -139,6 +139,7 @@ import TicketDistribution from './components/TicketDistribution';
 
 
 function App() {
+  const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
 
   return (
     <>
@@ -154,15 +155,22 @@ function App() {
 
               {localStorage.getItem("userId") && <Topnav />}
               <div className='d-flex'>
-
-                <div className='d-none d-md-block'>
-                  {localStorage.getItem("userId") && <TicketTrack />}
+                <div>
+                <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ?<i class="fa-regular fa-rectangle-xmark"></i>:<i class="fa-solid fa-book-open-reader"></i>}</div>
+                <div className='d-flex '>
+                  {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
+                    {localStorage.getItem("userId") && <TicketTrack />}
+                  </div> : ""}
+                </div>
                 </div>
 
 
 
                 <div className="w-100 overflow-auto">
-                  {localStorage.getItem("userId") && <TicketDistribution />}
+                  {localStorage.getItem("roleName") !== "Admin" &&
+                    <div>
+                      {localStorage.getItem("userId") && <TicketDistribution />}
+                    </div>}
                   <Routes>
                     {/* Customer Invoice */}
                     <Route exact path="/coustomer_invoice" element={<Coustomer />} />
@@ -175,7 +183,7 @@ function App() {
                     <Route exact path="/" element={<Login />} />
                     <Route exact path="/logout" element={<Logout />} />
                     <Route exact path="/forgot_password" element={<Forgetpassword />} />
-
+                    <Route exact path="/payment_window" element={<PaymentWindow />} />
                     {/* Private Routes */}
                     <Route element={<PrivateRoute />}>
                       {/* Components */}

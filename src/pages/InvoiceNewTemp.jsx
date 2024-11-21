@@ -292,7 +292,7 @@ function InvoiceNewTemp() {
                                                 {invoice.paymentStatus || "Pending"}
                                             </td>
                                             <td className={invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
-                                                {invoice.opened ? <i className="fa-solid fa-check fa-2xl" style={{ color: "#067f30" }}></i> : <i className="fa-solid fa-xmark fa-xl" style={{ color: "#ff0000" }}></i>}
+                                                {invoice.opened ? <i className="fa-solid fa-check-double fa-2xl" style={{ color: "#05a836" }}></i> : <i className="fa-solid fa-check-double fa-2xl" style={{ color: "#58595a" }}></i>}
                                             </td>
                                             <td className={invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
                                                 {invoice.ipAddress ? invoice.ipAddress : "not opened yet"}
@@ -316,30 +316,30 @@ function InvoiceNewTemp() {
             {/* mark as paid Modal */}
             {isModalOpen && (
                 <div
-                    className="modal fade show"
-                    style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                    className="modal fade show d-block"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
                     id="addTicketModal"
                     tabIndex="-1"
                     aria-labelledby="addTicketModalLabel"
                     aria-hidden="true"
                 >
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content border-0 shadow-lg rounded-lg">
+                            <div className="modal-header bg-primary text-white">
                                 <h5 className="modal-title" id="addTicketModalLabel">
                                     Mark as Paid
                                 </h5>
                                 <button
                                     type="button"
-                                    className="btn-close"
+                                    className="btn-close text-white"
                                     onClick={() => setIsModalOpen(false)}
                                     aria-label="Close"
                                 ></button>
                             </div>
                             <form onSubmit={handleSubmit}>
                                 <div className="modal-body">
-                                    <div className="form-group">
-                                        <label htmlFor="transectionid">Transaction ID</label>
+                                    <div className="mb-3">
+                                        <label htmlFor="transectionid" className="form-label">Transaction ID</label>
                                         <input
                                             type="text"
                                             id="transectionid"
@@ -350,8 +350,8 @@ function InvoiceNewTemp() {
                                             required
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label htmlFor="amount">Amount</label>
+                                    <div className="mb-3">
+                                        <label htmlFor="amount" className="form-label">Amount</label>
                                         <input
                                             type="text"
                                             id="amount"
@@ -362,8 +362,8 @@ function InvoiceNewTemp() {
                                             required
                                         />
                                     </div>
-                                    <div className="form-group">
-                                        <label htmlFor="paymentWindow">Payment Window</label>
+                                    <div className="mb-3">
+                                        <label htmlFor="paymentWindow" className="form-label">Payment Window</label>
                                         <input
                                             type="text"
                                             id="paymentWindow"
@@ -374,13 +374,12 @@ function InvoiceNewTemp() {
                                             required
                                         />
                                     </div>
-
-                                    <div className="form-group">
-                                        <label htmlFor="paymentWindow">Currency</label>
+                                    <div className="mb-3">
+                                        <label htmlFor="currency" className="form-label">Currency</label>
                                         <select
-                                            id="paymentWindow"
-                                            className="form-control"
-                                            name="paymentWindow"
+                                            id="currency"
+                                            className="form-select"
+                                            name="currency"
                                             value={formData.currency}
                                             onChange={handleInputChange}
                                             required
@@ -394,7 +393,6 @@ function InvoiceNewTemp() {
                                             <option value="JPY">JPY - Japanese Yen</option>
                                         </select>
                                     </div>
-
                                 </div>
                                 <div className="modal-footer">
                                     <button
@@ -413,6 +411,8 @@ function InvoiceNewTemp() {
                     </div>
                 </div>
             )}
+
+
 
         </>
     );
