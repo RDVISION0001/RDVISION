@@ -729,23 +729,41 @@ function QuotationBox(props) {
                 <Modal.Body>
                     <div className="container mt-3">
                         <h3> Prices list</h3>
-                        <table className="table table-bordered table-striped">
+                        <table className="table table-bordered table-striped table-hover shadow-sm">
                             <thead className="thead-dark">
                                 <tr>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
+                                    <th className="text-center">Quantity</th>
+                                    <th className="text-center">Price</th>
+                                    <th className="text-center">Payment Link</th>
                                 </tr>
                             </thead>
-                            {prices.length > 0 ? <tbody>
-                                {prices.map((price) => (
-                                    <tr key={price.priceId}>
-
-                                        <td>{price.quantity} {price.unit} </td>
-                                        <td>{price.currency} {price.price}</td>
+                            {prices.length > 0 ? (
+                                <tbody>
+                                    {prices.map((price) => (
+                                        <tr key={price.priceId}>
+                                            <td className="text-center align-middle border">
+                                                {price.quantity} {price.unit}
+                                            </td>
+                                            <td className="text-center align-middle border">
+                                                {price.currency} {price.price}
+                                            </td>
+                                            <td className="text-center align-middle border">
+                                            {price.paymentLink}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            ) : (
+                                <tbody>
+                                    <tr>
+                                        <td colSpan="3" className="text-center text-muted">
+                                            No price available
+                                        </td>
                                     </tr>
-                                ))}
-                            </tbody> : "No price Available"}
+                                </tbody>
+                            )}
                         </table>
+
                     </div>
 
                 </Modal.Body>

@@ -229,9 +229,9 @@ function InNegotiation() {
   };
 
   const handleSelecteRow = (index, ticketId) => {
-    setSelectedKey(index)
-    localStorage.setItem("selectedNego", ticketId)
-  }
+    setSelectedKey(index);
+    localStorage.setItem("selectedNego", ticketId);
+  };
 
   // Define stages
   const stages = [
@@ -364,12 +364,24 @@ function InNegotiation() {
 
   }
 
+  const rowcolor = (ticketStatus) => {
+    const colors = {
+      'New': 'table-primary',
+      'Sale': 'table-success',
+      'Follow': 'table-info',
+      'Interested': 'table-warning',
+      'Not_Interested': 'table-danger',
+      'Wrong_Number': 'table-secondary',
+      'Not_Pickup': 'table-secondary'
+    };
+    return colors[ticketStatus] || 'white';
+  }
   //color of styatus 
   const getColorByStatus = (ticketStatus) => {
     const colors = {
       'New': 'dodgerblue',
       'Sale': 'green',
-      'Follow': 'RoyalBlue',
+      'Follow': '#37d6d6',
       'Interested': 'orange',
       'Not_Interested': 'red',
       'Wrong_Number': 'gray',
@@ -378,6 +390,7 @@ function InNegotiation() {
     return colors[ticketStatus] || 'white';
   };
 
+ 
   function formatFollowUpDate(followUpDateTime) {
     const [year, month, day] = followUpDateTime;
     // Convert month to 2-digit format and day to 2-digit format
@@ -886,7 +899,7 @@ function InNegotiation() {
                 <div className="container-fluid">
                   <div className="table-wrapper tabbed-table">
                     <div className="followups-table table-responsive table-height">
-                      <table className="table">
+                      <table className="table table-hover">
                         <thead className="sticky-header">
                           <tr>
                             <th tabIndex="0" >S.No.</th>
@@ -905,13 +918,15 @@ function InNegotiation() {
                         </thead>
                         <tbody>
                           {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
+                            // ${localStorage.getItem("selectedNego") && localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "table-success" :  for selected row 
                             <tr key={index}
-                              style={{
-                                boxShadow: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
-                                zIndex: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? 1 : "auto",
-                                position: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "relative" : "static"
-                              }}
-                              onClick={() => handleSelecteRow(index, nego.uniqueQueryId)}
+                            className={`${rowcolor(nego.ticketstatus)}`}
+                            style={{
+                              boxShadow: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
+                              zIndex: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? 1 : "auto",
+                              position: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "relative" : "static"
+                            }}
+                            onClick={() => handleSelecteRow(index, nego.uniqueQueryId)}
                             >
                               <td>{rowsPerPage * (currentPage - 1) + (index + 1)}.</td>
                               <td>
