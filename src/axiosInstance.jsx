@@ -3,7 +3,7 @@ import axios from 'axios';
 // Create an Axios instance
 const axiosInstance = axios.create({
   baseURL: 'https://rdvision.in',
-  // baseURL:'http://localhost:8080'
+  // baseURL:'http://54.172.58.86:8080'
 });
 
 // Add a request interceptor

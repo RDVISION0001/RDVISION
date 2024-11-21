@@ -25,7 +25,7 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
                 priceId: price.priceId,
                 quantity: price.quantity,
                 price: price.price,
-                paymentLink: price.paymentLink 
+                paymentLink: price.paymentLink
             }));
 
             setEntries(fetchedEntries.length > 0 ? fetchedEntries : [{ priceId: null, quantity: '', price: '', paymentLink: '' }]);
@@ -34,31 +34,44 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
         }
     };
 
-
     useEffect(() => {
         if (productId > 0) {
             fetchPriceList();
         }
     }, [productId]);
 
-    // Handle unit change
     const handleUnitChange = (e) => {
         setUnit(e.target.value);
     };
 
-    // Handle input changes for quantity and price
     const handleEntryChange = (index, field, value) => {
         const updatedEntries = [...entries];
         updatedEntries[index][field] = value;
         setEntries(updatedEntries);
     };
 
-    // Add a new empty quantity and price field
     const addQuantityPriceField = () => {
         setEntries([...entries, { priceId: null, quantity: '', price: '', paymentLink: '' }]);
     };
 
-    // Handle form submission
+    const handleDeleteEntry = async (priceId, index) => {
+        if (!priceId) {
+            // If no `priceId` exists (unsaved entry), just remove it locally
+            const updatedEntries = entries.filter((_, i) => i !== index);
+            setEntries(updatedEntries);
+            return;
+        }
+
+        try {
+            await axiosInstance.delete(`/product/delete/${priceId}`);
+            toast.success('Price deleted successfully!');
+            const updatedEntries = entries.filter((_, i) => i !== index);
+            setEntries(updatedEntries);
+        } catch (error) {
+            toast.error('Failed to delete the price.');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -70,26 +83,22 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
             product: { productId },
             ticketId: ticketId,
             currency: currency,
-            paymentLink: entry.paymentLink // Corrected reference
+            paymentLink: entry.paymentLink
         }));
 
         try {
-            const response = await axiosInstance.post('/product/addprices', data);
+            await axiosInstance.post('/product/addprices', data);
             toast.success('Prices updated successfully!');
-            onClose(); // Close the form after submission
+            onClose();
         } catch (error) {
             toast.error('Failed to submit prices.');
         }
     };
 
-
-
-
     return (
         <div className="p-4 rounded">
             <h5>Product: {productName}</h5>
             <form onSubmit={handleSubmit}>
-                {/* Unit Input */}
                 <div className="mb-3">
                     <label htmlFor="unit" className="form-label">Unit</label>
                     <input
@@ -102,11 +111,10 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
                     />
                 </div>
 
-                {/* Quantity and Price Inputs */}
                 <div className="mb-3">
                     <label className="form-label">Quantities and Prices</label>
                     {entries.map((entry, index) => (
-                        <div key={index} className="d-flex gap-2 mb-2">
+                        <div key={index} className="d-flex gap-2 mb-2 align-items-center">
                             <input
                                 type="number"
                                 value={entry.quantity}
@@ -123,19 +131,25 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
                                 className="form-control"
                                 required
                             />
-                            <input
-                                type="link"
-                                value={entry.paymentLink}
-                                onChange={(e) => handleEntryChange(index, 'paymentLink', e.target.value)}
-                                placeholder="Payment Link"
-                                className="form-control"
-                                required
-                            />
+                            <div className="d-flex align-items-center flex-grow-1">
+                                <input
+                                    type="url"
+                                    value={entry.paymentLink}
+                                    onChange={(e) => handleEntryChange(index, 'paymentLink', e.target.value)}
+                                    placeholder="Payment Link"
+                                    className="form-control"
+                                />
+                                <i
+                                    className="fa-regular fa-trash-can fa-2xl ms-2"
+                                    style={{ color: "#e10e39", cursor: "pointer" }}
+                                    onClick={() => handleDeleteEntry(entry.priceId, index)}
+                                ></i>
+                            </div>
                         </div>
+
                     ))}
                 </div>
 
-                {/* Add More Fields Button */}
                 <div className="mb-3">
                     <button
                         type="button"
@@ -146,7 +160,6 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
                     </button>
                 </div>
 
-                {/* Submit Button */}
                 <div className="d-flex justify-content-end">
                     <button type="submit" className="btn btn-primary">
                         Submit
