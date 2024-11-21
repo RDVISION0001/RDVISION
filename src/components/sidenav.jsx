@@ -222,6 +222,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/payment_window" className="nav-link">
+                <i class="fa-solid fa-money-check-dollar"></i>
+                <span className="nav-text">Payment Window</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/admin_to_everyone" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Everyone</span>

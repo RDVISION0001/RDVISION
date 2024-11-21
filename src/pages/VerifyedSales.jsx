@@ -42,13 +42,27 @@ function VerifiedSales() {
     const formatDate = (timestamp) => {
         if (!timestamp) return 'N/A';
         const date = new Date(timestamp);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+        return date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        }).replace(',', ''); // Removes the comma if it appears
     };
 
     const formatPaymentDate = (paymentDate) => {
         if (!paymentDate || !Array.isArray(paymentDate)) return 'N/A';
-        const [year, month, day, hour, minute, second, millisecond] = paymentDate;
-        return `${year}-${month + 1}-${day} ${hour}:${minute}:${second}`;
+        const [year, month, day, hour, minute, second] = paymentDate;
+        const date = new Date(year, month, day, hour, minute, second);
+        return `${date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+        }).replace(',', '')} ${date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true, // Optional for 12-hour format
+        })}`;
     };
 
     if (loading) {
@@ -64,64 +78,68 @@ function VerifiedSales() {
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
-                        <h3 className="title">Verifyed Sales</h3>
-                        <div className="bg-white mx-3">
-                            <div className="followups-table table-responsive table-height">
-
-                                <table className="table table-borderless table-hover">
-                                    <thead className="text-dark" style={{ backgroundColor: 'gray' }}>
-                                        <tr>
-                                            <th scope="col">Closed By</th>
-                                            <th scope="col">Sale Date</th>
-                                            <th scope="col">Customer Name</th>
-                                            <th scope="col">Customer Order</th>
-                                            <th scope="col">Invoice ID</th>
-                                            <th scope="col">Ticket ID</th>
-                                            <th scope="col">Issue Date</th>
-                                            <th scope="col">Total Payable Amount</th>
-                                            <th scope="col">Payment Status</th>
+                        <h3 className="title mb-4">Verified Sales</h3>
+                        <div className="followups-table table-responsive table-height">
+                            <table className="table table-bordered table-hover table-striped table-sm">
+                                <thead className="text-white" style={{ backgroundColor: '#343a40' }}>
+                                    <tr>
+                                        <th scope="col">S No</th>
+                                        <th scope="col">Order No</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Closed By</th>
+                                        <th scope="col">Order Status</th>
+                                        <th scope="col">Customer Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Order</th>
+                                        <th scope="col">Tracking No</th>
+                                        <th scope="col">Payment Window</th>
+                                        <th scope="col">Received Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {invoices.map((invoice, index) => (
+                                        <tr key={invoice.invoiceId} className='table-success'>
+                                            <td className="text-center">{index + 1}.</td>
+                                            <td>{invoice.orderDto?.orderId}</td>
+                                            <td className="text-nowrap">{formatDate(invoice.saleDate) || 'N/A'}</td>
+                                            <td className="text-nowrap">
+                                                {invoice.closerName}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleShowCustomerModal(invoice)}
+                                                    className="btn btn-link p-0"
+                                                >
+                                                    ...
+                                                </button>
+                                            </td>
+                                            <td>{invoice.deliveryStatus || 'Processing'}</td>
+                                            <td>{invoice.customerName}</td>
+                                            <td>{invoice.customerEmail}</td>
+                                            <td>{invoice.address?.landmark},{invoice.address?.houseNumber},{invoice.address?.city},{invoice.address?.state},{invoice.address?.country},{invoice.address?.zipCode}</td>
+                                            <td>
+                                                {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                    invoice.orderDto.productOrders.map((order, i) =>
+                                                        order.product?.map((p, index) => (
+                                                            <div key={`${i}-${index}`}>{p.name}</div>
+                                                        ))
+                                                    )
+                                                ) : (
+                                                    'No Products Available'
+                                                )}
+                                            </td>
+                                            <td>{invoice.trackingNumber || 'Wating'}</td>
+                                            <td>{invoice.payment?.paymentWindow} </td>
+                                            <td className="text-success font-weight-bold">{invoice.payment?.currency} {invoice.payment?.amount}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {invoices.map((invoice) => (
-                                            <tr className="border" key={invoice.invoiceId}>
-                                                <td>
-                                                    {invoice.closerName}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleShowCustomerModal(invoice)}
-                                                        className="btn btn-link p-0">....
-                                                    </button>
-                                                </td>
-                                                <td>{formatDate(invoice.saleDate) || 'N/A'}</td> {/* Handle null saleDate */}
-                                                <td>{invoice.customerName}</td>
-                                                <td>
-                                                    {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                        invoice.orderDto.productOrders.map(order =>
-                                                            order.product?.map((p, index) => (
-                                                                <div key={index}>{p.name}</div>
-                                                            ))
-                                                        )
-                                                    ) : (
-                                                        'No Products Available'
-                                                    )}
-                                                </td>
-                                                <td>{invoice.invoiceId || 'N/A'}</td> {/* Display invoiceId */}
-                                                <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
-                                                <td>{formatDate(invoice.date)}</td> {/* Use issueDate or date */}
-                                                <td className="text-success bold-text">
-                                                    {invoice.currency || 'USD'} {invoice.orderAmount}
-                                                </td>
-                                                <td className="text-success bold-text">{invoice.orderDto?.paymentStatus}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </section>
+
 
             {/* Customer Details Modal */}
             <Modal show={showCustomerModal} onHide={handleCloseCustomerModal} centered>
