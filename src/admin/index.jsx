@@ -26,27 +26,61 @@ const index = () => {
     candidate.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Inline style for active tab
+  const activeTabStyle = {
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Shadow effect for active tab
+    transition: 'box-shadow 0.3s ease', // Smooth transition for shadow
+  };
 
   return (
 
-    <section className="followup-table-section py-3">
+    <section className="followup-table-section">
       <div className="container-fluid">
 
-        <div className="container my-4">
+        <div className="container">
           <Tabs
             activeKey={activeTab}
             onSelect={(k) => setActiveTab(k)}
-            className="custom-tabs mb-3"
+            className="mb-3"
           >
-            <Tab eventKey="totalticket" title="Total Ticket" />
-            <Tab eventKey="todaytickets" title="Today's Ticket" />
-            <Tab eventKey="totalsales" title="Total Sales" />
-            <Tab eventKey="preparingforshipment" title="Preparing for Shipment" />
-            <Tab eventKey="awaitingtracking" title="Awaiting Tracking" />
-            <Tab eventKey="newcustomer" title="New Customer" />
-            <Tab eventKey="existingcustomer" title="Existing Customer" />
-
+            <Tab
+              eventKey="totalticket"
+              title="Total Ticket"
+              style={activeTab === "totalticket" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="todaytickets"
+              title="Today's Ticket"
+              style={activeTab === "todaytickets" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="totalsales"
+              title="Total Sales"
+              style={activeTab === "totalsales" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="preparingforshipment"
+              title="Preparing for Shipment"
+              style={activeTab === "preparingforshipment" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="awaitingtracking"
+              title="Awaiting Tracking"
+              style={activeTab === "awaitingtracking" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="newcustomer"
+              title="New Customer"
+              style={activeTab === "newcustomer" ? activeTabStyle : {}}
+            />
+            <Tab
+              eventKey="existingcustomer"
+              title="Existing Customer"
+              style={activeTab === "existingcustomer" ? activeTabStyle : {}}
+            />
           </Tabs>
+
+
 
           <div className="d-flex justify-content-between align-items-center mb-3">
             <InputGroup className="search-input">
