@@ -8,7 +8,9 @@ import 'react-toastify/dist/ReactToastify.css';
 
 ///compo//
 import Sidenav from './components/sidenav';
-import Topnav from './components/topnav'
+import Topnav from './components/topnav';
+import PaymentWindow from './components/PaymentWindow';
+
 
 //Coustomer invoice
 import Coustomer from './components/Coustomer';
@@ -23,9 +25,9 @@ import New_Products from './pages/New_Products';
 import ActionMode from './pages/ActionMode';
 import SalesReport from './pages/SalesReport';
 import VerifyedSales from './pages/VerifyedSales';
-
 import InvoiceNewTemp from './pages/InvoiceNewTemp';
-import PaymentWindow from './components/PaymentWindow';
+import MIS_Product from './pages/MIS_Product';
+
 
 
 
@@ -200,6 +202,8 @@ function App() {
                       <Route exact path="/sales_report" element={<SalesReport />} />
                       <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
                       <Route exact path="/invoice" element={<InvoiceNewTemp />} />
+                      <Route exact path="/mis_product" element={<MIS_Product />} />
+
 
                       {/* Admin */}
                       <Route exact path="/admin_index" element={<Index />} />

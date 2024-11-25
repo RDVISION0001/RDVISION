@@ -401,9 +401,9 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
-                <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+              <NavLink target='_blank' to="/mis_product" className="nav-link">
+                <i class="fa-solid fa-plus-minus"></i>
+                <span className="nav-text">MIS-PRODUCT_DEP</span>
               </NavLink>
             </li>
           </>

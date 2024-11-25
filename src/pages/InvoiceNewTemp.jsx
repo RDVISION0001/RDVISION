@@ -12,6 +12,8 @@ function InvoiceNewTemp() {
     const [error, setError] = useState(null); // Error state
     const { userId } = useAuth();
 
+    // State to store the dropdown options
+    const [options, setOptions] = useState([]);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null); // State to store selected invoice
@@ -90,6 +92,23 @@ function InvoiceNewTemp() {
         .reduce((sum, invoice) => sum + (invoice.orderAmount || 0), 0);
 
     const totalPendingInvoices = invoices.filter(invoice => invoice.paymentStatus !== "paid").length;
+
+
+    useEffect(() => {
+        // Call the API on component mount
+        axiosInstance.get('/paymentwindow/getAll')
+            .then((response) => {
+                setOptions(response.data);  // Assuming the response data is an array
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching payment windows:', error);
+                setLoading(false);
+            });
+    }, []);
+
+
+
 
     return (
         <>
@@ -362,18 +381,32 @@ function InvoiceNewTemp() {
                                             required
                                         />
                                     </div>
+
                                     <div className="mb-3">
-                                        <label htmlFor="paymentWindow" className="form-label">Payment Window</label>
-                                        <input
-                                            type="text"
-                                            id="paymentWindow"
-                                            className="form-control"
-                                            name="paymentWindow"
-                                            value={formData.paymentWindow}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
+                                        <label htmlFor="paymentWindow" className="form-label">
+                                            Payment Window
+                                        </label>
+                                        {loading ? (
+                                            <p>Loading...</p>
+                                        ) : (
+                                            <select
+                                                id="paymentWindow"
+                                                name="paymentWindow"
+                                                className="form-control"
+                                                value={formData.paymentWindow}
+                                                onChange={handleInputChange}
+                                                required
+                                            >
+                                                <option value="">Select Payment Window</option>
+                                                {options.map((option) => (
+                                                    <option key={option.id} value={option.id}>
+                                                        {option.paymentWindowName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
                                     </div>
+
                                     <div className="mb-3">
                                         <label htmlFor="currency" className="form-label">Currency</label>
                                         <select
@@ -419,4 +452,5 @@ function InvoiceNewTemp() {
 }
 
 export default InvoiceNewTemp;
+
 
