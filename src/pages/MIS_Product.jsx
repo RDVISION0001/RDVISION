@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
-import { Modal } from "react-bootstrap";
+import { Modal, Button } from 'react-bootstrap';
+// Toast notification
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function MIS_Product() {
+    const [category, setCategory] = useState(""); // Added state for category
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [one, setOne] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [show, setShow] = useState(false);
+
 
     // State for modal inputs
     const [unit, setUnit] = useState("");
@@ -15,6 +21,8 @@ function MIS_Product() {
     const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
     const [requestBody, setRequestBody] = useState([])
     const [submitError, setSubmitError] = useState(null);
+    const [productId, setProductId] = useState([]);
+
 
     useEffect(() => {
         fetchProducts();
@@ -37,6 +45,22 @@ function MIS_Product() {
         }
     };
 
+    //add catogry modal 
+    const handleClose = () => {
+        setShow(false);    // Close the modal
+        setCategory("");   // Clear the category input
+        setProductId(null); // Reset productId
+    };
+    const handleShow = (id) => {
+        const product = products.find((p) => p.productId === id);
+        setCategory(product?.category || ""); // Pre-fill category for editing
+        setProductId(id);
+        setShow(true);
+    };
+
+
+
+    //add price modal 
     const handleOne = (product) => {
         setOne(true);
         setSelectedProduct(product);
@@ -127,21 +151,43 @@ function MIS_Product() {
     };
     console.log(requestBody)
 
+
+    const handleUpdateCategory = async () => {
+        try {
+            const response = await axiosInstance.put("/product/updateCategory", {
+                productId,
+                category,
+            });
+            console.log("Category updated successfully:", response.data);
+            toast.success("Category updated successfully");
+
+            setShow(false);    // Close the modal
+
+            // Automatically close the modal after success
+            handleClose(); // Close the modal
+        } catch (error) {
+            console.error("Error updating category:", error);
+            toast.error("Failed to update category. Please try again.");
+        }
+    };
+
+
+
+
     return (
-        <div>
+        <div className="container-fluid">
             <h3 className="title text-center">MIS-Product Department</h3>
             <div className="table-responsive">
-                <table className="table table-bordered">
+                <table className="table table-bordered border-dark">
                     <thead>
                         <tr>
-                            <th>S.No.</th>
-                            <th>Product Image</th>
-                            <th colSpan="2">Product Details</th>
-                            <th>Product Code</th>
-                            <th>Pills Qty</th>
-                            <th>Price</th>
-                            <th>Price per Pill</th>
-                            <th>Brochure Link</th>
+                            <th style={{ width: "5%" }}>S.No.</th>
+                            <th style={{ width: "10%" }}>Product Image</th>
+                            <th style={{ width: "20%" }} colSpan="2">Product Details</th>
+                            <th style={{ width: "15%" }}>Product Code</th>
+                            <th style={{ width: "15%" }}>Quantity & Unit</th>
+                            <th style={{ width: "15%" }}>Price & Currency</th>
+                            <th style={{ width: "10%" }}>Brochure Link</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -151,35 +197,94 @@ function MIS_Product() {
                                     <tr key={`${product.productId}-${rowIndex}`}>
                                         {rowIndex === 0 && (
                                             <>
-                                                <td rowSpan={rowDetails.length}>{index + 1}</td>
-                                                <td rowSpan={rowDetails.length}>
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     {product.images?.length > 0 ? (
-                                                        <img src={product.images[0]} alt="Product" style={{ maxWidth: "100px" }} />
+                                                        <img src={product.images[0]} alt="Product" style={{ maxWidth: "80px" }} />
                                                     ) : (
                                                         "No Image"
                                                     )}
                                                 </td>
                                             </>
                                         )}
-                                        <td>{row.label}</td>
-                                        <td>{product[row.valueKey] || "N/A"}</td>
+                                        <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
+                                        <td style={{ padding: "5px" }}>
+                                            {row.valueKey === "category" && (
+                                                <>
+                                                    {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
+                                                        <>
+                                                            {product[row.valueKey]}{" "}
+                                                            <button
+                                                                className="btn btn-sm btn-warning ms-2"
+                                                                onClick={() => handleShow(product.productId)}
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <button onClick={() => handleShow(product.productId)}>Add Category</button>
+                                                    )}
+                                                </>
+                                            )}
+                                            {row.valueKey !== "category" && (
+                                                <>
+                                                    {product[row.valueKey] || "N/A"}
+                                                </>
+                                            )}
+                                        </td>
+                                        {/* Apply smaller padding and font size to the rest of the table rows */}
                                         {rowIndex === 0 && (
                                             <>
-                                                <td rowSpan={rowDetails.length}>{product.productCode || "N/A"}</td>
-                                                <td rowSpan={rowDetails.length}>{product.packagingSize || "N/A"}</td>
-                                                <td rowSpan={rowDetails.length}>
-                                                    {product.price ? (
-                                                        `$${product.price}`
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                    {product.priceList && product.priceList.length > 0 ? (
+                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                            <tbody>
+                                                                {product.priceList.map((priceItem) => (
+                                                                    <tr key={priceItem.priceId}>
+                                                                        <td>{priceItem.productCode || "N/A"}</td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
                                                     ) : (
-                                                        <button onClick={() => handleOne(product)}>Add</button>
+                                                        <button onClick={() => handleOne(product)}>Add Price</button>
                                                     )}
                                                 </td>
-                                                <td rowSpan={rowDetails.length}>
-                                                    {product.price && product.packagingSize
-                                                        ? `$${(product.price / product.packagingSize).toFixed(2)}`
-                                                        : "N/A"}
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                    {product.priceList && product.priceList.length > 0 ? (
+                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                            <tbody>
+                                                                {product.priceList.map((priceItem) => (
+                                                                    <tr key={priceItem.priceId}>
+                                                                        <td>
+                                                                            {priceItem.quantity || "N/A"} {priceItem.unit || ""}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    ) : (
+                                                        "N/A"
+                                                    )}
                                                 </td>
-                                                <td rowSpan={rowDetails.length}>
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                    {product.priceList && product.priceList.length > 0 ? (
+                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                            <tbody>
+                                                                {product.priceList.map((priceItem) => (
+                                                                    <tr key={priceItem.priceId}>
+                                                                        <td>
+                                                                            {`$${priceItem.price}`} {priceItem.currency || "USD"}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                    ) : (
+                                                        "N/A"
+                                                    )}
+                                                </td>
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     <a href={product.bruchureLink || "#"}>Brochure</a>
                                                 </td>
                                             </>
@@ -189,7 +294,10 @@ function MIS_Product() {
                             </React.Fragment>
                         ))}
                     </tbody>
+
+
                 </table>
+
             </div>
 
             {/* Add Price Modal */}
@@ -281,8 +389,42 @@ function MIS_Product() {
                     </button>
                 </div>
             </Modal>
+
+
+            {/* Add Category Modal */}
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add Category</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div className="form-group">
+                            <label htmlFor="category">Category</label>
+                            <input
+                                type="text"
+                                name="category"
+                                className="form-control"
+                                value={category}
+                                id="category"
+                                placeholder="Enter category"
+                                onChange={(e) => setCategory(e.target.value)} // Add this line
+                            />
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button className="btn btn-warning" onClick={handleUpdateCategory}>
+                        {category ? "Update Category" : "Add Category"}
+                    </button>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+
+            </Modal>
         </div>
     );
 }
 
 export default MIS_Product;
+
