@@ -3,6 +3,7 @@ import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import { Table } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 
 function New_Products() {
     const [products, setProducts] = useState([]);
@@ -32,7 +33,7 @@ function New_Products() {
 
     const [isBasicActive, setBasicActive] = useState(true);
     const [basicData, setBasicData] = useState({
-        productId:0,
+        productId: 0,
         name: '',
         productCode: '',
         price: '',
@@ -165,24 +166,38 @@ function New_Products() {
         }));
     };
 
-    //delete products
     const handleDeleteProduct = async (productId) => {
-        try {
-            const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
-            toast.success("Product deleted successfully");
-            fetchProducts(); // Refresh the product list after deletion
-        } catch (error) {
-            toast.error("Failed to delete product. Please try again.");
-        }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+          }).then(async(result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
+                    toast.success("Product deleted successfully");
+                    fetchProducts(); // Refresh the product list after deletion
+                    scrollToTop(); // Scroll to the top of the page
+                } catch (error) {
+                    toast.error("Failed to delete product. Please try again.");
+                }
+            }
+          });
+      
     };
+
     const scrollToTop = () => {
         window.scrollTo({
-          top: 0,
-          left: 0,
-          behavior: 'smooth' // Optional: adds smooth scrolling
+            top: 0,
+            left: 0,
+            behavior: 'smooth' // Optional: adds smooth scrolling
         });
-      };
-      
+    };
+
     const handleEditProduct = (product) => {
         setBasicData((prev) => ({
             ...prev, // spread the previous state
@@ -191,7 +206,7 @@ function New_Products() {
         }));
         scrollToTop()
     };
-    
+
 
 
     return (
@@ -220,7 +235,6 @@ function New_Products() {
                             <div className="row">
                                 <div className="container mt-4">
                                     <div className="card">
-
                                         <div className="card-body">
                                             <form >
                                                 <div className="row">
@@ -260,36 +274,7 @@ function New_Products() {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                                <>
-                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
 
-                                                                        <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
-                                                                        <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
-                                                                    </div>
-                                                                </>
-                                                            </dialog>
-                                                            <dialog id='videoLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                                <>
-                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closevideoInput}>close</button></div>
-
-                                                                        <input name='productVideo' type="text" value={basicData.productVideo} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
-                                                                        <button className='bg-primary text-white m-2' onClick={closevideoInput}>Add video</button>
-                                                                    </div>
-                                                                </>
-                                                            </dialog>
-                                                            <dialog id='pdfLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
-                                                                <>
-                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closePdfInput}>close</button></div>
-
-                                                                        <input type="text" name='productBrochure' value={basicData.productBrochure} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
-                                                                        <button className='bg-primary text-white m-2' onClick={closePdfInput}>Add brucher</button>
-                                                                    </div>
-                                                                </>
-                                                            </dialog>
                                                         </div>
                                                     </div>
 
@@ -384,7 +369,7 @@ function New_Products() {
                                                     </div>
                                                 </div>
                                                 <div className="text-right mt-3 d-flex justify-content-end">
-                                                    <button className="btn btn-success" type="submit" onClick={handleSubmit}>Add Product</button>
+                                                    <button className="btn btn-success" onClick={handleSubmit}>Add Product</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -439,7 +424,7 @@ function New_Products() {
                                     </thead>
                                     <tbody>
                                         {/* Map through filteredProducts to create rows */}
-                                        {filteredProducts.filter((product)=>product.images===null).length > 0 ? (
+                                        {filteredProducts.filter((product) => product.images === null).length > 0 ? (
                                             filteredProducts
                                                 .filter((product) => product.images === null) // Ensure product has images
                                                 .map((product, index) => (
@@ -447,8 +432,10 @@ function New_Products() {
                                                         <td>{product.name}</td> {/* Product Name */}
                                                         <td>
                                                             {/* Action Buttons */}
-                                                            <button className="btn btn-primary" onClick={()=>handleEditProduct(product)}>Edit Product</button>
+                                                            <button className="btn btn-primary" onClick={() => handleEditProduct(product)}>Edit Product</button>
+                                                            <button className="btn btn-danger ms-2" onClick={() => handleDeleteProduct(product.productId)}>Delete</button>
                                                         </td>
+
                                                     </tr>
                                                 ))
                                         ) : (
@@ -464,7 +451,36 @@ function New_Products() {
                 </div>
             </section>
 
+            <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                <>
+                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
 
+                        <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
+                        <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
+                    </div>
+                </>
+            </dialog>
+            <dialog id='videoLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                <>
+                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closevideoInput}>close</button></div>
+
+                        <input name='productVideo' type="text" value={basicData.productVideo} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                        <button className='bg-primary text-white m-2' onClick={closevideoInput}>Add video</button>
+                    </div>
+                </>
+            </dialog>
+            <dialog id='pdfLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
+                <>
+                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closePdfInput}>close</button></div>
+
+                        <input type="text" name='productBrochure' value={basicData.productBrochure} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleProductFileChange} placeholder='Enter image Link' />
+                        <button className='bg-primary text-white m-2' onClick={closePdfInput}>Add brucher</button>
+                    </div>
+                </>
+            </dialog>
 
         </div>
     );
