@@ -84,7 +84,7 @@ function UploadedProduct() {
                 description: basicData.description,
                 productVideo: basicData.productVideo,
                 bruchureLink: basicData.productBrochure,
-                images: imageList,
+                imageListInByte: imageList,
                 composition: advanceData.composition,
                 brand: advanceData.brand,
                 treatment: advanceData.treatment,
@@ -201,11 +201,35 @@ function UploadedProduct() {
             toast.error("Failed to update category. Please try again.");
         }
     };
+    //image handling
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files); // Convert FileList to an Array
+        const newImageList = [];
 
+        files.forEach((file) => {
+            const reader = new FileReader();
 
+            reader.onloadend = () => {
+                newImageList.push(reader.result);
+
+                // Once all files are processed, update the state
+                if (newImageList.length === files.length) {
+                    setimageList((prev) => [...prev, ...newImageList]);
+                }
+            };
+
+            if (file) {
+                reader.readAsDataURL(file); // Convert the file to a Base64 string
+            }
+            closeLinkInput()
+        });
+    };
+
+    console.log(imageList)
 
     return (
         <div>
+
             {/* Toggle between Basic and Advance Details */}
             {localStorage.getItem("roleName") === "Product_Coordinator" && <>
                 <section className="filter-section">
@@ -222,7 +246,6 @@ function UploadedProduct() {
                         </div>
                     </div>
                 </section>
-
                 {/* Conditionally render based on the state */}
                 {isBasicActive ? (
                     <section className="filter-section">
@@ -272,10 +295,26 @@ function UploadedProduct() {
                                                             </div>
                                                             <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
                                                                 <>
-                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
 
-                                                                        <input type="text" value={imageLink} className='p-2 bg-white text-black ' style={{ width: "500px" }} onChange={handleLinkChangeEvent} placeholder='Enter image Link' />
+                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
+                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
+
+                                                                        <label htmlFor="image">Add image list</label>
+                                                                        <div className="custom-file">
+                                                                            <input
+                                                                                type="file"
+                                                                                className="custom-file-input"
+                                                                                id="upload-profile-img"
+                                                                                onChange={(e) => handleFileChange(e, 'image')}
+                                                                                name="upload-profile"
+                                                                                multiple // Allows multiple files to be selected
+                                                                            />
+                                                                            <label className="custom-file-label" htmlFor="upload-profile-img">
+                                                                                Choose files
+                                                                            </label>
+                                                                        </div>
+
+
                                                                         <button className='bg-primary text-white m-2' onClick={addImageInArray}>Add Image</button>
                                                                     </div>
                                                                 </>
