@@ -76,6 +76,13 @@ function UploadedProduct() {
         if (imageList.length === 0) {
             toast.info("Add atlist one Image ")
         } else {
+            let newImage = [];
+            for (let i = 0; i < imageList.length; i++) {
+                newImage.push({
+                    imageData: imageList[i]
+                })
+            }
+
             const payload = {
                 productCode: basicData.productCode,
                 name: basicData.name,
@@ -84,7 +91,7 @@ function UploadedProduct() {
                 description: basicData.description,
                 productVideo: basicData.productVideo,
                 bruchureLink: basicData.productBrochure,
-                imageListInByte: imageList,
+                imageListInByte: newImage,
                 composition: advanceData.composition,
                 brand: advanceData.brand,
                 treatment: advanceData.treatment,
@@ -210,7 +217,7 @@ function UploadedProduct() {
             const reader = new FileReader();
 
             reader.onloadend = () => {
-                newImageList.push(reader.result);
+                newImageList.push(reader.result.split(",")[1]);
 
                 // Once all files are processed, update the state
                 if (newImageList.length === files.length) {
@@ -225,7 +232,19 @@ function UploadedProduct() {
         });
     };
 
-    console.log(imageList)
+    //resuble function to convert byte code to image url
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
+
+    }
 
     return (
         <div>
@@ -265,7 +284,7 @@ function UploadedProduct() {
                                                                         {[...Array(5)].map((_, index) => (
                                                                             <div key={index} className="form-group mb-1">
                                                                                 <label className="border rounded d-flex justify-content-center align-items-center" style={{ height: '50px', width: "50px", cursor: 'pointer' }}>
-                                                                                    {imageList[index + 1] ? <img src={imageList[index + 1]} style={{ maxHeight: "50px" }} /> : <FaCamera size={10} onClick={openLinkInput} />
+                                                                                    {imageList[index + 1] ? <img src={convertToImage(imageList[index + 1])} style={{ maxHeight: "50px" }} /> : <FaCamera size={10} onClick={openLinkInput} />
                                                                                     } </label>
                                                                             </div>
                                                                         ))}
@@ -274,7 +293,7 @@ function UploadedProduct() {
                                                                         <div className="form-group mb-3">
                                                                             <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '200px', width: "200px", cursor: 'pointer' }}>
 
-                                                                                {imageList[0] ? <img src={imageList[0]} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
+                                                                                {imageList[0] ? <img src={convertToImage(imageList[0])} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
                                                                                 }
                                                                             </label>
                                                                             <div className='d-flex justify-content-between mt-2'>
@@ -297,7 +316,7 @@ function UploadedProduct() {
                                                                 <>
 
                                                                     <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                    <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
+                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
 
                                                                         <label htmlFor="image">Add image list</label>
                                                                         <div className="custom-file">
@@ -478,7 +497,7 @@ function UploadedProduct() {
                             >
                                 <div className="row">
                                     {filteredProducts.length > 0 ? (
-                                        filteredProducts.filter((product) => product.images !== null).map((product, index) => (
+                                        filteredProducts.filter((product) => product.brand !== null).map((product, index) => (
                                             <div className="col-md-2 mb-4" key={index}>
                                                 <div
                                                     className="card product-card shadow-sm h-100"
@@ -487,36 +506,43 @@ function UploadedProduct() {
                                                     }}
                                                 >
                                                     <div className="card-header">
-                                                        <h5 className="card-title">{product.name}</h5>
+                                                        <h5 className="card-title">{product.name || "N/A"}</h5>
                                                     </div>
                                                     <img
-                                                        src={product.images}
+                                                        src={
+                                                            product.imageListInByte?.[0]?.imageData
+                                                                ? convertToImage(product.imageListInByte[0].imageData)
+                                                                : "https://via.placeholder.com/200" // Placeholder image if no image is available
+                                                        }
                                                         className="card-img-top"
-                                                        alt={product.name}
+                                                        alt={product.name || "N/A"}
                                                         style={{ height: "200px", objectFit: "cover" }}
                                                     />
                                                     <div className="card-body">
                                                         <p className="card-text">
-                                                            <strong>Product Code:</strong> {product.productCode}
+                                                            <strong>Product Code:</strong> {product.productCode || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Strength:</strong> {product.strength}
+                                                            <strong>Strength:</strong> {product.strength || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Packaging Size:</strong> {product.packagingSize}
+                                                            <strong>Packaging Size:</strong> {product.packagingSize || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Packaging Type:</strong> {product.packagingType}
+                                                            <strong>Packaging Type:</strong> {product.packagingType || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Composition:</strong> {product.composition}
+                                                            <strong>Composition:</strong> {product.composition || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Brand:</strong> {product.brand}
+                                                            <strong>Brand:</strong> {product.brand || "N/A"}
                                                         </p>
                                                         <p className="card-text">
-                                                            <strong>Treatment:</strong> {product.treatment.split(' ').slice(0, 7).join(' ')}
-                                                            {product.treatment.split(' ').length > 7 && '...'}
+                                                            <strong>Treatment:</strong>
+                                                            {product.treatment
+                                                                ? product.treatment.split(' ').slice(0, 7).join(' ') +
+                                                                (product.treatment.split(' ').length > 7 ? "..." : "")
+                                                                : "N/A"}
                                                         </p>
 
                                                         {localStorage.getItem("roleName") === "Product_Coordinator" && (
@@ -535,6 +561,7 @@ function UploadedProduct() {
                                                     </Button>
                                                 </div>
                                             </div>
+
                                         ))
                                     ) : (
                                         <div className="col-12 text-center">

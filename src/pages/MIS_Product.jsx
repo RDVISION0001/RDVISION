@@ -171,7 +171,19 @@ function MIS_Product() {
         }
     };
 
+    //resuble function to convert byte code to image url
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
 
+    }
 
 
     return (
@@ -199,8 +211,12 @@ function MIS_Product() {
                                             <>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    {product.images?.length > 0 ? (
-                                                        <img src={product.images[0]} alt="Product" style={{ maxWidth: "80px" }} />
+                                                    {product.imageListInByte?.[0]?.imageData ? (
+                                                        <img src={
+                                                            product.imageListInByte?.[0]?.imageData
+                                                                ? convertToImage(product.imageListInByte[0].imageData)
+                                                                : "https://via.placeholder.com/200" // Placeholder image if no image is available
+                                                        } alt="Product" style={{ maxWidth: "80px" }} />
                                                     ) : (
                                                         "No Image"
                                                     )}
