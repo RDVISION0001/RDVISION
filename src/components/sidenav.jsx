@@ -389,6 +389,12 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
+              <NavLink target='_blank' to="/image_upload" className="nav-link">
+                <i class="fa-solid fa-image"></i>               
+                 <span className="nav-text">Img Upload</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink target='_blank' to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>

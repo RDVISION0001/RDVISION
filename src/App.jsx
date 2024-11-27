@@ -27,8 +27,7 @@ import SalesReport from './pages/SalesReport';
 import VerifyedSales from './pages/VerifyedSales';
 import InvoiceNewTemp from './pages/InvoiceNewTemp';
 import MIS_Product from './pages/MIS_Product';
-
-
+import ImgUpload from './pages/ImgUpload';
 
 
 // auth
@@ -158,12 +157,12 @@ function App() {
               {localStorage.getItem("userId") && <Topnav />}
               <div className='d-flex'>
                 <div>
-                <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ?<i class="fa-regular fa-rectangle-xmark"></i>:<i class="fa-solid fa-book-open-reader"></i>}</div>
-                <div className='d-flex '>
-                  {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
-                    {localStorage.getItem("userId") && <TicketTrack />}
-                  </div> : ""}
-                </div>
+                  <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>
+                  <div className='d-flex '>
+                    {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
+                      {localStorage.getItem("userId") && <TicketTrack />}
+                    </div> : ""}
+                  </div>
                 </div>
 
 
@@ -203,6 +202,7 @@ function App() {
                       <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
                       <Route exact path="/invoice" element={<InvoiceNewTemp />} />
                       <Route exact path="/mis_product" element={<MIS_Product />} />
+                      <Route exact path="/image_upload" element={<ImgUpload />} />
 
 
                       {/* Admin */}
