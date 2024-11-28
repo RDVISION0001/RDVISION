@@ -4,16 +4,20 @@ import { Modal, Button } from 'react-bootstrap';
 // Toast notification
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaCamera } from 'react-icons/fa';
+import UpProductImg from "../components/UpProductImg";
+
 
 function MIS_Product() {
     const [category, setCategory] = useState(""); // Added state for category
     const [products, setProducts] = useState([]);
+    const [image, setImage] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [one, setOne] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [show, setShow] = useState(false);
-
+    const [on, setOn] = useState(false);
 
     // State for modal inputs
     const [unit, setUnit] = useState("");
@@ -47,17 +51,27 @@ function MIS_Product() {
 
     //add catogry modal 
     const handleClose = () => {
-        setShow(false);    // Close the modal
-        setCategory("");   // Clear the category input
-        setProductId(null); // Reset productId
+        setShow(false);
+        setCategory("");
+        setProductId(null);
     };
     const handleShow = (id) => {
         const product = products.find((p) => p.productId === id);
-        setCategory(product?.category || ""); // Pre-fill category for editing
+        setCategory(product?.category || "");
         setProductId(id);
         setShow(true);
     };
 
+    //add iamge modal 
+    const handleOff = () => {
+        setOn(false);
+        setProductId(null);
+    };
+
+    const handleOn = (id) => {
+        setProductId(id);
+        setOn(true);
+    };
 
 
     //add price modal 
@@ -185,6 +199,23 @@ function MIS_Product() {
 
     }
 
+    const handleUpdateProImg = async () => {
+        try {
+            const response = await axiosInstance.post("/product/addImage", {
+                productId,
+                image,
+            });
+            console.log("image updated successfully:", response.data);
+            toast.success("image updated successfully");
+
+            setOn(false);
+
+            handleOff();
+        } catch (error) {
+            console.error("Error updating image:", error);
+            toast.error("Failed to update image. Please try again.");
+        }
+    };
 
     return (
         <div className="container-fluid">
@@ -212,14 +243,27 @@ function MIS_Product() {
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     {product.imageListInByte?.[0]?.imageData ? (
-                                                        <img src={
-                                                            product.imageListInByte?.[0]?.imageData
-                                                                ? convertToImage(product.imageListInByte[0].imageData)
-                                                                : "https://via.placeholder.com/200" // Placeholder image if no image is available
-                                                        } alt="Product" style={{ maxWidth: "80px" }} />
+                                                        <img
+                                                            src={
+                                                                product.imageListInByte?.[0]?.imageData
+                                                                    ? convertToImage(product.imageListInByte[0].imageData)
+                                                                    : "https://via.placeholder.com/200" // Placeholder image if no image is available
+                                                            }
+                                                            alt="Product"
+                                                            style={{ maxWidth: "80px" }}
+                                                        />
                                                     ) : (
-                                                        "No Image"
+                                                        <>
+                                                            {/* Button to upload an image */}
+                                                            <button
+                                                                className="btn btn-sm btn-primary ms-2"
+                                                                onClick={() => handleOn(product.productId)}
+                                                            >
+                                                                Upload Image
+                                                            </button>
+                                                        </>
                                                     )}
+
                                                 </td>
                                             </>
                                         )}
@@ -437,6 +481,21 @@ function MIS_Product() {
                     </Button>
                 </Modal.Footer>
 
+            </Modal>
+
+            {/* Add Category Modal */}
+            <Modal show={on} onHide={handleOn}>
+                <Modal.Header   OffButton>
+                    <Modal.Title>Add Image</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-center">
+                    <UpProductImg id={productId} />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleOff}>
+                        Close
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </div>
     );
