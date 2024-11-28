@@ -390,8 +390,8 @@ function Sidenav() {
             </li>
             <li className="nav-item">
               <NavLink target='_blank' to="/image_upload" className="nav-link">
-                <i class="fa-solid fa-image"></i>               
-                 <span className="nav-text">Img Upload</span>
+                <i class="fa-solid fa-image"></i>
+                <span className="nav-text">Img Upload</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -410,6 +410,12 @@ function Sidenav() {
               <NavLink target='_blank' to="/mis_product" className="nav-link">
                 <i class="fa-solid fa-plus-minus"></i>
                 <span className="nav-text">MIS-PRODUCT_DEP</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
+              <NavLink target='_blank' to="/admin_upload_tickets" className="nav-link">
+                <i class="fa fa-upload" aria-hidden="true"></i>
+                <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
           </>
@@ -582,3 +588,4 @@ function Sidenav() {
 }
 
 export default Sidenav;
+

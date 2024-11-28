@@ -166,6 +166,7 @@ const SimpleUploadUI = (props) => {
                                 id="upload-profile-img"
                                 onChange={(e) => handleFileChange(e, 'image')}
                                 name="upload-profile"
+                                accept=".png,.jpeg,.jpg,.gif"
                                 multiple // Allows multiple files to be selected
                             />
                             <label className="custom-file-label" htmlFor="upload-profile-img">

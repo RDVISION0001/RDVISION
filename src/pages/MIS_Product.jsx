@@ -297,15 +297,21 @@ function MIS_Product() {
                                             <>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     {product.priceList && product.priceList.length > 0 ? (
-                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
-                                                            <tbody>
-                                                                {product.priceList.map((priceItem) => (
-                                                                    <tr key={priceItem.priceId}>
-                                                                        <td>{priceItem.productCode || "N/A"}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
+                                                        <>
+                                                            {product.priceList.map((priceItem) => (
+                                                                <div key={priceItem.priceId}>
+                                                                    {priceItem.productCode || "N/A"}
+                                                                </div>
+                                                            ))}
+                                                            {product.priceList.some((priceItem) => priceItem.productCode) && (
+                                                                <button
+                                                                    className="btn btn-sm btn-success mt-2"
+                                                                    onClick={() => handleOne(product)}
+                                                                >
+                                                                    Add More
+                                                                </button>
+                                                            )}
+                                                        </>
                                                     ) : (
                                                         <button onClick={() => handleOne(product)}>Add Price</button>
                                                     )}
@@ -485,7 +491,7 @@ function MIS_Product() {
 
             {/* Add Category Modal */}
             <Modal show={on} onHide={handleOn}>
-                <Modal.Header   OffButton>
+                <Modal.Header OffButton>
                     <Modal.Title>Add Image</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="text-center">
@@ -502,4 +508,5 @@ function MIS_Product() {
 }
 
 export default MIS_Product;
+
 
