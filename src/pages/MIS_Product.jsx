@@ -77,7 +77,6 @@ function MIS_Product() {
     //EDIT action
     const handleDesable = () => {
         setEnable(false);
-        setProductId(null);
     };
 
     const handleEnable = (id) => {
@@ -174,8 +173,6 @@ function MIS_Product() {
             },
         ]);
     };
-    console.log(requestBody)
-
 
     const handleUpdateCategory = async () => {
         try {
@@ -519,8 +516,8 @@ function MIS_Product() {
             </Modal>
 
             {/* action/EDIT */}
-            <Modal show={enable} onHide={handleEnable}>
-                <Modal.Header DesableButton>
+            <Modal show={enable} onHide={handleDesable}>
+                <Modal.Header >
                     <Modal.Title>Edit MIS Product</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="text-center">
