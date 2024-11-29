@@ -21,6 +21,20 @@ function SalesReport() {
         });
         setShowCustomerModal(true);
     };
+    //conver image
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
+
+    }
+
     //VerificationModel States 
     const [selectedInvoiceIdForVerification, setSelectedInvoiceforVerification] = useState("")
     const [selectedCloser, setSelectedCloser] = useState('')
@@ -121,7 +135,7 @@ function SalesReport() {
     function formatDateFromArray(dateArray) {
         // Create a new Date object from the array (Note: month is zero-indexed)
         const date = new Date(dateArray[0], dateArray[1] - 1, dateArray[2], dateArray[3], dateArray[4], dateArray[5], dateArray[6]);
-        
+
         // Define options for the formatting
         const options = {
             weekday: 'long', // "Monday"
@@ -132,7 +146,7 @@ function SalesReport() {
             minute: '2-digit', // "30"
             hour12: true // 12-hour format (AM/PM)
         };
-    
+
         // Format the date using `toLocaleString` with the options
         return date.toLocaleString('en-GB', options);
     }
@@ -158,7 +172,7 @@ function SalesReport() {
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
-                                   {invoices.length>0? <tbody>
+                                    {invoices.length > 0 ? <tbody>
                                         {invoices.map((invoice) => (
                                             <tr className="border" key={invoice.invoiceId}>
                                                 <td>
@@ -192,7 +206,7 @@ function SalesReport() {
 
                                             </tr>
                                         ))}
-                                    </tbody>:<div className='text-center  m-3 fw-bold'>No Invioces Pending For Verification</div>}
+                                    </tbody> : <div className='text-center  m-3 fw-bold'>No Invioces Pending For Verification</div>}
                                 </table>
                             </div>
                         </div>
@@ -278,7 +292,8 @@ function SalesReport() {
                                         {selectedPropductOrders && selectedPropductOrders.map((product, index) => (
                                             <tr key={index}>
                                                 <td className='text-center'>
-                                                    <img style={{ height: "50px" }} src={product.product[0].images[0]} alt="Product Image" class="img-fluid" />
+                                                    <img style={{ height: "50px" }} src={product.imageListInByte ? convertToImage(product.imageListInByte[0]) : 'https://via.placeholder.com/200'} alt="Product Image" class="img-fluid" />
+
                                                 </td>
                                                 <td className='text-center'>{product.product[0].name}</td>
                                                 <td className='text-center'>{product.quantity}</td>

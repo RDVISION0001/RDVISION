@@ -407,12 +407,13 @@ function InNegotiation() {
   const totalPages = Math.ceil(
     ticketData
       .filter((item) =>
-        item.senderName && item.senderName.includes(shortValue) ||
-        item.firstName && item.firstName.includes(shortValue) ||
-        item.email && item.email.includes(shortValue) ||
-        item.mobileNumber && item.mobileNumber.includes(shortValue) ||
-        item.senderMobile && item.senderMobile.includes(shortValue)
-      ).filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data)
+        (item.senderName && item.senderName.toLowerCase().includes(shortValue.toLowerCase())) ||
+        (item.firstName && item.firstName.toLowerCase().includes(shortValue.toLowerCase())) ||
+        (item.email && item.email.toLowerCase().includes(shortValue.toLowerCase())) ||
+        (item.mobileNumber && item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase())) ||
+        (item.senderMobile && item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()))
+      )
+      .filter((data) => (filterdate ? extracxtDate(data.followUpDateTime) : data))
       .length / rowsPerPage
   );
 
