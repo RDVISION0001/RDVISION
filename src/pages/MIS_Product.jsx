@@ -6,6 +6,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaCamera } from 'react-icons/fa';
 import UpProductImg from "../components/UpProductImg";
+import EditMIS_Product from "../components/EditMIS_Product";
 
 
 function MIS_Product() {
@@ -18,6 +19,7 @@ function MIS_Product() {
     const [error, setError] = useState(null);
     const [show, setShow] = useState(false);
     const [on, setOn] = useState(false);
+    const [enable, setEnable] = useState(false);
 
     // State for modal inputs
     const [unit, setUnit] = useState("");
@@ -26,7 +28,6 @@ function MIS_Product() {
     const [requestBody, setRequestBody] = useState([])
     const [submitError, setSubmitError] = useState(null);
     const [productId, setProductId] = useState([]);
-
 
     useEffect(() => {
         fetchProducts();
@@ -73,6 +74,16 @@ function MIS_Product() {
         setOn(true);
     };
 
+    //EDIT action
+    const handleDesable = () => {
+        setEnable(false);
+        setProductId(null);
+    };
+
+    const handleEnable = (id) => {
+        setProductId(id);
+        setEnable(true);
+    };
 
     //add price modal 
     const handleOne = (product) => {
@@ -143,7 +154,7 @@ function MIS_Product() {
         { label: "Treatment", valueKey: "treatment" },
     ];
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className="text-center"> Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     const handleAddPriceInBody = (e) => {
@@ -230,7 +241,7 @@ function MIS_Product() {
                             <th style={{ width: "15%" }}>Product Code</th>
                             <th style={{ width: "15%" }}>Quantity & Unit</th>
                             <th style={{ width: "15%" }}>Price & Currency</th>
-                            <th style={{ width: "10%" }}>Brochure Link</th>
+                            <th style={{ width: "10%" }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -350,8 +361,11 @@ function MIS_Product() {
                                                         "N/A"
                                                     )}
                                                 </td>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                {/* <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     <a href={product.bruchureLink || "#"}>Brochure</a>
+                                                </td> */}
+                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                    <button onClick={() => handleEnable(product)}>EDIT</button>
                                                 </td>
                                             </>
                                         )}
@@ -489,7 +503,7 @@ function MIS_Product() {
 
             </Modal>
 
-            {/* Add Category Modal */}
+            {/* Add image Modal */}
             <Modal show={on} onHide={handleOn}>
                 <Modal.Header OffButton>
                     <Modal.Title>Add Image</Modal.Title>
@@ -503,10 +517,23 @@ function MIS_Product() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {/* action/EDIT */}
+            <Modal show={enable} onHide={handleEnable}>
+                <Modal.Header DesableButton>
+                    <Modal.Title>Edit MIS Product</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="text-center">
+                    <EditMIS_Product id={productId} />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleDesable}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
 
 export default MIS_Product;
-
-
