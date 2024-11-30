@@ -4,6 +4,8 @@ import { useAuth } from "../auth/AuthContext";
 // Toast notification
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Modal } from "react-bootstrap";
+import AddressForm from "../components/AddressForm";
 
 
 function InvoiceNewTemp() {
@@ -11,6 +13,8 @@ function InvoiceNewTemp() {
     const [loading, setLoading] = useState(true); // Loading state
     const [error, setError] = useState(null); // Error state
     const { userId } = useAuth();
+    const [addressFrom, setAddressForm] = useState(false)
+    const [ticketId,setTicketId]=useState()
 
     // State to store the dropdown options
     const [options, setOptions] = useState([]);
@@ -48,20 +52,17 @@ function InvoiceNewTemp() {
             setIsModalOpen(false);
         }
     };
-
-    // Fetch invoices
+    const fetchInvoices = async () => {
+        try {
+            const response = await axiosInstance.get(`/invoice/getInvoiceByUser/${userId}`);
+            setInvoices(response.data);
+            setLoading(false);
+        } catch (err) {
+            setError("Failed to fetch invoices. Please try again.");
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchInvoices = async () => {
-            try {
-                const response = await axiosInstance.get(`/invoice/getInvoiceByUser/${userId}`);
-                setInvoices(response.data);
-                setLoading(false);
-            } catch (err) {
-                setError("Failed to fetch invoices. Please try again.");
-                setLoading(false);
-            }
-        };
-
         fetchInvoices();
     }, [userId]);
 
@@ -107,7 +108,10 @@ function InvoiceNewTemp() {
             });
     }, []);
 
-
+const openModel=(ticketId)=>{
+setTicketId(ticketId)
+setAddressForm(true)
+}
 
 
     return (
@@ -285,6 +289,7 @@ function InvoiceNewTemp() {
                                         <th scope="col">Payment Status</th>
                                         <th scope="col">Seen</th>
                                         <th scope="col">IP Address</th>
+                                        <th scope="col">Verification Status</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
@@ -316,10 +321,17 @@ function InvoiceNewTemp() {
                                             <td className={invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
                                                 {invoice.ipAddress ? invoice.ipAddress : "not opened yet"}
                                             </td>
+                                            <td className={invoice.verificationDate ? "text-success fw-bold text-center" : "text-danger text-center"}>
+                                                {invoice.verificationDate ? <i class="fa-solid fa-circle-check fa-2xl" style={{color: "#2f850a"}}></i>: <i class="fa-solid fa-hourglass-half fa-xl" style={{color: "#ff3838"}}></i>}
+                                            </td>
                                             <td>
                                                 {invoice.paymentStatus !== "paid" && (
-                                                    <button className="btn btn-success rounded" onClick={() => handleMarkAsPaidClick(invoice)}>
+                                                    invoice.address ? <button className="btn btn-success rounded" onClick={() => handleMarkAsPaidClick(invoice)}>
                                                         Mark paid
+
+                                                    </button> : <button className="btn btn-success rounded" onClick={() => openModel(invoice.uniqueQueryId)}>
+                                                        Add Address
+
                                                     </button>
                                                 )}
                                             </td>
@@ -445,7 +457,15 @@ function InvoiceNewTemp() {
                 </div>
             )}
 
+            <Modal show={addressFrom} onHide={fetchInvoices} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+                <div className='d-flex justify-content-center'>
+                    <AddressForm ticketId={ticketId} close={()=>setAddressForm(false)} />
 
+                </div>
+               <div className="d-flex justify-content-end">
+               <button style={{maxWidth:"70px"}} onClick={()=>setAddressForm(false)}>close</button>
+               </div>
+            </Modal>
 
         </>
     );

@@ -18,7 +18,7 @@ function topnav() {
   const { setUserReportReloader } = useAuth()
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-  const {isSideBarOpen, setIsSideBarOpen} = useAuth()
+  const { isSideBarOpen, setIsSideBarOpen } = useAuth()
 
   //handle Open Calender
   const handleOpenCalender = () => {
@@ -57,7 +57,7 @@ function topnav() {
       note.close()
     }
   };
-
+  // /topic/invoice/paid/
   //websocket for notification
   useEffect(() => {
     const socket = new SockJS('https://rdvision.in/ws');
@@ -75,6 +75,22 @@ function topnav() {
           playNotificationSound()
           // setData((prevProducts) => [newProduct, ...prevProducts]);
           // setSelectedKey((prevKey) => prevKey + 1);
+        });
+
+        stompClient.subscribe('/topic/invoice/paid/', (message) => {
+          const updateData = JSON.parse(message.body);
+          if (localStorage.getItem("roleName") === "SeniorSuperVisor") {
+            toast.info("Received an Paid Invoice");
+          }
+        });
+
+        // Subscribe to the second endpoint
+        stompClient.subscribe('/topic/invoice/verified/', (message) => {
+          const updateData = JSON.parse(message.body);
+          if (parseInt(localStorage.getItem("userId")) === updateData) {
+            toast.success("You invoice is Verified");
+
+          }
         });
       },
       onStompError: (frame) => {
@@ -191,7 +207,7 @@ function topnav() {
 
             </div>
           </nav>
-        
+
           <div>
             <FloatingButton />
           </div>
