@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axiosInstance from "../axiosInstance";
 import { Modal, Button } from 'react-bootstrap';
 // Toast notification
@@ -10,7 +10,11 @@ import EditMIS_Product from "../components/EditMIS_Product";
 
 
 function MIS_Product() {
-    const [category, setCategory] = useState(""); // Added state for category
+    const [filterText, setFilterText] = useState("");
+    const [debouncedFilterText, setDebouncedFilterText] = useState("");
+    const debounceTimeout = useRef(null);
+
+    const [category, setCategory] = useState("");
     const [products, setProducts] = useState([]);
     const [image, setImage] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
@@ -25,13 +29,20 @@ function MIS_Product() {
     const [unit, setUnit] = useState("");
     const [currency, setCurrency] = useState("");
     const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
-    const [requestBody, setRequestBody] = useState([])
+    const [requestBody, setRequestBody] = useState([]);
     const [submitError, setSubmitError] = useState(null);
-    const [productId, setProductId] = useState([]);
+    const [productId, setProductId] = useState(null);
 
     useEffect(() => {
         fetchProducts();
     }, []);
+
+    useEffect(() => {
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+        debounceTimeout.current = setTimeout(() => {
+            setDebouncedFilterText(filterText);
+        }, 300);
+    }, [filterText]);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -40,7 +51,6 @@ function MIS_Product() {
             const response = await axiosInstance.get("/product/getAllProducts");
             if (response.data?.dtoList) {
                 setProducts(response.data.dtoList);
-                fetchProducts();
             } else {
                 setError("Unexpected response format");
             }
@@ -51,7 +61,15 @@ function MIS_Product() {
         }
     };
 
-    //add catogry modal 
+    const handleFilterChange = (e) => {
+        setFilterText(e.target.value.toLowerCase());
+    };
+
+    const filteredProducts = (products || []).filter((product) =>
+        product.name?.toLowerCase().includes(debouncedFilterText) ||
+        product.genericName?.toLowerCase().includes(debouncedFilterText) || product.category?.toLowerCase().includes(debouncedFilterText)
+    );
+
     const handleClose = () => {
         setShow(false);
         setCategory("");
@@ -154,7 +172,7 @@ function MIS_Product() {
         { label: "Treatment", valueKey: "treatment" },
     ];
 
-    if (loading) return <div className="text-center"> Loading...</div>;
+    if (loading) return <div className="text-center">Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     const handleAddPriceInBody = (e) => {
@@ -227,6 +245,16 @@ function MIS_Product() {
     return (
         <div className="container-fluid">
             <h3 className="title text-center">MIS-Product Department</h3>
+            <div className="mb-3">
+                <input
+                    type="text"
+                    placeholder="Search by Name or Generic Name"
+                    className="form-control"
+                    value={filterText}
+                    onChange={handleFilterChange}
+                />
+            </div>
+
             <div className="table-responsive">
                 <table className="table table-bordered border-dark">
                     <thead>
@@ -239,105 +267,118 @@ function MIS_Product() {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map((product, index) => (
-                            <React.Fragment key={product.productId}>
-                                {rowDetails.map((row, rowIndex) => (
-                                    <tr key={`${product.productId}-${rowIndex}`}>
-                                        {rowIndex === 0 && (
-                                            <>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-
-                                                    <img
-                                                        src={
-
-                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
-                                                        }
-                                                        alt="No Image Found"
-                                                        style={{ maxWidth: "80px" }}
-                                                    />
-                                                    {/* {/ Button to upload an image /} */}
-                                                    <div className="mt-3"> 
-                                                        <button
-                                                            className="btn btn-sm btn-primary "
-                                                            onClick={() => handleOn(product.productId)}
-                                                        >
-                                                            Upload Image
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </>
-                                        )}
-                                        <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
-                                        <td style={{ padding: "5px" }}>
-                                            {row.valueKey === "category" && (
+                        {filteredProducts.length > 0 ? (
+                            filteredProducts.map((product, index) => (
+                                <React.Fragment key={product.productId}>
+                                    {rowDetails.map((row, rowIndex) => (
+                                        <tr key={`${product.productId}-${rowIndex}`}>
+                                            {rowIndex === 0 && (
                                                 <>
-                                                    {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
-                                                        <>
-                                                            {product[row.valueKey]}{" "}
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+
+                                                        <img
+                                                            src={
+
+                                                                `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                            }
+                                                            alt="No Image Found"
+                                                            style={{ maxWidth: "80px" }}
+                                                        />
+                                                        {/* {/ Button to upload an image /} */}
+                                                        <div className="mt-3">
                                                             <button
-                                                                className="btn btn-sm btn-warning ms-2"
-                                                                onClick={() => handleShow(product.productId)}
+                                                                className="btn btn-sm btn-primary "
+                                                                onClick={() => handleOn(product.productId)}
                                                             >
-                                                                Edit
+                                                                Upload Image
                                                             </button>
-                                                        </>
-                                                    ) : (
-                                                        <button onClick={() => handleShow(product.productId)}>Add Category</button>
-                                                    )}
+                                                        </div>
+                                                    </td>
                                                 </>
                                             )}
-                                            {row.valueKey !== "category" && (
+                                            <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
+                                            <td style={{ padding: "5px" }}>
+                                                {row.valueKey === "category" && (
+                                                    <>
+                                                        {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
+                                                            <>
+                                                                {product[row.valueKey]}{" "}
+                                                                <button
+                                                                    className="btn btn-sm btn-warning ms-2"
+                                                                    onClick={() => handleShow(product.productId)}
+                                                                >
+                                                                    Edit
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <button onClick={() => handleShow(product.productId)}>Add Category</button>
+                                                        )}
+                                                    </>
+                                                )}
+                                                {row.valueKey !== "category" && (
+                                                    <>
+                                                        {product[row.valueKey] || "N/A"}
+                                                    </>
+                                                )}
+                                            </td>
+                                            {rowIndex === 0 && (
                                                 <>
-                                                    {product[row.valueKey] || "N/A"}
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                        {product.priceList && product.priceList.length > 0 ? (
+                                                            <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Product Code</th>
+                                                                        <th>Quantity</th>
+                                                                        <th>Price</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {product.priceList.map((priceItem) => (
+                                                                        <tr key={priceItem.priceId}>
+                                                                            <td>{priceItem.productCode || "N/A"}</td>
+                                                                            <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
+                                                                            <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        ) : (
+                                                            <button
+                                                                className=""
+                                                                onClick={() => handleOne(product)}
+                                                            >
+                                                                Add Price
+                                                            </button>
+                                                        )}
+                                                        {/* Add More button below the table */}
+                                                        {product.priceList && product.priceList.length > 0 && (
+                                                            <button
+                                                                className="btn btn-sm btn-success mt-2"
+                                                                onClick={() => handleOne(product)}
+                                                            >
+                                                                Add More
+                                                            </button>
+                                                        )}
+                                                    </td>
+
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                        <button onClick={() => handleEnable(product)}>EDIT</button>
+                                                    </td>
                                                 </>
                                             )}
-                                        </td>
-                                        {rowIndex === 0 && (
-                                            <>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    {product.priceList && product.priceList.length > 0 ? (
-                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Product Code</th>
-                                                                    <th>Quantity</th>
-                                                                    <th>Price</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                {product.priceList.map((priceItem) => (
-                                                                    <tr key={priceItem.priceId}>
-                                                                        <td>{priceItem.productCode || "N/A"}</td>
-                                                                        <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
-                                                                        <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    ) : (
-                                                        "N/A"
-                                                    )}
-                                                    {/* Add More button below the table */}
-                                                    {product.priceList && product.priceList.length > 0 && (
-                                                        <button
-                                                            className="btn btn-sm btn-success mt-2"
-                                                            onClick={() => handleOne(product)}
-                                                        >
-                                                            Add More
-                                                        </button>
-                                                    )}
-                                                </td>
-
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    <button onClick={() => handleEnable(product)}>EDIT</button>
-                                                </td>
-                                            </>
-                                        )}
-                                    </tr>
-                                ))}
-                            </React.Fragment>
-                        ))}
+                                        </tr>
+                                    ))}
+                                </React.Fragment>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6" className="text-center">
+                                    No products match your search.
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
 
