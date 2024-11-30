@@ -132,13 +132,7 @@ function ProductPriceForm({ productId, productName, onClose, ticketId, currency 
                                 required
                             />
                             <div className="d-flex align-items-center flex-grow-1">
-                                <input
-                                    type="url"
-                                    value={entry.paymentLink}
-                                    onChange={(e) => handleEntryChange(index, 'paymentLink', e.target.value)}
-                                    placeholder="Payment Link"
-                                    className="form-control"
-                                />
+                              
                                 <i
                                     className="fa-regular fa-trash-can fa-2xl ms-2"
                                     style={{ color: "#e10e39", cursor: "pointer" }}
