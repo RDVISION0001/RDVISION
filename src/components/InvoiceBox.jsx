@@ -120,7 +120,7 @@ function InvoiceBox(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosInstance.get('/product/getAllProducts');
+                const response = await axiosInstance.get('/product/getAllProductForInvoice');
                 setProducts(response.data.dtoList);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -290,7 +290,19 @@ function InvoiceBox(props) {
         }));
     };
 
+  //resuble function to convert byte code to image url
+  function convertToImage(imageString) {
+    const byteCharacters = atob(imageString); // Decode base64 string
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    return url;
 
+}
     return (
         <>
             <div className="">
@@ -614,7 +626,7 @@ function InvoiceBox(props) {
                                                 {/* Image Section */}
                                                 <div>
                                                     <img
-                                                        src={product.images && product.images[0]}
+                                                        src={convertToImage(product.imageData)}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxWidth: '60px', marginTop: '10px' }}

@@ -160,7 +160,7 @@ function QuotationBox(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosInstance.get('/product/getAllProducts');
+                const response = await axiosInstance.get('/product/getAllProductForInvoice');
                 setProducts(response.data.dtoList);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -329,7 +329,19 @@ function QuotationBox(props) {
             [productId]: e.target.value,
         }));
     };
+ //resuble function to convert byte code to image url
+ function convertToImage(imageString) {
+    const byteCharacters = atob(imageString); // Decode base64 string
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    return url;
 
+}
 
     return (
         <>
@@ -645,7 +657,7 @@ function QuotationBox(props) {
                                                 {/* Image Section */}
                                                 <div>
                                                     <img
-                                                        src={product.images && product.images[0]}
+                                                        src={convertToImage(product.imageData)}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxWidth: '60px', marginTop: '10px' }}
@@ -734,7 +746,7 @@ function QuotationBox(props) {
                                 <tr>
                                     <th className="text-center">Quantity</th>
                                     <th className="text-center">Price</th>
-                                    <th className="text-center">Payment Link</th>
+                                    
                                 </tr>
                             </thead>
                             {prices.length > 0 ? (
@@ -746,9 +758,6 @@ function QuotationBox(props) {
                                             </td>
                                             <td className="text-center align-middle border">
                                                 {price.currency} {price.price}
-                                            </td>
-                                            <td className="text-center align-middle border">
-                                            {price.paymentLink}
                                             </td>
                                         </tr>
                                     ))}
