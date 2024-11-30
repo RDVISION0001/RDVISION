@@ -40,6 +40,7 @@ function MIS_Product() {
             const response = await axiosInstance.get("/product/getAllProducts");
             if (response.data?.dtoList) {
                 setProducts(response.data.dtoList);
+                fetchProducts();
             } else {
                 setError("Unexpected response format");
             }
@@ -145,7 +146,7 @@ function MIS_Product() {
     const rowDetails = [
         { label: "Category", valueKey: "category" },
         { label: "Product Name", valueKey: "name" },
-        { label: "Generic Name", valueKey: "composition" },
+        { label: "Generic Name", valueKey: "genericName" },
         { label: "Brand", valueKey: "brand" },
         { label: "Strength", valueKey: "strength" },
         { label: "Packaging Sizes", valueKey: "packagingSize" },
@@ -182,11 +183,9 @@ function MIS_Product() {
             });
             console.log("Category updated successfully:", response.data);
             toast.success("Category updated successfully");
-
-            setShow(false);    // Close the modal
-
-            // Automatically close the modal after success
-            handleClose(); // Close the modal
+            fetchProducts();
+            setShow(false);
+            handleClose();
         } catch (error) {
             console.error("Error updating category:", error);
             toast.error("Failed to update category. Please try again.");
@@ -215,7 +214,7 @@ function MIS_Product() {
             });
             console.log("image updated successfully:", response.data);
             toast.success("image updated successfully");
-
+            fetchProducts();
             setOn(false);
 
             handleOff();
@@ -235,9 +234,7 @@ function MIS_Product() {
                             <th style={{ width: "5%" }}>S.No.</th>
                             <th style={{ width: "10%" }}>Product Image</th>
                             <th style={{ width: "20%" }} colSpan="2">Product Details</th>
-                            <th style={{ width: "15%" }}>Product Code</th>
-                            <th style={{ width: "15%" }}>Quantity & Unit</th>
-                            <th style={{ width: "15%" }}>Price & Currency</th>
+                            <th style={{ width: "15%" }} className="text-center">Price List</th>
                             <th style={{ width: "10%" }}>Actions</th>
                         </tr>
                     </thead>
@@ -250,28 +247,24 @@ function MIS_Product() {
                                             <>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    {product.imageListInByte?.[0]?.imageData ? (
-                                                        <img
-                                                            src={
-                                                                product.imageListInByte?.[0]?.imageData
-                                                                    ? convertToImage(product.imageListInByte[0].imageData)
-                                                                    : "https://via.placeholder.com/200" // Placeholder image if no image is available
-                                                            }
-                                                            alt="Product"
-                                                            style={{ maxWidth: "80px" }}
-                                                        />
-                                                    ) : (
-                                                        <>
-                                                            {/* Button to upload an image */}
-                                                            <button
-                                                                className="btn btn-sm btn-primary ms-2"
-                                                                onClick={() => handleOn(product.productId)}
-                                                            >
-                                                                Upload Image
-                                                            </button>
-                                                        </>
-                                                    )}
 
+                                                    <img
+                                                        src={
+
+                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                        }
+                                                        alt="No Image Found"
+                                                        style={{ maxWidth: "80px" }}
+                                                    />
+                                                    {/* {/ Button to upload an image /} */}
+                                                    <div className="mt-3"> 
+                                                        <button
+                                                            className="btn btn-sm btn-primary "
+                                                            onClick={() => handleOn(product.productId)}
+                                                        >
+                                                            Upload Image
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </>
                                         )}
@@ -300,39 +293,24 @@ function MIS_Product() {
                                                 </>
                                             )}
                                         </td>
-                                        {/* Apply smaller padding and font size to the rest of the table rows */}
                                         {rowIndex === 0 && (
                                             <>
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     {product.priceList && product.priceList.length > 0 ? (
-                                                        <>
-                                                            {product.priceList.map((priceItem) => (
-                                                                <div key={priceItem.priceId}>
-                                                                    {priceItem.productCode || "N/A"}
-                                                                </div>
-                                                            ))}
-                                                            {product.priceList.some((priceItem) => priceItem.productCode) && (
-                                                                <button
-                                                                    className="btn btn-sm btn-success mt-2"
-                                                                    onClick={() => handleOne(product)}
-                                                                >
-                                                                    Add More
-                                                                </button>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <button onClick={() => handleOne(product)}>Add Price</button>
-                                                    )}
-                                                </td>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    {product.priceList && product.priceList.length > 0 ? (
                                                         <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Product Code</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Price</th>
+                                                                </tr>
+                                                            </thead>
                                                             <tbody>
                                                                 {product.priceList.map((priceItem) => (
                                                                     <tr key={priceItem.priceId}>
-                                                                        <td>
-                                                                            {priceItem.quantity || "N/A"} {priceItem.unit || ""}
-                                                                        </td>
+                                                                        <td>{priceItem.productCode || "N/A"}</td>
+                                                                        <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
+                                                                        <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -340,27 +318,17 @@ function MIS_Product() {
                                                     ) : (
                                                         "N/A"
                                                     )}
-                                                </td>
-                                                <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    {product.priceList && product.priceList.length > 0 ? (
-                                                        <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
-                                                            <tbody>
-                                                                {product.priceList.map((priceItem) => (
-                                                                    <tr key={priceItem.priceId}>
-                                                                        <td>
-                                                                            {`$${priceItem.price}`} {priceItem.currency || "USD"}
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    ) : (
-                                                        "N/A"
+                                                    {/* Add More button below the table */}
+                                                    {product.priceList && product.priceList.length > 0 && (
+                                                        <button
+                                                            className="btn btn-sm btn-success mt-2"
+                                                            onClick={() => handleOne(product)}
+                                                        >
+                                                            Add More
+                                                        </button>
                                                     )}
                                                 </td>
-                                                {/* <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                    <a href={product.bruchureLink || "#"}>Brochure</a>
-                                                </td> */}
+
                                                 <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                     <button onClick={() => handleEnable(product)}>EDIT</button>
                                                 </td>
@@ -371,9 +339,8 @@ function MIS_Product() {
                             </React.Fragment>
                         ))}
                     </tbody>
-
-
                 </table>
+
 
             </div>
 
