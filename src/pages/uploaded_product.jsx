@@ -509,10 +509,8 @@ function UploadedProduct() {
                                                         <h5 className="card-title">{product.name || "N/A"}</h5>
                                                     </div>
                                                     <img
-                                                        src={
-                                                            product.imageListInByte?.[0]?.imageData
-                                                                ? convertToImage(product.imageListInByte[0].imageData)
-                                                                : "https://via.placeholder.com/200" // Placeholder image if no image is available
+                                                         src={
+                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
                                                         }
                                                         className="card-img-top"
                                                         alt={product.name || "N/A"}
