@@ -292,7 +292,9 @@ function SalesReport() {
                                         {selectedPropductOrders && selectedPropductOrders.map((product, index) => (
                                             <tr key={index}>
                                                 <td className='text-center'>
-                                                    <img style={{ height: "50px" }} src={product.imageListInByte ? convertToImage(product.imageListInByte[0]) : 'https://via.placeholder.com/200'} alt="Product Image" class="img-fluid" />
+                                                    <img style={{ height: "50px" }}  src={
+                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                        } alt="Product Image" class="img-fluid" />
 
                                                 </td>
                                                 <td className='text-center'>{product.product[0].name}</td>
