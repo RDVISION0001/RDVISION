@@ -156,172 +156,96 @@ function topnav() {
         <div className="topnav">
           <nav className="navbar top-navbar navbar-light bg-white container-fluid">
             <div className="left-part">
-              <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
+              <a
+                className="btn border-0 ms-2 bg-white text-black"
+                style={{ fontSize: "30px" }}
+                onClick={toggleSidbar}
+                id="menu-btn"
+              >
+                {isSideBarOpen ? (
+                  <i className="fa-solid fa-chevron-left fa-xl"></i>
+                ) : (
+                  <i className="fa-solid fa-chevron-right fa-xl"></i>
+                )}
+              </a>
             </div>
             <div className="right-part">
-              <div href="/timezone" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <span className="page-title"  >
-                  <i class="fa-solid fa-clock fa-2xl" onClick={handleOpenTimezone}></i>
-                </span>
-              </div>
-              <a href="/action_mode" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <span className="page-title"  >
-                  <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
-                </span>
+              <a
+                href="/timezone"
+                target="_blanck"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i className="fa-solid fa-clock fa-xl" onClick={handleOpenTimezone}></i>
               </a>
-              <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i className="fa-solid fa-ticket fa-2xl pointer"></i>
-                <span className='bg-danger text-white rounded-circle text-center' style={{
-                  height: "32px",
-                  width: "32px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  top: "-20px",
-                  right: "-20px"
-                }}>
+              <a
+                href="/action_mode"
+                target="_blanck"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i className="fa-solid fa-jet-fighter-up fa-xl"></i>
+              </a>
+              <a
+                href="/live_tickets"
+                target="_blanck"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i className="fa-solid fa-ticket fa-xl pointer"></i>
+                <span
+                  className="bg-danger text-white rounded-circle text-center"
+                  style={{
+                    height: "32px",
+                    width: "32px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    top: "-20px",
+                    right: "-20px",
+                  }}
+                >
                   {noOfNweticketsRecevied}
                 </span>
               </a>
-              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
-
+              <a
+                href="#"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i className="fa-solid fa-book fa-xl" onClick={handleOpenNote}></i>
               </a>
-              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>
-                <span className='bg-danger text-white rounded-circle text-center' style={{
-                  height: "32px",
-                  width: "32px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  top: "-20px",
-                  right: "-20px"
-                }}>
+              <a
+                href="#"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i
+                  className="fa-solid fa-calendar-days fa-xl pointer"
+                  onClick={handleOpenCalender}
+                ></i>
+                <span
+                  className="bg-danger text-white rounded-circle text-center"
+                  style={{
+                    height: "32px",
+                    width: "32px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    top: "-20px",
+                    right: "-20px",
+                  }}
+                >
                   {todayFollowups}
                 </span>
               </a>
-
-
             </div>
           </nav>
+        </div>
 
-          <div>
-            <FloatingButton />
-          </div>
-
-          {/* for calander */}
-          <dialog
-            id="calender"
-            className="noteebook-modal bg-light text-black"
-            style={{
-              height: "80vh",
-              width: "80vw",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              border: "none",
-              borderRadius: "8px",
-              padding: "5px"
-            }}
-          >
-            <div className="modal-content" style={{ width: "100%", height: "100%" }}>
-              <i
-                className="fa-solid fa-times fa-xl pointer close-icon"
-                onClick={handleClose}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  cursor: "pointer"
-                }}
-              ></i>
-              <LiveCalander model={true} />
-            </div>
-          </dialog>
-
-          {/* for tomezone */}
-          <dialog
-            id="timezone"
-            className="noteebook-modal bg-light text-black"
-            style={{
-              height: "20vh",
-              width: "30vw",
-              // display: "flex", // Center content within the dialog
-              alignItems: "center", // Vertically center
-              justifyContent: "center", // Horizontally center
-              position: "fixed",
-              top: "30%",
-              left: "50%", // Adjusted for proper centering
-              transform: "translate(-50%, -50%)",
-              border: "none",
-              borderRadius: "8px",
-              padding: "5px",
-            }}
-          >
-            <div
-              className="modal-content"
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "relative", // Ensure proper positioning for close icon
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <i
-                className="fa-solid fa-times fa-xl pointer close-icon"
-                onClick={handletCloseTimezone}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  cursor: "pointer",
-                }}
-              ></i>
-              <TimezoneClocks />
-            </div>
-          </dialog>
-
-          {/* for notebook */}
-          <dialog
-            id="notebook"
-            className="noteebook-modal bg-light text-black"
-            style={{
-              height: "70vh",
-              width: "70vw",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              border: "none",
-              borderRadius: "8px",
-              padding: "5px"
-            }}
-          >
-            <div className="modal-content" style={{ width: "100%", height: "100%" }}>
-              <i
-                className="fa-solid fa-times fa-xl pointer close-icon"
-                onClick={handleClose}
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  cursor: "pointer"
-                }}
-              ></i>
-              <Enotebook />
-            </div>
-          </dialog>
-        </div>}
+      }
     </>
   );
 }

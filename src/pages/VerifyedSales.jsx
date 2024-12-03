@@ -133,7 +133,15 @@ function VerifiedSales() {
                                         <th scope="col">Customer Name</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Address</th>
-                                        <th scope="col">Order</th>
+                                        <th scope="col" className='text-center'>Order
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-3">Name</th>
+                                                    <th className="px-4">Quantity</th>
+                                                    <th className="px-">Price</th>
+                                                </tr>
+                                            </thead>
+                                        </th>
                                         <th scope="col">Tracking No</th>
                                         <th scope="col">Payment Window</th>
                                         <th scope="col">Received Amount</th>
@@ -156,18 +164,36 @@ function VerifiedSales() {
                                                 ...
                                             </button></td>
                                             <td>{invoice.customerEmail}</td>
-                                            <td>{invoice.address?.landmark},{invoice.address?.houseNumber},{invoice.address?.city},{invoice.address?.state},{invoice.address?.country},{invoice.address?.zipCode}</td>
+                                            <td>{invoice.address?.landmark},{invoice.address?.houseNumber},{invoice.address?.city}
+                                                ,{invoice.address?.state},{invoice.address?.country},{invoice.address?.zipCode}</td>
                                             <td>
                                                 {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                    invoice.orderDto.productOrders.map((order, i) =>
-                                                        order.product?.map((p, index) => (
-                                                            <div key={`${i}-${index}`}>{p.name}</div>
-                                                        ))
-                                                    )
+                                                    <table>
+                                                        {/* <thead>
+                                                            <tr>
+                                                                <th className="px-4">Name</th>
+                                                                <th className="px-4 py-2">Quantity</th>
+                                                                <th className="px-4 py-2">Price</th>
+                                                            </tr>
+
+                                                        </thead> */}
+                                                        <tbody>
+                                                            {invoice.orderDto.productOrders.map((order, i) =>
+                                                                order.product?.map((p, index) => (
+                                                                    <tr key={`${i}-${index}`}>
+                                                                        <td className="px-1">{p.name}</td>
+                                                                        <td className="px-1">{order.quantity || 'N/A'}</td>
+                                                                        <td className="px-1">{order.totalAmount || 'N/A'}</td>
+                                                                    </tr>
+                                                                ))
+                                                            )}
+                                                        </tbody>
+                                                    </table>
                                                 ) : (
-                                                    'No Products Available'
+                                                    <span>No Products Available</span>
                                                 )}
                                             </td>
+
                                             <td>{invoice.trackingNumber || 'Waiting'}</td>
                                             <td>{invoice.payment?.paymentWindow}</td>
                                             <td className="text-success font-weight-bold">{invoice.payment?.currency} {invoice.payment?.amount}</td>
