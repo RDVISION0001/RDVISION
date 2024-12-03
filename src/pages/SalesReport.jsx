@@ -175,16 +175,15 @@ function SalesReport() {
                                     {invoices.length > 0 ? <tbody>
                                         {invoices.map((invoice) => (
                                             <tr className="border" key={invoice.invoiceId}>
-                                                <td>
-                                                    {invoice.closerName}
+                                                <td> {invoice.closerName}</td>
+                                                <td>{formatDate(invoice.saleDate)}</td>
+                                                <td>{invoice.customerName}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
                                                         className="btn btn-link p-0">....
                                                     </button>
                                                 </td>
-                                                <td>{formatDate(invoice.saleDate)}</td>
-                                                <td>{invoice.customerName}</td>
                                                 <td>
                                                     {invoice.orderDto?.productOrders?.map(order =>
                                                         order.product?.map((p, index) => (
@@ -292,9 +291,9 @@ function SalesReport() {
                                         {selectedPropductOrders && selectedPropductOrders.map((product, index) => (
                                             <tr key={index}>
                                                 <td className='text-center'>
-                                                    <img style={{ height: "50px" }}  src={
-                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
-                                                        } alt="Product Image" class="img-fluid" />
+                                                    <img style={{ height: "50px" }} src={
+                                                        `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                    } alt="Product Image" class="img-fluid" />
 
                                                 </td>
                                                 <td className='text-center'>{product.product[0].name}</td>

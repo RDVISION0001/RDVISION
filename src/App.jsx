@@ -98,7 +98,6 @@ import './admin/css/admin.css';
 import './admin/css/admin.scss';
 
 import './css/Sidebar/sidebar.css';
-import './css/Sidebar/sidebar.scss';
 
 import './css/closer/dashAgent.css';
 import './css/closer/dashAgent.scss';
