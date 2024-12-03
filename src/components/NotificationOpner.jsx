@@ -223,7 +223,7 @@ function NotificationOpner(searchText) {
         try {
             const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
                 number: formatNumberAccordingToHodu(number),
-                userId:localStorage.getItem("userId")
+                userId: localStorage.getItem("userId")
             });
             setCallId(response.data.call_id)
         } catch (error) {
@@ -252,12 +252,12 @@ function NotificationOpner(searchText) {
         return `${maskedUser}@${domain}`;
     };
 
-   
+
     const searchbyNameOrEmailOfNumber = async () => {
         setLoading(true);
         try {
             const response = await axiosInstance.post(`/third_party_api/ticket/getBySearchQuery`, {
-                userId:localStorage.getItem("userId"),
+                userId: localStorage.getItem("userId"),
                 searchQuery: searchText.searchString,
                 status: "New"
             });
@@ -273,11 +273,7 @@ function NotificationOpner(searchText) {
     };
     // Call next API by default on mount
     useEffect(() => {
-        if (localStorage.getItem("currentWorkingTicket")) {
-            searchbyNameOrEmailOfNumber()
-        } else {
-            fetchFirstTicket();
-        }
+        searchbyNameOrEmailOfNumber()
         fetchProducts()
     }, [selectedStatus]);
 
@@ -354,7 +350,7 @@ function NotificationOpner(searchText) {
             <section className="">
                 <div className="">
                     <div className="d-flex justify-content-center flex-column">
-                      
+
                         <div className=" border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
                             <div className="card " style={{ minHeight: "60vh" }}>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
