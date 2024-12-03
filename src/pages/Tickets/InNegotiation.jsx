@@ -1388,7 +1388,7 @@ function InNegotiation() {
                             <div className="d-flex flex-column flex-md-row align-items-center">
                               <div>
                                 <img
-                                  src={product.images && product.images[0]}
+                                  src={`https://rdvision.in/images/getProductImage/${product.productId}`}
                                   alt="Product"
                                   className="img-fluid rounded"
                                   style={{ maxWidth: '60px' }}

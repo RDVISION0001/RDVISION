@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../axiosInstance';
 import { Button, Modal } from 'react-bootstrap';
-import { useAuth } from '../auth/AuthContext';
 import TicketJourney from '../components/TicketJourney';
 import InvoiceBox from '../components/InvoiceBox';
 import temp1 from '../assets/emailtemp/temp1.png';
@@ -13,7 +12,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
-function ActionMode() {
+function NotificationOpner(searchText) {
     const [ticket, setTicket] = useState(null); // Holds the current ticket
     const [loading, setLoading] = useState(true); // To track loading state
     const [show, setShow] = useState(false);
@@ -25,8 +24,7 @@ function ActionMode() {
     const [text, setText] = useState("")
     const [serchValue, setserchValue] = useState("")
     const [productsIds, setProductIds] = useState([])
-    const { userId } = useAuth();
-    const { setFolowupUpdate } = useAuth()
+    const { userId } = localStorage.getItem("userId")
     const [currentTicket, setCurrentTicket] = useState(0)
     const [totalTicket, setTotalTicket] = useState(0)
     const [searchString, setSearchString] = useState("")
@@ -186,7 +184,6 @@ function ActionMode() {
             fetchData(params[activeTab], currentPage, itemsPerPage);
             setError(null);
             setCallId(0)
-            setFolowupUpdate(uniqueQueryId)
         } catch (err) {
             setError(err.message);
             setResponse(null);
@@ -226,7 +223,7 @@ function ActionMode() {
         try {
             const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
                 number: formatNumberAccordingToHodu(number),
-                userId
+                userId:localStorage.getItem("userId")
             });
             setCallId(response.data.call_id)
         } catch (error) {
@@ -255,33 +252,14 @@ function ActionMode() {
         return `${maskedUser}@${domain}`;
     };
 
-    // Function to fetch the previous ticket
-    const fetchPreviousTicket = async () => {
-        setLoading(true);
-        try {
-            const response = await axiosInstance.post(`/third_party_api/ticket/previous`, {
-                userId,
-                number: ticketNumber,
-                status: selectedStatus
-            });
-            setTicket(response.data.ticket); // Assuming the response contains a single ticket
-            setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
-            setCurrentTicket(response.data.currentTicketNo)
-            localStorage.setItem("currentWorkingTicket", response.data.currentTicketNo)
-        } catch (error) {
-            console.error("Error fetching previous ticket:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
+   
     const searchbyNameOrEmailOfNumber = async () => {
         setLoading(true);
         try {
             const response = await axiosInstance.post(`/third_party_api/ticket/getBySearchQuery`, {
-                userId,
-                searchQuery: searchString,
-                status: selectedStatus
+                userId:localStorage.getItem("userId"),
+                searchQuery: searchText.searchString,
+                status: "New"
             });
             setTicket(response.data.ticket); // Assuming the response contains a single ticket
             setTotalTicket(response.data.totalTickets) // Assuming the response contains a single ticket
@@ -296,7 +274,7 @@ function ActionMode() {
     // Call next API by default on mount
     useEffect(() => {
         if (localStorage.getItem("currentWorkingTicket")) {
-            fetchSpecifiTicketByNumber()
+            searchbyNameOrEmailOfNumber()
         } else {
             fetchFirstTicket();
         }
@@ -373,14 +351,11 @@ function ActionMode() {
 
     return (
         <>
-            <section className="min-vh-100 bg-light py-3 ">
-                <div className="container-fluid">
+            <section className="">
+                <div className="">
                     <div className="d-flex justify-content-center flex-column">
-                        <div className='text-center d-flex justify-content-center m-3'>
-                            <button className="bg-light text-success border" onClick={() => setSelectedStatus("New")}>{selectedStatus === "New" && "✅"} New Tickets</button>
-                            <button className="bg-light text-success border" style={{ marginLeft: "15px" }} onClick={() => setSelectedStatus("Follow")}>{selectedStatus !== "New" && "✅"} Negotiations</button>
-                        </div>
-                        <div className="shadow border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+                      
+                        <div className=" border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
                             <div className="card " style={{ minHeight: "60vh" }}>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
                                     {ticket && <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>}
@@ -388,7 +363,7 @@ function ActionMode() {
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", right: "-20px" }}>
                                     {ticket && <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>}
                                 </div>
-                                <div className='d-flex justify-content-between mt-3'>
+                                {/* <div className='d-flex justify-content-between mt-3'>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Total Tickets:</span>
                                         <span className="ms-2 h4 text-primary">{totalTicket}</span>
@@ -397,7 +372,7 @@ function ActionMode() {
                                         <span className='fw-bold text-muted'>Current Ticket Number:</span>
                                         <span className="ms-2 h4 text-success">{currentTicket} / {totalTicket}</span>
                                     </div>
-                                </div>
+                                </div> */}
 
 
                                 <div className="card-body" style={{ minHeight: "35vh" }}>
@@ -541,22 +516,15 @@ function ActionMode() {
                                 </div>
                             </div>
 
-                            <div className="d-flex justify-content-between mt-3">
-                                <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
-                                <div>
-                                    <label htmlFor="number ">Enter ticket number </label>
-                                    <input value={ticketNumber} className='bg-white text-black p-2 rounded' style={{ width: "100px", margin: '5px' }} onChange={(e) => setTicketNumber(e.target.value)} type="number" />
-                                    <button className="btn btn-primary" onClick={fetchSpecifiTicketByNumber} min="0" disabled={ticketNumber < 1}>Go To</button>
-
-                                </div>
+                            {/* <div className="d-flex justify-content-between mt-3">
+                              
                                 <div>
                                     <label htmlFor="search "><i class="fa-solid fa-magnifying-glass fa-2xl"></i></label>
                                     <input value={searchString} className='bg-white text-black p-2 rounded' style={{ width: "200px", margin: '5px' }} onChange={(e) => setSearchString(e.target.value)} type="text" placeholder='enter number/email/name' />
                                     <button className="btn btn-primary" onClick={searchbyNameOrEmailOfNumber} min="0" disabled={searchString.length === 0}>Search</button>
 
                                 </div>
-                                <button className="btn btn-primary" onClick={fetchNextTicket} disabled={currentTicket == totalTicket}>Next</button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -808,7 +776,7 @@ function ActionMode() {
             </Modal>
             <dialog
                 id="ticketjourney"
-                className="bg-white rounded shadow"
+                className="bg-white rounded "
                 style={{ width: '80%', maxWidth: '600px', border: 'none' }}
             >
 
@@ -860,7 +828,7 @@ function ActionMode() {
                     <div className="container">
                         <div className="row">
                             <div className="col-md-4">
-                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                <div className=" p-3 mb-5 bg-white rounded">
                                     <div className="card-body d-flex flex-column align-items-start">
                                         <input
                                             type="checkbox"
@@ -881,7 +849,7 @@ function ActionMode() {
                                 </div>
                             </div>
                             <div className="col-md-4">
-                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                <div className=" p-3 mb-5 bg-white rounded">
                                     <div className="card-body d-flex flex-column align-items-start">
                                         <input
                                             type="checkbox"
@@ -902,7 +870,7 @@ function ActionMode() {
                                 </div>
                             </div>
                             <div className="col-md-4">
-                                <div className="shadow p-3 mb-5 bg-white rounded">
+                                <div className=" p-3 mb-5 bg-white rounded">
                                     <div className="card-body d-flex flex-column align-items-start">
                                         <input
                                             type="checkbox"
@@ -937,7 +905,7 @@ function ActionMode() {
                                     />
                                     {productsIds.length > 0 && (
                                         <div
-                                            className='bg-primary text-white rounded p-2 hover:shadow-lg'
+                                            className='bg-primary text-white rounded p-2 hover:-lg'
                                             style={{ height: "30px", fontSize: "12px", cursor: "Pointer" }}
                                             onClick={() => setProductIds([])}
                                         >
@@ -958,7 +926,7 @@ function ActionMode() {
                                             )
                                             .filter((product) => product.images !== null).map((product, index) => (
                                                 <div key={index} className="col-12 col-md-6 mb-3 d-flex justify-content-center " onClick={() => handleToggleProduct(product.productId)}>
-                                                    <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "shadow-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
+                                                    <div className={`card p-2 position-relative ${productsIds.includes(product.productId) && "-lg bg-info"}`} style={{ width: '100%', maxWidth: '300px', height: '80px' }}>
                                                         {/* Brand Tag */}
                                                         <div
                                                             className="position-absolute bottom-0 start-0 bg-success text-white px-2 py-1"
@@ -1009,5 +977,4 @@ function ActionMode() {
     );
 }
 
-export default ActionMode;
-
+export default NotificationOpner

@@ -26,8 +26,8 @@ function MIS_Product() {
     const [enable, setEnable] = useState(false);
 
     // State for modal inputs
-    const [unit, setUnit] = useState("");
-    const [currency, setCurrency] = useState("");
+    const [unit, setUnit] = useState("Pills");
+    const [currency, setCurrency] = useState("USD");
     const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
     const [requestBody, setRequestBody] = useState([]);
     const [submitError, setSubmitError] = useState(null);
@@ -117,7 +117,8 @@ function MIS_Product() {
         setSubmitError(null);
     };
 
-    const handleAddMore = () => {
+    const handleAddMore = (e) => {
+        handleAddPriceInBody(e)
         setQuantities([...quantities, { quantity: "", price: "" }]);
     };
 
@@ -133,6 +134,8 @@ function MIS_Product() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        handleAddPriceInBody(e)
+
         setSubmitError(null);
 
         if (!unit || quantities.some((q) => !q.quantity || !q.price)) {
@@ -243,7 +246,7 @@ function MIS_Product() {
     };
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid" >
             <h3 className="title text-center">MIS-Product Department</h3>
             <div className="mb-3">
                 <input
@@ -447,7 +450,7 @@ function MIS_Product() {
                                     >
                                         Remove
                                     </button> */}
-                                    <button className="btn btn-success" onClick={handleAddPriceInBody}>Add</button>
+                                    {/* <button className="btn btn-success" onClick={handleAddPriceInBody}>Add</button> */}
                                 </div>
                             ))}
                             <button
@@ -525,17 +528,16 @@ function MIS_Product() {
 
             {/* action/EDIT */}
             <Modal show={enable} onHide={handleDesable}>
-                <Modal.Header >
-                    <Modal.Title>Edit MIS Product</Modal.Title>
-                </Modal.Header>
-                <Modal.Body className="text-center">
+                
+            <div  className="m-3 d-flex justify-content-end" >
+            <i onClick={handleDesable} class="fa-solid fa-xmark  fa-xl"></i>
+                    </div>
+               
+               
                     <EditMIS_Product id={productId} />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleDesable}>
-                        Close
-                    </Button>
-                </Modal.Footer>
+             
+                   
+              
             </Modal>
         </div>
     );

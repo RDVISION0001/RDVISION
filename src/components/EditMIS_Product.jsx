@@ -1,38 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 
-const EditMIS_Product = (props) => {
-    const productId = props.id;
-
-    // State to manage form data
+const EditMIS_Product = ({ id }) => {
+    // State for form data
+    const productData = id;
     const [formData, setFormData] = useState({
-        name: props.id.name,
-        genericName: props.id.genericName,
-        brand: props.id.brand,
-        strength: props.id.strength,
-        packagingSize: props.id.packagingSize,
-        packagingType: props.id.packagingType,
-        treatment: props.id.treatment,
-        productId: props.id.productId,
+        productId:id.productId,
+        name: productData?.name || '',
+        genericName: productData?.genericName || '',
+        brand: productData?.brand || '',
+        strength: productData?.strength || '',
+        packagingSize: productData?.packagingSize || '',
+        packagingType: productData?.packagingType || '',
+        treatment: productData?.treatment || '',
     });
 
-    // Set initial form data from props if available
-    useEffect(() => {
-        if (props.productData) {
-            setFormData({
-                name: props.productData.name || '',
-                genericName: props.productData.genericName || '',
-                brand: props.productData.brand || '',
-                strength: props.productData.strength || '',
-                packagingSize: props.productData.packagingSize || '',
-                packagingType: props.productData.packagingType || '',
-                treatment: props.productData.treatment || '',
-            });
-        }
-    }, [props.productData]);
-
-    // Handle form input change
+    // Handle form input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -53,107 +37,145 @@ const EditMIS_Product = (props) => {
     };
 
     return (
-        <div className="container mt-5">
-            <form onSubmit={handleSubmit}>
-                <div className="card shadow p-5 rounded-4">
-                    <div className="row mb-3">
+        <div className=""style={{padding:"20px"}}>
+            <div className="" >
+                <h2 className="text-center mb-4" style={{ color: "#343a40" }}>Edit Product Details</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="row mb-4">
                         <div className="col-md-12">
-                            <label className="form-label fw-semibold text-muted">Product Name</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Product Name</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                required
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter the product name"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
+                                required
                             />
                         </div>
                     </div>
-                    <div className="row mb-3">
+                    <div className="row mb-4">
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Generic Name</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Generic Name</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="genericName"
                                 value={formData.genericName}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter generic name"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Brand</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Brand</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="brand"
                                 value={formData.brand}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter brand name"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="row mb-3">
+                    <div className="row mb-4">
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Strength</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Strength</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="strength"
                                 value={formData.strength}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter strength"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Packaging Size</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Packaging Size</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="packagingSize"
                                 value={formData.packagingSize}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter packaging size"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="row mb-3">
+                    <div className="row mb-4">
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Packaging Type</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Packaging Type</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="packagingType"
                                 value={formData.packagingType}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter packaging type"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                         <div className="col-md-6">
-                            <label className="form-label fw-semibold text-muted">Treatment</label>
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Treatment</label>
                             <input
                                 type="text"
-                                className="form-control border-0 shadow-sm rounded-3 p-3"
                                 name="treatment"
                                 value={formData.treatment}
                                 onChange={handleChange}
+                                className="form-control p-3 rounded-3"
                                 placeholder="Enter treatment"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
                             />
                         </div>
                     </div>
-                    <div className="d-grid gap-2 mt-4">
-                        <button type="submit" className="btn btn-info btn-lg rounded-pill">
+                    <div className="d-flex justify-content-end ">
+                        <button
+                            type="submit"
+                            className="btn rounded-pill"
+                            style={{
+                                backgroundColor: "#343a40",
+                                color: "#ffffff",
+                                padding: "10px 20px",
+                                fontSize: "16px",
+                                fontWeight: "bold",
+                                border: "none",
+                                width:'100px'
+                            }}
+                        >
                             Submit
                         </button>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     );
-}
+};
 
 export default EditMIS_Product;
-
-
-
