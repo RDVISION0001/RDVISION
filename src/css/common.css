@@ -642,5 +642,28 @@
   cursor: pointer;
 }
 
+/* Add this CSS to your global styles or in a relevant CSS file */
+.notification-enter {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.notification-enter-active {
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 500ms ease-out, opacity 500ms ease-out;
+}
+
+.notification-exit {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.notification-exit-active {
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 500ms ease-in, opacity 500ms ease-in;
+}
+
 
 

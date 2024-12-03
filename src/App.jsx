@@ -132,6 +132,7 @@ import Team from './senior_supervisor/Team';
 import TicketHouse from './components/TicketHouse';
 import TicketTrack from './components/TicketTrack';
 import TicketDistribution from './components/TicketDistribution';
+import NotificationContainer from './components/NotificationContainer';
 
 
 
@@ -143,7 +144,10 @@ function App() {
 
   return (
     <>
-
+      <div className='d-flex justify-content-end'>
+        <NotificationContainer/> {/* This will handle WebSocket notifications */}
+        {/* Other app content */}
+      </div>
       <ToastContainer />
       <AuthProvider>
         <Router>
@@ -245,6 +249,7 @@ function App() {
                       <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
                       <Route exact path="/ticket_house" element={<TicketHouse />} />
                       <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
+                      
                     </Route>
                   </Routes>
                 </div>

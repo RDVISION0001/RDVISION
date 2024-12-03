@@ -3,15 +3,20 @@ import axiosInstance from '../axiosInstance';
 import { Modal, Button } from "react-bootstrap";
 import { toast } from 'react-toastify';  // Ensure toast is imported correctly if not already
 import Swal from 'sweetalert2';
+import AddressForm from '../components/AddressForm';
+import { useAuth } from '../auth/AuthContext';
 
 function SalesReport() {
     const [invoices, setInvoices] = useState([]);
+    const { userId } = useAuth()
     const [view, setView] = useState(false); // For the Verify modal
     const [showCustomerModal, setShowCustomerModal] = useState(false); // For Customer Details modal
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [selectedInvoiceId, setSelectedInvoiceId] = useState(null); // Store the selected invoice ID for verification
-
+    const [addressFrom, setAddressForm] = useState(false)
     const handleCloseCustomerModal = () => setShowCustomerModal(false);
+    const [options, setOptions] = useState([]);
+    const [loading, setLoading] = useState(true); // Loading state
     const handleShowCustomerModal = (invoice) => {
         setSelectedCustomer({
             customerName: invoice.customerName,
@@ -21,19 +26,22 @@ function SalesReport() {
         });
         setShowCustomerModal(true);
     };
-    //conver image
-    function convertToImage(imageString) {
-        const byteCharacters = atob(imageString); // Decode base64 string
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        const url = URL.createObjectURL(blob);
-        return url;
 
-    }
+
+    useEffect(() => {
+        // Call the API on component mount
+        axiosInstance.get('/paymentwindow/getAll')
+            .then((response) => {
+                setOptions(response.data);  // Assuming the response data is an array
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching payment windows:', error);
+                setLoading(false);
+            });
+    }, []);
+
+    const [isPriceEditorOpen, setIsPriceEditorOpen] = useState(false)
 
     //VerificationModel States 
     const [selectedInvoiceIdForVerification, setSelectedInvoiceforVerification] = useState("")
@@ -46,6 +54,36 @@ function SalesReport() {
     const [selectedOrderAmount, setSelectedOrderAmount] = useState(0)
     const [selectedAddress, setSelectedAddress] = useState()
     const [paymnet, setSelectedPaymnet] = useState()
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+
+    const handleOpenPaymentModel=()=>{
+        setIsModalOpen(true)
+        setFormData({
+            id:paymnet && paymnet.id,
+            paymentIntentId: paymnet && paymnet.paymentIntentId,
+            amount: paymnet && paymnet.amount,
+            currency: paymnet && paymnet.currency, // Default currency
+            paymentWindow:paymnet && paymnet.paymentWindow,
+            userId,
+            ticketId:paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
+        })
+    }
+    const [formData, setFormData] = useState({
+        id:paymnet && paymnet.id,
+        paymentIntentId: paymnet && paymnet.paymentIntentId,
+        amount: paymnet && paymnet.amount,
+        currency: paymnet && paymnet.currency, // Default currency
+        paymentWindow:paymnet && paymnet.paymentWindow,
+        userId,
+        ticketId:paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
+    });
+
+    const handleInputChangeOfFromrData = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
 
 
     const handleCloses = () => setView(false);
@@ -69,6 +107,10 @@ function SalesReport() {
         fetchVerificationList()
     }, []);
 
+    const fetchAddewss = async (orderid) => {
+        const response = await axiosInstance.get(`/address/getAddress/${orderid}`)
+        setSelectedAddress(response.data.dto)
+    }
 
     const fetchVerificationList = async () => {
         await axiosInstance.get('/invoice/verificationList')
@@ -150,6 +192,58 @@ function SalesReport() {
         // Format the date using `toLocaleString` with the options
         return date.toLocaleString('en-GB', options);
     }
+
+    const openModel = () => {
+
+        setAddressForm(true)
+    }
+    const closeModal = async (id) => {
+        fetchAddewss(id)
+        setAddressForm(false)
+    }
+
+    const openPriceEditor = (product) => {
+        setEditedData(product)
+        setIsPriceEditorOpen(true)
+    }
+
+    const [editedData, setEditedData] = useState();
+    const handleInputChange = (index, field, value) => {
+        const updatedProducts = [...editedData];
+        updatedProducts[index][field] = value;
+        setEditedData(updatedProducts);
+    };
+
+    const handleSubmit = async () => {
+
+        try {
+            const response = await axiosInstance.put("/product/updateProductOrders", editedData)
+            setIsPriceEditorOpen(false)
+            toast.success("Price and quantity updated")
+            setEditedData(false);
+        } catch (e) {
+            toast.error("Some Error occurs ")
+        }
+        // Add your save logic here
+    };
+
+    const handleUpdatePayment = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axiosInstance.put("/payment/update_payment", formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            setSelectedPaymnet(response.data);
+            toast.success("Payment processed successfully!");
+        } catch (error) {
+            console.error("Error:", error.response || error);
+            toast.error("Payment failed. Please try again.");
+        } finally {
+            setIsModalOpen(false);
+        }
+    };
     return (
         <>
             <section className="followup-table-section py-3">
@@ -175,15 +269,16 @@ function SalesReport() {
                                     {invoices.length > 0 ? <tbody>
                                         {invoices.map((invoice) => (
                                             <tr className="border" key={invoice.invoiceId}>
-                                                <td> {invoice.closerName}</td>
-                                                <td>{formatDate(invoice.saleDate)}</td>
-                                                <td>{invoice.customerName}
+                                                <td>
+                                                    {invoice.closerName}
                                                     <button
                                                         type="button"
                                                         onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
                                                         className="btn btn-link p-0">....
                                                     </button>
                                                 </td>
+                                                <td>{formatDate(invoice.saleDate)}</td>
+                                                <td>{invoice.customerName}</td>
                                                 <td>
                                                     {invoice.orderDto?.productOrders?.map(order =>
                                                         order.product?.map((p, index) => (
@@ -274,6 +369,7 @@ function SalesReport() {
                                     <div>State :- {selectedAddress.state}</div>
                                     <div>Country :- {selectedAddress.country}</div>
                                     <div>Zip Code :- {selectedAddress.zipCode}</div>
+                                    <button onClick={() => openModel(selectedAddress)} style={{ height: "25px", padding: "1px 5px", fontSize: "15px" }}>Edit</button>
                                 </div>}
                             </div>
                             <div class="container mt-4">
@@ -285,6 +381,8 @@ function SalesReport() {
                                             <th className='text-center' scope="col">Product Name</th>
                                             <th className='text-center' scope="col">Quantity</th>
                                             <th className='text-center' scope="col">Price</th>
+                                            <th className='text-center' scope="col">Action</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -299,6 +397,8 @@ function SalesReport() {
                                                 <td className='text-center'>{product.product[0].name}</td>
                                                 <td className='text-center'>{product.quantity}</td>
                                                 <td className='text-center'>{product.currency} {product.totalAmount}</td>
+                                                <td className='text-center text-primary' onClick={() => openPriceEditor(selectedPropductOrders)}>Edit</td>
+
                                             </tr>
                                         ))}
                                     </tbody>
@@ -311,6 +411,8 @@ function SalesReport() {
                                         <div>Payment Intent id :- {paymnet.paymentIntentId}</div>
                                         <div>Payment Status :- <span className="text-green-600">{paymnet.paymentStatus}</span></div>
                                         <div>Paid Amount :- <span className="text-green-600">{paymnet.currency} {paymnet.amount}</span></div>
+                                        <button onClick={handleOpenPaymentModel} style={{ height: "25px", padding: "1px 5px", fontSize: "15px" }}>Edit</button>
+
                                     </div>
                                 </div>}
                             </div>
@@ -328,8 +430,189 @@ function SalesReport() {
                 </Modal.Footer>
             </Modal>
 
+            <Modal show={addressFrom} onHide={fetchVerificationList} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+                <div className='d-flex justify-content-center'>
+                    <AddressForm ticketId={selectedAddress && selectedAddress.ticketId} close={() => closeModal(selectedAddress.ticketId)} address={selectedAddress} />
+                </div>
+                <div className="d-flex justify-content-end">
+                    <button style={{ maxWidth: "70px" }} onClick={() => setAddressForm(false)}>close</button>
+                </div>
+            </Modal>
+            <Modal
+                show={isPriceEditorOpen}
+                onHide={fetchVerificationList}
+                className="modal assign-ticket-modal fade"
+                id="addMoreItemsModal"
+                tabIndex="-1"
+                aria-labelledby="addMoreItemsLabel"
+                aria-hidden="true"
+            >
+                <div className="modal-header">
+                    <h5 className="modal-title" id="addMoreItemsLabel">Edit Quantity and Price</h5>
+                    <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setIsPriceEditorOpen(false)}
+                    />
+                </div>
+                <div className="modal-body">
+                    <form>
+                        {editedData && editedData.map((item, index) => (
+                            <div key={item.productorderId} className="mb-4">
+                                <div className="mb-2">
+                                    <strong>Product Name:</strong> {item.product[0]?.name}
+                                </div>
+                                <div className="d-flex justify-content-between">
+                                    <div className="me-2">
+                                        <label className="form-label">Quantity</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={item.quantity}
+                                            onChange={(e) => handleInputChange(index, "quantity", e.target.value)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="form-label">Total Amount</label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            value={item.totalAmount}
+                                            onChange={(e) => handleInputChange(index, "totalAmount", e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </form>
+                </div>
+                <div className="modal-footer d-flex justify-content-end">
+                    <button className="btn btn-secondary me-2" onClick={() => setIsPriceEditorOpen(false)}>
+                        Close
+                    </button>
+                    <button className="btn btn-primary" onClick={handleSubmit}>
+                        Save Changes
+                    </button>
+                </div>
+            </Modal>
 
+            <Modal show={isModalOpen} onHide={fetchVerificationList} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
+                <div className='d-flex justify-content-center'>
+                <div
+                    className="modal fade show d-block"
+                    style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                    id="addTicketModal"
+                    tabIndex="-1"
+                    aria-labelledby="addTicketModalLabel"
+                    aria-hidden="true"
+                >
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content border-0 shadow-lg rounded-lg">
+                            <div className="modal-header bg-primary text-white">
+                                <h5 className="modal-title" id="addTicketModalLabel">
+                                    Mark as Paid
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close text-white"
+                                    onClick={() => setIsModalOpen(false)}
+                                    aria-label="Close"
+                                ></button>
+                            </div>
+                            <form onSubmit={handleUpdatePayment}>
+                                <div className="modal-body">
+                                    <div className="mb-3">
+                                        <label htmlFor="paymentIntentId" className="form-label">Transaction ID</label>
+                                        <input
+                                            type="text"
+                                            id="paymentIntentId"
+                                            className="form-control"
+                                            name="paymentIntentId"
+                                            value={formData.paymentIntentId}
+                                            onChange={handleInputChangeOfFromrData}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="amount" className="form-label">Amount</label>
+                                        <input
+                                            type="text"
+                                            id="amount"
+                                            className="form-control"
+                                            name="amount"
+                                            value={formData.amount}
+                                            onChange={handleInputChangeOfFromrData}
+                                            required
+                                        />
+                                    </div>
 
+                                    <div className="mb-3">
+                                        <label htmlFor="paymentWindow" className="form-label">
+                                            Payment Window
+                                        </label>
+                                        {loading ? (
+                                            <p>Loading...</p>
+                                        ) : (
+                                            <select
+                                                id="paymentWindow"
+                                                name="paymentWindow"
+                                                className="form-control"
+                                                value={formData.paymentWindow}
+                                                onChange={handleInputChangeOfFromrData}
+                                                required
+                                            >
+                                                <option value="">Select Payment Window</option>
+                                                {options.map((option) => (
+                                                    <option key={option.id} value={option.id}>
+                                                        {option.paymentWindowName}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label htmlFor="currency" className="form-label">Currency</label>
+                                        <select
+                                            id="currency"
+                                            className="form-select"
+                                            name="currency"
+                                            value={formData.currency}
+                                            onChange={handleInputChangeOfFromrData}
+                                            required
+                                        >
+                                            <option value="">Select Currency</option>
+                                            <option value="INR">INR - Indian Rupee</option>
+                                            <option value="USD">USD - US Dollar</option>
+                                            <option value="GBP">GBP - British Pound</option>
+                                            <option value="AUD">AUD - Australian Dollar</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="JPY">JPY - Japanese Yen</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => setIsModalOpen(false)}
+                                    >
+                                        Close
+                                    </button>
+                                    <button type="submit" className="btn btn-primary">
+                                        Mark as Paid
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div className="d-flex justify-content-end">
+                    <button style={{ maxWidth: "70px" }} onClick={() => setIsModalOpen(false)}>close</button>
+                </div>
+            </Modal>
+          
         </>
     );
 }

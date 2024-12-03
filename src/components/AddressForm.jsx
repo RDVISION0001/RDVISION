@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axiosInstance from '../axiosInstance';
 
-const AddressForm = ({ ticketId,close}) => {
+const AddressForm = ({ ticketId,close,address}) => {
     const [formData, setFormData] = useState({
-        addressId: '',
-        ticketId: '',
-        firstName: '',
+        addressId:address && address.addressId,
+        ticketId: address && address.ticketId,
+        firstName:address && address.firstName,
         lastName: '',
         phoneNumber: '',
-        email: '',
-        houseNumber: '',
-        landmark: '',
-        city: '',
-        zipCode: '',
-        state: '',
-        country: ''
+        email:address &&address.email,
+        houseNumber:address && address.houseNumber,
+        landmark:address && address.landmark,
+        city:address && address.city,
+        zipCode:address &&address.zipCode,
+        state: address &&address.state,
+        country:address && address.country
     });
 
     const handleChange = (e) => {

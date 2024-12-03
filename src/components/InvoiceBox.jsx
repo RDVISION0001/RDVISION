@@ -7,10 +7,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 //// Auth ////
-import { useAuth } from '../auth/AuthContext';
 
 function InvoiceBox(props) {
-    const { userId } = useAuth();
+   const userId=localStorage.getItem("userId")
 
     // State for modal visibility
     const [show, setShow] = useState(false);
