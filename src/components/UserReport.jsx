@@ -133,9 +133,13 @@ const UserReport = () => {
     }
 
     const getNumbersOfUsersAction = (usersFirstName, action) => {
-        // Check if the user exists in the usersActionData and if they have the specified action
-        return usersActionData[usersFirstName]?.[action] ?? "0";
+        // Added check to ensure usersActionData exists and is not undefined
+        if (!usersActionData || !usersActionData[usersFirstName]) {
+            return "0"; // Return "0" if data is missing or user doesn't have the specified action
+        }
+        return usersActionData[usersFirstName][action] ?? "0";
     };
+    
     return (
         <>
             <section className="followup-table-section py-3">
