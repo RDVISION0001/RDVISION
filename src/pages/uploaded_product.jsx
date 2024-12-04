@@ -11,12 +11,27 @@ function UploadedProduct() {
 
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleClose = () => setShow(false);
     const handleShow = (id) => {
         setShow(true)
         setProductId(id)
     };
+
+    const rowDetails = [
+        { label: "Category", valueKey: "category" },
+        { label: "Product Name", valueKey: "name" },
+        { label: "Generic Name", valueKey: "genericName" },
+        { label: "Brand", valueKey: "brand" },
+        { label: "Strength", valueKey: "strength" },
+        { label: "Packaging Sizes", valueKey: "packagingSize" },
+        { label: "Packaging Types", valueKey: "packagingType" },
+        { label: "Composition", valueKey: "composition" },
+        { label: "Treatment", valueKey: "treatment" },
+
+    ];
 
     // Filter products by search term
     const filteredProducts = products.filter(product =>
@@ -29,16 +44,21 @@ function UploadedProduct() {
     }, []);
 
     const fetchProducts = async () => {
-        await axiosInstance
-            .get('/product/getAllProducts')
-            .then((response) => {
-                // Assuming response contains an array of products
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axiosInstance.get("/product/getAllProducts");
+            if (response.data?.dtoList) {
                 setProducts(response.data.dtoList);
-            })
-            .catch((error) => {
-                console.error('Error fetching products:', error);
-            });
-    }
+            } else {
+                setError("Unexpected response format");
+            }
+        } catch (err) {
+            setError(err.message || "Error fetching products");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const [isBasicActive, setBasicActive] = useState(true);
     const [basicData, setBasicData] = useState({
@@ -468,110 +488,118 @@ function UploadedProduct() {
             {/* Product Card List */}
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
-                    <div className="table-wrapper tabbed-table">
-                        <h3 className="title">
-                            Products List</h3>
-                        <div className="col-md-5 mb-3">
-                            <div className="search-wrapper">
-                                <input
-                                    type="text"
-                                    name="search-user"
-                                    id="searchUsers"
-                                    className="form-control"
-                                    placeholder="Search products by name"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
-                                <div className="search-icon">
-                                    <i className="fa-solid fa-magnifying-glass"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="tab-content recent-transactions-tab-body" id="followUpContent">
-                            <div
-                                className="tab-pane fade show active"
-                                id="new-arrivals-tkts-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="new-arrivals-tkts-tab"
-                                tabIndex="0"
-                            >
-                                <div className="row">
-                                    {filteredProducts.length > 0 ? (
-                                        filteredProducts.filter((product) => product.brand !== null).map((product, index) => (
-                                            <div className="col-md-2 mb-4" key={index}>
-                                                <div
-                                                    className="card product-card shadow-sm h-100"
-                                                    style={{
-                                                        transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                                                    }}
-                                                >
-                                                    <div className="card-header">
-                                                        <h5 className="card-title">{product.name || "N/A"}</h5>
-                                                    </div>
-                                                    <img
-                                                         src={
-                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
-                                                        }
-                                                        className="card-img-top"
-                                                        alt={product.name || "N/A"}
-                                                        style={{ height: "200px", objectFit: "cover" }}
-                                                    />
-                                                    <div className="card-body">
-                                                        <p className="card-text">
-                                                            <strong>Product Code:</strong> {product.productCode || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Strength:</strong> {product.strength || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Packaging Size:</strong> {product.packagingSize || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Packaging Type:</strong> {product.packagingType || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Composition:</strong> {product.composition || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Brand:</strong> {product.brand || "N/A"}
-                                                        </p>
-                                                        <p className="card-text">
-                                                            <strong>Treatment:</strong>
-                                                            {product.treatment
-                                                                ? product.treatment.split(' ').slice(0, 7).join(' ') +
-                                                                (product.treatment.split(' ').length > 7 ? "..." : "")
-                                                                : "N/A"}
-                                                        </p>
-
-                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && (
-                                                            <div className="actions-wrapper">
-                                                                <i
-                                                                    className="fa-solid fa-trash fa-2xl"
-                                                                    style={{ color: "#a8101f", cursor: "pointer" }}
-                                                                    onClick={() => handleDeleteProduct(product.productId)}
-                                                                ></i>
-                                                            </div>
+                    <div className="table-responsive">
+                        <table className="table table-bordered border-dark">
+                            <thead>
+                                <tr>
+                                    <th style={{ width: "5%" }}>S.No.</th>
+                                    <th style={{ width: "10%" }}>Product Image</th>
+                                    <th style={{ width: "20%" }} colSpan="2">Product Details</th>
+                                    <th style={{ width: "15%" }} className="text-center">Price List</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredProducts.length > 0 ? (
+                                    filteredProducts.map((product, index) => (
+                                        <React.Fragment key={product.productId}>
+                                            {rowDetails.map((row, rowIndex) => (
+                                                <tr key={`${product.productId}-${rowIndex}`}>
+                                                    {rowIndex === 0 && (
+                                                        <>
+                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
+                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                                <img
+                                                                    src={`https://rdvision.in/images/getProductImage/${product.productId}`}
+                                                                    alt="No Image Found"
+                                                                    style={{ maxWidth: "80px" }}
+                                                                />
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                    <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
+                                                    <td style={{ padding: "5px" }}>
+                                                        {row.valueKey === "category" && (
+                                                            <>
+                                                                {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
+                                                                    <>
+                                                                        {product[row.valueKey]}{" "}
+                                                                    </>
+                                                                ) : (
+                                                                    "No category added"
+                                                                )}
+                                                            </>
                                                         )}
-                                                    </div>
-                                                    {/* Trigger button */}
-                                                    <Button variant="info" onClick={() => handleShow(product.productId)}>
-                                                        Add
-                                                    </Button>
-                                                </div>
-                                            </div>
+                                                        {row.valueKey !== "category" && (
+                                                            <>
+                                                                {product[row.valueKey] || "N/A"}
+                                                            </>
+                                                        )}
+                                                    </td>
+                                                    {rowIndex === 0 && (
+                                                        <>
+                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                                {product.priceList && product.priceList.length > 0 ? (
+                                                                    <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>Product Code</th>
+                                                                                <th>Quantity</th>
+                                                                                <th>Price</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {product.priceList.map((priceItem) => (
+                                                                                <tr key={priceItem.priceId}>
+                                                                                    <td>{priceItem.productCode || "N/A"}</td>
+                                                                                    <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
+                                                                                    <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
+                                                                                </tr>
+                                                                            ))}
+                                                                        </tbody>
+                                                                    </table>
+                                                                ) : (
+                                                                    "No price list added"
+                                                                )}
+                                                            </td>
+                                                        </>
+                                                    )}
+                                                </tr>
+                                            ))}
+                                        </React.Fragment>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" className="text-center">
+                                            No products match your search.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
 
-                                        ))
-                                    ) : (
-                                        <div className="col-12 text-center">
-                                            <p>No products found</p>
-                                        </div>
-                                    )}
-                                </div>
+                    {/* Packaging Types Composition Section */}
+                    <div className="packaging-types-section mt-4">
+                        <h5>Packaging Types</h5>
+                        <div className="packaging-list">
+                            {/* Example of different packaging types */}
+                            <div className="packaging-item">
+                                <strong>Box:</strong> Standard packaging in a box
                             </div>
+                            <div className="packaging-item">
+                                <strong>Bag:</strong> Flexible packaging in a bag
+                            </div>
+                            <div className="packaging-item">
+                                <strong>Bubble Wrap:</strong> Protective bubble wrap packaging
+                            </div>
+                            {/* Add more packaging types as needed */}
                         </div>
                     </div>
                 </div>
             </section>
+
+
+
 
             {/* Modal */}
             <Modal show={show} onHide={handleClose}>
