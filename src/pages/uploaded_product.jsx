@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
@@ -8,6 +8,26 @@ import { Modal, Button } from 'react-bootstrap';
 function UploadedProduct() {
     const [products, setProducts] = useState([]);
     const [productId, setProductId] = useState([]);
+    const [filterText, setFilterText] = useState("");
+    const debounceTimeout = useRef(null);
+    const [debouncedFilterText, setDebouncedFilterText] = useState("");
+
+
+    useEffect(() => {
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+        debounceTimeout.current = setTimeout(() => {
+            setDebouncedFilterText(filterText);
+        }, 300);
+    }, [filterText]);
+
+    const handleFilterChange = (e) => {
+        setFilterText(e.target.value);
+    };
+    
+    const filteredProducts = products.filter((product) =>
+        product.name?.toLowerCase().includes(debouncedFilterText.toLowerCase())
+    );
+    
 
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
@@ -33,10 +53,6 @@ function UploadedProduct() {
 
     ];
 
-    // Filter products by search term
-    const filteredProducts = products.filter(product =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
 
     useEffect(() => {
         // Fetch data from API
@@ -488,6 +504,15 @@ function UploadedProduct() {
             {/* Product Card List */}
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
+                <div className="mb-3">
+                <input
+                    type="text"
+                    placeholder="Search by Name or Generic Name"
+                    className="form-control"
+                    value={filterText}
+                    onChange={handleFilterChange}
+                />
+            </div>
                     <div className="table-responsive">
                         <table className="table table-bordered border-dark">
                             <thead>
@@ -576,24 +601,6 @@ function UploadedProduct() {
                                 )}
                             </tbody>
                         </table>
-                    </div>
-
-                    {/* Packaging Types Composition Section */}
-                    <div className="packaging-types-section mt-4">
-                        <h5>Packaging Types</h5>
-                        <div className="packaging-list">
-                            {/* Example of different packaging types */}
-                            <div className="packaging-item">
-                                <strong>Box:</strong> Standard packaging in a box
-                            </div>
-                            <div className="packaging-item">
-                                <strong>Bag:</strong> Flexible packaging in a bag
-                            </div>
-                            <div className="packaging-item">
-                                <strong>Bubble Wrap:</strong> Protective bubble wrap packaging
-                            </div>
-                            {/* Add more packaging types as needed */}
-                        </div>
                     </div>
                 </div>
             </section>
