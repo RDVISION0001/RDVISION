@@ -11,7 +11,17 @@ function UploadedProduct() {
     const [filterText, setFilterText] = useState("");
     const debounceTimeout = useRef(null);
     const [debouncedFilterText, setDebouncedFilterText] = useState("");
+    const [selectedImage, setSelectedImage] = useState("");
+    const [view, setView] = useState(false);
+    const handleView = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setView(true);
+    };
 
+    const handleClosee = () => {
+        setView(false);
+        setSelectedImage("");
+    };
 
     useEffect(() => {
         if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
@@ -23,11 +33,11 @@ function UploadedProduct() {
     const handleFilterChange = (e) => {
         setFilterText(e.target.value);
     };
-    
+
     const filteredProducts = products.filter((product) =>
         product.name?.toLowerCase().includes(debouncedFilterText.toLowerCase())
     );
-    
+
 
     const [searchTerm, setSearchTerm] = useState('');
     const [show, setShow] = useState(false);
@@ -405,13 +415,13 @@ function UploadedProduct() {
                                                                     <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
                                                                 </div>
                                                             </div>
-                                                            <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
+                                                            {/* <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
                                                                 <label htmlFor="unit">Product Code</label>
                                                                 <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" />
-                                                            </div>
+                                                            </div> */}
                                                         </div>
 
-                                                        <div className="d-flex">
+                                                        {/* <div className="d-flex">
                                                             <div className="form-group col-md-6 col-sm-12">
                                                                 <label htmlFor="price">Price</label>
                                                                 <div className="input-group">
@@ -425,9 +435,9 @@ function UploadedProduct() {
                                                                 <label htmlFor="unit">- per -</label>
                                                                 <input type="text" className="form-control" id="unit" value={basicData.unit} onChange={handleInputChange} placeholder="Ex - Pair, Piece etc" />
                                                             </div>
-                                                        </div>
+                                                        </div> */}
                                                         <div className="form-group">
-                                                            <label htmlFor="description">Product/Service Description</label>
+                                                            <label htmlFor="description">Description</label>
                                                             <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
                                                             <small className="text-muted">0 characters (maximum of 4000) including formatting.</small>
                                                         </div>
@@ -504,15 +514,15 @@ function UploadedProduct() {
             {/* Product Card List */}
             <section className="followup-table-section py-3">
                 <div className="container-fluid">
-                <div className="mb-3">
-                <input
-                    type="text"
-                    placeholder="Search by Name or Generic Name"
-                    className="form-control"
-                    value={filterText}
-                    onChange={handleFilterChange}
-                />
-            </div>
+                    <div className="mb-3">
+                        <input
+                            type="text"
+                            placeholder="Search by Name or Generic Name"
+                            className="form-control"
+                            value={filterText}
+                            onChange={handleFilterChange}
+                        />
+                    </div>
                     <div className="table-responsive">
                         <table className="table table-bordered border-dark">
                             <thead>
@@ -534,6 +544,10 @@ function UploadedProduct() {
                                                             <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                             <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                                 <img
+                                                                    onClick={() =>
+                                                                        handleView(
+                                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                                        )}
                                                                     src={`https://rdvision.in/images/getProductImage/${product.productId}`}
                                                                     alt="No Image Found"
                                                                     style={{ maxWidth: "80px" }}
@@ -637,8 +651,26 @@ function UploadedProduct() {
                 </Modal.Footer>
             </Modal>
 
+            {/* Modal to view image */}
+            <Modal show={view} onHide={handleClose} centered>
+                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                    <img
+                        src={selectedImage}
+                        alt="Selected Product"
+                        style={{ maxWidth: "100%", maxHeight: "80vh", }}
+                    />
+                    <button
+                        className="btn btn-danger mt-3"
+                        onClick={handleClosee}
+                    >
+                        Close
+                    </button>
+                </Modal.Body>
+            </Modal>
+
         </div>
     );
 }
 
 export default UploadedProduct;
+
