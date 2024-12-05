@@ -14,11 +14,11 @@ function InvoiceNewTemp() {
     const [error, setError] = useState(null); // Error state
     const { userId } = useAuth();
     const [addressFrom, setAddressForm] = useState(false)
-    const [ticketId,setTicketId]=useState()
+    const [ticketId, setTicketId] = useState()
 
     // State to store the dropdown options
     const [options, setOptions] = useState([]);
-    
+
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedInvoice, setSelectedInvoice] = useState(null); // State to store selected invoice
@@ -109,10 +109,10 @@ function InvoiceNewTemp() {
             });
     }, []);
 
-const openModel=(ticketId)=>{
-setTicketId(ticketId)
-setAddressForm(true)
-}
+    const openModel = (ticketId) => {
+        setTicketId(ticketId)
+        setAddressForm(true)
+    }
 
 
     return (
@@ -269,7 +269,7 @@ setAddressForm(true)
             <section className="followup-table-section py-4 d-flex">
                 <div className="container-fluid">
                     <div className="table-wrapper tabbed-table">
-                        <h5 className="title">Live Tickets</h5>
+                        <h5 className="title">Invoices</h5>
                         {loading ? (
                             <p>Loading invoices...</p>
                         ) : error ? (
@@ -284,7 +284,11 @@ setAddressForm(true)
                                         <th scope="col">Closer Name</th>
                                         <th scope="col">Sale Date</th>
                                         <th scope="col">Customer Name</th>
-                                        <th scope="col">Customer Order</th>
+                                        <th className="p-3">
+                                            <th className="px-4">Name</th>
+                                            <th className="px-5">Qty</th>
+                                            <th className="px-3">Price</th>
+                                        </th>
                                         <th scope="col">Invoice Generate Date</th>
                                         <th scope="col">Order Amount</th>
                                         <th scope="col">Payment Status</th>
@@ -302,12 +306,23 @@ setAddressForm(true)
                                             <td>{formatDate(invoice.saleDate)}</td>
                                             <td>{invoice.customerName}</td>
                                             <td>
-                                                {invoice.orderDto?.productOrders?.map(order =>
-                                                    order.product?.map((p, index) => (
-                                                        <div key={index}>{p.name}</div>
-                                                    ))
+                                                {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                    <table>
+                                                        <tbody>
+                                                            {invoice.orderDto.productOrders.map((order, index) =>
+                                                                order.product?.map((p) => (
+                                                                    <tr key={`${index}-${p.productId}`}>
+                                                                        <td className="p-2">{p.name || 'N/A'}</td>
+                                                                        <td className="p-2">{order.quantity || 0}</td>
+                                                                        <td className="p-2">{order.totalAmount || 0}</td>
+                                                                    </tr>
+                                                                ))
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    'No Products Available'
                                                 )}
-                                                {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
                                             </td>
                                             <td>{formatDate(invoice.invoiceGenerateDate)}</td>
                                             <td className="text-success bold-text">
@@ -323,7 +338,7 @@ setAddressForm(true)
                                                 {invoice.ipAddress ? invoice.ipAddress : "not opened yet"}
                                             </td>
                                             <td className={invoice.verificationDate ? "text-success fw-bold text-center" : "text-danger text-center"}>
-                                                {invoice.verificationDate ? <i class="fa-solid fa-circle-check fa-2xl" style={{color: "#2f850a"}}></i>: <i class="fa-solid fa-hourglass-half fa-xl" style={{color: "#ff3838"}}></i>}
+                                                {invoice.verificationDate ? <i class="fa-solid fa-circle-check fa-2xl" style={{ color: "#2f850a" }}></i> : <i class="fa-solid fa-hourglass-half fa-xl" style={{ color: "#ff3838" }}></i>}
                                             </td>
                                             <td>
                                                 {invoice.paymentStatus !== "paid" && (
@@ -460,12 +475,12 @@ setAddressForm(true)
 
             <Modal show={addressFrom} onHide={fetchInvoices} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
                 <div className='d-flex justify-content-center'>
-                    <AddressForm ticketId={ticketId} close={()=>setAddressForm(false)} />
+                    <AddressForm ticketId={ticketId} close={() => setAddressForm(false)} />
 
                 </div>
-               <div className="d-flex justify-content-end">
-               <button style={{maxWidth:"70px"}} onClick={()=>setAddressForm(false)}>close</button>
-               </div>
+                <div className="d-flex justify-content-end">
+                    <button style={{ maxWidth: "70px" }} onClick={() => setAddressForm(false)}>close</button>
+                </div>
             </Modal>
 
         </>

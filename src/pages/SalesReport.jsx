@@ -58,26 +58,26 @@ function SalesReport() {
 
 
 
-    const handleOpenPaymentModel=()=>{
+    const handleOpenPaymentModel = () => {
         setIsModalOpen(true)
         setFormData({
-            id:paymnet && paymnet.id,
+            id: paymnet && paymnet.id,
             paymentIntentId: paymnet && paymnet.paymentIntentId,
             amount: paymnet && paymnet.amount,
             currency: paymnet && paymnet.currency, // Default currency
-            paymentWindow:paymnet && paymnet.paymentWindow,
+            paymentWindow: paymnet && paymnet.paymentWindow,
             userId,
-            ticketId:paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
+            ticketId: paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
         })
     }
     const [formData, setFormData] = useState({
-        id:paymnet && paymnet.id,
+        id: paymnet && paymnet.id,
         paymentIntentId: paymnet && paymnet.paymentIntentId,
         amount: paymnet && paymnet.amount,
         currency: paymnet && paymnet.currency, // Default currency
-        paymentWindow:paymnet && paymnet.paymentWindow,
+        paymentWindow: paymnet && paymnet.paymentWindow,
         userId,
-        ticketId:paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
+        ticketId: paymnet && paymnet.ticketId, // Added uniqueQueryId to the formData
     });
 
     const handleInputChangeOfFromrData = (e) => {
@@ -258,7 +258,11 @@ function SalesReport() {
                                             <th scope="col">Closer Name</th>
                                             <th scope="col">Sale Date</th>
                                             <th scope="col">Customer Name</th>
-                                            <th scope="col">Customer Order</th>
+                                            <th className="p-3">
+                                                <th className="px-4">Name</th>
+                                                <th className="px-5">Qty</th>
+                                                <th className="px-3">Price</th>
+                                            </th>
                                             <th scope="col">Invoice ID</th>
                                             <th scope="col">Ticket ID</th>
                                             <th scope="col">Issue Date</th>
@@ -280,13 +284,24 @@ function SalesReport() {
                                                 <td>{formatDate(invoice.saleDate)}</td>
                                                 <td>{invoice.customerName}</td>
                                                 <td>
-                                                    {invoice.orderDto?.productOrders?.map(order =>
-                                                        order.product?.map((p, index) => (
-                                                            <div key={index}>{p.name}</div>
-                                                        ))
-                                                    )}
-                                                    {(!invoice.orderDto?.productOrders || invoice.orderDto.productOrders.length === 0) && 'No Products Available'}
-                                                </td>
+                                                {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                    <table>
+                                                        <tbody>
+                                                            {invoice.orderDto.productOrders.map((order, index) =>
+                                                                order.product?.map((p) => (
+                                                                    <tr key={`${index}-${p.productId}`}>
+                                                                        <td className="p-2">{p.name || 'N/A'}</td>
+                                                                        <td className="p-2">{order.quantity || 0}</td>
+                                                                        <td className="p-2">{order.totalAmount || 0}</td>
+                                                                    </tr>
+                                                                ))
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                ) : (
+                                                    'No Products Available'
+                                                )}
+                                            </td>
                                                 <td>{invoice.invoiceId}</td>
                                                 <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
                                                 <td>{formatDate(invoice.date)}</td>
@@ -300,7 +315,7 @@ function SalesReport() {
 
                                             </tr>
                                         ))}
-                                    </tbody> : <div className='text-center  m-3 fw-bold'>No Invioces Pending For Verification</div>}
+                                    </tbody> : <div className='text-center'>No Invioces Pending For Verification</div>}
                                 </table>
                             </div>
                         </div>
@@ -498,121 +513,121 @@ function SalesReport() {
 
             <Modal show={isModalOpen} onHide={fetchVerificationList} className="modal assign-ticket-modal fade " id="addMoreItemsModal" tabindex="-1" aria-labelledby="addMoreItemsLabel" aria-hidden="true">
                 <div className='d-flex justify-content-center'>
-                <div
-                    className="modal fade show d-block"
-                    style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-                    id="addTicketModal"
-                    tabIndex="-1"
-                    aria-labelledby="addTicketModalLabel"
-                    aria-hidden="true"
-                >
-                    <div className="modal-dialog modal-dialog-centered">
-                        <div className="modal-content border-0 shadow-lg rounded-lg">
-                            <div className="modal-header bg-primary text-white">
-                                <h5 className="modal-title" id="addTicketModalLabel">
-                                    Mark as Paid
-                                </h5>
-                                <button
-                                    type="button"
-                                    className="btn-close text-white"
-                                    onClick={() => setIsModalOpen(false)}
-                                    aria-label="Close"
-                                ></button>
-                            </div>
-                            <form onSubmit={handleUpdatePayment}>
-                                <div className="modal-body">
-                                    <div className="mb-3">
-                                        <label htmlFor="paymentIntentId" className="form-label">Transaction ID</label>
-                                        <input
-                                            type="text"
-                                            id="paymentIntentId"
-                                            className="form-control"
-                                            name="paymentIntentId"
-                                            value={formData.paymentIntentId}
-                                            onChange={handleInputChangeOfFromrData}
-                                            required
-                                        />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label htmlFor="amount" className="form-label">Amount</label>
-                                        <input
-                                            type="text"
-                                            id="amount"
-                                            className="form-control"
-                                            name="amount"
-                                            value={formData.amount}
-                                            onChange={handleInputChangeOfFromrData}
-                                            required
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="paymentWindow" className="form-label">
-                                            Payment Window
-                                        </label>
-                                        {loading ? (
-                                            <p>Loading...</p>
-                                        ) : (
-                                            <select
-                                                id="paymentWindow"
-                                                name="paymentWindow"
+                    <div
+                        className="modal fade show d-block"
+                        style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+                        id="addTicketModal"
+                        tabIndex="-1"
+                        aria-labelledby="addTicketModalLabel"
+                        aria-hidden="true"
+                    >
+                        <div className="modal-dialog modal-dialog-centered">
+                            <div className="modal-content border-0 shadow-lg rounded-lg">
+                                <div className="modal-header bg-primary text-white">
+                                    <h5 className="modal-title" id="addTicketModalLabel">
+                                        Mark as Paid
+                                    </h5>
+                                    <button
+                                        type="button"
+                                        className="btn-close text-white"
+                                        onClick={() => setIsModalOpen(false)}
+                                        aria-label="Close"
+                                    ></button>
+                                </div>
+                                <form onSubmit={handleUpdatePayment}>
+                                    <div className="modal-body">
+                                        <div className="mb-3">
+                                            <label htmlFor="paymentIntentId" className="form-label">Transaction ID</label>
+                                            <input
+                                                type="text"
+                                                id="paymentIntentId"
                                                 className="form-control"
-                                                value={formData.paymentWindow}
+                                                name="paymentIntentId"
+                                                value={formData.paymentIntentId}
+                                                onChange={handleInputChangeOfFromrData}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="mb-3">
+                                            <label htmlFor="amount" className="form-label">Amount</label>
+                                            <input
+                                                type="text"
+                                                id="amount"
+                                                className="form-control"
+                                                name="amount"
+                                                value={formData.amount}
+                                                onChange={handleInputChangeOfFromrData}
+                                                required
+                                            />
+                                        </div>
+
+                                        <div className="mb-3">
+                                            <label htmlFor="paymentWindow" className="form-label">
+                                                Payment Window
+                                            </label>
+                                            {loading ? (
+                                                <p>Loading...</p>
+                                            ) : (
+                                                <select
+                                                    id="paymentWindow"
+                                                    name="paymentWindow"
+                                                    className="form-control"
+                                                    value={formData.paymentWindow}
+                                                    onChange={handleInputChangeOfFromrData}
+                                                    required
+                                                >
+                                                    <option value="">Select Payment Window</option>
+                                                    {options.map((option) => (
+                                                        <option key={option.id} value={option.id}>
+                                                            {option.paymentWindowName}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            )}
+                                        </div>
+
+                                        <div className="mb-3">
+                                            <label htmlFor="currency" className="form-label">Currency</label>
+                                            <select
+                                                id="currency"
+                                                className="form-select"
+                                                name="currency"
+                                                value={formData.currency}
                                                 onChange={handleInputChangeOfFromrData}
                                                 required
                                             >
-                                                <option value="">Select Payment Window</option>
-                                                {options.map((option) => (
-                                                    <option key={option.id} value={option.id}>
-                                                        {option.paymentWindowName}
-                                                    </option>
-                                                ))}
+                                                <option value="">Select Currency</option>
+                                                <option value="INR">INR - Indian Rupee</option>
+                                                <option value="USD">USD - US Dollar</option>
+                                                <option value="GBP">GBP - British Pound</option>
+                                                <option value="AUD">AUD - Australian Dollar</option>
+                                                <option value="EUR">EUR - Euro</option>
+                                                <option value="JPY">JPY - Japanese Yen</option>
                                             </select>
-                                        )}
+                                        </div>
                                     </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="currency" className="form-label">Currency</label>
-                                        <select
-                                            id="currency"
-                                            className="form-select"
-                                            name="currency"
-                                            value={formData.currency}
-                                            onChange={handleInputChangeOfFromrData}
-                                            required
+                                    <div className="modal-footer">
+                                        <button
+                                            type="button"
+                                            className="btn btn-secondary"
+                                            onClick={() => setIsModalOpen(false)}
                                         >
-                                            <option value="">Select Currency</option>
-                                            <option value="INR">INR - Indian Rupee</option>
-                                            <option value="USD">USD - US Dollar</option>
-                                            <option value="GBP">GBP - British Pound</option>
-                                            <option value="AUD">AUD - Australian Dollar</option>
-                                            <option value="EUR">EUR - Euro</option>
-                                            <option value="JPY">JPY - Japanese Yen</option>
-                                        </select>
+                                            Close
+                                        </button>
+                                        <button type="submit" className="btn btn-primary">
+                                            Mark as Paid
+                                        </button>
                                     </div>
-                                </div>
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-secondary"
-                                        onClick={() => setIsModalOpen(false)}
-                                    >
-                                        Close
-                                    </button>
-                                    <button type="submit" className="btn btn-primary">
-                                        Mark as Paid
-                                    </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <div className="d-flex justify-content-end">
                     <button style={{ maxWidth: "70px" }} onClick={() => setIsModalOpen(false)}>close</button>
                 </div>
             </Modal>
-          
+
         </>
     );
 }
