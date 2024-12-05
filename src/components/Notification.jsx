@@ -9,7 +9,7 @@ const Notification = ({ title, details, requirement, type, name }) => {
     const [isVisible, setIsVisible] = useState(true); // Track visibility of the notification
     const [isCopied, setIsCopied] = useState(false); // Track if the title is copied
     const notificationTime = new Date(); // Assuming this is the time when the notification was created
-    const [isActionModeOpen,setIsActionModeOpen]=useState(false)
+    const [isActionModeOpen, setIsActionModeOpen] = useState(false)
 
     useEffect(() => {
         const updateTimeAgo = () => {
@@ -126,12 +126,12 @@ const Notification = ({ title, details, requirement, type, name }) => {
                         </button>
                     </div>
                     <div>
-                        <i class="fa-solid fa-location-arrow fa-xl" onClick={()=>setIsActionModeOpen(true)} style={{ color: "#0056eb", cursor: "Pointer" }}></i>
-                  </div>
+                        <i class="fa-solid fa-location-arrow fa-xl" onClick={() => setIsActionModeOpen(true)} style={{ color: "#0056eb", cursor: "Pointer" }}></i>
+                    </div>
                 </div>
 
                 {/* Details */}
-                <div className="d-flex justify-content-between">
+                <div className="d-flex justify-content-between w-100">
                     <div className="d-flex align-items-center" style={{ fontSize: "12px" }}>
                         <img src={getFlagUrl(details)} alt={details} />
                     </div>
@@ -139,15 +139,16 @@ const Notification = ({ title, details, requirement, type, name }) => {
                         <span style={{ marginRight: "8px" }}><i className="fa-solid fa-ticket"></i></span>
                         {requirement ? requirement : "No product info"}
                     </div>
+                    {/* Timestamp */}
+                    <div className="text-muted" style={{ fontSize: "12px", alignSelf: "flex-end" }}>
+                        {timeAgo}
+                    </div>
                 </div>
 
-                {/* Timestamp */}
-                <div className="mt-2 text-muted" style={{ fontSize: "12px", alignSelf: "flex-end" }}>
-                    {timeAgo}
-                </div>
+
             </div>
             <Modal show={isActionModeOpen} id="addMoreItemsModal" >
-                    <NotificationOpner searchString={name}/>
+                <NotificationOpner searchString={name} />
                 <div className="d-flex justify-content-end">
                     <button style={{ maxWidth: "70px" }} onClick={() => setIsActionModeOpen(false)}>close</button>
                 </div>

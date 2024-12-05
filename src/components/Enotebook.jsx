@@ -3,174 +3,150 @@ import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 
 const Enotebook = () => {
-  const [notes, setNotes] = useState([]); // State to store all notes
+  const [notes, setNotes] = useState([]);
   const [isOpened, setIsOpened] = useState(false);
-  const [searchValue, setSearchValue] = useState(""); // State for search input
+  const [searchValue, setSearchValue] = useState('');
   const [noteDetails, setNoteDetails] = useState({
-    title: "",
-    noteContent: "",
+    title: '',
+    noteContent: '',
     user: {
-      userId: localStorage.getItem("userId")
-    }
+      userId: localStorage.getItem('userId'),
+    },
   });
 
   useEffect(() => {
     fetNotes();
   }, []);
 
-  // Handling changes in state
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNoteDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  // Function to handle adding a new note
   const addNote = async () => {
-    const response = await axiosInstance.post("/enote/createNote", noteDetails);
+    const response = await axiosInstance.post('/enote/createNote', noteDetails);
     if (response.status === 201) {
-      toast.success("Note Added");
+      toast.success('Note Added');
       setNoteDetails({
         title: '',
         noteContent: '',
         user: {
-          userId: localStorage.getItem("userId")
-        }
+          userId: localStorage.getItem('userId'),
+        },
       });
       fetNotes();
     } else {
-      toast.error("Some Error Occurred");
+      toast.error('Some Error Occurred');
     }
   };
 
   const fetNotes = async () => {
-    const response = await axiosInstance.get(`/enote/getallByUser/${localStorage.getItem("userId")}`);
+    const response = await axiosInstance.get(`/enote/getallByUser/${localStorage.getItem('userId')}`);
     setNotes(response.data);
-   
   };
 
   const deleteNote = async (noteId) => {
     const response = await axiosInstance.delete(`/enote/delete/${noteId}`);
-    console.log(response.data);
-    if (response.data === "Deleted") {
-      toast.success("Note Deleted");
+    if (response.data === 'Deleted') {
+      toast.success('Note Deleted');
       fetNotes();
     } else {
-      toast.error("Some Error Occurred");
+      toast.error('Some Error Occurred');
     }
   };
 
   const formatLocalDateTime = (dateArray) => {
     const [year, month, day, hours, minutes] = dateArray;
-    const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     const period = hours >= 12 ? 'PM' : 'AM';
     const formattedHours = hours % 12 || 12;
-    const formattedDate = `${day}-${monthNames[month - 1]}-${year} ${formattedHours}:${String(minutes).padStart(2, '0')} ${period}`;
-    return formattedDate;
+    return `${day}-${monthNames[month - 1]}-${year} ${formattedHours}:${String(minutes).padStart(2, '0')} ${period}`;
   };
 
-  // Filtering logic
   const filteredNotes = notes.filter((note) => {
     if (searchValue.length > 1) {
       return note.title.toLowerCase().includes(searchValue.toLowerCase());
     }
-    return true; // Return all notes if searchValue length is 1 or less
+    return true;
   });
 
   return (
-    <div className="container mt-4" style={{ overflowY: "scroll" }}>
-      <div className='text-center mb-3 d-flex justify-content-around'>
-        <h3 className="mb-4 text-left" style={{ color: "#183e81" }}>E-NoteBook</h3>
-        <span
-          className='rounded-circle border border-primary'
-          style={{
-            height: "50px",
-            width: "50px",
-            padding: "8px",
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-          {!isOpened
-            ? <i className="fa-solid fa-plus fa-2xl" onClick={() => setIsOpened(true)} style={{ color: "#183e81" }}></i>
-            : <i className="fa-solid fa-chevron-up fa-2xl" onClick={() => setIsOpened(false)} style={{ color: "#1f4fa3" }}></i>}
-        </span>
+    <div
+      className="d-flex flex-column align-items-center"
+      style={{
+        height: '100vh',
+        width: '20vw',
+        border: '1px solid #ddd',
+        borderRadius: '10px',
+        overflowY: 'auto',
+        backgroundColor: '#f9f9f9',
+        paddingTop:"20px"
+      }}
+    >
+      {/* Add Note Button */}
+      <div
+        className="d-flex align-items-center justify-content-center mb-3"
+        style={{
+          height: '50px',
+          width: '50px',
+          borderRadius: '50%',
+          // backgroundColor: '#183e81',
+          color: '#fff',
+          cursor: 'pointer',
+        }}
+        onClick={() => setIsOpened(!isOpened)}
+      >
+        <i className={`fa-solid ${isOpened ? 'fa-chevron-up' : 'fa-plus'} fa-lg text-danger`} />
       </div>
 
-
+      {/* Add Note Form */}
       {isOpened && (
-        <div className="card p-4 mb-4 shadow">
-          <h4 className="card-title text-primary">Add a New Note</h4>
-          <div className="mb-3">
-            <label htmlFor="noteTitle" className="form-label">Title</label>
-            <input
-              type="text"
-              className="form-control"
-              name='title'
-              id="noteTitle"
-              placeholder="Note Title"
-              value={noteDetails.title}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="noteContent" className="form-label">Note Content</label>
-            <textarea
-              className="form-control"
-              id="noteContent"
-              rows="4"
-              name='noteContent'
-              placeholder="Write your note content here..."
-              value={noteDetails.noteContent}
-              onChange={handleChange}
-            ></textarea>
-          </div>
-
-          <button className="btn btn-primary" onClick={addNote}>
+        <div className="card p-3 mb-4 shadow w-100" style={{ maxWidth: '90%' }}>
+          <h4 className="card-title text-primary text-center">Add a New Note</h4>
+          <input
+            type="text"
+            className="form-control mb-2"
+            name="title"
+            placeholder="Note Title"
+            value={noteDetails.title}
+            onChange={handleChange}
+          />
+          <textarea
+            className="form-control mb-2"
+            name="noteContent"
+            rows="3"
+            placeholder="Write your note content here..."
+            value={noteDetails.noteContent}
+            onChange={handleChange}
+          />
+          <button className="btn btn-primary w-100" onClick={addNote}>
             Add Note
           </button>
         </div>
       )}
 
-      {/* Search Input */}
-      <div className='d-flex flex-column' style={{ marginBottom: "5px" }}>
-        <label htmlFor="searchInput">Search By Title</label>
-        <input
-          type="text"
-          id="searchInput"
-          onChange={(e) => setSearchValue(e.target.value)} // Corrected input change
-          className='border p-2 w-50 bg-white text-black'
-          placeholder='Enter text to search'
-        />
-      </div>
-
-      {/* Display Notes */}
+      {/* Notes List */}
       {filteredNotes.length === 0 ? (
         <p className="text-muted text-center">No notes found!</p>
       ) : (
-        <div className="row">
+        <div className="w-100">
           {filteredNotes.slice().reverse().map((note) => (
-            <div className="col-md-4 mb-3" key={note.noteId}>
-              <div className="card shadow" style={{ borderRadius: "10px" }}>
-                <div className="card-body">
-                  <div className="d-flex justify-content-between align-items-start mb-2">
-                    <h5 className="card-title" style={{ color: "#183e81" }}>{note.title}</h5>
-                    <p className="text-muted small">{formatLocalDateTime(note.date)}</p>
-                  </div>
-                  <p className="card-text">{note.noteContent}</p>
-                  <span className='d-flex justify-content-end'>
-                    <i
-                      className="fa-solid fa-trash fa-xl"
-                      style={{ color: "#f50a0a", cursor: "pointer" }}
-                      onClick={() => deleteNote(note.noteId)}
-                    ></i>
-                  </span>
-                </div>
-              </div>
+            <div
+              key={note.noteId}
+              className="card shadow-sm p-3 mb-3"
+              style={{ borderRadius: '10px', backgroundColor: '#fff' }}
+            >
+              <h5 className="text-primary mb-1">{note.title}</h5>
+              <p className="text-muted small">{formatLocalDateTime(note.date)}</p>
+              <p>{note.noteContent}</p>
+              <i
+                className="fa-solid fa-trash fa-lg text-danger"
+                style={{ cursor: 'pointer' }}
+                onClick={() => deleteNote(note.noteId)}
+              />
             </div>
           ))}
         </div>
