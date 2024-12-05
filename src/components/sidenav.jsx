@@ -166,24 +166,6 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
-                <i className="fa-solid fa-upload"></i>
-                <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
-                <i className="fa-solid fa-handshake"></i>
-                <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink target='_blank' to="/super_admin_sales" className="nav-link">
-                <i className="fa-solid fa-hand-holding-dollar"></i>
-                <span className="nav-text">Sale's Status</span>
-              </NavLink>
-            </li>
-            <li className="nav-item">
               <NavLink target='_blank' to="/super_admin_orders" className="nav-link">
                 <i className="fa-solid fa-money-check-dollar"></i>
                 <span className="nav-text">Orders Status</span>

@@ -32,6 +32,18 @@ function MIS_Product() {
     const [requestBody, setRequestBody] = useState([]);
     const [submitError, setSubmitError] = useState(null);
     const [productId, setProductId] = useState(null);
+    const [selectedImage, setSelectedImage] = useState("");
+
+    const [view, setView] = useState(false);
+    const handleView = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setView(true);
+    };
+
+    const handleClosee = () => {
+        setView(false);
+        setSelectedImage("");
+    };
 
     useEffect(() => {
         fetchProducts();
@@ -172,6 +184,7 @@ function MIS_Product() {
         { label: "Strength", valueKey: "strength" },
         { label: "Packaging Sizes", valueKey: "packagingSize" },
         { label: "Packaging Types", valueKey: "packagingType" },
+        { label: "Composition", valueKey: "composition" },
         { label: "Treatment", valueKey: "treatment" },
     ];
 
@@ -279,16 +292,17 @@ function MIS_Product() {
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-
                                                         <img
-                                                            src={
-
-                                                                `https://rdvision.in/images/getProductImage/${product.productId}`
-                                                            }
+                                                            onClick={() =>
+                                                                handleView(
+                                                                    `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                                )}
+                                                            src={`https://rdvision.in/images/getProductImage/${product.productId}`}
                                                             alt="No Image Found"
                                                             style={{ maxWidth: "80px" }}
                                                         />
                                                         {/* {/ Button to upload an image /} */}
+
                                                         <div className="mt-3">
                                                             <button
                                                                 className="btn btn-sm btn-primary "
@@ -296,6 +310,7 @@ function MIS_Product() {
                                                             >
                                                                 Upload Image
                                                             </button>
+                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "#c62b10" }}></i>
                                                         </div>
                                                     </td>
                                                 </>
@@ -516,7 +531,7 @@ function MIS_Product() {
                 <Modal.Header OffButton>
                     <Modal.Title>Add Image</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="text-center">
+                <Modal.Body>
                     <UpProductImg id={productId} />
                 </Modal.Body>
                 <Modal.Footer>
@@ -528,17 +543,31 @@ function MIS_Product() {
 
             {/* action/EDIT */}
             <Modal show={enable} onHide={handleDesable}>
-                
-            <div  className="m-3 d-flex justify-content-end" >
-            <i onClick={handleDesable} class="fa-solid fa-xmark  fa-xl"></i>
-                    </div>
-               
-               
-                    <EditMIS_Product id={productId} />
-             
-                   
-              
+
+                <div className="m-3 d-flex justify-content-end" >
+                    <i onClick={handleDesable} class="fa-solid fa-xmark  fa-xl"></i>
+                </div>
+                <EditMIS_Product id={productId} />
             </Modal>
+
+            {/* Modal to view image */}
+            <Modal show={view} onHide={handleClose} centered>
+                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                    <img
+                        src={selectedImage}
+                        alt="Selected Product"
+                        style={{ maxWidth: "100%", maxHeight: "80vh", }}
+                    />
+                    <button
+                        className="btn btn-danger mt-3"
+                        onClick={handleClosee}
+                    >
+                        Close
+                    </button>
+                </Modal.Body>
+            </Modal>
+
+
         </div>
     );
 }
