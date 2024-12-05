@@ -5,6 +5,7 @@ import axiosInstance from '../axiosInstance';
 import { useAuth } from '../auth/AuthContext';
 import FloatingButton from './FloatingButton';
 import Enotebook from './Enotebook';
+import WebsocketService from './WebsocketServices';
 
 // import TimeZone from './TimeZone';
 
@@ -14,6 +15,19 @@ function topnav() {
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
   const { isSideBarOpen, setIsSideBarOpen } = useAuth()
+  const [isChatBotOPen, setIsChatBotOpen] = useState(false)
+
+
+  // Update the handle functions for the notebook
+  const [isNotebookOpen, setIsNotebookOpen] = useState(false);
+
+  const handleOpenNote = () => {
+    setIsNotebookOpen(true);
+  };
+
+  const handleCloseNotebook = () => {
+    setIsNotebookOpen(false);
+  };
 
   //handle Open Calender
   const handleOpenCalender = () => {
@@ -37,12 +51,12 @@ function topnav() {
     }
   };
   //handle Open Calender
-  const handleOpenNote = () => {
-    const dialog = document.getElementById("notebook");
-    if (dialog) {
-      dialog.showModal();
-    }
-  };
+  // const handleOpenNote = () => {
+  //   const dialog = document.getElementById("notebook");
+  //   if (dialog) {
+  //     dialog.showModal();
+  //   }
+  // };
   //handle close Calender
   const handleClose = () => {
     const dialog = document.getElementById("calender");
@@ -52,7 +66,7 @@ function topnav() {
       note.close()
     }
   };
-  
+
 
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
@@ -128,6 +142,11 @@ function topnav() {
                 <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
 
               </a>
+              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
+                <i class="fa-brands fa-rocketchat fa-xl" onClick={() => setIsChatBotOpen(true)}></i>
+
+              </a>
+
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{
@@ -230,12 +249,11 @@ function topnav() {
           </dialog>
 
           {/* for notebook */}
-          <dialog
+          {/* <dialog
             id="notebook"
             className="noteebook-modal bg-light text-black"
             style={{
-              height: "70vh",
-              width: "70vw",
+              height: "100vh",
               alignItems: "center",
               justifyContent: "center",
               position: "fixed",
@@ -260,7 +278,88 @@ function topnav() {
               ></i>
               <Enotebook />
             </div>
-          </dialog>
+          </dialog> */}
+          {isNotebookOpen && (
+            <div
+              className="noteebook-modal bg-light text-black"
+              style={{
+                height: "100vh",
+                position: "fixed",
+                top: "50%",
+                left: "90%",
+                transform: "translate(-50%, -50%)",
+                border: "none",
+                borderRadius: "8px",
+                padding: "5px",
+                zIndex: 1000, // Ensure it's above other components
+                boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.3)",
+
+              }}
+            >
+              <i
+                className="fa-solid fa-times fa-xl pointer close-icon"
+                onClick={handleCloseNotebook}
+                style={{
+                  position: "absolute",
+                  top: "20px",
+                  right: "360px",
+                  cursor: "pointer",
+                  zIndex: "1000"
+                }}
+              ></i>
+              <div className="modal-content" style={{ width: "100%", height: "100%" }}>
+
+                <Enotebook />
+              </div>
+            </div>
+          )}
+          <div
+            className="text-black"
+            style={{
+              position: "fixed",
+              bottom: "100px",
+              right: "10px",
+              width: isChatBotOPen ? "350px" : "5px", // Full width when open, small when hidden
+              height: isChatBotOPen ? "500px" : "5px", // Full height when open, small when hidden
+              border: "none",
+              zIndex: 1000,
+              overflow: "hidden",
+              backgroundColor: isChatBotOPen ? "#fff" : "#f0f0f0", // Change background if needed
+              cursor: "pointer", // Indicate clickable when minimized
+            }}
+            onClick={() => {
+              if (!isChatBotOPen) {
+                setIsChatBotOpen(true); // Open chat when clicking minimized window
+              }
+            }}
+          >
+            {isChatBotOPen && <WebsocketService />}
+          </div>
+
+          <div
+            className="chatbot-toggle-button"
+            onClick={() => setIsChatBotOpen(!isChatBotOPen)}
+            style={{
+              position: "fixed",
+              bottom: "20px",
+              right: "20px",
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              backgroundColor: "#007bff",
+              color: "white",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.3)",
+              cursor: "pointer",
+              zIndex: 1000,
+            }}
+          >
+            <i className="fa-solid fa-comments fa-lg"></i>
+          </div>
+
+
         </div>}
     </>
   );

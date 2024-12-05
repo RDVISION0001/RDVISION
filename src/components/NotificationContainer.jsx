@@ -11,7 +11,7 @@ const NotificationContainer = () => {
     const [noOfnewticketsReceived, setNoOfnewticketsReceived] = useState(0);
 
     useEffect(() => {
-        const socket = new SockJS('https://rdvision.in/ws');
+        const socket = new SockJS('http://localhost:8080/ws');
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
