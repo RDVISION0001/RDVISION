@@ -142,37 +142,37 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/super_admin_index" className="nav-link">
+              <NavLink  to="/super_admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/super_admin_users" className="nav-link">
+              <NavLink  to="/super_admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+              <NavLink  to="/verifyed_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
                 <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+              <NavLink  to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/super_admin_orders" className="nav-link">
+              <NavLink  to="/super_admin_orders" className="nav-link">
                 <i className="fa-solid fa-money-check-dollar"></i>
                 <span className="nav-text">Orders Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
+              <NavLink  to="/invoice" className="nav-link">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className="nav-text">Invoice</span>
               </NavLink>
@@ -198,67 +198,67 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/admin_index" className="nav-link">
+              <NavLink  to="/admin_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/payment_window" className="nav-link">
+              <NavLink  to="/payment_window" className="nav-link">
                 <i class="fa-solid fa-money-check-dollar"></i>
                 <span className="nav-text">Payment Window</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/admin_to_everyone" className="nav-link">
+              <NavLink  to="/admin_to_everyone" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">To Everyone</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/ticket_house" className="nav-link">
+              <NavLink  to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/admin_upload_tickets" className="nav-link">
+              <NavLink  to="/admin_upload_tickets" className="nav-link">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+              <NavLink  to="/verifyed_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
                 <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/admin_users" className="nav-link">
+              <NavLink  to="/admin_users" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">Users</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+              <NavLink  to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+              <NavLink  to="/upload_tickets" className="nav-link">
                 <i className="fa-solid fa-upload"></i>
                 <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+              <NavLink  to="/in_negotiation" className="nav-link">
                 <i className="fa-solid fa-handshake"></i>
                 <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_products" className="nav-link">
+              <NavLink  to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
@@ -270,7 +270,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
+              <NavLink  to="/invoice" className="nav-link">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className="nav-text">Invoice</span>
               </NavLink>
@@ -297,14 +297,14 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/closer_index" className="nav-link">
+              <NavLink  to="/closer_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
 
             <li className="nav-item">
-              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+              <NavLink  to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
                   {liveTickets.totalAssignTickets}
@@ -313,7 +313,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+              <NavLink  to="/upload_tickets" className="nav-link">
                 <i className="fa-solid fa-upload"></i>
                 <span className="nav-text">
                   ABC <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -323,7 +323,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+              <NavLink  to="/in_negotiation" className="nav-link">
                 <i className="fa-solid fa-handshake"></i>
                 <span className="nav-text">
                   In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -333,19 +333,19 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/after_sales_service" className="nav-link">
+              <NavLink  to="/after_sales_service" className="nav-link">
                 <i className="fa-solid fa-headphones"></i>
                 <span className="nav-text">ASS</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_products" className="nav-link">
+              <NavLink  to="/upload_products" className="nav-link">
                 <i className="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
+              <NavLink  to="/invoice" className="nav-link">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className="nav-text">Invoice</span>
               </NavLink>
@@ -371,31 +371,31 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/image_upload" className="nav-link">
+              <NavLink  to="/image_upload" className="nav-link">
                 <i class="fa-solid fa-image"></i>
                 <span className="nav-text">Img Upload</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_products" className="nav-link">
+              <NavLink  to="/upload_products" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/new_products" className="nav-link">
+              <NavLink  to="/new_products" className="nav-link">
                 <i class="fa-solid fa-pills"></i>
                 <span className="nav-text">New Products</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/mis_product" className="nav-link">
+              <NavLink  to="/mis_product" className="nav-link">
                 <i class="fa-solid fa-plus-minus"></i>
                 <span className="nav-text">MIS-PRODUCT_DEP</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/admin_upload_tickets" className="nav-link">
+              <NavLink  to="/admin_upload_tickets" className="nav-link">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
               </NavLink>
@@ -421,43 +421,43 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/captain_index" className="nav-link">
+              <NavLink  to="/captain_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/captain_to_closer" className="nav-link">
+              <NavLink  to="/captain_to_closer" className="nav-link">
                 <i className="fa-solid fa-people-group"></i>
                 <span className="nav-text">To Closer</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+              <NavLink  to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text">Live Tickets <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalAssignTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/upload_tickets" className="nav-link">
+              <NavLink  to="/upload_tickets" className="nav-link">
                 <i className="fa-solid fa-upload"></i>
                 <span className="nav-text">ABC <span className='rounded-circle bg-danger text-white p-1 w'>{uploadedTickets.totalNewTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+              <NavLink  to="/in_negotiation" className="nav-link">
                 <i className="fa-solid fa-handshake"></i>
                 <span className="nav-text">In-Negotiation  <span className='rounded-circle bg-danger text-white p-1 '>{liveTickets.totalFollowupsTickets + uploadedTickets.totalFollowupsTickets}</span></span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/captain_sales" className="nav-link">
+              <NavLink  to="/captain_sales" className="nav-link">
                 <i className="fa-solid fa-hand-holding-dollar"></i>
                 <span className="nav-text">Sale's Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
+              <NavLink  to="/invoice" className="nav-link">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className="nav-text">Invoice</span>
               </NavLink>
@@ -483,20 +483,20 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/senior_supervisor_index" className="nav-link">
+              <NavLink  to="/senior_supervisor_index" className="nav-link">
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className="nav-text">Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/senior_supervisor_to_captain" className="nav-link">
+              <NavLink  to="/senior_supervisor_to_captain" className="nav-link">
                 <i className="fa-solid fa-user"></i>
                 <span className="nav-text">Team</span>
               </NavLink>
             </li>
 
             <li className="nav-item">
-              <NavLink target='_blank' to="/live_tickets" className="nav-link">
+              <NavLink  to="/live_tickets" className="nav-link">
                 <i className="fa-solid fa-headset"></i>
                 <span className="nav-text"> Live Tickets <span className="rounded-circle bg-danger text-white p-1 ml-2">
                   {liveTickets.totalAssignTickets}
@@ -505,7 +505,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/in_negotiation" className="nav-link">
+              <NavLink  to="/in_negotiation" className="nav-link">
                 <i className="fa-solid fa-handshake"></i>
                 <span className="nav-text">
                   In-Negotiation <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -515,31 +515,31 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/assign_ticket_report" className="nav-link">
+              <NavLink  to="/assign_ticket_report" className="nav-link">
                 <i class="fa-solid fa-bug"></i>
                 <span className="nav-text">Assign Ticket Report</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/ticket_house" className="nav-link">
+              <NavLink  to="/ticket_house" className="nav-link">
                 <i class="fa-solid fa-house-laptop"></i>
                 <span className="nav-text">Ticket-House</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/sales_report" className="nav-link">
+              <NavLink  to="/sales_report" className="nav-link">
                 <i className="fa-solid fa-trophy"></i>
                 <span className="nav-text">Sales Report</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/verifyed_sales" className="nav-link">
+              <NavLink  to="/verifyed_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
                 <span className="nav-text">Verifyed Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink target='_blank' to="/invoice" className="nav-link">
+              <NavLink  to="/invoice" className="nav-link">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className="nav-text">Invoice</span>
               </NavLink>
