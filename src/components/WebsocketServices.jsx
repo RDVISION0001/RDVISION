@@ -13,6 +13,7 @@ const WebsocketService = () => {
     const [selectedRecipient, setSelectedRecipient] = useState(); // Default recipient
     const [recipientName, setRecipientName] = useState("Admin")
     const [admin, setAdmin] = useState();
+    const username = localStorage.getItem("firstName")
     const currentDate = new Date().toISOString().split('T')[0];
 
     const [messageBox, setMessage] = useState({
@@ -41,13 +42,13 @@ const WebsocketService = () => {
             if (allMessages[i].sentByUserId.toString() === userId) {
                 // Mark the message as sent by the user
                 allMessages[i].sentByUser = true;
-        
+
                 // Update sentByUserId (if needed)
                 const updatedUserId = allMessages[i].sentByUserId.toString();
                 allMessages[i].sentByUserId = updatedUserId;
             }
         }
-        
+
         console.log(allMessages)
         setMessages(allMessages)
     }
@@ -72,6 +73,15 @@ const WebsocketService = () => {
         }
     }
 
+
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false, // Ensures 24-hour format
+    });
+
     const fetchAllClosers = async () => {
         const response = await axiosInstance.get("/user/getAllCloser");
         setUsers(response.data);
@@ -93,10 +103,11 @@ const WebsocketService = () => {
         client.connect({}, (frame) => {
             console.log("Connected: " + frame);
 
+            // Subscribe to public and private messages only once
             client.subscribe("/topic/messages", (messageOutput) => {
                 const messageData = JSON.parse(messageOutput.body);
-                playNotificationSound()
-                if (messageData.role !== role) {
+                console.log(messageData.sentToUserId ,parseInt(userId))
+                if (messageData.sentToUserId === parseInt(userId)) {
                     setMessages((prevMessages) => {
                         if (!prevMessages.some((msg) => msg.message === messageData.message)) {
                             return [
@@ -112,16 +123,60 @@ const WebsocketService = () => {
                     });
                 }
             });
+            console.log(`/user/${userId}/queue/messages`)
 
-            setStompClient(client);
+            client.subscribe(`/user/${username.toLowerCase()}/queue/messages`, (message) => {
+
+                console.log("Private Message: ", JSON.parse(message.body));
+            });
+
+            setStompClient(client); // Store the client in state after connection
         });
 
+        // Cleanup function to disconnect the client when the component unmounts
         return () => {
             if (stompClient) {
                 stompClient.disconnect();
             }
         };
-    }, []);
+    }, []); // Empty dependency array ensures this runs once on mount
+
+    // useEffect(() => {
+    //     const socket = new SockJS("https://rdvision.in/ws");
+    //     const client = Stomp.over(socket);
+
+    //     client.connect({}, (frame) => {
+    //         console.log("Connected: " + frame);
+
+    //         client.subscribe("/topic/messages", (messageOutput) => {
+    //             const messageData = JSON.parse(messageOutput.body);
+
+    //             if (messageData.sentToUserId === userId) {
+    //                 setMessages((prevMessages) => {
+    //                     if (!prevMessages.some((msg) => msg.message === messageData.message)) {
+    //                         return [
+    //                             ...prevMessages,
+    //                             {
+    //                                 ...messageData,
+    //                                 sentByUser: false,
+    //                                 receivedTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    //                             },
+    //                         ];
+    //                     }
+    //                     return prevMessages;
+    //                 });
+    //             }
+    //         });
+
+    //         setStompClient(client);
+    //     });
+
+    //     return () => {
+    //         if (stompClient) {
+    //             stompClient.disconnect();
+    //         }
+    //     };
+    // }, []);
 
     const sendMessage = () => {
         if (messageBox.message && stompClient) {
@@ -134,7 +189,7 @@ const WebsocketService = () => {
                 sentToUserId: role === "Admin" ? selectedRecipient : admin && admin.userId,
                 sentByUser: true,
                 sentDate: currentDate,
-                sentTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                sentTime: formattedTime,
                 recipientName: messageBox.recipientName, // Add recipient name to the message object
             };
 
@@ -146,10 +201,10 @@ const WebsocketService = () => {
                 messageObject,
             ]);
             setMessage((prev) => ({ ...prev, message: "" }));
-            console.log(typeof(userId))
+
         }
 
-       
+
     };
 
     useEffect(() => {
@@ -245,7 +300,7 @@ const WebsocketService = () => {
                             }}
                         >
                             {/* Show "Sent to" only for sent messages */}
-                            {role === "Admin" && (msg.sentByUserId === userId ) ? (
+                            {role === "Admin" && (msg.sentByUserId === userId) ? (
                                 <strong>Sent to {msg.recipientName}</strong>
                             ) : null}
 
