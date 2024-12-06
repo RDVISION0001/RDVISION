@@ -220,66 +220,11 @@ button:focus-visible {
 }
 
 /* / topnav.css / */
-.topnav {
+/* .topnav {
   position: sticky;
   top: 0;
   z-index: 1000;
   background-color: white;
   width: 100%;
 
-}
-
-
-/* Sidebar styles */
-#sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  background-color: #ffffff;
-  transition: all 0.3s ease;
-  z-index: 1000;
-  width: 250px;
-  /* Default width for larger screens */
-}
-
-#sidebar.active-nav {
-  left: 0;
-}
-
-.my-container.active-cont {
-  margin-left: 250px;
-  /* Adjust content margin for sidebar */
-}
-
-/* Mobile styles */
-@media (max-width: 991px) {
-  #sidebar {
-    width: 70%;
-    /* Adjust sidebar width to 70% */
-    left: -70%;
-    /* Hide sidebar off-screen by default */
-  }
-
-  #sidebar.active-nav {
-    left: 0;
-    /* Show sidebar when active */
-  }
-
-  .my-container.active-cont {
-    margin-left: 0;
-    /* Prevent margin adjustment on smaller screens */
-  }
-}
-
-/* Hide all icons except the arrow icon in mobile mode */
-@media screen and (max-width: 768px) {
-  .right-part .notification {
-    display: none; /* Hide all notification icons */
-  }
-
-  #menu-btn {
-    display: inline-block; /* Ensure the arrow icon remains visible */
-  }
-}
-
+} */

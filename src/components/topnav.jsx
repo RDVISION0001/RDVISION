@@ -113,17 +113,17 @@ function topnav() {
               <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
             </div>
             <div className="right-part">
-              <div href="/timezone" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+              <div href="/timezone"  className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <span className="page-title"  >
                   <i class="fa-solid fa-clock fa-2xl" onClick={handleOpenTimezone}></i>
                 </span>
               </div>
-              <a href="/action_mode" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+              <a href="/action_mode"  className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <span className="page-title"  >
                   <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
                 </span>
               </a>
-              {/* <a href="/live_tickets" target='_blanck' className="notification" style={{ position: "relative", display: "inline-block" }}>
+              {/* <a href="/live_tickets"  className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-ticket fa-2xl pointer"></i>
                 <span className='bg-danger text-white rounded-circle text-center' style={{
                   height: "32px",
