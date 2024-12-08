@@ -18,6 +18,7 @@ import QuotationBox from '../../components/QuotationBox';
 import InvoiceInfo from '../../components/InvoiceInfo'
 import { useParams } from 'react-router-dom';
 import TicketTrack from '../../components/TicketTrack';
+import SaleConframtion from '../../components/SaleConframtion';
 
 
 function InNegotiation() {
@@ -25,6 +26,8 @@ function InNegotiation() {
   const [selectedKey, setSelectedKey] = useState(null)
   const { setFolowupUpdate } = useAuth()
   const { setUserReportReloader } = useAuth();
+  const [showModal, setShowModal] = useState(false);
+  const handleClosee = () => setShowModal(false);
 
   const [list, setlist] = useState(true)
   const [ticketData, setTicketData] = useState([]);
@@ -153,7 +156,7 @@ function InNegotiation() {
 
     // Show transaction details input when 'Sale' is selected
     if (value === "Sale") {
-      setShowTransaction(true);
+      setShowModal(true);
     } else {
       setShowTransaction(false);
     }
@@ -1206,22 +1209,7 @@ function InNegotiation() {
               </select>
             </div>
 
-            {showSaleTransaction && (
-              <div className="mb-3">
-                <label htmlFor="transactionDetails" className="form-label">Transaction ID</label>
-                <input
-                  type="transaction-details"
-                  placeholder="Enter Transaction ID"
-                  className="form-control border-0 shadow-sm"
-                  id="transactionDetails"
-                  name="transactionDetails"
-                  value={formData.SaleTransaction}
-                  onChange={handleChange}
-                  required
-                  style={{ borderRadius: '4px' }}
-                />
-              </div>
-            )}
+           
 
             {showFollowUpDate && (
               <div className="mb-3">
@@ -1559,6 +1547,16 @@ function InNegotiation() {
           email={selectEmailForInvoice}
           mobile={selectMobileForInvoice}
         />
+      </Modal>
+
+       {/* when select Sale */}
+       <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <SaleConframtion ticketId={uniqueQueryId}/>
+        <div className="modal-body">
+          <button type="button" className="btn btn-secondary" onClick={handleClosee}>
+            Close
+          </button>
+        </div>
       </Modal>
     </>
   );

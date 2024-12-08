@@ -24,6 +24,7 @@ import TicketJourney from '../components/TicketJourney';
 import InvoiceBox from '../components/InvoiceBox';
 import QuotationBox from '../components/QuotationBox';
 import TicketTrack from '../components/TicketTrack';
+import SaleConframtion from '../components/SaleConframtion';
 
 
 function live_tickets() {
@@ -80,6 +81,10 @@ function live_tickets() {
     productList: []
   });
 
+  const [showModal, setShowModal] = useState(false);
+  const handleClosee = () => {
+    setShowModal(false);
+  };
 
   const addCopyRecord = async (ticketId, text) => {
     // toast.info("Copied" + text);
@@ -237,8 +242,6 @@ function live_tickets() {
   };
 
 
-
-
   //click to call
   const handleClick = async (number, ticketId) => {
     try {
@@ -336,25 +339,24 @@ function live_tickets() {
     return colors[ticketStatus] || 'white';
   };
 
-  // Update handleStatusChange function
   const handleStatusChange = (event) => {
     handleChange(event);
     const { value } = event.target;
-
-    // Show folloeupdatetime input when 'Follow' is selected
+  
+    if (value === "Sale") {
+      setShowModal(true); 
+      // setShowTransaction(true); 
+    } else {
+      setShowTransaction(false);
+    }
+  
     if (value === "Follow") {
       setShowFollowUpDate(true);
     } else {
       setShowFollowUpDate(false);
     }
-
-    // Show transaction details input when 'Sale' is selected
-    if (value === "Sale") {
-      setShowTransaction(true);
-    } else {
-      setShowTransaction(false);
-    }
   };
+  
 
   const fetchCountries = async () => {
     const response = await axiosInstance.get("/third_party_api/ticket/getDistinctCountries")
@@ -1309,7 +1311,15 @@ function live_tickets() {
         </div>
       </div>
 
-
+      {/* when select Sale */}
+      <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <SaleConframtion  ticketId={uniqueQueryId}/>
+        <div className="modal-body">
+          <button type="button" className="btn btn-secondary" onClick={handleClosee}>
+            Close
+          </button>
+        </div>
+      </Modal>
 
 
     </>

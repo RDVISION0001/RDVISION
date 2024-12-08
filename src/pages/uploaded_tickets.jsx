@@ -23,6 +23,7 @@ import TicketJourney from '../components/TicketJourney';
 import InvoiceBox from '../components/InvoiceBox';
 import QuotationBox from '../components/QuotationBox';
 import TicketTrack from '../components/TicketTrack';
+import SaleConframtion from '../components/SaleConframtion';
 
 function uploaded_tickets() {
   const { userId } = useAuth();
@@ -47,7 +48,10 @@ function uploaded_tickets() {
   const [selectNameForInvoice, setSelectNameForInvoice] = useState(null)
   const [selectMobileForInvoice, setSelectMobileForInvoice] = useState(null)
   const [selectEmailForInvoice, setSelectEmailForInvoice] = useState(null)
-
+  const [showModal, setShowModal] = useState(false);
+  const handleClosee = () => {
+    setShowModal(false);
+  };
 
   // Modal state
   const [show, setShow] = useState(false);
@@ -326,7 +330,7 @@ function uploaded_tickets() {
 
     // Show transaction details input when 'Sale' is selected
     if (value === "Sale") {
-      setShowTransaction(true);
+      setShowModal(true);
     } else {
       setShowTransaction(false);
     }
@@ -589,7 +593,7 @@ function uploaded_tickets() {
 
   return (
     <div className='d-flex'>
-  
+
       <div style={{ width: "100vw" }}>
 
         {/* <!-- Tabbed Ticket Table --> */}
@@ -1286,7 +1290,15 @@ function uploaded_tickets() {
           />
         </Modal>
       </div>
-
+      {/* when select Sale */}
+      <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <SaleConframtion ticketId={uniqueQueryId} />
+        <div className="modal-body">
+          <button type="button" className="btn btn-secondary" onClick={handleClosee}>
+            Close
+          </button>
+        </div>
+      </Modal>
     </div>
   )
 }

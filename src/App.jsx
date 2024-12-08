@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Sidenav from './components/sidenav';
 import Topnav from './components/topnav';
 import PaymentWindow from './components/PaymentWindow';
-
+import SaleConframtion from './components/SaleConframtion';
 
 //Coustomer invoice
 import Coustomer from './components/Coustomer';
@@ -135,10 +135,6 @@ import TicketDistribution from './components/TicketDistribution';
 import NotificationContainer from './components/NotificationContainer';
 
 
-
-
-
-
 function App() {
   const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
 
@@ -192,6 +188,7 @@ function App() {
                     <Route element={<PrivateRoute />}>
                       {/* Components */}
                       <Route exact path="/sidenav" element={<Sidenav />} />
+                      <Route exact path="/sale_conframtion" element={<SaleConframtion />} />
 
                       {/* Pages */}
                       <Route exact path="/live_tickets" element={<Live />} />
