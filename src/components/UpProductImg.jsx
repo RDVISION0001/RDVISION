@@ -72,7 +72,7 @@ const SimpleUploadUI = (props) => {
         console.log(imageDataList)
         const response = await axiosInstance.post("/product/addImage", imageDataList)
         console.log(response.data)
-
+        props.ofFunction()
         toast.success("Image Uplaoded")
     }
     return (
