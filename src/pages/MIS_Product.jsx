@@ -24,7 +24,7 @@ function MIS_Product() {
     const [show, setShow] = useState(false);
     const [on, setOn] = useState(false);
     const [enable, setEnable] = useState(false);
-
+    const [images, setImages] = useState([])
     // State for modal inputs
     const [unit, setUnit] = useState("Pills");
     const [currency, setCurrency] = useState("USD");
@@ -47,6 +47,7 @@ function MIS_Product() {
 
     useEffect(() => {
         fetchProducts();
+        fetchProductImages()
     }, []);
 
     useEffect(() => {
@@ -98,6 +99,7 @@ function MIS_Product() {
     const handleOff = () => {
         setOn(false);
         setProductId(null);
+        fetchProductImages()
     };
 
     const handleOn = (id) => {
@@ -258,6 +260,32 @@ function MIS_Product() {
         }
     };
 
+   
+    
+    const fetchProductImages = async (productId) => {
+        try {
+            const response = await axiosInstance.get(`/images/getProductImages`);
+            setImages(response.data)
+        } catch (error) {
+            setImages([]);
+        }
+    };
+
+    const getImageIds = (productId) => {
+        if (images[productId]) {
+         return(images[productId])
+        } else {
+          return[];
+        }
+      };
+   
+      const handleDeleteImage = async(imageId)=>{
+        await axiosInstance.delete(`/images/deleteImageById/${imageId}`);
+        toast.success("Image Deleted")
+fetchProductImages()
+    }
+
+
     return (
         <div className="container-fluid" >
             <h3 className="title text-center">MIS-Product Department</h3>
@@ -291,17 +319,26 @@ function MIS_Product() {
                                             {rowIndex === 0 && (
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                        <img
-                                                            onClick={() =>
-                                                                handleView(
-                                                                    `https://rdvision.in/images/getProductImage/${product.productId}`
-                                                                )}
-                                                            src={`https://rdvision.in/images/getProductImage/${product.productId}`}
-                                                            alt="No Image Found"
-                                                            style={{ maxWidth: "80px" }}
-                                                        />
-                                                        {/* {/ Button to upload an image /} */}
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "10px" }}>
+                                                        {getImageIds(product.productId).map((imageId) => (
+                                                       localStorage.getItem("roleName")==="Product_Coordinator"? <>  
+                                                        <i class="fa-solid fa-xmark" style={{color:"red",position:"relative", backgroundColor:"white", }}  onClick={()=>handleDeleteImage(imageId)}></i>
+                                                            <img
+                                                                key={imageId}
+                                                                onClick={() => handleView(`https://rdvision.in/images/image/${imageId}`)}
+                                                                src={`https://rdvision.in/images/image/${imageId}`}
+                                                                alt="No Image Found"
+                                                                style={{ maxWidth: "100px" }}
+                                                            />
+                                                            </>: <img
+                                                                key={imageId}
+                                                                onClick={() => handleView(`https://rdvision.in/images/image/${imageId}`)}
+                                                                src={`https://rdvision.in/images/image/${imageId}`}
+                                                                alt="No Image Found"
+                                                                style={{ maxWidth: "100px" }}
+                                                            />
+                                                            
+                                                        ))}
 
                                                         <div className="mt-3">
                                                             <button
@@ -310,7 +347,7 @@ function MIS_Product() {
                                                             >
                                                                 Upload Image
                                                             </button>
-                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "#c62b10" }}></i>
+                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "red" }}></i>
                                                         </div>
                                                     </td>
                                                 </>
@@ -532,7 +569,7 @@ function MIS_Product() {
                     <Modal.Title>Add Image</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <UpProductImg id={productId} />
+                    <UpProductImg id={productId} ofFunction={handleOff} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleOff}>
