@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import axiosInstance from '../axiosInstance';
 
-const AddressForm = ({ ticketId,close,address}) => {
+const AddressForm = ({ ticketId,handleClose,address}) => {
     const [formData, setFormData] = useState({
         addressId:address && address.addressId,
         ticketId: address && address.ticketId,
@@ -39,9 +39,8 @@ const AddressForm = ({ ticketId,close,address}) => {
                 ticketId: ticketId
             });
             toast.success('Address added successfully!');
-            close()
+            handleClose();
         } catch (err) {
-           
             toast.error('Failed to add address');
         } 
     };
