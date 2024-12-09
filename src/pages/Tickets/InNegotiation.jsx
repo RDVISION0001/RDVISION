@@ -711,7 +711,16 @@ function InNegotiation() {
     setCopiedType(type); // Track whether it's a mobile number or email
     addCopyRecord(uniqueQueryId, text); // Log the copied record
   };
-
+  function formatDate(dateArray) {
+    if(dateArray){const [year, month, day] = dateArray;
+    const months = [
+        "jan", "feb", "mar", "apr", "may", "jun",
+        "jul", "aug", "sep", "oct", "nov", "dec"
+    ];
+    const formattedDay = String(day).padStart(2, '0');
+    const formattedMonth = months[month - 1];
+    return `${formattedDay}-${formattedMonth}-${year}`;}
+}
 
   return (
     <>
@@ -918,6 +927,10 @@ function InNegotiation() {
                             <th tabIndex="0">Follow Comment</th>
                             <th tabIndex="0">Action</th>
                             <th tabIndex="0">Ticket ID</th>
+                            {
+                              selectedStage===3 &&
+                              <th tabIndex="0">Sale Date</th>
+                            }
                           </tr>
                         </thead>
                         <tbody>
@@ -1055,6 +1068,7 @@ function InNegotiation() {
                               </td>
 
                               <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
+                              <td>{formatDate(nego.lastActionDate && nego.lastActionDate)}</td>
                             </tr>
                           ))}
                         </tbody>
