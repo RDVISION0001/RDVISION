@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { Modal, Button } from "react-bootstrap";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 
 function VerifiedSales() {
     const [invoices, setInvoices] = useState([]);
@@ -21,6 +23,9 @@ function VerifiedSales() {
         setShowCustomerModal(true);
     };
 
+    const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
+
+
     // Fetch invoices
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -36,6 +41,17 @@ function VerifiedSales() {
 
         fetchInvoices();
     }, []);
+
+
+    // API call to verify invoice
+    const handleVerifyInvoice = async (invoiceId) => {
+        try {
+            const response = await axiosInstance.get(`/invoice/verifyInvoiceByAdmin/${invoiceId}`);
+            toast.success(response.data.message || 'Invoice verified successfully!', { autoClose: 3000 });
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to verify invoice', { autoClose: 3000 });
+        }
+    };
 
     // Filter invoices based on verificationDate
     const getFilteredInvoices = () => {
@@ -124,79 +140,88 @@ function VerifiedSales() {
                             <table className="table table-bordered table-hover table-striped table-sm">
                                 <thead className="text-white" style={{ backgroundColor: '#343a40' }}>
                                     <tr>
-                                        <th scope="col">S No</th>
-                                        <th scope="col">Order No</th>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Varification Date </th>
-                                        <th scope="col">Closed By</th>
-                                        <th scope="col">Order Status</th>
+                                        {/* <th scope="col">Ser n.</th> */}
+                                        <th scope="col">Order ID</th>
+                                        <th scope="col">Sale Date</th>
+                                        <th scope="col">Closer Name</th>
                                         <th scope="col">Customer Name</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Address</th>
-                                        <th scope="col" className='text-center'>Order
+                                        <th scope="col">Customer Email</th>
+                                        <th scope="col">Street</th>
+                                        <th scope="col">City</th>
+                                        <th scope="col">State</th>
+                                        <th scope="col">Zip Code</th>
+                                        <th scope="col">Country</th>
+                                        <th scope="col" className='text-center'>Product Details
                                             <thead>
                                                 <tr>
-                                                    <th className="px-3">Name</th>
-                                                    <th className="px-4">Quantity</th>
-                                                    <th className="px-">Price</th>
+                                                    <th className="px-3">Name</th>|
+                                                    <th className="px-3">Quantity</th>|
+                                                    <th className="px-3">Price</th>
                                                 </tr>
                                             </thead>
                                         </th>
-                                        <th scope="col">Tracking No</th>
-                                        <th scope="col">Payment Window</th>
-                                        <th scope="col">Received Amount</th>
+                                        <th scope="col">Doses</th>
+                                        <th scope="col">Tracking Number</th>
+                                        <th scope="col">Paymnent Windows</th>
+                                        <th scope="col">Shipping Through</th>
+                                        <th scope="col">Paid Amount</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredInvoices.map((invoice, index) => (
                                         <tr key={invoice.invoiceId} className='table-success'>
-                                            <td className="text-center">{index + 1}.</td>
-                                            <td>{invoice.orderDto?.orderId}</td>
-                                            <td className="text-nowrap">{formatDate(invoice.saleDate) || 'N/A'}</td>
-                                            <td className="text-nowrap">{formatDate(invoice.verificationDate) || 'N/A'}</td>
-                                            <td className="text-nowrap"> {invoice.closerName} </td>
-                                            <td>{invoice.deliveryStatus || 'Processing'}</td>
-                                            <td>{invoice.customerName}  <button
-                                                type="button"
-                                                onClick={() => handleShowCustomerModal(invoice)}
-                                                className="btn btn-link p-0"
-                                            >
-                                                ...
-                                            </button></td>
-                                            <td>{invoice.customerEmail}</td>
-                                            <td>{invoice.address?.landmark},{invoice.address?.houseNumber},{invoice.address?.city}
-                                                ,{invoice.address?.state},{invoice.address?.country},{invoice.address?.zipCode}</td>
-                                            <td>
-                                                {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                    <table>
-                                                        {/* <thead>
-                                                            <tr>
-                                                                <th className="px-4">Name</th>
-                                                                <th className="px-4 py-2">Quantity</th>
-                                                                <th className="px-4 py-2">Price</th>
-                                                            </tr>
-
-                                                        </thead> */}
-                                                        <tbody>
-                                                            {invoice.orderDto.productOrders.map((order, i) =>
-                                                                order.product?.map((p, index) => (
-                                                                    <tr key={`${i}-${index}`}>
-                                                                        <td className="px-1">{p.name}</td>
-                                                                        <td className="px-1">{order.quantity || 'N/A'}</td>
-                                                                        <td className="px-1">{order.totalAmount || 'N/A'}</td>
-                                                                    </tr>
-                                                                ))
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    <span>No Products Available</span>
-                                                )}
+                                            {/* <td className="text-center">{index + 1}.</td> */}
+                                            <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
+                                            <td>{formatDate(invoice.saleDate)}</td>
+                                            <td> {invoice.closerName} </td>
+                                            <td>{invoice.customerName}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
+                                                    className="btn btn-link p-0">....
+                                                </button>
                                             </td>
-
-                                            <td>{invoice.trackingNumber || 'Waiting'}</td>
-                                            <td>{invoice.payment?.paymentWindow}</td>
-                                            <td className="text-success font-weight-bold">{invoice.payment?.currency} {invoice.payment?.amount}</td>
+                                            <td> {invoice.customerEmail} </td>
+                                            <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
+                                            <td className='text-center'>{invoice.address?.city || "N/A"}</td>
+                                            <td className='text-center'>{invoice.address?.state || "N/A"}</td>
+                                            <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
+                                            <td className='text-center'>
+                                                <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                                            </td>
+                                            <td className='text-center'>
+                                                <table className="table-bordered">
+                                                    <tbody>
+                                                        {invoice.orderDto.productOrders.map((order, i) =>
+                                                            order.product?.map((product, index) => (
+                                                                <tr key={`${i}-${index}`} className="table table-bordered">
+                                                                    <td className="px-2">{product.name}</td>
+                                                                    <td className="px-2">{order.quantity || 'N/A'}</td>
+                                                                    <td className="px-2">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td className='text-center'>
+                                                {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
+                                            </td>
+                                            <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                                            <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
+                                            <td><button>Add</button></td>
+                                            <td className="text-success bold-text">
+                                                {invoice.currency || 'USD'} {invoice.payment?.amount}
+                                            </td>
+                                            <td>
+                                                <Button
+                                                    variant="success rounded"
+                                                    onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                                                >
+                                                    Next
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -248,3 +273,4 @@ const formatDate = (timestamp) => {
 };
 
 export default VerifiedSales;
+

@@ -284,10 +284,14 @@ function InvoiceNewTemp() {
                                         <th scope="col">Closer Name</th>
                                         <th scope="col">Sale Date</th>
                                         <th scope="col">Customer Name</th>
-                                        <th className="p-3">
-                                            <th className="px-4">Name</th>
-                                            <th className="px-5">Qty</th>
-                                            <th className="px-3">Price</th>
+                                        <th scope="col" className='text-center'>Product Details
+                                            <thead>
+                                                <tr>
+                                                    <th className="px-3">Name</th>|
+                                                    <th className="px-3">Quantity</th>|
+                                                    <th className="px-3">Price</th>
+                                                </tr>
+                                            </thead>
                                         </th>
                                         <th scope="col">Invoice Generate Date</th>
                                         <th scope="col">Order Amount</th>
@@ -305,24 +309,21 @@ function InvoiceNewTemp() {
                                             <td>{invoice.closerName}</td>
                                             <td>{formatDate(invoice.saleDate)}</td>
                                             <td>{invoice.customerName}</td>
-                                            <td>
-                                                {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                    <table>
-                                                        <tbody>
-                                                            {invoice.orderDto.productOrders.map((order, index) =>
-                                                                order.product?.map((p) => (
-                                                                    <tr key={`${index}-${p.productId}`}>
-                                                                        <td className="p-2">{p.name || 'N/A'}</td>
-                                                                        <td className="p-2">{order.quantity || 0}</td>
-                                                                        <td className="p-2">{order.totalAmount || 0}</td>
-                                                                    </tr>
-                                                                ))
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    'No Products Available'
-                                                )}
+                                            <td className='text-center'>
+                                                {/* Product details section */}
+                                                <table className="table table-bordered">
+                                                    <tbody>
+                                                        {invoice.orderDto.productOrders.map((order, i) =>
+                                                            order.product?.map((product, index) => (
+                                                                <tr key={`${i}-${index}`}>
+                                                                    <td className="px-">{product.name}</td>
+                                                                    <td className="px-">{order.quantity || 'N/A'}</td>
+                                                                    <td className="px-">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                </tr>
+                                                            ))
+                                                        )}
+                                                    </tbody>
+                                                </table>
                                             </td>
                                             <td>{formatDate(invoice.invoiceGenerateDate)}</td>
                                             <td className="text-success bold-text">
