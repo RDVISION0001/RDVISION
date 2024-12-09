@@ -27,6 +27,7 @@ function SalesReport() {
         setShowCustomerModal(true);
     };
 
+    const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
     useEffect(() => {
         // Call the API on component mount
@@ -257,65 +258,81 @@ function SalesReport() {
                                         <tr>
                                             <th scope="col">Closer Name</th>
                                             <th scope="col">Sale Date</th>
+                                            <th scope="col">Tracking Number</th>
+                                            <th scope="col">Payment Status</th>
+                                            <th scope="col">Order ID</th>
                                             <th scope="col">Customer Name</th>
-                                            <th className="p-3">
-                                                <th className="px-4">Name</th>
-                                                <th className="px-5">Qty</th>
-                                                <th className="px-3">Price</th>
+                                            <th scope="col">Street</th>
+                                            <th scope="col">City</th>
+                                            <th scope="col">State</th>
+                                            <th scope="col">Zip Code</th>
+                                            <th scope="col">Country</th>
+                                            <th scope="col" className='text-center'>Product Details
+                                                <thead>
+                                                    <tr>
+                                                        <th className="px-3">Name</th>|
+                                                        <th className="px-3">Quantity</th>|
+                                                        <th className="px-3">Price</th>
+                                                    </tr>
+                                                </thead>
                                             </th>
-                                            <th scope="col">Invoice ID</th>
-                                            <th scope="col">Ticket ID</th>
-                                            <th scope="col">Issue Date</th>
-                                            <th scope="col">Order Amount</th>
+                                            <th scope="col">Doses</th>
+                                            <th scope="col">Paid Amount</th>
+                                            <th scope="col">Paymnent Windows</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
-                                    {invoices.length > 0 ? <tbody>
-                                        {invoices.map((invoice) => (
-                                            <tr className="border" key={invoice.invoiceId}>
-                                                <td>
-                                                    {invoice.closerName}
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
-                                                        className="btn btn-link p-0">....
-                                                    </button>
-                                                </td>
-                                                <td>{formatDate(invoice.saleDate)}</td>
-                                                <td>{invoice.customerName}</td>
-                                                <td>
-                                                {invoice.orderDto?.productOrders?.length > 0 ? (
-                                                    <table>
-                                                        <tbody>
-                                                            {invoice.orderDto.productOrders.map((order, index) =>
-                                                                order.product?.map((p) => (
-                                                                    <tr key={`${index}-${p.productId}`}>
-                                                                        <td className="p-2">{p.name || 'N/A'}</td>
-                                                                        <td className="p-2">{order.quantity || 0}</td>
-                                                                        <td className="p-2">{order.totalAmount || 0}</td>
-                                                                    </tr>
-                                                                ))
-                                                            )}
-                                                        </tbody>
-                                                    </table>
-                                                ) : (
-                                                    'No Products Available'
-                                                )}
-                                            </td>
-                                                <td>{invoice.invoiceId}</td>
-                                                <td>{invoice.orderDto?.ticketId || 'N/A'}</td>
-                                                <td>{formatDate(invoice.date)}</td>
-                                                <td className="text-success bold-text">
-                                                    {invoice.currency || 'USD'} {invoice.orderAmount}
-                                                </td>
-                                                <td>
-                                                    <button type="button" onClick={() => handleView(invoice.invoiceId, invoice.closerName, invoice.saleDate, invoice.orderDto.productOrders, invoice.customerMobile, invoice.customerEmail, invoice.customerName, invoice.orderAmount, invoice.address, invoice.payment)} className="btn btn-success">Verify</button>
-                                                </td>
-
-
-                                            </tr>
-                                        ))}
-                                    </tbody> : <div className='text-center'>No Invioces Pending For Verification</div>}
+                                    {invoices.length > 0 ?
+                                        <tbody>
+                                            {invoices.map((invoice) => (
+                                                <tr className="border" key={invoice.invoiceId}>
+                                                    <td> {invoice.closerName} </td>
+                                                    <td>{formatDate(invoice.saleDate)}</td>
+                                                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                                                    <td className='text-center'>{invoice.paymentStatus || "N/A"}</td>
+                                                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
+                                                    <td>{invoice.customerName}
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
+                                                            className="btn btn-link p-0">....
+                                                        </button>
+                                                    </td>
+                                                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
+                                                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
+                                                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
+                                                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
+                                                    <td className='text-center'>
+                                                        <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                                                    </td>
+                                                    <td className='text-center'>
+                                                        <table className="table table-bordered">
+                                                            <tbody>
+                                                                {invoice.orderDto.productOrders.map((order, i) =>
+                                                                    order.product?.map((product, index) => (
+                                                                        <tr key={`${i}-${index}`} className="table table-bordered">
+                                                                            <td className="px-2">{product.name}</td>
+                                                                            <td className="px-2">{order.quantity || 'N/A'}</td>
+                                                                            <td className="px-2">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                        </tr>
+                                                                    ))
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td className='text-center'>
+                                                        {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
+                                                    </td>
+                                                    <td className="text-success bold-text">
+                                                        {invoice.currency || 'USD'} {invoice.payment?.amount}
+                                                    </td>
+                                                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
+                                                    <td>
+                                                        <button type="button" onClick={() => handleView(invoice.invoiceId, invoice.closerName, invoice.saleDate, invoice.orderDto.productOrders, invoice.customerMobile, invoice.customerEmail, invoice.customerName, invoice.orderAmount, invoice.address, invoice.payment)} className="btn btn-success">Verify</button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody> : <div className='text-center'>No Invioces Pending For Verification</div>}
                                 </table>
                             </div>
                         </div>
