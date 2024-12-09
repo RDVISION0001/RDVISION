@@ -189,6 +189,7 @@ function SaleConframtion(props) {
 
     // Function to handle sending invoice
     const handleSendInvoice = async () => {
+       if(orderDetails.productOrders.length>0){
         try {
             const response = await axiosInstance.post(`/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`, formData); // Send formData instead of setFormData
             toast.success('Invoice sent successfully!');
@@ -196,6 +197,9 @@ function SaleConframtion(props) {
             console.error('Error sending invoice:', error);
             toast.error('Failed to send invoice');
         }
+       }else{
+        toast.error("Please Add At least one poroduct")
+       }
     };
 
 
@@ -264,7 +268,7 @@ function SaleConframtion(props) {
             [e.target.name]: e.target.value
         }));
     }
-
+console.log(orderDetails)
 
     return (
         <>
@@ -481,7 +485,11 @@ function SaleConframtion(props) {
 
                                 {/* Order Items Details Ends Here */}
                                 <div className="d-flex justify-content-center">
-                                    <button onClick={handleSendInvoice} className="bg-primary mt-1"  disabled={!address} >
+
+                                    <button onClick={handleSendInvoice} className="bg-primary mt-1"
+                                    disabled={address===null}
+                                    >
+
                                         Save Confirmation
                                     </button>
                                 </div>

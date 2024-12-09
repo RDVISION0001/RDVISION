@@ -51,6 +51,7 @@ function InvoiceNewTemp() {
             toast.error("Payment failed. Please try again.");
         } finally {
             setIsModalOpen(false);
+            fetchInvoices()
         }
     };
     const fetchInvoices = async () => {
