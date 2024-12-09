@@ -290,10 +290,10 @@ console.log(orderDetails)
                                             <div className="p-4 border rounded m-2">
                                                 <h5 className="-title text-center mb-4">Customer Detail</h5>
                                                 <div className="user-info">
-                                                    <div>Name:{ticketDetails.senderName?ticketDetails.senderName:ticketDetails.firstName}</div>
-                                                    <div>Ticket ID:{selectedTicketId}</div>
-                                                    <div>Email:{ticketDetails.senderEmail?ticketDetails.senderEmail:ticketDetails.email}</div>
-                                                    <div>Mobile Number:{ticketDetails.senderMobile?ticketDetails.senderMobile:ticketDetails.mobileNumber}</div>
+                                                    <div><strong>Name:</strong> {ticketDetails.senderName ? ticketDetails.senderName : ticketDetails.firstName}</div>
+                                                    <div><strong>Ticket ID:</strong> {selectedTicketId}</div>
+                                                    <div><strong>Email:</strong> {ticketDetails.senderEmail ? ticketDetails.senderEmail : ticketDetails.email}</div>
+                                                    <div><strong>Mobile Number:</strong>{ticketDetails.senderMobile ? ticketDetails.senderMobile : ticketDetails.mobileNumber}</div>
                                                 </div>
                                             </div>
                                             <div className="border rounded p-4 m-2">
@@ -302,14 +302,13 @@ console.log(orderDetails)
                                                     <div>
                                                         {address && (
                                                             <div>
-                                                                <h6>Address Details</h6>
-                                                                <p><strong> House Number:</strong> {address.houseNumber}</p> 
-                                                                <p><strong>Landmark: </strong> {address.landmark}</p>                                                             
+                                                                <p><strong> House Number:</strong> {address.houseNumber}</p>
+                                                                <p><strong>Street: </strong> {address.landmark}</p>
                                                                 <p><strong>City:</strong> {address.city}</p>
                                                                 <p><strong>State:</strong> {address.state}</p>
                                                                 <p><strong>Zip Code:</strong> {address.zipCode}</p>
                                                                 <p><strong>Country:</strong> {address.country}</p>
-                                                                
+
                                                             </div>
                                                         )}
                                                         {/* Add the rest of your component here */}
@@ -486,9 +485,11 @@ console.log(orderDetails)
 
                                 {/* Order Items Details Ends Here */}
                                 <div className="d-flex justify-content-center">
+
                                     <button onClick={handleSendInvoice} className="bg-primary mt-1"
                                     disabled={address===null}
                                     >
+
                                         Save Confirmation
                                     </button>
                                 </div>

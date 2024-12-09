@@ -11,6 +11,7 @@ import Sidenav from './components/sidenav';
 import Topnav from './components/topnav';
 import PaymentWindow from './components/PaymentWindow';
 import SaleConframtion from './components/SaleConframtion';
+import CloserSalesReport from './components/CloserSalesReport';
 
 //Coustomer invoice
 import Coustomer from './components/Coustomer';
@@ -73,7 +74,6 @@ import Ordersa from './closer/ordersa';
 import Salesa from './closer/salesa';
 import Usersa from './closer/usersa';
 import Ass from './closer/Ass';
-
 
 // senior_supervisor 
 import Indexss from './senior_supervisor/indexss';
@@ -237,6 +237,8 @@ function App() {
                       <Route exact path="/closer_sales" element={<Salesa />} />
                       <Route exact path="/closer_users" element={<Usersa />} />
                       <Route exact path="/after_sales_service" element={<Ass />} />
+                      <Route exact path="/closer_sales_report" element={<CloserSalesReport />} />
+
 
                       {/* Senior Supervisor */}
                       <Route exact path="/senior_supervisor_index" element={<Indexss />} />
