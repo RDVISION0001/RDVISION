@@ -151,15 +151,7 @@ function VerifiedSales() {
                                         <th scope="col">State</th>
                                         <th scope="col">Zip Code</th>
                                         <th scope="col">Country</th>
-                                        <th scope="col" className='text-center'>Product Details
-                                            <thead>
-                                                <tr>
-                                                    <th className="px-3">Name</th>|
-                                                    <th className="px-3">Quantity</th>|
-                                                    <th className="px-3">Price</th>
-                                                </tr>
-                                            </thead>
-                                        </th>
+                                        <th scope="col" className='text-center'>Product Details  </th>
                                         <th scope="col">Doses</th>
                                         <th scope="col">Tracking Number</th>
                                         <th scope="col">Paymnent Windows</th>
@@ -192,13 +184,20 @@ function VerifiedSales() {
                                             </td>
                                             <td className='text-center'>
                                                 <table className="table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th className="px-4">Name</th>
+                                                            <th className="px-3">Quantity</th>
+                                                            <th className="px-3">Price</th>
+                                                        </tr>
+                                                    </thead>
                                                     <tbody>
                                                         {invoice.orderDto.productOrders.map((order, i) =>
                                                             order.product?.map((product, index) => (
                                                                 <tr key={`${i}-${index}`} className="table table-bordered">
-                                                                    <td className="px-2">{product.name}</td>
-                                                                    <td className="px-2">{order.quantity || 'N/A'}</td>
-                                                                    <td className="px-2">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                    <td >{product.name}</td>
+                                                                    <td >{order.quantity || 'N/A'}</td>
+                                                                    <td >{invoice.currency}{order.totalAmount || 'N/A'}</td>
                                                                 </tr>
                                                             ))
                                                         )}
