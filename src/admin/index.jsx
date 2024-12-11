@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Table, InputGroup, FormControl } from "react-bootstrap";
 import axiosInstance from "../axiosInstance"; // Assuming axiosInstance is configured
-import { Modal, Button } from "react-bootstrap";
+import { Form, Modal, Button } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 
@@ -14,8 +14,42 @@ const Index = () => {
   const [newCustomers, setNewCustomers] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [todayInvoices, setTodayInvoices] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [careers, setCareers] = useState([]);
+  const [selectedCareer, setSelectedCareer] = useState("");
+  const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
+  const [preparingShipment, setPreparingShipment] = useState([]);
+  const [awaitingtracking, setAwaitingtracking] = useState([]);
 
 
+  // Fetch careers data when the modal is opened
+  const handleShowModal = (invoiceId) => {
+    setCurrentInvoiceId(invoiceId);
+    axiosInstance.get(`/career/gelAll`)
+      .then((response) => setCareers(response.data))
+      .catch((error) => console.error("Error fetching careers:", error));
+    setShowModal(true);
+  };
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedCareer("");
+  };
+  // Submit selected career to the API
+  const handleAddCareer = async () => {
+    if (!selectedCareer) {
+      toast.error("Please select a career option.");
+      return;
+    }
+    try {
+      const response = await axiosInstance.post(`/invoice/addCareer/${currentInvoiceId}`, {
+        careerName: selectedCareer
+      });
+      toast.success(response.data.message || "Career added successfully!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add career.");
+    }
+  };
   // Fetch data when the tab changes
   useEffect(() => {
     if (activeTab === "totalticket") {
@@ -48,6 +82,22 @@ const Index = () => {
           setTodayInvoices(filtered);
         })
         .catch((error) => console.error("Error fetching today's invoices:", error));
+    } else if (activeTab === "preparingforshipment") {
+      axiosInstance.get(`/invoice/getVerifiedInvoives`)
+        .then((response) => {
+          const filtered = response.data.filter((invoice) => invoice.isVerifiedByAdmin === true);
+          setPreparingShipment(filtered);
+        })
+        .catch((error) => console.error("Error fetching preparing for shipment invoices:", error));
+    } else if (activeTab === "awaitingtracking") {
+      axiosInstance.get(`/invoice/getVerifiedInvoives`)
+        .then((response) => {
+          const filtered = response.data.filter((invoice) =>
+            invoice.trackingNumber === null && invoice.isVerifiedByAdmin === true
+          );
+          setAwaitingtracking(filtered);
+        })
+        .catch((error) => console.error("Error fetching awaiting tracking invoices:", error));
     } else if (activeTab === "existingcustomer") {
       axiosInstance.get(`/customers/getAll`)
         .then((response) => {
@@ -73,12 +123,22 @@ const Index = () => {
 
   const handleVerifyInvoice = async (invoiceId) => {
     try {
-        const response = await axiosInstance.get(`/invoice/verifyInvoiceByAdmin/${invoiceId}`);
-        toast.success(response.data.message || 'Invoice verified successfully!', { autoClose: 3000 });
+      const response = await axiosInstance.get(`/invoice/verifyInvoiceByAdmin/${invoiceId}`);
+      toast.success(response.data.message || 'Invoice verified successfully!', { autoClose: 3000 });
     } catch (error) {
-        toast.error(error.response?.data?.message || 'Failed to verify invoice', { autoClose: 3000 });
+      toast.error(error.response?.data?.message || 'Failed to verify invoice', { autoClose: 3000 });
     }
-};
+  };
+
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    }).replace(',', ''); // Removes the comma if it appears
+  };
 
   // Search logic
   const handleSearch = (e) => {
@@ -118,6 +178,20 @@ const Index = () => {
 
   // Filtered data for today's sales/invoices
   const filteredTodayInvoices = todayInvoices.filter(
+    (invoice) =>
+      invoice.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      invoice.customerEmail?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Filtered data for preprating for shippment
+  const filteredPreparingShipment = preparingShipment.filter(
+    (invoice) =>
+      invoice.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      invoice.customerEmail?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Filtered data for awating tracking
+  const filteredAwaitingtracking = awaitingtracking.filter(
     (invoice) =>
       invoice.customerName?.toLowerCase().includes(search.toLowerCase()) ||
       invoice.customerEmail?.toLowerCase().includes(search.toLowerCase())
@@ -214,70 +288,6 @@ const Index = () => {
             </Table>
           )}
 
-          {/* Table Rendering for Existing Customers */}
-          {activeTab === "existingcustomer" && (
-            <Table responsive bordered className="candidate-table">
-              <thead>
-                <tr>
-                  <th><input type="checkbox" /></th>
-                  <th>Customer ID</th>
-                  <th>Customer Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Country</th>
-                  <th>Customer Type</th>
-                  <th>Ticket ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCustomers.map((customer) => (
-                  <tr key={customer.customerId}>
-                    <td><input type="checkbox" /></td>
-                    <td>{customer.customerId}</td>
-                    <td>{customer.customerName}</td>
-                    <td>{customer.customerEmail}</td>
-                    <td>{customer.customerMobile}</td>
-                    <td>{customer.country}</td>
-                    <td>{customer.customerType}</td>
-                    <td>{customer.ticketId}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          )}
-
-          {/* Table Rendering for New Customers */}
-          {activeTab === "newcustomer" && (
-            <Table responsive bordered className="candidate-table">
-              <thead>
-                <tr>
-                  <th><input type="checkbox" /></th>
-                  <th>Customer ID</th>
-                  <th>Customer Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Country</th>
-                  <th>Customer Type</th>
-                  <th>Ticket ID</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredNewCustomers.map((customer) => (
-                  <tr key={customer.customerId}>
-                    <td><input type="checkbox" /></td>
-                    <td>{customer.customerId}</td>
-                    <td>{customer.customerName}</td>
-                    <td>{customer.customerEmail}</td>
-                    <td>{customer.customerMobile}</td>
-                    <td>{customer.country}</td>
-                    <td>{customer.customerType}</td>
-                    <td>{customer.ticketId}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          )}
-
           {/* Table Rendering for Total Sales */}
           {activeTab === "totalsales" && (
             <Table responsive bordered className="candidate-table">
@@ -352,7 +362,11 @@ const Index = () => {
                     </td>
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td><button>Add</button></td>
+                    <td>
+                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                        Add
+                      </Button>
+                    </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
                     </td>
@@ -448,7 +462,11 @@ const Index = () => {
                     </td>
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td><button>Add</button></td>
+                    <td>
+                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                        Add
+                      </Button>
+                    </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
                     </td>
@@ -470,21 +488,303 @@ const Index = () => {
             </Table>
           )}
 
+          {/* Table Rendering for preparingforshipment */}
+          {activeTab === "preparingforshipment" && (
+            <Table responsive bordered className="candidate-table">
+              <thead>
+                <tr>
+                  {/* <th scope="col">Ser n.</th> */}
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Sale Date</th>
+                  <th scope="col">Closer Name</th>
+                  <th scope="col">Customer Name</th>
+                  <th scope="col">Customer Email</th>
+                  <th scope="col">Street</th>
+                  <th scope="col">City</th>
+                  <th scope="col">State</th>
+                  <th scope="col">Zip Code</th>
+                  <th scope="col">Country</th>
+                  <th scope="col" className='text-center'>Product Details </th>
+                  <th scope="col">Doses</th>
+                  <th scope="col">Tracking Number</th>
+                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Shipping Through</th>
+                  <th scope="col">Paid Amount</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPreparingShipment.map((invoice, index) => (
+                  <tr key={invoice.invoiceId}>
+                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
+                    <td>{formatDate(invoice.saleDate)}</td>
+                    <td> {invoice.closerName} </td>
+                    <td>{invoice.customerName}
+                      <button
+                        type="button"
+                        onClick={() => handleShowCustomerModal(invoice)}
+                        className="btn btn-link p-0">....
+                      </button>
+                    </td>
+                    <td> {invoice.customerEmail} </td>
+                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
+                    <td className='text-center'>
+                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                    </td>
+                    <td className='text-center'>
+                      <table className="table-bordered">
+                        <thead>
+                          <tr>
+                            <th className="px-4">Name</th>
+                            <th className="px-3">Quantity</th>
+                            <th className="px-3">Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoice.orderDto.productOrders.map((order, i) =>
+                            order.product?.map((product, index) => (
+                              <tr key={`${i}-${index}`} className="table table-bordered">
+                                <td scope="col">{product.name}</td>
+                                <td scope="col">{order.quantity || 'N/A'}</td>
+                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                    <td className='text-center'>
+                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
+                    </td>
+                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
+                    <td>
+                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                        Add
+                      </Button>
+                    </td>
+                    <td className="text-success bold-text">
+                      {invoice.currency || 'USD'} {invoice.payment?.amount}
+                    </td>
+                    <td>
+                      {invoice.isVerifiedByAdmin ? (
+                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
+                      ) : (
+                        <Button
+                          variant="success rounded"
+                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                        >
+                          Next
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          {/* Table Rendering for preparingforshipment */}
+          {activeTab === "awaitingtracking" && (
+            <Table responsive bordered className="candidate-table">
+              <thead>
+                <tr>
+                  {/* <th scope="col">Ser n.</th> */}
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Sale Date</th>
+                  <th scope="col">Closer Name</th>
+                  <th scope="col">Customer Name</th>
+                  <th scope="col">Customer Email</th>
+                  <th scope="col">Street</th>
+                  <th scope="col">City</th>
+                  <th scope="col">State</th>
+                  <th scope="col">Zip Code</th>
+                  <th scope="col">Country</th>
+                  <th scope="col" className='text-center'>Product Details </th>
+                  <th scope="col">Doses</th>
+                  <th scope="col">Tracking Number</th>
+                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Shipping Through</th>
+                  <th scope="col">Paid Amount</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredAwaitingtracking.map((invoice, index) => (
+                  <tr key={invoice.invoiceId}>
+                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
+                    <td>{formatDate(invoice.saleDate)}</td>
+                    <td> {invoice.closerName} </td>
+                    <td>{invoice.customerName}
+                      <button
+                        type="button"
+                        onClick={() => handleShowCustomerModal(invoice)}
+                        className="btn btn-link p-0">....
+                      </button>
+                    </td>
+                    <td> {invoice.customerEmail} </td>
+                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
+                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
+                    <td className='text-center'>
+                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                    </td>
+                    <td className='text-center'>
+                      <table className="table-bordered">
+                        <thead>
+                          <tr>
+                            <th className="px-4">Name</th>
+                            <th className="px-3">Quantity</th>
+                            <th className="px-3">Price</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoice.orderDto.productOrders.map((order, i) =>
+                            order.product?.map((product, index) => (
+                              <tr key={`${i}-${index}`} className="table table-bordered">
+                                <td scope="col">{product.name}</td>
+                                <td scope="col">{order.quantity || 'N/A'}</td>
+                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                              </tr>
+                            ))
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                    <td className='text-center'>
+                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
+                    </td>
+                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
+                    <td>
+                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                        Add
+                      </Button>
+                    </td>
+                    <td className="text-success bold-text">
+                      {invoice.currency || 'USD'} {invoice.payment?.amount}
+                    </td>
+                    <td>
+                      {invoice.isVerifiedByAdmin ? (
+                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
+                      ) : (
+                        <Button
+                          variant="success rounded"
+                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                        >
+                          Next
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+          {/* Table Rendering for Existing Customers */}
+          {activeTab === "existingcustomer" && (
+            <Table responsive bordered className="candidate-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" /></th>
+                  <th>Customer ID</th>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Country</th>
+                  <th>Customer Type</th>
+                  <th>Ticket ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredCustomers.map((customer) => (
+                  <tr key={customer.customerId}>
+                    <td><input type="checkbox" /></td>
+                    <td>{customer.customerId}</td>
+                    <td>{customer.customerName}</td>
+                    <td>{customer.customerEmail}</td>
+                    <td>{customer.customerMobile}</td>
+                    <td>{customer.country}</td>
+                    <td>{customer.customerType}</td>
+                    <td>{customer.ticketId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
+
+          {/* Table Rendering for New Customers */}
+          {activeTab === "newcustomer" && (
+            <Table responsive bordered className="candidate-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" /></th>
+                  <th>Customer ID</th>
+                  <th>Customer Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Country</th>
+                  <th>Customer Type</th>
+                  <th>Ticket ID</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredNewCustomers.map((customer) => (
+                  <tr key={customer.customerId}>
+                    <td><input type="checkbox" /></td>
+                    <td>{customer.customerId}</td>
+                    <td>{customer.customerName}</td>
+                    <td>{customer.customerEmail}</td>
+                    <td>{customer.customerMobile}</td>
+                    <td>{customer.country}</td>
+                    <td>{customer.customerType}</td>
+                    <td>{customer.ticketId}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          )}
         </div>
       </div>
+      {/* Add Modal */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Career</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="careerSelect">
+              <Form.Label>Select Career</Form.Label>
+              <Form.Control as="select" value={selectedCareer} onChange={(e) => setSelectedCareer(e.target.value)}>
+                <option value="">-- Select a Career --</option>
+                {careers.map((career) => (
+                  <option key={career.id} value={career.id}>
+                    {career.careerName}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddCareer}>
+            Add Career
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+
     </section>
+
   );
 };
-
-const formatDate = (timestamp) => {
-  if (!timestamp) return 'N/A';
-  const date = new Date(timestamp);
-  return date.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  }).replace(',', ''); // Removes the comma if it appears
-};
-
 
 export default Index;
