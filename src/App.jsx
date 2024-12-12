@@ -136,7 +136,7 @@ import NotificationContainer from './components/NotificationContainer';
 
 
 function App() {
-  const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
+  const [isTicketTrackOn, setIsTicketTrackOn] = useState(true)
 
   return (
     <>
@@ -156,7 +156,7 @@ function App() {
               {localStorage.getItem("userId") && <Topnav />}
               <div className='d-flex'>
                 <div>
-                  <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>
+                {localStorage.getItem("roleName") !== "Admin" &&   <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
                   <div className='d-flex '>
                     {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
                       {localStorage.getItem("userId") && <TicketTrack />}

@@ -101,6 +101,10 @@ function InNegotiation() {
   const handleClose = () => {
     setShow(false)
     setShowTransaction(false)
+    setFormData((prev) => ({
+      ...prev,
+      ticketStatus: ""
+    }))
   };
   const handleShow = (queryId, targetStage) => {
     setDropedinStage(targetStage)
@@ -157,6 +161,7 @@ function InNegotiation() {
     // Show transaction details input when 'Sale' is selected
     if (value === "Sale") {
       setShowModal(true);
+      handleClose()
     } else {
       setShowTransaction(false);
     }
@@ -393,7 +398,7 @@ function InNegotiation() {
     return colors[ticketStatus] || 'white';
   };
 
- 
+
   function formatFollowUpDate(followUpDateTime) {
     const [year, month, day] = followUpDateTime;
     // Convert month to 2-digit format and day to 2-digit format
@@ -435,13 +440,13 @@ function InNegotiation() {
 
   // Get the current page data
   const currentData = ticketData
-  .filter((item) =>
-    (item.senderName && item.senderName.toLowerCase().includes(shortValue.toLowerCase())) ||
-    (item.firstName && item.firstName.toLowerCase().includes(shortValue.toLowerCase())) ||
-    (item.email && item.email.toLowerCase().includes(shortValue.toLowerCase())) ||
-    (item.mobileNumber && item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase())) ||
-    (item.senderMobile && item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()))
-  )
+    .filter((item) =>
+      (item.senderName && item.senderName.toLowerCase().includes(shortValue.toLowerCase())) ||
+      (item.firstName && item.firstName.toLowerCase().includes(shortValue.toLowerCase())) ||
+      (item.email && item.email.toLowerCase().includes(shortValue.toLowerCase())) ||
+      (item.mobileNumber && item.mobileNumber.toLowerCase().includes(shortValue.toLowerCase())) ||
+      (item.senderMobile && item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()))
+    )
     .filter((ticket) => {
       // If buttonFilterValue is an empty string, return all tickets
       if (buttonFilterValue === "") {
@@ -464,18 +469,29 @@ function InNegotiation() {
   };
 
   const [followCount, setFollowupCount] = useState(0)
+  const [saleCount,setSaleCount]=useState(0)
   const [interestedCount, setInterestedCOunt] = useState(0)
   const [placeWithOtherCOunt, setPlaceWithOtherCount] = useState(0)
   const [notPickupCount, setNotPickupCount] = useState(0)
   const [wrongNumberCount, setWrongNumberCount] = useState(0)
   const [notInteresteCount, setNotIntrestedCount] = useState(0)
+  const [users, setAllUsers] = useState([])
+  const [selectedCloser, setSelectedCloser] = useState()
 
   useEffect(() => {
     fetchNoOfTickets()
-  }, [])
 
+    if (localStorage.getItem("roleName") === "SeniorSuperVisor") {
+      fetchAllUsers()
+    }
+  }, [assignedTo])
+
+  const fetchAllUsers = async () => {
+    const response = await axiosInstance.get("/user/getAllCloser")
+    setAllUsers(response.data)
+  }
   const fetchNoOfTickets = async () => {
-    const response = await axiosInstance.get(`/third_party_api/ticket/getcountoftcikets/${userId}`)
+    const response = await axiosInstance.get(`/third_party_api/ticket/getcountoftcikets/${assignedTo===0?userId:assignedTo}`)
     const resutl = response.data;
     for (let i = 0; i < resutl.length; i++) {
       if (resutl[i].Follow) {
@@ -490,6 +506,8 @@ function InNegotiation() {
         setPlaceWithOtherCount(resutl[i].Place_with_other)
       } else if (resutl[i].Interested) {
         setInterestedCOunt(resutl[i].Interested)
+      }else if (resutl[i].Sale) {
+        setSaleCount(resutl[i].Sale)
       }
 
     }
@@ -712,18 +730,29 @@ function InNegotiation() {
     addCopyRecord(uniqueQueryId, text); // Log the copied record
   };
   function formatDate(dateArray) {
-    if(dateArray){const [year, month, day] = dateArray;
-    const months = [
+    if (dateArray) {
+      const [year, month, day] = dateArray;
+      const months = [
         "jan", "feb", "mar", "apr", "may", "jun",
         "jul", "aug", "sep", "oct", "nov", "dec"
-    ];
-    const formattedDay = String(day).padStart(2, '0');
-    const formattedMonth = months[month - 1];
-    return `${formattedDay}-${formattedMonth}-${year}`;}
-}
+      ];
+      const formattedDay = String(day).padStart(2, '0');
+      const formattedMonth = months[month - 1];
+      return `${formattedDay}-${formattedMonth}-${year}`;
+    }
+  }
 
   return (
     <>
+   {localStorage.getItem("roleName")==="SeniorSuperVisor"&&   <div className='p-3' style={{textAlign:"start"}}>
+        <label className='m-3 fw-bold'>Select Closer to see their Negotiation tickets</label>
+        <select value={assignedTo} onChange={(e)=>setAssignedTo(e.target.value)} className="form-select w-25" aria-label="Default select example">
+          <option selected value="0">All negotiations</option>
+          {users.filter((user)=>user.roleId===4).map((user, index) =>
+            <option value={user.userId}>{user.firstName } {user.lastName}</option>
+          )}
+        </select>
+      </div>}
       <div className='d-flex justify-content-end '>
         <div className=' d-flex justify-content-center' >
 
@@ -782,375 +811,375 @@ function InNegotiation() {
       </div>
       <div>
         {list &&
-        
 
-            <div style={{ width: "100%" }}>
-              {/* Stages */}
-              <section className="followup-table-section py-3">
-                <div className="container-fluid">
-                  <div className="table-wrapper tabbed-table">
-                    <div
-                      className="pipeline-container"
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      {stages.map((stage, index) => (
+
+          <div style={{ width: "100%" }}>
+            {/* Stages */}
+            <section className="followup-table-section py-3">
+              <div className="container-fluid">
+                <div className="table-wrapper tabbed-table">
+                  <div
+                    className="pipeline-container"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    {stages.map((stage, index) => (
+                      <div
+                        key={index}
+                        onClick={() => stageSelection(stage.stage)} // Set selected stage
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          position: "relative",
+                          width: `calc(100% / ${stages.length})`,
+                          cursor: "pointer", // Add cursor pointer to indicate it's clickable
+                          fontSize: "inherit", // Default to inherit if not selected
+                          color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                        }}
+                      >
                         <div
-                          key={index}
-                          onClick={() => stageSelection(stage.stage)} // Set selected stage
                           style={{
+                            backgroundColor: stage.color, // Highlight selected stage
+                            width: "100%",
+                            height: "100px",
                             display: "flex",
                             alignItems: "center",
-                            position: "relative",
-                            width: `calc(100% / ${stages.length})`,
-                            cursor: "pointer", // Add cursor pointer to indicate it's clickable
-                            fontSize: "inherit", // Default to inherit if not selected
-                            color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                            justifyContent: "center",
+                            fontWeight: "bold",
+                            flexDirection: "column",
+                            clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
+                            marginRight: "-25px",
+                            zIndex: 1,
+                            boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
                           }}
                         >
                           <div
                             style={{
-                              backgroundColor: stage.color, // Highlight selected stage
-                              width: "100%",
-                              height: "100px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              fontWeight: "bold",
-                              flexDirection: "column",
-                              clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
-                              marginRight: "-25px",
-                              zIndex: 1,
-                              boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
+
+                              fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
+                              color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                             }}
-                          >
-                            <div
-                              style={{
-
-                                fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
-                                color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
-                              }}
-                            >Stage :{stage.stage}</div>
-                            <div style={{ padding: "5px", fontSize: "12px" }}>{stage.name}</div>
-                            {stage.stage < 3 && <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 3 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}</div>}
-                          </div>
-
-                          {index < stages.length - 1 && (
-                            <div
-                              style={{
-                                width: "0",
-                                height: "0",
-                                borderTop: "50px solid transparent",
-                                borderBottom: "50px solid transparent",
-                                borderLeft: `25px solid ${stages[index + 1].color}`,
-                                position: "absolute",
-                                right: "-25px",
-                                zIndex: 0,
-                              }}
-                            ></div>
-                          )}
+                          >Stage :{stage.stage}</div>
+                          <div style={{ padding: "5px", fontSize: "12px" }}>{stage.name}</div>
+                          {stage.stage < 4 && <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 4 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}{stage.stage===3&& saleCount}</div>}
                         </div>
-                      ))}
-                    </div>
 
+                        {index < stages.length - 1 && (
+                          <div
+                            style={{
+                              width: "0",
+                              height: "0",
+                              borderTop: "50px solid transparent",
+                              borderBottom: "50px solid transparent",
+                              borderLeft: `25px solid ${stages[index + 1].color}`,
+                              position: "absolute",
+                              right: "-25px",
+                              zIndex: 0,
+                            }}
+                          ></div>
+                        )}
+                      </div>
+                    ))}
                   </div>
+
                 </div>
-              </section>
-              <section className="filter-section">
-                <div className="container-fluid">
-                  <div className="row">
-                    <div className="col-md-5">
-                      <div className="search-wrapper">
-                        <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                        <div className="search-icon">
-                          <i className="fa-solid fa-magnifying-glass"></i>
-                        </div>
+              </div>
+            </section>
+            <section className="filter-section">
+              <div className="container-fluid">
+                <div className="row">
+                  <div className="col-md-5">
+                    <div className="search-wrapper">
+                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
                       </div>
                     </div>
-                    {selectedStage === 2 && <div className="col-md-5">
-                      <div className="search-wrapper d-flex justify-content-center align-items-center">
-                        <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
-                        <div className="search-icon">
-                          <i className="fa-solid fa-magnifying-glass"></i>
-
-                        </div>
-                        <i
-                          className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
-                          onClick={() => setFilterDate(null)}
-                        ></i>
+                  </div>
+                  {selectedStage === 2 && <div className="col-md-5">
+                    <div className="search-wrapper d-flex justify-content-center align-items-center">
+                      <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                      <div className="search-icon">
+                        <i className="fa-solid fa-magnifying-glass"></i>
 
                       </div>
+                      <i
+                        className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                        onClick={() => setFilterDate(null)}
+                      ></i>
 
-                    </div>}
-                  </div>
+                    </div>
+
+                  </div>}
                 </div>
-              </section>
-              {/*Filters*/}
+              </div>
+            </section>
+            {/*Filters*/}
 
-              {selectedStage < 4 && <section className='d-flex justify-content-center'>
-                <div className=' w-50 d-flex justify-content-around p-3'>
-                  {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
-                  {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
-                    {/* <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button> */}
-                    <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
-                    <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
-                  </>}
-                  {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
-                    <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
-                    <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button>
-                    <button className={`${buttonFilterValue === "hang_up" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("hang_up")}>Hang_Up</button></>}
+            {selectedStage < 4 && <section className='d-flex justify-content-center'>
+              <div className=' w-50 d-flex justify-content-around p-3'>
+                {selectedStage !== 3 && <button className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("")}>All</button>}
+                {selectedStage === 2 && <><button className={`${buttonFilterValue === "Follow" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Follow")}>Follow</button>
+                  {/* <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button> */}
+                  <button className={`${buttonFilterValue === "Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Interested")}>Interested</button>
+                  <button className={`${buttonFilterValue === "Place_with_other" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Place_with_other")}>Place With Others</button>
+                </>}
+                {selectedStage === 1 && <>  <button className={`${buttonFilterValue === "Wrong_Number" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Wrong_Number")}>Wrong_Number</button>
+                  <button className={`${buttonFilterValue === "Not_Pickup" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Pickup")}>Not-pickup</button>
+                  <button className={`${buttonFilterValue === "Not_Interested" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Not_Interested")}>Not-Interested</button>
+                  <button className={`${buttonFilterValue === "hang_up" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("hang_up")}>Hang_Up</button></>}
 
-                </div>
-              </section>
-              }
-              {/* Table */}
-              {selectedStage < 4 && <section className="followup-table-section py-3">
-                <div className="container-fluid">
-                  <div className="table-wrapper tabbed-table">
-                    <div className="followups-table table-responsive table-height">
-                      <table className="table table-hover">
-                        <thead className="sticky-header">
-                          <tr>
-                            <th tabIndex="0" >S.No.</th>
-                            <th tabIndex="0" style={{ width: "120px" }}>Date/Time</th>
-                            <th tabIndex="0">Country</th>
-                            <th tabIndex="0">Customer Name</th>
-                            <th tabIndex="0">Customer Number</th>
-                            <th tabIndex="0">Customer Email</th>
-                            <th tabIndex="0">Status</th>
-                            <th tabIndex="0">Requirement</th>
-                            {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
-                            <th tabIndex="0">Follow Comment</th>
-                            <th tabIndex="0">Action</th>
-                            <th tabIndex="0">Ticket ID</th>
-                            {
-                              selectedStage===3 &&
-                              <th tabIndex="0">Sale Date</th>
-                            }
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
-                            // ${localStorage.getItem("selectedNego") && localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "table-success" :  for selected row 
-                            <tr key={index}
+              </div>
+            </section>
+            }
+            {/* Table */}
+            {selectedStage < 4 && <section className="followup-table-section py-3">
+              <div className="container-fluid">
+                <div className="table-wrapper tabbed-table">
+                  <div className="followups-table table-responsive table-height">
+                    <table className="table table-hover">
+                      <thead className="sticky-header">
+                        <tr>
+                          <th tabIndex="0" >S.No.</th>
+                          <th tabIndex="0" style={{ width: "120px" }}>Date/Time</th>
+                          <th tabIndex="0">Country</th>
+                          <th tabIndex="0">Customer Name</th>
+                          <th tabIndex="0">Customer Number</th>
+                          <th tabIndex="0">Customer Email</th>
+                          <th tabIndex="0">Status</th>
+                          <th tabIndex="0">Requirement</th>
+                          {selectedStage === 2 && <th tabIndex="0">Follow Date/Time</th>}
+                          <th tabIndex="0">Follow Comment</th>
+                          <th tabIndex="0">Action</th>
+                          <th tabIndex="0">Ticket ID</th>
+                          {
+                            selectedStage === 3 &&
+                            <th tabIndex="0">Sale Date</th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
+                          // ${localStorage.getItem("selectedNego") && localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "table-success" :  for selected row 
+                          <tr key={index}
                             className={`${rowcolor(nego.ticketstatus)}`}
                             style={{
-                              boxShadow: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
-                              zIndex: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? 1 : "auto",
-                              position: localStorage.getItem("selectedNego")===nego.uniqueQueryId ? "relative" : "static"
+                              boxShadow: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
+                              zIndex: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? 1 : "auto",
+                              position: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? "relative" : "static"
                             }}
                             onClick={() => handleSelecteRow(index, nego.uniqueQueryId)}
-                            >
-                              <td>{rowsPerPage * (currentPage - 1) + (index + 1)}.</td>
-                              <td>
-                                <span className="text">
-                                  {nego.senderName
-                                    ? <div className='d-flex flex-column'><span className="text">{convertDateFormat(nego.queryTime)}</span></div>
+                          >
+                            <td>{rowsPerPage * (currentPage - 1) + (index + 1)}.</td>
+                            <td>
+                              <span className="text">
+                                {nego.senderName
+                                  ? <div className='d-flex flex-column'><span className="text">{convertDateFormat(nego.queryTime)}</span></div>
 
-                                    : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
-                                </span>
-                              </td>
-                              <td>
-                                <img src={nego.senderCountryIso && getFlagUrl(nego.senderCountryIso)} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
-                                <span className="text">{nego.country}</span>
-                              </td>
-                              <td><span className="text">{nego.senderName || nego.firstName}</span></td>
-                              <td>
-                                {/* For Mobile Number */}
-                                <CopyToClipboard
-                                  text={nego.mobileNumber}
-                                  onCopy={() => handleCopy(nego.uniqueQueryId, nego.mobileNumber, 'mobile')}
-                                >
-                                  <button
-                                    style={{
-                                      backgroundColor:
-                                        copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
-                                      color: copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
-                                    }}
-                                  >
-                                    {copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
-                                  </button>
-                                </CopyToClipboard>
-                                <span className="text"> {maskMobileNumber(nego.mobileNumber)}</span>
-                              </td>
-
-                              <td>
-                                {/* For Email */}
-                                <CopyToClipboard
-                                  text={nego.email}
-                                  onCopy={() => handleCopy(nego.uniqueQueryId, nego.email, 'email')}
-                                >
-                                  <button
-                                    style={{
-                                      backgroundColor:
-                                        copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
-                                      color: copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
-                                    }}
-                                  >
-                                    {copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
-                                  </button>
-                                </CopyToClipboard>
-                                <span className="text">{maskEmail(nego.email)}</span>
-                              </td>
-                              <td>
-                                <div className="dropdown" onClick={() => handleShow(nego.uniqueQueryId)}>
-                                  <a className="btn btn-info dropdown-toggle" role="button" data-bs-toggle="dropdown" style={{ backgroundColor: getColorByStatus(nego.ticketstatus) }}>
-                                    {nego.ticketstatus}
-                                  </a>
-                                </div>
-                              </td>
-                              <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
-                                <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
-                              </td>
-                              {selectedStage === 2 && <td><span className="text">{nego.followUpDateTime ? formatLocalDateTime(nego.followUpDateTime) : ""}</span></td>
-                              }
-                              <td>{nego.comment}</td>
-                              <td>
-                                <span className="actions-wrapper">
-                                  <Button
-                                    onClick={() => openTicketJourney(nego.uniqueQueryId)}
-                                    // onClick={handleView}
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#followUpModal"
-                                    className="btn-action call bg-danger"
-                                    title="Get connect on call"
-                                  ><i className="fa-solid fa-info "></i>
-                                  </Button>
-                                  <Button
-                                    onClick={() => handleClick(nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#followUpModal"
-                                    className="btn-action call"
-                                    title="Get connected on call"
-                                  >
-                                    <i className="fa-solid fa-phone"></i>
-                                  </Button>
-
-                                  <a
-                                    href={`sms:${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
-                                    className="btn-action message"
-                                    title="Get connected on message"
-                                  >
-                                    <i className="fa-solid fa-message"></i>
-                                  </a>
-
-                                  <Button
-                                    onClick={() => handleOn(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile, nego.queryProductName)}
-                                    // href="mailto:someone@example.com"
-                                    className="btn-action email"
-                                    title="Get connect on email"
-                                  ><i className="fa-solid fa-envelope"></i
-                                  ></Button>
-                                  <a href={`https://wa.me/${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. if you're looking for a good deal please type YES👍`}`}
-                                    target='_blank'
-                                    className="btn-action whatsapp"
-                                    title="Get connect on whatsapp"
-                                  ><i className="fa-brands fa-whatsapp"></i></a>
-                                  <Button
-                                    onClick={() => handleQuotation(nego.uniqueQueryId)}
-                                    className="rounded-circle "
-                                    title="Get connect on"
-                                  >
-                                    <i class="fa-share-from-square" ></i>
-                                  </Button>
-                                  <Button
-                                    onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
-                                    className="rounded-circle "
-                                    title="Get connect on"
-                                  >
-                                    <i className="fa-solid fa-file-invoice"></i>
-                                  </Button>
-                                </span>
-                              </td>
-
-                              <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
-                              <td>{formatDate(nego.lastActionDate && nego.lastActionDate)}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Pagination Controls */}
-                    <div className='d-flex pagination-controls align-items-center'>
-                      <div className="pagination-controls">
-                        <button
-                          className='text-white'
-                          style={{ backgroundColor: "#0ecdc6dd" }}
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          disabled={currentPage === 1}
-                        >
-                          Previous
-                        </button>
-
-                        <span>
-                          {Array.from({ length: totalPages }, (_, index) => index + 1)
-                            .filter(page =>
-                              page === 1 ||
-                              page === totalPages ||
-                              (page >= currentPage - 4 && page <= currentPage + 4)
-                            )
-                            .reduce((acc, page, index, array) => {
-                              // Add the page button
-                              acc.push(
+                                  : nego.uploadDate && [nego.uploadDate[2], convertNumberToStringMonth(parseInt(nego.uploadDate[1])), nego.uploadDate[0]].join("-")}
+                              </span>
+                            </td>
+                            <td>
+                              <img src={nego.senderCountryIso && getFlagUrl(nego.senderCountryIso)} alt={`${nego.senderCountryIso} flag`} style={{ width: '30px' }} />
+                              <span className="text">{nego.country}</span>
+                            </td>
+                            <td><span className="text">{nego.senderName || nego.firstName}</span></td>
+                            <td>
+                              {/* For Mobile Number */}
+                              <CopyToClipboard
+                                text={nego.mobileNumber}
+                                onCopy={() => handleCopy(nego.uniqueQueryId, nego.mobileNumber, 'mobile')}
+                              >
                                 <button
-                                  key={page}
-                                  onClick={() => handlePageChange(page)}
-                                  className={`pagination-button text-white ${currentPage === page ? 'active' : ''}`}
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                    color: copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                  }}
                                 >
-                                  {page}
+                                  {copiedId === nego.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
                                 </button>
-                              );
+                              </CopyToClipboard>
+                              <span className="text"> {maskMobileNumber(nego.mobileNumber)}</span>
+                            </td>
 
-                              // Add "..." if there is a gap to the next page in the filtered array
-                              if (index < array.length - 1 && array[index + 1] !== page + 1) {
-                                acc.push(<span key={`ellipsis-${page}`} className="pagination-ellipsis">.........</span>);
-                              }
-                              return acc;
-                            }, [])}
-                        </span>
+                            <td>
+                              {/* For Email */}
+                              <CopyToClipboard
+                                text={nego.email}
+                                onCopy={() => handleCopy(nego.uniqueQueryId, nego.email, 'email')}
+                              >
+                                <button
+                                  style={{
+                                    backgroundColor:
+                                      copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                    color: copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                  }}
+                                >
+                                  {copiedId === nego.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                </button>
+                              </CopyToClipboard>
+                              <span className="text">{maskEmail(nego.email)}</span>
+                            </td>
+                            <td>
+                              <div className="dropdown" onClick={() => handleShow(nego.uniqueQueryId)}>
+                                <a className="btn btn-info dropdown-toggle" role="button" data-bs-toggle="dropdown" style={{ backgroundColor: getColorByStatus(nego.ticketstatus) }}>
+                                  {nego.ticketstatus}
+                                </a>
+                              </div>
+                            </td>
+                            <td className="hover-cell"><span className="comment">{(nego.queryProductName && nego.queryProductName.slice(0, 10)) || (nego.productEnquiry && nego.productEnquiry.slice(0, 10))}</span>
+                              <span className="message ">{nego.queryProductName || nego.productEnquiry}</span>
+                            </td>
+                            {selectedStage === 2 && <td><span className="text">{nego.followUpDateTime ? formatLocalDateTime(nego.followUpDateTime) : ""}</span></td>
+                            }
+                            <td>{nego.comment}</td>
+                            <td>
+                              <span className="actions-wrapper">
+                                <Button
+                                  onClick={() => openTicketJourney(nego.uniqueQueryId)}
+                                  // onClick={handleView}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call bg-danger"
+                                  title="Get connect on call"
+                                ><i className="fa-solid fa-info "></i>
+                                </Button>
+                                <Button
+                                  onClick={() => handleClick(nego.senderMobile ? nego.senderMobile : nego.mobileNumber)}
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#followUpModal"
+                                  className="btn-action call"
+                                  title="Get connected on call"
+                                >
+                                  <i className="fa-solid fa-phone"></i>
+                                </Button>
 
-                        <button
-                          className='text-white'
-                          style={{ backgroundColor: "#0ecdc6dd" }}
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                        >
-                          Next
-                        </button>
-                      </div>
+                                <a
+                                  href={`sms:${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                  className="btn-action message"
+                                  title="Get connected on message"
+                                >
+                                  <i className="fa-solid fa-message"></i>
+                                </a>
 
-                      <div className="table-controls">
-                        <label className='ml-2'>
-                          Rows per page:
-                        </label>
-                        <select value={rowsPerPage} onChange={handleRowsPerPageChange}
-                          style={{ backgroundColor: "#0ecdc6dd" }}
-                        >
-                          <option value={5}>5</option>
-                          <option value={10}>10</option>
-                          <option value={20}>20</option>
-                          <option value={50}>50</option>
-                          <option value={100}>100</option>
-                          <option value={1000}>1000</option>
-                        </select>
-                      </div>
+                                <Button
+                                  onClick={() => handleOn(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile, nego.queryProductName)}
+                                  // href="mailto:someone@example.com"
+                                  className="btn-action email"
+                                  title="Get connect on email"
+                                ><i className="fa-solid fa-envelope"></i
+                                ></Button>
+                                <a href={`https://wa.me/${nego.senderMobile ? nego.senderMobile.split("-")[1] : nego.mobileNumber}?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. if you're looking for a good deal please type YES👍`}`}
+                                  target='_blank'
+                                  className="btn-action whatsapp"
+                                  title="Get connect on whatsapp"
+                                ><i className="fa-brands fa-whatsapp"></i></a>
+                                <Button
+                                  onClick={() => handleQuotation(nego.uniqueQueryId)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i class="fa-share-from-square" ></i>
+                                </Button>
+                                <Button
+                                  onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
+                                  className="rounded-circle "
+                                  title="Get connect on"
+                                >
+                                  <i className="fa-solid fa-file-invoice"></i>
+                                </Button>
+                              </span>
+                            </td>
+
+                            <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
+                            <td>{formatDate(nego.lastActionDate && nego.lastActionDate)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination Controls */}
+                  <div className='d-flex pagination-controls align-items-center'>
+                    <div className="pagination-controls">
+                      <button
+                        className='text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        Previous
+                      </button>
+
+                      <span>
+                        {Array.from({ length: totalPages }, (_, index) => index + 1)
+                          .filter(page =>
+                            page === 1 ||
+                            page === totalPages ||
+                            (page >= currentPage - 4 && page <= currentPage + 4)
+                          )
+                          .reduce((acc, page, index, array) => {
+                            // Add the page button
+                            acc.push(
+                              <button
+                                key={page}
+                                onClick={() => handlePageChange(page)}
+                                className={`pagination-button text-white ${currentPage === page ? 'active' : ''}`}
+                              >
+                                {page}
+                              </button>
+                            );
+
+                            // Add "..." if there is a gap to the next page in the filtered array
+                            if (index < array.length - 1 && array[index + 1] !== page + 1) {
+                              acc.push(<span key={`ellipsis-${page}`} className="pagination-ellipsis">.........</span>);
+                            }
+                            return acc;
+                          }, [])}
+                      </span>
+
+                      <button
+                        className='text-white'
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        Next
+                      </button>
                     </div>
 
-
+                    <div className="table-controls">
+                      <label className='ml-2'>
+                        Rows per page:
+                      </label>
+                      <select value={rowsPerPage} onChange={handleRowsPerPageChange}
+                        style={{ backgroundColor: "#0ecdc6dd" }}
+                      >
+                        <option value={5}>5</option>
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                        <option value={1000}>1000</option>
+                      </select>
+                    </div>
                   </div>
+
+
                 </div>
-              </section>}
-              {
-                selectedStage > 3 &&
-                <InvoiceInfo stage={selectedStage} />
-              }
-            </div>
-        
+              </div>
+            </section>}
+            {
+              selectedStage > 3 &&
+              <InvoiceInfo stage={selectedStage} />
+            }
+          </div>
+
         }
         {
           !list &&
@@ -1223,7 +1252,7 @@ function InNegotiation() {
               </select>
             </div>
 
-           
+
 
             {showFollowUpDate && (
               <div className="mb-3">
@@ -1563,9 +1592,9 @@ function InNegotiation() {
         />
       </Modal>
 
-       {/* when select Sale */}
-       <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <SaleConframtion ticketId={uniqueQueryId}/>
+      {/* when select Sale */}
+      <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <SaleConframtion ticketId={uniqueQueryId} />
         <div className="modal-body">
           <button type="button" className="btn btn-secondary" onClick={handleClosee}>
             Close

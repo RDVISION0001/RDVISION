@@ -77,8 +77,10 @@ const Enotebook = () => {
     <div
       className="d-flex flex-column align-items-center"
       style={{
-        height: '100vh',
-        width: '20vw',
+        height: '90vh',
+        // width: '20vw',
+        overflowY:"scroll",
+        padding:"5px",
         border: '1px solid #ddd',
         borderRadius: '10px',
         overflowY: 'auto',
@@ -143,7 +145,7 @@ const Enotebook = () => {
               <p className="text-muted small">{formatLocalDateTime(note.date)}</p>
               <p>{note.noteContent}</p>
               <i
-                className="fa-solid fa-trash fa-lg text-danger"
+                className="fa-solid fa-trash fa-lg text-danger d-flex justify-content-end"
                 style={{ cursor: 'pointer' }}
                 onClick={() => deleteNote(note.noteId)}
               />

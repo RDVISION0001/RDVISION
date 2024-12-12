@@ -22,7 +22,7 @@ function topnav() {
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
 
   const handleOpenNote = () => {
-    setIsNotebookOpen(true);
+    setIsNotebookOpen(!isNotebookOpen);
   };
 
   const handleCloseNotebook = () => {
@@ -113,12 +113,12 @@ function topnav() {
               <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
             </div>
             <div className="right-part">
-              <div href="/timezone"  className="notification" style={{ position: "relative", display: "inline-block" }}>
+              <div href="/timezone" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <span className="page-title"  >
                   <i class="fa-solid fa-clock fa-2xl" onClick={handleOpenTimezone}></i>
                 </span>
               </div>
-              <a href="/action_mode"  className="notification" style={{ position: "relative", display: "inline-block" }}>
+              <a href="/action_mode" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <span className="page-title"  >
                   <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
                 </span>
@@ -142,10 +142,7 @@ function topnav() {
                 <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
 
               </a>
-              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i class="fa-brands fa-rocketchat fa-xl" onClick={() => setIsChatBotOpen(true)}></i>
 
-              </a>
 
               <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>
@@ -279,40 +276,30 @@ function topnav() {
               <Enotebook />
             </div>
           </dialog> */}
-          {isNotebookOpen && (
-            <div
-              className="noteebook-modal bg-light text-black"
-              style={{
-                height: "100vh",
-                position: "fixed",
-                top: "50%",
-                left: "90%",
-                transform: "translate(-50%, -50%)",
-                border: "none",
-                borderRadius: "8px",
-                padding: "5px",
-                zIndex: 1000, // Ensure it's above other components
-                boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.3)",
 
-              }}
-            >
-              <i
-                className="fa-solid fa-times fa-xl pointer close-icon"
-                onClick={handleCloseNotebook}
-                style={{
-                  position: "absolute",
-                  top: "20px",
-                  right: "360px",
-                  cursor: "pointer",
-                  zIndex: "1000"
-                }}
-              ></i>
-              <div className="modal-content" style={{ width: "100%", height: "100%" }}>
 
-                <Enotebook />
-              </div>
-            </div>
-          )}
+          <div
+            className="text-black"
+            style={{
+              position: "fixed",
+              bottom: "200px",
+              right: "10px",
+              width: isNotebookOpen ? "350px" : "5px", // Full width when open, small when hidden
+              height: isNotebookOpen ? "400px" : "5px", // Full height when open, small when hidden
+              border: "none",
+              zIndex: 1000,
+              backgroundColor: isNotebookOpen ? "#fff" : "#f0f0f0", // Change background if needed
+              cursor: "pointer", // Indicate clickable when minimized
+            }}
+            onClick={() => {
+              if (!isNotebookOpen) {
+                setIsNotebookOpen(true); // Open chat when clicking minimized window
+              }
+            }}
+          >
+            {isNotebookOpen && <Enotebook />}
+          </div>
+
           <div
             className="text-black"
             style={{
