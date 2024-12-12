@@ -106,7 +106,6 @@ const WebsocketService = () => {
             // Subscribe to public and private messages only once
             client.subscribe("/topic/messages", (messageOutput) => {
                 const messageData = JSON.parse(messageOutput.body);
-                console.log(messageData.sentToUserId ,parseInt(userId))
                 if (messageData.sentToUserId === parseInt(userId)) {
                     console.log(messageData.sentToUserId)
                     playNotificationSound()
@@ -271,7 +270,7 @@ const WebsocketService = () => {
                     alignItems: "center",
                 }}
             >
-                <div style={{ fontWeight: "bold" }}>Chat  with {role==="Admin"?"Closer":"Admin"}</div>
+                <div style={{ fontWeight: "bold" }}>Chat  with {role === "Admin" ? "Closer" : "Admin"}</div>
                 <div style={{ fontSize: "14px", cursor: "pointer" }}>⋮</div>
             </div>
             {/* Chat Body */}
@@ -307,7 +306,7 @@ const WebsocketService = () => {
                             ) : null}
 
                             {/* Show "Received from" only for received messages */}
-                            {role === "Admin" && msg.sentByUserId !== userId ? (
+                            {msg.sentByUserId !== userId ? (
                                 <strong>Received from {msg.sentByUserName}</strong>
                             ) : null}
 
@@ -325,7 +324,18 @@ const WebsocketService = () => {
                                         Received on: {formatDate(msg.sentDate)} at {formatTime(msg.sentTime)}
                                     </small>
                                 )}
+
                             </div>
+                           {msg.sentByUserId!== (userId)&& <div className="d-flex justify-content-end">
+                                <i
+                                    className="fa-solid fa-reply fa-rotate-180"
+                                    onClick={()=>setSelectedRecipient(msg.sentByUserId)}
+                                    style={{ color: "#32b38c", cursor: "pointer" }}
+                                    title="Reply"
+                                ></i>
+                             
+                            </div>}
+
                         </div>
                     </div>
                 ))}
@@ -370,7 +380,7 @@ const WebsocketService = () => {
                 }}
             >
                 {/* Show recipient selection dropdown for Admin */}
-                {role === "Admin" && (users && users.length > 0) && (
+                {(users && users.length > 0) && (
                     <select
                         value={selectedRecipient}
                         onChange={(e) => setSelectedRecipient(e.target.value)}

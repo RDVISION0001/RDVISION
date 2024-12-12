@@ -14,10 +14,15 @@ const Index = () => {
   const [newCustomers, setNewCustomers] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [todayInvoices, setTodayInvoices] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showCareerModal, setShowCareerModal] = useState(false);
+  const [showTrackingModal, setShowTrackingModal] = useState(false);
+
   const [careers, setCareers] = useState([]);
   const [selectedCareer, setSelectedCareer] = useState("");
+  const [tracking, setTracking] = useState("");
   const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
+  const [uniqueQueryId, setUniqueQueryId] = useState(null);
+
   const [preparingShipment, setPreparingShipment] = useState([]);
   const [awaitingtracking, setAwaitingtracking] = useState([]);
 
@@ -28,12 +33,15 @@ const Index = () => {
     axiosInstance.get(`/career/gelAll`)
       .then((response) => setCareers(response.data))
       .catch((error) => console.error("Error fetching careers:", error));
-    setShowModal(true);
+    setShowCareerModal(true);
   };
   const handleCloseModal = () => {
-    setShowModal(false);
+    setShowCareerModal(false); // Close the career modal
+    setShowTrackingModal(false); // Close the tracking modal
     setSelectedCareer("");
+    setTracking("");
   };
+
   // Submit selected career to the API
   const handleAddCareer = async () => {
     if (!selectedCareer) {
@@ -51,7 +59,32 @@ const Index = () => {
     }
   };
 
-//formate date 
+  const handleShowTrackingModal = (queryId) => {
+    setUniqueQueryId(queryId); // Ensure the unique query ID is set here
+    setShowTrackingModal(true);
+  };
+
+  // Submit tracking to the API
+  const handleAddTracking = async () => {
+    if (!tracking) {
+      toast.error("Please enter a tracking number.");
+      return;
+    }
+    try {
+      const response = await axiosInstance.post(`/invoice/addTrackingNumber`, {
+        trackingNumber: tracking,     
+        ticketId: uniqueQueryId,  
+      });
+      toast.success(response.data.message || "Tracking added successfully!");
+      handleCloseModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to add tracking.");
+    }
+  };
+  
+  
+
+  //formate date 
   const formatDateToString = (dateArray) => {
     const [year, month, day] = dateArray;
     return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -84,7 +117,7 @@ const Index = () => {
           const today = new Date().toISOString().split("T")[0];
 
           const filtered = response.data.filter((invoice) => {
-            const saleDate =  formatDateToString(invoice.saleDate);
+            const saleDate = formatDateToString(invoice.saleDate);
             return saleDate === today;
           });
           setTodayInvoices(filtered);
@@ -371,7 +404,7 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                     {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
                       </Button>}
                     </td>
@@ -471,7 +504,7 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
                       </Button>}
                     </td>
@@ -571,7 +604,7 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
                       </Button>}
                     </td>
@@ -595,7 +628,8 @@ const Index = () => {
               </tbody>
             </Table>
           )}
-          {/* Table Rendering for preparingforshipment */}
+
+          {/* Table Rendering for awaiting tracking */}
           {activeTab === "awaitingtracking" && (
             <Table responsive bordered className="candidate-table">
               <thead>
@@ -667,10 +701,15 @@ const Index = () => {
                     <td className='text-center'>
                       {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
                     </td>
-                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                    {/* <td className='text-center'>{invoice.trackingNumber || "N/A"}</td> */}
+                    <td>
+                      {invoice.trackingNumber ? invoice.trackingNumber : <Button variant="warning rounded" onClick={() => handleShowTrackingModal(invoice.uniqueQueryId)}>
+                        Add Tracking
+                      </Button>}
+                    </td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
                       </Button>}
                     </td>
@@ -759,8 +798,9 @@ const Index = () => {
           )}
         </div>
       </div>
-      {/* Add Modal */}
-      <Modal show={showModal} onHide={handleCloseModal}>
+
+      {/* Add Career Modal  */}
+      <Modal show={showCareerModal} onHide={handleCloseModal}>
         <Modal.Header closeButton>
           <Modal.Title>Add Career</Modal.Title>
         </Modal.Header>
@@ -788,6 +828,33 @@ const Index = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* Add Tracking Modal */}
+      <Modal show={showTrackingModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Tracking Number</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group controlId="formTrackingNumber">
+            <Form.Label>Tracking Number</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter tracking number"
+              value={tracking}
+              onChange={(e) => setTracking(e.target.value)}
+            />
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleAddTracking}>
+            Add Tracking
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
 
 
     </section>
