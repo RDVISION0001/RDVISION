@@ -192,7 +192,7 @@ function SaleConframtion(props) {
        if(orderDetails.productOrders.length>0){
         try {
             const response = await axiosInstance.post(`/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`, formData); // Send formData instead of setFormData
-            toast.success('Invoice sent successfully!');
+            toast.success('Marked as Sale done');
         } catch (error) {
             console.error('Error sending invoice:', error);
             toast.error('Failed to send invoice');

@@ -73,6 +73,7 @@ function live_tickets() {
   const [countryFilter, setCountryFilter] = useState([])
   const [productArray, setProductArray] = useState([]);
   const [dropdownCountries, setDropDownCountries] = useState([])
+  const [assignedTo, setAssignedTo] = useState(0)
   const [emailData, setEmailData] = useState({
     ticketId: "",
     name: "",
@@ -108,7 +109,13 @@ function live_tickets() {
     followUp: {},
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false)
+    setFormData((prev)=>({
+      ...prev,
+      ticketStatus:""
+    }))
+  };
   const handleShow = (queryId) => {
     setUniqueQueryId(queryId);
     setShow(true);
@@ -149,26 +156,14 @@ function live_tickets() {
     setIsQuotationOn(!isQuotationOn)
   }
 
-  const fetchData = async (params, page, perPage) => {
-    try {
-      const response = await axiosInstance.get('/third_party_api/ticket/ticketByStatus', {
-        params: { ...params, page, size: perPage }
-      });
-      setData(response.data.dtoList);
-      setCurrentPage(response.data.currentPage);
-      setTotalPages(response.data.totalPages);
+  const fetchData = async () => {
+    const response = await axiosInstance.get(`/third_party_api/ticket/${assignedTo!==0?`getAllNewTickets/${userId}`:`getAllNewTickets`}`)
+    setData(response.data);
+    const allData = response.data
+    console.log(allData.length)
+    setCurrentPage(0);
+    setTotalPages(Math.ceil(response.data.length / itemsPerPage));
 
-      // Update notification count based on totalElement
-      if (params.ticketStatus === 'New') {
-        const newCount = response.data.totalElement;
-        if (newCount > newNotifications) {
-
-        }
-        setNewNotifications(newCount);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
   };
 
 
@@ -342,21 +337,21 @@ function live_tickets() {
   const handleStatusChange = (event) => {
     handleChange(event);
     const { value } = event.target;
-  
+
     if (value === "Sale") {
-      setShowModal(true); 
-      // setShowTransaction(true); 
+      setShowModal(true);
+      handleClose()
     } else {
       setShowTransaction(false);
     }
-  
+
     if (value === "Follow") {
       setShowFollowUpDate(true);
     } else {
       setShowFollowUpDate(false);
     }
   };
-  
+
 
   const fetchCountries = async () => {
     const response = await axiosInstance.get("/third_party_api/ticket/getDistinctCountries")
@@ -366,8 +361,8 @@ function live_tickets() {
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
   useEffect(() => {
-    fetchData(params[activeTab], currentPage, itemsPerPage);
-  }, [activeTab, currentPage, itemsPerPage]);
+    fetchData();
+  }, [assignedTo]);
 
   useEffect(() => {
     fetchProducts();
@@ -431,28 +426,29 @@ function live_tickets() {
 
   const handleItemsPerPageChange = (perPage) => {
     setItemsPerPage(perPage);
-    setCurrentPage(0);
+    setCurrentPage(0); // Reset to the first page
   };
-
+  
   const generatePageNumbers = () => {
+    const totalPages = Math.ceil(data && data.length / itemsPerPage); // Calculate total pages
     const pageNumbers = [];
-    const maxPagesToShow = 9;
+    const maxPagesToShow = 9; // Maximum number of page buttons to display
     const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
-
+  
     let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
     let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
-
+  
     if (endPage - startPage < maxPagesToShow - 1) {
       startPage = Math.max(endPage - maxPagesToShow + 1, 0);
     }
-
+  
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-
+  
     return pageNumbers;
   };
-
+  
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try {
@@ -590,7 +586,6 @@ function live_tickets() {
     setCopiedType(type); // Track whether it's a mobile number or email
     addCopyRecord(uniqueQueryId, text); // Log the copied record
   };
-  const [assignedTo, setAssignedTo] = useState(0)
 
 
   const handleCountryFilter = (country) => {
@@ -604,9 +599,6 @@ function live_tickets() {
       setCountryFilter([]); // Clear selection if "All" is clicked
     }
   };
-
-
-
 
   return (
     <>
@@ -662,7 +654,7 @@ function live_tickets() {
                               onChange={() => setAssignedTo(0)} // Call toggle method on change
                             />
                             <label className="form-check-label" htmlFor="flexCheckChecked">
-                              All negotiation tickets
+                              All New tickets
                             </label>
                           </div>
                         </div>
@@ -733,151 +725,156 @@ function live_tickets() {
                           </thead>
                           {data ? (
                             <tbody>
-                              {data.filter(
-                                (item) =>
-                                  item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
-                                  item.senderName.toLowerCase().includes(shortValue.toLowerCase())
-                              ).filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso)).filter((item) => item.senderCountryIso !== "IN").map((item, index) => (
-                                <tr key={index}
-                                  className={`${localStorage.getItem("selectedLive") && localStorage.getItem("selectedLive").includes(item.uniqueQueryId) ? "table-success" : ""}`}
-                                  // style={{
-                                  //   boxShadow: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
-                                  //   zIndex: localStorage.getItem("selectedLive") === item.uniqueQueryId ? 1 : "auto",
-                                  //   position: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "relative" : "static"
-                                  // }}
-                                  onClick={() => handleSelecteRow(index, item.uniqueQueryId)}
-                                >
-                                  <td>{itemsPerPage * currentPage + (index + 1)}.</td>
-                                  <td>
-                                    <span className="text">
-                                      {item.queryTime.split(" ")[0].split("-")[2]}-
-                                      {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
-                                      {item.queryTime.split(" ")[0].split("-")[0]}
-                                    </span>
-                                    <br />
-                                    <span>
-                                      {convertTo12HourFormat(item.queryTime.split(" ")[1])}
-                                    </span>
-                                  </td>
-                                  <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
-                                  <td><span className="text">{item.senderName}</span></td>
-                                  <td>
-                                    {/* For Mobile Number */}
-                                    <CopyToClipboard
-                                      text={item.senderMobile}
-                                      onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
-                                    >
-                                      <button
-                                        style={{
-                                          backgroundColor:
-                                            copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
-                                          color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
-                                        }}
+                              {data
+                                .filter(
+                                  (item) =>
+                                    item.senderMobile.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                    item.senderEmail.toLowerCase().includes(shortValue.toLowerCase()) ||
+                                    item.senderName.toLowerCase().includes(shortValue.toLowerCase())
+                                )
+                                .filter((item) => countryFilter.length === 0 || countryFilter.includes(item.senderCountryIso))
+                                .filter((item) => item.senderCountryIso !== "IN")
+                                .slice(itemsPerPage * currentPage, itemsPerPage * (currentPage + 1)) // Paginate the data
+                                .map((item, index) => (
+                                  <tr key={index}
+                                    className={`${localStorage.getItem("selectedLive") && localStorage.getItem("selectedLive").includes(item.uniqueQueryId) ? "table-success" : ""}`}
+                                    // style={{
+                                    //   boxShadow: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
+                                    //   zIndex: localStorage.getItem("selectedLive") === item.uniqueQueryId ? 1 : "auto",
+                                    //   position: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "relative" : "static"
+                                    // }}
+                                    onClick={() => handleSelecteRow(index, item.uniqueQueryId)}
+                                  >
+                                    <td>{itemsPerPage * currentPage + (index + 1)}.</td>
+                                    <td>
+                                      <span className="text">
+                                        {item.queryTime.split(" ")[0].split("-")[2]}-
+                                        {convertNumberToStringMonth(parseInt(item.queryTime.split(" ")[0].split("-")[1]))}-
+                                        {item.queryTime.split(" ")[0].split("-")[0]}
+                                      </span>
+                                      <br />
+                                      <span>
+                                        {convertTo12HourFormat(item.queryTime.split(" ")[1])}
+                                      </span>
+                                    </td>
+                                    <td><img src={getFlagUrl(item.senderCountryIso === "UK" ? "gb" : item.senderCountryIso)} alt={`${item.senderCountryIso} flag`} /><span className="text">{item.senderCountryIso}</span></td>
+                                    <td><span className="text">{item.senderName}</span></td>
+                                    <td>
+                                      {/* For Mobile Number */}
+                                      <CopyToClipboard
+                                        text={item.senderMobile}
+                                        onCopy={() => handleCopy(item.uniqueQueryId, item.senderMobile, 'mobile')}
                                       >
-                                        {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
-                                      </button>
-                                    </CopyToClipboard>
-                                    <span className="text">{maskMobileNumber(item.senderMobile)}</span>
-                                  </td>
+                                        <button
+                                          style={{
+                                            backgroundColor:
+                                              copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'green' : 'black',
+                                            color: copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'white' : 'white',
+                                          }}
+                                        >
+                                          {copiedId === item.uniqueQueryId && copiedType === 'mobile' ? 'Copied!' : 'Copy'}
+                                        </button>
+                                      </CopyToClipboard>
+                                      <span className="text">{maskMobileNumber(item.senderMobile)}</span>
+                                    </td>
 
-                                  <td>
-                                    {/* For Email */}
-                                    <CopyToClipboard
-                                      text={item.senderEmail}
-                                      onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
-                                    >
-                                      <button
-                                        style={{
-                                          backgroundColor:
-                                            copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
-                                          color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
-                                        }}
+                                    <td>
+                                      {/* For Email */}
+                                      <CopyToClipboard
+                                        text={item.senderEmail}
+                                        onCopy={() => handleCopy(item.uniqueQueryId, item.senderEmail, 'email')}
                                       >
-                                        {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
-                                      </button>
-                                    </CopyToClipboard>
-                                    <span className="text">{maskEmail(item.senderEmail)}</span>
-                                  </td>
+                                        <button
+                                          style={{
+                                            backgroundColor:
+                                              copiedId === item.uniqueQueryId && copiedType === 'email' ? 'green' : 'black',
+                                            color: copiedId === item.uniqueQueryId && copiedType === 'email' ? 'white' : 'white',
+                                          }}
+                                        >
+                                          {copiedId === item.uniqueQueryId && copiedType === 'email' ? 'Copied!' : 'Copy'}
+                                        </button>
+                                      </CopyToClipboard>
+                                      <span className="text">{maskEmail(item.senderEmail)}</span>
+                                    </td>
 
-                                  <td onClick={() => handleShow(item.uniqueQueryId)} >
-                                    <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
-                                      style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
-                                      {item.ticketstatus}
-                                    </a>
-                                  </td>
-
-                                  <td className="hover-cell">
-                                    <span className="comment">{item.subject.slice(15, 30)}<br /></span>
-
-                                    {/* Hidden message span that will show on hover */}
-                                    <span className="message">{item.subject}</span>
-                                  </td>
-
-                                  {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
-
-                                  <td>
-                                    <span className="actions-wrapper">
-                                      <Button
-                                        onClick={() => openTicketJourney(item.uniqueQueryId)}
-                                        // onClick={handleView}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action call bg-danger"
-                                        title="Get connect on call"
-                                      ><i className="fa-solid fa-info "></i>
-                                      </Button>
-                                      <Button
-                                        onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
-                                        // onClick={handleView}
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#followUpModal"
-                                        className="btn-action call rounded-circle"
-                                        title="Get connect on call"
-                                      ><i className="fa-solid fa-phone"></i>
-                                      </Button>
-                                      <a
-                                        href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                        className="btn-action message"
-                                        title="Get connect on message"
-                                      ><i className="fa-solid fa-message"></i></a>
-                                      <Button
-                                        onClick={() => handleOn(item.uniqueQueryId)}
-                                        // href="mailto:someone@example.com"
-                                        className="btn-action email"
-                                        title="Get connect on email"
-                                      ><i className="fa-solid fa-envelope"></i
-                                      ></Button>
-                                      <a
-                                        href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
-                                        target="_blank"
-                                        className="btn-action whatsapp"
-                                        title="Get connect on whatsapp"
-                                      >
-                                        <i className="fa-brands fa-whatsapp"></i>
+                                    <td onClick={() => handleShow(item.uniqueQueryId)} >
+                                      <a className="btn btn-info dropdown-toggle" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false"
+                                        style={{ backgroundColor: getColorByStatus(item.ticketstatus) }}>
+                                        {item.ticketstatus}
                                       </a>
-                                      <Button
-                                        onClick={() => handleQuotation(item.uniqueQueryId)}
-                                        className="rounded-circle "
-                                        title="Get connect on"
-                                      >
-                                        <i class="fa-share-from-square" ></i>
-                                      </Button>
+                                    </td>
 
-                                      <Button
-                                        onClick={() => handleInvoice(item.uniqueQueryId)}
-                                        className="rounded-circle "
-                                        title="Get connect on"
-                                      >
-                                        <i className="fa-solid fa-file-invoice"></i>
-                                      </Button>
-                                    </span>
-                                  </td>
-                                  <td className="ticket-id">
-                                    <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
-                                  </td>
-                                </tr>
-                              ))}
+                                    <td className="hover-cell">
+                                      <span className="comment">{item.subject.slice(15, 30)}<br /></span>
+
+                                      {/* Hidden message span that will show on hover */}
+                                      <span className="message">{item.subject}</span>
+                                    </td>
+
+                                    {/* <span className='text-primary' style={{cursor:"Pointer"}}>see more...</span> */}
+
+                                    <td>
+                                      <span className="actions-wrapper">
+                                        <Button
+                                          onClick={() => openTicketJourney(item.uniqueQueryId)}
+                                          // onClick={handleView}
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#followUpModal"
+                                          className="btn-action call bg-danger"
+                                          title="Get connect on call"
+                                        ><i className="fa-solid fa-info "></i>
+                                        </Button>
+                                        <Button
+                                          onClick={() => handleClick(item.senderMobile, item.uniqueQueryId)}
+                                          // onClick={handleView}
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#followUpModal"
+                                          className="btn-action call rounded-circle"
+                                          title="Get connect on call"
+                                        ><i className="fa-solid fa-phone"></i>
+                                        </Button>
+                                        <a
+                                          href={`sms:${item.senderMobile}?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                          className="btn-action message"
+                                          title="Get connect on message"
+                                        ><i className="fa-solid fa-message"></i></a>
+                                        <Button
+                                          onClick={() => handleOn(item.uniqueQueryId)}
+                                          // href="mailto:someone@example.com"
+                                          className="btn-action email"
+                                          title="Get connect on email"
+                                        ><i className="fa-solid fa-envelope"></i
+                                        ></Button>
+                                        <a
+                                          href={`https://wa.me/${item.senderMobile.replace(/[+-]/g, '')}?text=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                          target="_blank"
+                                          className="btn-action whatsapp"
+                                          title="Get connect on whatsapp"
+                                        >
+                                          <i className="fa-brands fa-whatsapp"></i>
+                                        </a>
+                                        <Button
+                                          onClick={() => handleQuotation(item.uniqueQueryId)}
+                                          className="rounded-circle "
+                                          title="Get connect on"
+                                        >
+                                          <i class="fa-share-from-square" ></i>
+                                        </Button>
+
+                                        <Button
+                                          onClick={() => handleInvoice(item.uniqueQueryId)}
+                                          className="rounded-circle "
+                                          title="Get connect on"
+                                        >
+                                          <i className="fa-solid fa-file-invoice"></i>
+                                        </Button>
+                                      </span>
+                                    </td>
+                                    <td className="ticket-id">
+                                      <i className="fa-solid fa-ticket"></i>{item.uniqueQueryId}
+                                    </td>
+                                  </tr>
+                                ))}
                             </tbody>
                           ) : (
                             <p>Loading...</p>
@@ -1313,7 +1310,7 @@ function live_tickets() {
 
       {/* when select Sale */}
       <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <SaleConframtion  ticketId={uniqueQueryId}/>
+        <SaleConframtion ticketId={uniqueQueryId} />
         <div className="modal-body">
           <button type="button" className="btn btn-secondary" onClick={handleClosee}>
             Close

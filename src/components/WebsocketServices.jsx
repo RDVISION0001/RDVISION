@@ -108,6 +108,8 @@ const WebsocketService = () => {
                 const messageData = JSON.parse(messageOutput.body);
                 console.log(messageData.sentToUserId ,parseInt(userId))
                 if (messageData.sentToUserId === parseInt(userId)) {
+                    console.log(messageData.sentToUserId)
+                    playNotificationSound()
                     setMessages((prevMessages) => {
                         if (!prevMessages.some((msg) => msg.message === messageData.message)) {
                             return [
@@ -269,7 +271,7 @@ const WebsocketService = () => {
                     alignItems: "center",
                 }}
             >
-                <div style={{ fontWeight: "bold" }}>Chat</div>
+                <div style={{ fontWeight: "bold" }}>Chat  with {role==="Admin"?"Closer":"Admin"}</div>
                 <div style={{ fontSize: "14px", cursor: "pointer" }}>⋮</div>
             </div>
             {/* Chat Body */}

@@ -131,6 +131,10 @@ function uploaded_tickets() {
   const handleClose = () => {
     setShow(false)
     setIsOpnnedAssign(false)
+    setFormData((prev)=>({
+      ...prev,
+      ticketStatus:""
+    }))
   };
   const handleShow = (queryId) => {
     setUniqueQueryId(queryId);
@@ -331,6 +335,7 @@ function uploaded_tickets() {
     // Show transaction details input when 'Sale' is selected
     if (value === "Sale") {
       setShowModal(true);
+      handleClose()
     } else {
       setShowTransaction(false);
     }

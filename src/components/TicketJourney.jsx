@@ -125,7 +125,7 @@ const TicketJourney = (props) => {
                             </time>
                             <span style={{ display: 'flex', justifyContent: "space-between", width: "100%" }} >
                                 <strong>
-                                    {stage.updateTime[0]}:{stage.updateTime[1]} &amp; {stage.comment}
+                                    {stage.updateTime && stage.updateTime[0]}:{stage.updateTime &&stage.updateTime[1]} &amp; {stage.comment}
                                     <div>{stage.userName}</div>
                                 </strong>
                                 <strong>
