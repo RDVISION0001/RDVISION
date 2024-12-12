@@ -41,7 +41,7 @@ const Index = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post(`/invoice/addCareer/${currentInvoiceId}`, {
+      const response = await axiosInstance.post(`/invoice/addCareer/${currentInvoiceId}?careerName=${selectedCareer}`, {
         careerName: selectedCareer
       });
       toast.success(response.data.message || "Career added successfully!");
@@ -50,6 +50,13 @@ const Index = () => {
       toast.error(error.response?.data?.message || "Failed to add career.");
     }
   };
+
+//formate date 
+  const formatDateToString = (dateArray) => {
+    const [year, month, day] = dateArray;
+    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+  };
+
   // Fetch data when the tab changes
   useEffect(() => {
     if (activeTab === "totalticket") {
@@ -75,8 +82,9 @@ const Index = () => {
       axiosInstance.get(`/invoice/getVerifiedInvoives`)
         .then((response) => {
           const today = new Date().toISOString().split("T")[0];
+
           const filtered = response.data.filter((invoice) => {
-            const saleDate = new Date(invoice.saleDate).toISOString().split("T")[0];
+            const saleDate =  formatDateToString(invoice.saleDate);
             return saleDate === today;
           });
           setTodayInvoices(filtered);
@@ -363,9 +371,9 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                     {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
-                      </Button>
+                      </Button>}
                     </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
@@ -463,9 +471,9 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
-                      </Button>
+                      </Button>}
                     </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
@@ -563,9 +571,9 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
-                      </Button>
+                      </Button>}
                     </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
@@ -662,9 +670,9 @@ const Index = () => {
                     <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                      <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
+                    {invoice.shippingCareer?invoice.shippingCareer:<Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
                         Add
-                      </Button>
+                      </Button>}
                     </td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
