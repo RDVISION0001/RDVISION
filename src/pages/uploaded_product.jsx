@@ -149,7 +149,7 @@ function UploadedProduct() {
             try {
                 const response = await axiosInstance.post('/product/addproduct', payload);
                 console.log('Product added successfully:', response.data);
-                toast.success(" Product Added ")
+                toast.success("Product Added Successfully!"); 
                 setBasicData({
                     name: '',
                     productCode: '',
@@ -171,6 +171,7 @@ function UploadedProduct() {
                 fetchProducts()
             } catch (error) {
                 console.error('Error adding product:', error);
+                toast.error("Failed to add product!"); 
             }
         }
     };

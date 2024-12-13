@@ -83,7 +83,6 @@ const Enotebook = () => {
         padding:"5px",
         border: '1px solid #ddd',
         borderRadius: '10px',
-        overflowY: 'auto',
         backgroundColor: '#f9f9f9',
         paddingTop:"20px"
       }}

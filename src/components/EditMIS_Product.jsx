@@ -8,6 +8,7 @@ const EditMIS_Product = ({ id }) => {
     const [formData, setFormData] = useState({
         productId:id.productId,
         name: productData?.name || '',
+        composition: productData?.composition || '',
         genericName: productData?.genericName || '',
         brand: productData?.brand || '',
         strength: productData?.strength || '',
@@ -48,6 +49,24 @@ const EditMIS_Product = ({ id }) => {
                                 type="text"
                                 name="name"
                                 value={formData.name}
+                                onChange={handleChange}
+                                className="form-control p-3 rounded-3"
+                                placeholder="Enter the product name"
+                                style={{
+                                    border: "1px solid #ced4da",
+                                    backgroundColor: "#ffffff",
+                                }}
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="row mb-4">
+                        <div className="col-md-12">
+                            <label className="form-label fw-semibold" style={{ color: "#6c757d" }}>Composition</label>
+                            <input
+                                type="text"
+                                name="composition"
+                                value={formData.composition}
                                 onChange={handleChange}
                                 className="form-control p-3 rounded-3"
                                 placeholder="Enter the product name"

@@ -97,7 +97,7 @@ const WebsocketService = () => {
 
 
     useEffect(() => {
-        const socket = new SockJS("https://rdvision.in/ws");
+        const socket = new SockJS("https://backend.rdvision.in/ws");
         const client = Stomp.over(socket);
 
         client.connect({}, (frame) => {

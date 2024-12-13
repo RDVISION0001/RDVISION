@@ -624,12 +624,12 @@ function InvoiceBox(props) {
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
-                                                    {/* <img
-                                                        src={convertToImage(product.imageData)}
+                                                <img
+                                                        src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
-                                                        style={{ maxWidth: '60px', marginTop: '10px' }}
-                                                    /> */}
+                                                        style={{ maxHeight: '80px', marginTop: '10px' }}
+                                                    />
                                                 </div>
 
                                                 {/* Product Details Section */}
