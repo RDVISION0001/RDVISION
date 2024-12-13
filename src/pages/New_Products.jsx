@@ -88,7 +88,7 @@ function New_Products() {
             try {
                 const response = await axiosInstance.post('/product/addproduct', payload);
                 console.log('Product added successfully:', response.data);
-                toast.success(" Product Added ")
+                toast.success(" Product Added Successfully!")
                 setBasicData({
                     name: '',
                     productCode: '',
@@ -110,6 +110,7 @@ function New_Products() {
                 fetchProducts()
             } catch (error) {
                 console.error('Error adding product:', error);
+                toast.error("Failed to add product!");
             }
         }
     };
@@ -175,7 +176,7 @@ function New_Products() {
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Yes, delete it!"
-          }).then(async(result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
@@ -186,8 +187,8 @@ function New_Products() {
                     toast.error("Failed to delete product. Please try again.");
                 }
             }
-          });
-      
+        });
+
     };
 
     const scrollToTop = () => {

@@ -136,7 +136,7 @@ import NotificationContainer from './components/NotificationContainer';
 
 
 function App() {
-  const [isTicketTrackOn, setIsTicketTrackOn] = useState(true)
+  const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
 
   return (
     <>

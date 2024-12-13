@@ -12,9 +12,9 @@ export const AuthProvider = ({ children }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [attendanceId, setAttendanceId] = useState('');
-  const [followupState,setFolowupUpdate]=useState("null")
-  const [noOfNweticketsRecevied,setNoOfnewticketsReceived]=useState(0)
-  const [userReportReloader,setUserReportReloader]=useState(0)
+  const [followupState, setFolowupUpdate] = useState("null")
+  const [noOfNweticketsRecevied, setNoOfnewticketsReceived] = useState(0)
+  const [userReportReloader, setUserReportReloader] = useState(0)
   const [isSideBarOpen, setIsSideBarOpen] = useState(true)
 
   const [takingBreak, setTakingBreak] = useState(false)
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     const storedFirstName = localStorage.getItem('firstName');
     const storedLastName = localStorage.getItem('lastName');
     const storedAttendanceId = localStorage.getItem('attendanceId');
-    
+
 
 
     if (token) {
@@ -108,12 +108,12 @@ export const AuthProvider = ({ children }) => {
     setUserId('');
     setFirstName('');
     setAttendanceId('');
-
+    window.location.reload()
     toast.info('Logged out successfully');
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout,followupState,setFolowupUpdate,noOfNweticketsRecevied,setNoOfnewticketsReceived,userReportReloader,setUserReportReloader,isSideBarOpen,setIsSideBarOpen}}>
+    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout, followupState, setFolowupUpdate, noOfNweticketsRecevied, setNoOfnewticketsReceived, userReportReloader, setUserReportReloader, isSideBarOpen, setIsSideBarOpen }}>
       {children}
     </AuthContext.Provider>
 

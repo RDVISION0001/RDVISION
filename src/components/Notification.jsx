@@ -44,7 +44,7 @@ const Notification = ({ title, details, requirement, type, name }) => {
 
     // Function to handle copying title to clipboard
     const handleCopy = () => {
-        navigator.clipboard.writeText(title).then(() => {
+        navigator.clipboard.writeText(name).then(() => {
             setIsCopied(true); // Change icon color after successful copy
             setTimeout(() => {
                 setIsCopied(false); // Reset the icon color after 2 seconds

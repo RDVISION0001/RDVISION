@@ -260,8 +260,6 @@ function MIS_Product() {
         }
     };
 
-   
-    
     const fetchProductImages = async (productId) => {
         try {
             const response = await axiosInstance.get(`/images/getProductImages`);
@@ -325,15 +323,15 @@ fetchProductImages()
                                                         <i class="fa-solid fa-xmark" style={{color:"red",position:"relative", backgroundColor:"white", }}  onClick={()=>handleDeleteImage(imageId)}></i>
                                                             <img
                                                                 key={imageId}
-                                                                onClick={() => handleView(`https://rdvision.in/images/image/${imageId}`)}
-                                                                src={`https://rdvision.in/images/image/${imageId}`}
+                                                                onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
+                                                                src={`https://backend.rdvision.in/images/image/${imageId}`}
                                                                 alt="No Image Found"
                                                                 style={{ maxWidth: "100px" }}
                                                             />
                                                             </>: <img
                                                                 key={imageId}
-                                                                onClick={() => handleView(`https://rdvision.in/images/image/${imageId}`)}
-                                                                src={`https://rdvision.in/images/image/${imageId}`}
+                                                                onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
+                                                                src={`https://backend.rdvision.in/images/image/${imageId}`}
                                                                 alt="No Image Found"
                                                                 style={{ maxWidth: "100px" }}
                                                             />
@@ -342,12 +340,11 @@ fetchProductImages()
 
                                                         <div className="mt-3">
                                                             <button
-                                                                className="btn btn-sm btn-primary "
+                                                                className="btn btn-sm btn-primary rounded"
                                                                 onClick={() => handleOn(product.productId)}
                                                             >
                                                                 Upload Image
                                                             </button>
-                                                            <i class="fa-solid fa-trash fa-2xl" style={{ color: "red" }}></i>
                                                         </div>
                                                     </td>
                                                 </>
@@ -360,7 +357,7 @@ fetchProductImages()
                                                             <>
                                                                 {product[row.valueKey]}{" "}
                                                                 <button
-                                                                    className="btn btn-sm btn-warning ms-2"
+                                                                    className="btn btn-sm btn-warning ms-2 rounded"
                                                                     onClick={() => handleShow(product.productId)}
                                                                 >
                                                                     Edit
@@ -410,10 +407,10 @@ fetchProductImages()
                                                         {/* Add More button below the table */}
                                                         {product.priceList && product.priceList.length > 0 && (
                                                             <button
-                                                                className="btn btn-sm btn-success mt-2"
+                                                                className="btn btn-sm btn-success mt-2 rounded"
                                                                 onClick={() => handleOne(product)}
                                                             >
-                                                                Add More
+                                                                Add Moree
                                                             </button>
                                                         )}
                                                     </td>
