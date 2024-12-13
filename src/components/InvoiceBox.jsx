@@ -119,7 +119,7 @@ function InvoiceBox(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axiosInstance.get('/product/getAllProductForInvoice');
+                const response = await axiosInstance.get('/product/getAllProducts');
                 setProducts(response.data.dtoList);
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -624,12 +624,12 @@ function InvoiceBox(props) {
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
-                                                    <img
+                                                    {/* <img
                                                         src={convertToImage(product.imageData)}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxWidth: '60px', marginTop: '10px' }}
-                                                    />
+                                                    /> */}
                                                 </div>
 
                                                 {/* Product Details Section */}
