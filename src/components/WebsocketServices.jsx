@@ -3,7 +3,6 @@ import { useEffect, useState, useRef } from "react";
 import SockJS from "sockjs-client";
 import axiosInstance from "../axiosInstance";
 import R2ZWYCP from '../assets/notification/chatN.mp3';
-import newmessage from '../assets/icons/newmessage.png'
 
 
 const WebsocketService = () => {
