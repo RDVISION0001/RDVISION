@@ -15,6 +15,8 @@ const WebsocketService = () => {
     const [admin, setAdmin] = useState();
     const username = localStorage.getItem("firstName")
     const currentDate = new Date().toISOString().split('T')[0];
+    const [roles, setRoles] = useState([])
+    const [filterString, setFilterString] = useState("")
 
     const [messageBox, setMessage] = useState({
         message: "",
@@ -33,6 +35,7 @@ const WebsocketService = () => {
         fetchAllClosers();
         fetchAdminDetails();
         fetchAllMessages()
+        fetchAllRoles()
     }, []);
 
     const fetchAllMessages = async () => {
@@ -94,6 +97,11 @@ const WebsocketService = () => {
         setAdmin(response.data);
 
     };
+
+    const fetchAllRoles = async () => {
+        const response = await axiosInstance.get(`/role/getAllRoles`)
+        setRoles(response.data.dtoList)
+    }
 
 
     useEffect(() => {
@@ -182,12 +190,12 @@ const WebsocketService = () => {
     const sendMessage = () => {
         if (messageBox.message && stompClient) {
             const recipientName = role === "Admin" && selectedRecipient
-                ? users.find(user => user.userId === selectedRecipient)?.firstName
+                ? selectedRecipient && users.find(user => user.userId === selectedRecipient)?.firstName
                 : ''; // Retrieve the firstName if Admin, else empty
 
             const messageObject = {
                 ...messageBox,
-                sentToUserId: role === "Admin" ? selectedRecipient : admin && admin.userId,
+                sentToUserId: selectedRecipient,
                 sentByUser: true,
                 sentDate: currentDate,
                 sentTime: formattedTime,
@@ -231,10 +239,10 @@ const WebsocketService = () => {
         const selectedUser = users && users.filter((user) => user.userId === parseInt(selectedRecipient))
 
         if (selectedUser) {
-            setRecipientName(selectedUser[0].firstName);  // Set recipient name to the first name of the selected user
+            setRecipientName(selectedRecipient && selectedUser[0].firstName);  // Set recipient name to the first name of the selected user
             setMessage((prev) => ({
                 ...prev,
-                recipientName: selectedUser[0].firstName
+                recipientName: selectedRecipient && selectedUser[0].firstName
             }))
         }
     }, [selectedRecipient]); // Re-run the effect when selectedRecipient or users change
@@ -244,197 +252,291 @@ const WebsocketService = () => {
         const audio = new Audio(R2ZWYCP);
         audio.play();
     };
+    //resuble function to convert byte code to image url
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
+
+    }
+
+    function getRoleNameById(roleId) {
+        // Find the role object by roleId
+        const role = roles.find(r => r.roleId === roleId);
+        // Return the roleName if found, otherwise return a default message
+        return role ? role.roleName : "Role not found";
+    }
+
+    function getUserByUserI(userId) {
+        // Find the role object by roleId
+        const user = users.find(r => r.userId === userId);
+        // Return the roleName if found, otherwise return a default message
+        return user ? user : "user not found";
+    }
     return (
-        <div
-            className="chat-widget"
-            style={{
-                width: "350px",
-                height: "500px",
-                borderRadius: "12px",
-                boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
-                overflow: "hidden",
-                display: "flex",
-                flexDirection: "column",
-                background: "#fff",
-                fontFamily: "Arial, sans-serif",
-            }}
-        >
-            {/* Header */}
-            <div
+        <>
+            {selectedRecipient ? <div
+                className="chat-widget"
                 style={{
-                    backgroundColor: "#4A90E2",
-                    color: "#fff",
-                    padding: "10px 15px",
+                    width: "350px",
+                    height: "500px",
+                    borderRadius: "12px",
+                    boxShadow: "0px 4px 15px rgba(0, 0, 0, 0.1)",
+                    overflow: "hidden",
                     display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
+                    flexDirection: "column",
+                    background: "#fff",
+                    fontFamily: "Arial, sans-serif",
                 }}
             >
-                <div style={{ fontWeight: "bold" }}>Chat  with {role === "Admin" ? "Closer" : "Admin"}</div>
-                <div style={{ fontSize: "14px", cursor: "pointer" }}>⋮</div>
-            </div>
-            {/* Chat Body */}
-            <div
-                ref={chatContainerRef}
-                onScroll={handleScroll} // Track scroll event
-                style={{
-                    flex: 1,
-                    padding: "10px",
-                    overflowY: "auto",
-                    background: "#F4F4F6",
-                }}
-            >
-                {messages.map((msg, index) => (
-                    <div
-                        key={index}
-                        className={`d-flex mb-2 ${msg.sentByUserId === userId ? "justify-content-end" : "justify-content-start"}`}
-                    >
-                        <div
-                            className={`p-2 rounded ${msg.sentByUserId === userId ? "bg-primary text-white" : "bg-light"}`}
-                            style={{
-                                maxWidth: "70%",
-                                padding: "8px 12px",
-                                borderRadius: "15px",
-                                backgroundColor: msg.sentByUserId === userId ? "#4A90E2" : "#fff",
-                                color: msg.sentByUserId === userId ? "#fff" : "#333",
-                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
-                            }}
-                        >
-                            {/* Show "Sent to" only for sent messages */}
-                            {role === "Admin" && (msg.sentByUserId === userId) ? (
-                                <strong>Sent to {msg.recipientName}</strong>
-                            ) : null}
-
-                            {/* Show "Received from" only for received messages */}
-                            {msg.sentByUserId !== userId ? (
-                                <strong>Received from {msg.sentByUserName}</strong>
-                            ) : null}
-
-                            <p>{msg.message}</p>
-
-                            <div className="d-flex justify-content-between">
-                                {/* Message Sent Date and Time */}
-                                {msg.sentByUser && <small className="text-light">
-                                    Sent on: {formatDate(msg.sentDate)} at {formatTime(msg.sentTime)}
-                                </small>}
-
-                                {/* Message Received Date and Time (for received messages) */}
-                                {msg.sentByUserId !== userId && (
-                                    <small className="text-muted">
-                                        Received on: {formatDate(msg.sentDate)} at {formatTime(msg.sentTime)}
-                                    </small>
-                                )}
-
-                            </div>
-                           {msg.sentByUserId!== (userId)&& <div className="d-flex justify-content-end">
-                                <i
-                                    className="fa-solid fa-reply fa-rotate-180"
-                                    onClick={()=>setSelectedRecipient(msg.sentByUserId)}
-                                    style={{ color: "#32b38c", cursor: "pointer" }}
-                                    title="Reply"
-                                ></i>
-                             
-                            </div>}
-
-                        </div>
-                    </div>
-                ))}
-
-
-
-                <div ref={chatEndRef} /> {/* This is the reference point to scroll to */}
-            </div>
-
-            {/* Scroll to Bottom Button */}
-            {showScrollButton && (
-                <button
-                    onClick={scrollToBottom}
+                {/* Header */}
+                <div
                     style={{
-                        position: "absolute",
-                        bottom: "70px",
-                        right: "10px",
-                        backgroundColor: "gray",
-                        color: "white",
-                        borderRadius: "50%",
-                        width: "40px",
-                        height: "40px",
-                        border: "none",
-                        cursor: "pointer",
+                        backgroundColor: "#4A90E2",
+                        color: "#fff",
+                        padding: "10px 15px",
                         display: "flex",
-                        justifyContent: "center",
+                        justifyContent: "space-between",
                         alignItems: "center",
                     }}
                 >
-                    <i className="fa-solid fa-arrow-right fa-rotate-90" style={{ color: "white" }}></i>
-                </button>
-            )}
-
-            {/* Footer */}
-            <div
-                style={{
-                    borderTop: "1px solid #ddd",
-                    padding: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    background: "#fff",
-                }}
-            >
-                {/* Show recipient selection dropdown for Admin */}
-                {(users && users.length > 0) && (
-                    <select
-                        value={selectedRecipient}
-                        onChange={(e) => setSelectedRecipient(e.target.value)}
-                        style={{
-                            marginRight: "10px",
-                            padding: "8px",
-                            borderRadius: "20px",
-                            border: "1px solid #ddd",
-                            fontSize: "14px",
-                        }}
-                    >
-                        <option value="0">
-                            select user
-                        </option>
-                        {users.map((user, index) => (
-
-                            <option key={index} value={user.userId}>
-                                {user.firstName}
-                            </option>
-                        ))}
-                    </select>
-                )}
-
-                {/* Message input field */}
-                <input
-                    type="text"
-                    className="form-control"
-                    value={messageBox.message}
-                    placeholder="Type your message..."
-                    onChange={(e) => setMessage((prev) => ({ ...prev, message: e.target.value }))}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                    <i class="fa-solid fa-arrow-right fa-rotate-180" onClick={() => setSelectedRecipient(null)}></i>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <div className="d-flex justify-content-between align-items-center ">
+                            <img
+                                style={{
+                                    height: "50px",
+                                    width: "50px",
+                                    borderRadius: "50%",
+                                    border: ".5px solid gray",
+                                }}
+                                src={convertToImage(getUserByUserI(selectedRecipient).imageData)}
+                                alt="NA"
+                            />
+                            <div style={{marginLeft:"40px"}}>{getUserByUserI(selectedRecipient).firstName}</div>
+                        </div>
+                        {/* <div style={{ fontWeight: "bold" }}>RD-chat</div> */}
+                    </div>
+                    <div style={{ fontSize: "14px", cursor: "pointer" }}>⋮</div>
+                </div>
+                {/* Chat Body */}
+                <div
+                    ref={chatContainerRef}
+                    onScroll={handleScroll} // Track scroll event
                     style={{
                         flex: 1,
-                        borderRadius: "25px",
-                        padding: "10px 15px",
-                        fontSize: "14px",
-                    }}
-                />
-                <button
-                    onClick={sendMessage}
-                    style={{
-                        marginLeft: "10px",
-                        padding: "8px 15px",
-                        borderRadius: "25px",
-                        backgroundColor: "#4A90E2",
-                        color: "#fff",
-                        border: "none",
-                        cursor: "pointer",
+                        padding: "10px",
+                        overflowY: "auto",
+                        background: "#F4F4F6",
                     }}
                 >
-                    Send
-                </button>
-            </div>
-        </div>
+                    {messages.filter((message) => (message.sentByUserId === userId && message.sentToUserId === selectedRecipient) || (parseInt(message.sentByUserId) === selectedRecipient && message.sentToUserId === parseInt(userId))).map((msg, index) => (
+                        <div
+                            key={index}
+                            className={`d-flex mb-2 ${msg.sentByUserId === userId ? "justify-content-end" : "justify-content-start"}`}
+                        >
+                            <div
+                                className={`p-2 rounded ${msg.sentByUserId === userId ? "bg-primary text-white" : "bg-light"}`}
+                                style={{
+                                    maxWidth: "70%",
+                                    padding: "8px 12px",
+                                    borderRadius: "15px",
+                                    backgroundColor: msg.sentByUserId === userId ? "#4A90E2" : "#fff",
+                                    color: msg.sentByUserId === userId ? "#fff" : "#333",
+                                    boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+                                }}
+                            >
+                                {/* Show "Sent to" only for sent messages */}
+                                {/* {role === "Admin" && (msg.sentByUserId === userId) ? (
+                                    <strong>Sent to {msg.recipientName}</strong>
+                                ) : null} */}
+
+                                {/* Show "Received from" only for received messages */}
+                                {/* {msg.sentByUserId !== userId ? (
+                                    <strong>Received from {msg.sentByUserName}</strong>
+                                ) : null} */}
+
+                                <p>{msg.message}</p>
+
+                                <div className="d-flex justify-content-between">
+                                    {/* Message Sent Date and Time */}
+                                    {msg.sentByUser && <small className="text-light">
+                                        Sent on: {formatDate(msg.sentDate)} at {formatTime(msg.sentTime)}
+                                    </small>}
+
+                                    {/* Message Received Date and Time (for received messages) */}
+                                    {msg.sentByUserId !== userId && (
+                                        <small className="text-muted">
+                                            Received on: {formatDate(msg.sentDate)} at {formatTime(msg.sentTime)}
+                                        </small>
+                                    )}
+
+                                </div>
+                                {/* {msg.sentByUserId !== (userId) && <div className="d-flex justify-content-end">
+                                    <i
+                                        className="fa-solid fa-reply fa-rotate-180"
+                                        onClick={() => setSelectedRecipient(msg.sentByUserId)}
+                                        style={{ color: "#32b38c", cursor: "pointer" }}
+                                        title="Reply"
+                                    ></i>
+
+                                </div>} */}
+
+                            </div>
+                        </div>
+                    ))}
+
+
+
+                    <div ref={chatEndRef} /> {/* This is the reference point to scroll to */}
+                </div>
+
+                {/* Scroll to Bottom Button */}
+                {showScrollButton && (
+                    <button
+                        onClick={scrollToBottom}
+                        style={{
+                            position: "absolute",
+                            bottom: "70px",
+                            right: "10px",
+                            backgroundColor: "gray",
+                            color: "white",
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                            border: "none",
+                            cursor: "pointer",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <i className="fa-solid fa-arrow-right fa-rotate-90" style={{ color: "white" }}></i>
+                    </button>
+                )}
+
+                {/* Footer */}
+                <div
+                    style={{
+                        borderTop: "1px solid #ddd",
+                        padding: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                        background: "#fff",
+                    }}
+                >
+                    {/* Show recipient selection dropdown for Admin */}
+
+
+                    {/* Message input field */}
+                    <input
+                        type="text"
+                        className="form-control"
+                        value={messageBox.message}
+                        placeholder="Type your message..."
+                        onChange={(e) => setMessage((prev) => ({ ...prev, message: e.target.value }))}
+                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                        style={{
+                            flex: 1,
+                            borderRadius: "25px",
+                            padding: "10px 15px",
+                            fontSize: "14px",
+                        }}
+                    />
+                    <button
+                        onClick={sendMessage}
+                        style={{
+                            marginLeft: "10px",
+                            padding: "8px 15px",
+                            borderRadius: "25px",
+                            backgroundColor: "#4A90E2",
+                            color: "#fff",
+                            border: "none",
+                            cursor: "pointer",
+                        }}
+                    >
+                        Send
+                    </button>
+                </div>
+            </div> :
+                <div className="h-100" style={{ overflowY: "scroll", paddingTop: "1px" }}>
+                    <div
+                        style={{
+                            backgroundColor: "#4A90E2",
+                            color: "#fff",
+                            padding: "10px 15px",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                    >
+                        {/* <i class="fa-solid fa-arrow-right fa-rotate-180" onClick={() => setSelectedRecipient(null)}></i> */}
+                        <div style={{ fontWeight: "bold" }}>RD-chat</div>
+                        <div style={{ fontSize: "14px", cursor: "pointer" }}>⋮</div>
+                    </div>
+                    <input value={filterString} onChange={(e) => setFilterString(e.target.value)} type="text" placeholder="search User to chat" style={{ padding: "5px", backgroundColor: "white", color: "black", borderRadius: "5px", marginTop: "10px", marginLeft: "10px" }} />
+                    {users &&
+                        users.filter((user) => user.userId !== parseInt(userId))
+                            .filter(
+                                (user) =>
+                                    filterString.length === 0 ||
+                                    user.firstName.toLowerCase().includes(filterString.toLowerCase())
+                            )
+                            .map((user, index) => (<div
+                                key={index}
+                                className="d-flex justify-content-between bg-light border m-3 p-3 rounded transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg"
+                                style={{
+                                    transition: "transform 0.3s, box-shadow 0.3s",
+                                    position: "relative", // Make sure the positioning works for the green dot
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.classList.add("shadow-lg", "scale-105")}
+                                onMouseLeave={(e) => e.currentTarget.classList.remove("shadow-lg", "scale-105")}
+                            >
+                                <div className="d-flex align-items-center" onClick={() => setSelectedRecipient(user.userId)}>
+                                    <img
+                                        style={{
+                                            height: "50px",
+                                            width: "50px",
+                                            borderRadius: "50%",
+                                            border: ".5px solid gray",
+                                        }}
+                                        src={convertToImage(user.imageData)}
+                                        alt="NA"
+                                    />
+                                    <div className="ms-3">
+                                        <div>
+                                            {user.firstName} {user.lastName}
+                                        </div>
+                                        <div>
+                                            {getRoleNameById(user.roleId)}
+                                        </div>
+                                    </div>
+                                </div>
+                                {/* Live Indicator (Green Dot) */}
+                                <div
+                                    className={`rounded-circle ${!user.onBreak ? 'bg-success' : 'bg-danger'}`}
+                                    style={{
+                                        height: "10px",
+                                        width: "10px",
+                                        position: "absolute",
+                                        top: "5px", // Adjust top and right to position the dot
+                                        right: "5px",
+                                        border: "2px solid white"
+                                    }}
+                                />
+                            </div>
+                            ))}
+                </div>
+
+
+            }
+        </>
     );
 };
 

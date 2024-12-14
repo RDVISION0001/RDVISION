@@ -350,6 +350,7 @@ const Index = () => {
                   <th scope="col">Tracking Number</th>
                   <th scope="col">Paymnent Windows</th>
                   <th scope="col">Shipping Through</th>
+                  <th scope="col">Delivery Status</th>
                   <th scope="col">Paid Amount</th>
                   <th scope="col">Action</th>
                 </tr>
@@ -408,6 +409,7 @@ const Index = () => {
                         Add
                       </Button>}
                     </td>
+                    <td>{invoice.deliveryStatus || 'N/A'}</td>
                     <td className="text-success bold-text">
                       {invoice.currency || 'USD'} {invoice.payment?.amount}
                     </td>
