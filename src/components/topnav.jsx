@@ -15,7 +15,7 @@ function topnav() {
   const { followupState } = useAuth()
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
   const { isSideBarOpen, setIsSideBarOpen } = useAuth()
-  const [isChatBotOPen, setIsChatBotOpen] = useState(false)
+  const [isChatBotOPen, setIsChatBotOpen] = useState(true)
 
 
   // Update the handle functions for the notebook

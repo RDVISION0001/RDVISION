@@ -108,7 +108,7 @@ function UserWorkTimeReport(props) {
                 ? apiData.map(item => `${numberToMonthName(item.month)}_${item.year}`)
                 : apiData.map(item => item.day); // Use day name as the label
             const workData = apiData.map(item => item.totalWorkTime / 3600);
-            const breakData = apiData.map(item => item.totalBreakTime / 3600);
+            const breakData = apiData.map(item => item.totalBreakTime / 60);
             let workTimeSum = 0;
             let breakTimeSum = 0;
 
@@ -118,7 +118,7 @@ function UserWorkTimeReport(props) {
             }
 
             setTotalWorktime(workTimeSum);
-            setTotalBreakTime(breakTimeSum);
+            setTotalBreakTime(breakTimeSum*60);
 
             setChartData(prevData => ({
                 ...prevData,
@@ -177,7 +177,7 @@ function UserWorkTimeReport(props) {
         <div style={{ margin: "0", padding: "0" }}>
             <div className='d-flex justify-content-between' style={{ padding: "0px 20px" }} >
                 <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hrs.</span></div>
-                <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} hrs.</span></div>
+                <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} Minutes.</span></div>
             </div>
             <p style={{ fontSize: "12px", marginLeft: "5px" }}>Work report</p>
             <div style={{ height: '130px' }}> {/* Adjust height here */}
