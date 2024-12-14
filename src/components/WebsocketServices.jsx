@@ -2,7 +2,9 @@ import { Stomp } from "@stomp/stompjs";
 import { useEffect, useState, useRef } from "react";
 import SockJS from "sockjs-client";
 import axiosInstance from "../axiosInstance";
-import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3';
+import R2ZWYCP from '../assets/notification/chatN.mp3';
+import newmessage from '../assets/icons/newmessage.png'
+
 
 const WebsocketService = () => {
     const [messages, setMessages] = useState([]);
@@ -17,6 +19,7 @@ const WebsocketService = () => {
     const currentDate = new Date().toISOString().split('T')[0];
     const [roles, setRoles] = useState([])
     const [filterString, setFilterString] = useState("")
+    const [notificationCount, setNotificationCOunt] = useState([])
 
     const [messageBox, setMessage] = useState({
         message: "",
@@ -52,7 +55,6 @@ const WebsocketService = () => {
             }
         }
 
-        console.log(allMessages)
         setMessages(allMessages)
     }
     function formatDate(dateStr) {
@@ -117,6 +119,11 @@ const WebsocketService = () => {
                 if (messageData.sentToUserId === parseInt(userId)) {
                     console.log(messageData.sentToUserId)
                     playNotificationSound()
+
+                    if (!notificationCount.includes(messageData.sentByUserId)) {
+                        setNotificationCOunt((prev) => [...prev, messageData.sentByUserId])
+
+                    }
                     setMessages((prevMessages) => {
                         if (!prevMessages.some((msg) => msg.message === messageData.message)) {
                             return [
@@ -279,6 +286,14 @@ const WebsocketService = () => {
         // Return the roleName if found, otherwise return a default message
         return user ? user : "user not found";
     }
+
+    const removeUser = (userToRemove) => {
+        setNotificationCOunt((prev) => prev.filter((user) => user !== userToRemove));
+    };
+    const openChatOfUser = (user) => {
+        setSelectedRecipient(user)
+        removeUser(user)
+    }
     return (
         <>
             {selectedRecipient ? <div
@@ -311,15 +326,15 @@ const WebsocketService = () => {
                         <div className="d-flex justify-content-between align-items-center ">
                             <img
                                 style={{
-                                    height: "50px",
-                                    width: "50px",
+                                    height: "30px",
+                                    width: "30px",
                                     borderRadius: "50%",
                                     border: ".5px solid gray",
                                 }}
                                 src={convertToImage(getUserByUserI(selectedRecipient).imageData)}
                                 alt="NA"
                             />
-                            <div style={{marginLeft:"40px"}}>{getUserByUserI(selectedRecipient).firstName}</div>
+                            <div style={{ marginLeft: "40px" }}>{getUserByUserI(selectedRecipient).firstName}</div>
                         </div>
                         {/* <div style={{ fontWeight: "bold" }}>RD-chat</div> */}
                     </div>
@@ -498,7 +513,12 @@ const WebsocketService = () => {
                                 onMouseEnter={(e) => e.currentTarget.classList.add("shadow-lg", "scale-105")}
                                 onMouseLeave={(e) => e.currentTarget.classList.remove("shadow-lg", "scale-105")}
                             >
-                                <div className="d-flex align-items-center" onClick={() => setSelectedRecipient(user.userId)}>
+
+                                {notificationCount.includes(user.userId) && <div className="bg-danger text-white rounded p-1 fw-bold" style={{ position: "absolute", left: "240px", top: "30px" }}>
+
+                                    unread
+                                </div>}
+                                <div className="d-flex align-items-center" onClick={() => openChatOfUser(user.userId)}>
                                     <img
                                         style={{
                                             height: "50px",
@@ -517,6 +537,7 @@ const WebsocketService = () => {
                                             {getRoleNameById(user.roleId)}
                                         </div>
                                     </div>
+
                                 </div>
                                 {/* Live Indicator (Green Dot) */}
                                 <div
