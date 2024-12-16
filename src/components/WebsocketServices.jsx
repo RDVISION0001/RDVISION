@@ -159,7 +159,7 @@ const WebsocketService = () => {
 
                     }
                     setMessages((prevMessages) => {
-                        if (!prevMessages.some((msg) => msg.message === messageData.message)) {
+                        if (!prevMessages.some((msg) => msg.id === messageData.id)) {
                             return [
                                 ...prevMessages,
                                 {

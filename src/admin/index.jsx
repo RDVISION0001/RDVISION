@@ -72,8 +72,8 @@ const Index = () => {
     }
     try {
       const response = await axiosInstance.post(`/invoice/addTrackingNumber`, {
-        trackingNumber: tracking,     
-        ticketId: uniqueQueryId,  
+        trackingNumber: tracking,
+        ticketId: uniqueQueryId,
       });
       toast.success(response.data.message || "Tracking added successfully!");
       handleCloseModal();
@@ -81,8 +81,8 @@ const Index = () => {
       toast.error(error.response?.data?.message || "Failed to add tracking.");
     }
   };
-  
-  
+
+
 
   //formate date 
   const formatDateToString = (dateArray) => {
@@ -92,73 +92,54 @@ const Index = () => {
 
   // Fetch data when the tab changes
   useEffect(() => {
-    if (activeTab === "totalticket") {
-      axiosInstance.get(`/third_party_api/ticket/getAllNewTickets`)
-        .then((response) => setTickets(response.data))
-        .catch((error) => console.error("Error fetching tickets:", error));
-    } else if (activeTab === "todaytickets") {
-      axiosInstance.get(`/third_party_api/ticket/getAllNewTickets`)
-        .then((response) => {
-          const today = new Date().toISOString().split("T")[0];
-          const filtered = response.data.filter((ticket) => {
-            const ticketDate = new Date(ticket.queryTime).toISOString().split("T")[0];
-            return ticketDate === today;
-          });
-          setTodayTickets(filtered);
-        })
-        .catch((error) => console.error("Error fetching today's tickets:", error));
-    } else if (activeTab === "totalsales") {
-      axiosInstance.get(`/invoice/getVerifiedInvoives`)
-        .then((response) => setInvoices(response.data))
-        .catch((error) => console.error("Error fetching invoices:", error));
-    } else if (activeTab === "todaysales") {
-      axiosInstance.get(`/invoice/getVerifiedInvoives`)
-        .then((response) => {
-          const today = new Date().toISOString().split("T")[0];
+    // Fetch all tickets
+    axiosInstance.get(`/third_party_api/ticket/getAllNewTickets`)
+      .then((response) => {
+        setTickets(response.data);
+        const today = new Date().toISOString().split("T")[0];
+        const filteredToday = response.data.filter((ticket) => {
+          const ticketDate = new Date(ticket.queryTime).toISOString().split("T")[0];
+          return ticketDate === today;
+        });
+        setTodayTickets(filteredToday);
+      })
+      .catch((error) => console.error("Error fetching tickets:", error));
 
-          const filtered = response.data.filter((invoice) => {
-            const saleDate = formatDateToString(invoice.saleDate);
-            return saleDate === today;
-          });
-          setTodayInvoices(filtered);
-        })
-        .catch((error) => console.error("Error fetching today's invoices:", error));
-    } else if (activeTab === "preparingforshipment") {
-      axiosInstance.get(`/invoice/getVerifiedInvoives`)
-        .then((response) => {
-          const filtered = response.data.filter((invoice) => invoice.isVerifiedByAdmin === true);
-          setPreparingShipment(filtered);
-        })
-        .catch((error) => console.error("Error fetching preparing for shipment invoices:", error));
-    } else if (activeTab === "awaitingtracking") {
-      axiosInstance.get(`/invoice/getVerifiedInvoives`)
-        .then((response) => {
-          const filtered = response.data.filter((invoice) =>
-            invoice.trackingNumber === null && invoice.isVerifiedByAdmin === true
-          );
-          setAwaitingtracking(filtered);
-        })
-        .catch((error) => console.error("Error fetching awaiting tracking invoices:", error));
-    } else if (activeTab === "existingcustomer") {
-      axiosInstance.get(`/customers/getAll`)
-        .then((response) => {
-          const filteredExistingCustomers = response.data.filter(
-            (customer) => customer.customerType?.toLowerCase() === "existing"
-          );
-          setCustomers(filteredExistingCustomers);
-        })
-        .catch((error) => console.error("Error fetching existing customers:", error));
-    } else if (activeTab === "newcustomer") {
-      axiosInstance.get(`/customers/getAll`)
-        .then((response) => {
-          const filteredNewCustomers = response.data.filter(
-            (customer) => customer.customerType?.toLowerCase() === "new"
-          );
-          setNewCustomers(filteredNewCustomers);
-        })
-        .catch((error) => console.error("Error fetching new customers:", error));
-    }
-  }, [activeTab]);
+    // Fetch all invoices
+    axiosInstance.get(`/invoice/getVerifiedInvoives`)
+      .then((response) => {
+        setInvoices(response.data);
+        const today = new Date().toISOString().split("T")[0];
+        const filteredToday = response.data.filter((invoice) => {
+          const saleDate = formatDateToString(invoice.saleDate);
+          return saleDate === today;
+        });
+        setTodayInvoices(filteredToday);
+        const preparingShipmentInvoices = response.data.filter((invoice) => invoice.isVerifiedByAdmin === true);
+        setPreparingShipment(preparingShipmentInvoices);
+        const awaitingTrackingInvoices = response.data.filter((invoice) =>
+          invoice.trackingNumber === null && invoice.isVerifiedByAdmin === true
+        );
+        setAwaitingtracking(awaitingTrackingInvoices);
+      })
+      .catch((error) => console.error("Error fetching invoices:", error));
+
+    // Fetch all customers
+    axiosInstance.get(`/customers/getAll`)
+      .then((response) => {
+        const existing = response.data.filter(
+          (customer) => customer.customerType?.toLowerCase() === "existing"
+        );
+        setCustomers(existing);
+
+        const newCust = response.data.filter(
+          (customer) => customer.customerType?.toLowerCase() === "new"
+        );
+        setNewCustomers(newCust);
+      })
+      .catch((error) => console.error("Error fetching customers:", error));
+  }, []);
+
 
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
@@ -248,15 +229,16 @@ const Index = () => {
             onSelect={(k) => setActiveTab(k)}
             className="mb-3"
           >
-            <Tab eventKey="totalticket" title="Total Ticket" />
-            <Tab eventKey="todaytickets" title="Today Tickets" />
-            <Tab eventKey="totalsales" title="Total Sales" />
-            <Tab eventKey="todaysales" title="Today Sales" />
-            <Tab eventKey="preparingforshipment" title="Preparing for Shipment" />
-            <Tab eventKey="awaitingtracking" title="Awaiting Tracking" />
-            <Tab eventKey="existingcustomer" title="Existing Customer" />
-            <Tab eventKey="newcustomer" title="New Customer" />
+            <Tab eventKey="totalticket" title={`Total Tickets (${tickets.length})`} />
+            <Tab eventKey="todaytickets" title={`Today's Tickets (${todayTickets.length})`} />
+            <Tab eventKey="totalsales" title={`Total Sales (${invoices.length})`} />
+            <Tab eventKey="todaysales" title={`Today's Sales (${todayInvoices.length})`} />
+            <Tab eventKey="preparingforshipment" title={`Preparing for Shipment (${preparingShipment.length})`} />
+            <Tab eventKey="awaitingtracking" title={`Awaiting Tracking (${awaitingtracking.length})`} />
+            <Tab eventKey="existingcustomer" title={`Existing Customers (${customers.length})`} />
+            <Tab eventKey="newcustomer" title={`New Customers (${newCustomers.length})`} />
           </Tabs>
+
 
           <div className="d-flex justify-content-between align-items-center mb-3">
             <InputGroup className="search-input">
@@ -274,7 +256,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" /></th>
+                  <th>S.N.</th>
                   <th>Date</th>
                   <th>Customer Name</th>
                   <th>Email</th>
@@ -286,7 +268,7 @@ const Index = () => {
               <tbody>
                 {filteredTickets.map((ticket, index) => (
                   <tr key={ticket.uniqueQueryId || index}>
-                    <td><input type="checkbox" /></td>
+                    <td>{index + 1}.</td>
                     <td>{ticket.queryTime}</td>
                     <td>{ticket.senderName}</td>
                     <td>{ticket.senderEmail}</td>
@@ -304,7 +286,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" /></th>
+                  <th>S.N.</th>
                   <th>Date</th>
                   <th>Customer Name</th>
                   <th>Email</th>
@@ -316,7 +298,7 @@ const Index = () => {
               <tbody>
                 {filteredTodayTickets.map((ticket, index) => (
                   <tr key={ticket.uniqueQueryId || index}>
-                    <td><input type="checkbox" /></td>
+                    <td>{index + 1}.</td>
                     <td>{ticket.queryTime}</td>
                     <td>{ticket.senderName}</td>
                     <td>{ticket.senderEmail}</td>
@@ -334,7 +316,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  {/* <th scope="col">Ser n.</th> */}
+                  <th>S.N.</th>
                   <th scope="col">Order ID</th>
                   <th scope="col">Sale Date</th>
                   <th scope="col">Closer Name</th>
@@ -358,7 +340,7 @@ const Index = () => {
               <tbody>
                 {filteredInvoices.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
                     <td> {invoice.closerName} </td>
@@ -436,7 +418,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  {/* <th scope="col">Ser n.</th> */}
+                  <th>S.N.</th>
                   <th scope="col">Order ID</th>
                   <th scope="col">Sale Date</th>
                   <th scope="col">Closer Name</th>
@@ -459,7 +441,7 @@ const Index = () => {
               <tbody>
                 {filteredTodayInvoices.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
                     <td> {invoice.closerName} </td>
@@ -536,7 +518,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  {/* <th scope="col">Ser n.</th> */}
+                  <th>S.N.</th>
                   <th scope="col">Order ID</th>
                   <th scope="col">Sale Date</th>
                   <th scope="col">Closer Name</th>
@@ -559,7 +541,7 @@ const Index = () => {
               <tbody>
                 {filteredPreparingShipment.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
                     <td> {invoice.closerName} </td>
@@ -636,7 +618,7 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  {/* <th scope="col">Ser n.</th> */}
+                  <th>S.N.</th>
                   <th scope="col">Order ID</th>
                   <th scope="col">Sale Date</th>
                   <th scope="col">Closer Name</th>
@@ -659,7 +641,7 @@ const Index = () => {
               <tbody>
                 {filteredAwaitingtracking.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    {/* <td className="text-center">{index + 1}.</td> */}
+                    <td className="text-center">{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
                     <td> {invoice.closerName} </td>
@@ -740,7 +722,8 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" /></th>
+                  <th>S.N.</th>
+                  <th>Date</th>
                   <th>Customer ID</th>
                   <th>Customer Name</th>
                   <th>Email</th>
@@ -751,9 +734,10 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredCustomers.map((customer) => (
+                {filteredCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
-                    <td><input type="checkbox" /></td>
+                    <td>{index + 1}</td>
+                    <td>{customer.queryTime}</td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>
@@ -772,7 +756,8 @@ const Index = () => {
             <Table responsive bordered className="candidate-table">
               <thead>
                 <tr>
-                  <th><input type="checkbox" /></th>
+                  <th>S.N.</th>
+                  <th>Date</th>
                   <th>Customer ID</th>
                   <th>Customer Name</th>
                   <th>Email</th>
@@ -783,9 +768,10 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredNewCustomers.map((customer) => (
+                {filteredNewCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
-                    <td><input type="checkbox" /></td>
+                    <td>{index + 1}.</td>
+                    <td>{customer.queryTime}</td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>
