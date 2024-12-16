@@ -33,8 +33,8 @@ const logout = () => {
       const response = await axiosInstance.post("attendance/logout", formData)
       console.log(response)
       if (response.status === 200) {
-        logout()
         navigate("/")
+        logout()
       }
     } else {
       toast.info("Please select a reason")
