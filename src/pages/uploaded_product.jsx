@@ -547,9 +547,9 @@ function UploadedProduct() {
                                                                 <img
                                                                     onClick={() =>
                                                                         handleView(
-                                                                            `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                                            `https://backend.rdvision.in/images/getProductImage/${product.productId}`
                                                                         )}
-                                                                    src={`https://rdvision.in/images/getProductImage/${product.productId}`}
+                                                                    src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                                     alt="No Image Found"
                                                                     style={{ maxWidth: "80px" }}
                                                                 />

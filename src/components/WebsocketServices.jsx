@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import SockJS from "sockjs-client";
 import axiosInstance from "../axiosInstance";
 import R2ZWYCP from '../assets/notification/chatN.mp3';
+import { FormLabel, Modal } from "react-bootstrap";
+import { FaPen } from "react-icons/fa";
 
 
 const WebsocketService = () => {
@@ -19,6 +21,33 @@ const WebsocketService = () => {
     const [roles, setRoles] = useState([])
     const [filterString, setFilterString] = useState("")
     const [notificationCount, setNotificationCOunt] = useState([])
+    const [isImageUplaoderOpen, setIsImageUploadeOpen] = useState(false)
+    const [imageUrlToSend, setImageUrlToSend] = useState("")
+    const [isUplaoded, setIsUploaded] = useState(false)
+    const [seeImageUrl, setSeeImageUrl] = useState("")
+    const [isImageView, setIsImageView] = useState(false)
+
+    const [files, setFiles] = useState("");
+    const [title, setTitle] = useState("");
+    const [uploadStatus, setUploadStatus] = useState(""); // To show upload status
+    const [uploadedDocuments, setUploadedDocuments] = useState([]); // To store the uploaded documents
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [isSending, setIsSending] = useState(false)
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            setFiles(reader.result.split(",")[1]); // Store the base64 string of the file
+            setPreviewUrl(reader.result.split(",")[1])
+            handleUplaodImage(reader.result.split(",")[1])
+        };
+
+        if (file) {
+            reader.readAsDataURL(file); // Convert the file to a Base64 string
+        }
+    };
 
     const [messageBox, setMessage] = useState({
         message: "",
@@ -36,12 +65,18 @@ const WebsocketService = () => {
     useEffect(() => {
         fetchAllClosers();
         fetchAdminDetails();
-        fetchAllMessages()
         fetchAllRoles()
     }, []);
 
+    useEffect(() => {
+        fetchAllMessages()
+
+    }, [selectedRecipient])
     const fetchAllMessages = async () => {
-        const response = await axiosInstance.get(`/user/messages/${userId}`)
+        const response = await axiosInstance.post(`/user/getTwoUsersConversation`, {
+            sentByUserId: userId,
+            sentToUserId: selectedRecipient
+        })
         const allMessages = response.data
         for (let i = 0; i < allMessages.length; i++) {
             if (allMessages[i].sentByUserId.toString() === userId) {
@@ -138,7 +173,6 @@ const WebsocketService = () => {
                     });
                 }
             });
-            console.log(`/user/${userId}/queue/messages`)
 
             client.subscribe(`/user/${username.toLowerCase()}/queue/messages`, (message) => {
 
@@ -156,45 +190,8 @@ const WebsocketService = () => {
         };
     }, []); // Empty dependency array ensures this runs once on mount
 
-    // useEffect(() => {
-    //     const socket = new SockJS("https://rdvision.in/ws");
-    //     const client = Stomp.over(socket);
-
-    //     client.connect({}, (frame) => {
-    //         console.log("Connected: " + frame);
-
-    //         client.subscribe("/topic/messages", (messageOutput) => {
-    //             const messageData = JSON.parse(messageOutput.body);
-
-    //             if (messageData.sentToUserId === userId) {
-    //                 setMessages((prevMessages) => {
-    //                     if (!prevMessages.some((msg) => msg.message === messageData.message)) {
-    //                         return [
-    //                             ...prevMessages,
-    //                             {
-    //                                 ...messageData,
-    //                                 sentByUser: false,
-    //                                 receivedTime: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    //                             },
-    //                         ];
-    //                     }
-    //                     return prevMessages;
-    //                 });
-    //             }
-    //         });
-
-    //         setStompClient(client);
-    //     });
-
-    //     return () => {
-    //         if (stompClient) {
-    //             stompClient.disconnect();
-    //         }
-    //     };
-    // }, []);
-
     const sendMessage = () => {
-        if (messageBox.message && stompClient) {
+        if (stompClient) {
             const recipientName = role === "Admin" && selectedRecipient
                 ? selectedRecipient && users.find(user => user.userId === selectedRecipient)?.firstName
                 : ''; // Retrieve the firstName if Admin, else empty
@@ -206,7 +203,9 @@ const WebsocketService = () => {
                 sentDate: currentDate,
                 sentTime: formattedTime,
                 recipientName: messageBox.recipientName, // Add recipient name to the message object
+                imageUrl: imageUrlToSend
             };
+            console.log(messageObject)
 
             console.log("Message object before sending:", messageObject); // Debug log
 
@@ -218,6 +217,11 @@ const WebsocketService = () => {
             setMessage((prev) => ({ ...prev, message: "" }));
 
         }
+        setImageUrlToSend("")
+        setIsUploaded(false)
+        setPreviewUrl('')
+        setIsImageUploadeOpen(false)
+
 
 
     };
@@ -292,6 +296,30 @@ const WebsocketService = () => {
     const openChatOfUser = (user) => {
         setSelectedRecipient(user)
         removeUser(user)
+    }
+    const openImageUploader = () => {
+        setIsImageUploadeOpen(true)
+    }
+
+    const handleUplaodImage = async (imageData) => {
+        setIsSending(true)
+        try {
+            const response = await axiosInstance.post('/images/uplaodChatImage', {
+                imageData: imageData
+            })
+            setImageUrlToSend(response.data)
+            setIsSending(false)
+            setIsUploaded(true)
+
+        }
+
+        catch (e) {
+            setIsSending(false)
+        }
+    }
+    const openImageView = (imageurl) => {
+        setSeeImageUrl(imageurl)
+        setIsImageView(true)
     }
     return (
         <>
@@ -377,6 +405,24 @@ const WebsocketService = () => {
                                 ) : null} */}
 
                                 <p>{msg.message}</p>
+                                {msg.imageUrl && (
+                                    <div>
+
+                                        <img
+                                            style={{
+                                                height: "250px",
+
+                                                width: "200px", // Maintain the aspect ratio by automatically adjusting the width
+                                                objectFit: "contain", // Ensure the entire image is visible
+                                                display: "block", // Prevent inline spacing issues
+                                                margin: "0 auto", // Center the image horizontally if needed
+                                            }}
+                                            src={msg.imageUrl}
+                                            alt="Uploaded"
+                                        />
+                                        <i class="fa-solid fa-expand fa-xl" onClick={() => openImageView(msg.imageUrl)}></i>
+                                    </div>
+                                )}
 
                                 <div className="d-flex justify-content-between">
                                     {/* Message Sent Date and Time */}
@@ -449,6 +495,9 @@ const WebsocketService = () => {
 
 
                     {/* Message input field */}
+                    <button className="bg-transparent text-black border p-2 " style={{ marginRight: "5px" }} onClick={openImageUploader}>
+                        @
+                    </button>
                     <input
                         type="text"
                         className="form-control"
@@ -556,6 +605,93 @@ const WebsocketService = () => {
 
 
             }
+
+            <Modal
+                show={isImageUplaoderOpen}
+                onHide={() => setIsImageUploadeOpen(false)}
+                dialogClassName=""
+                centered={false}
+                className=""
+            >
+                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                    <FormLabel className="mb-3 text-black">Upload Image to Send</FormLabel>
+                    <div
+                        style={{
+                            width: "300px",
+                            height: "200px",
+                            position: "relative", // To position the pen icon over the image
+                            border: previewUrl ? "none" : "2px dashed black",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderRadius: "8px",
+                            marginBottom: "10px",
+                            cursor: "pointer",
+                            overflow: "hidden", // To ensure image doesn't overflow
+                        }}
+                        onClick={() => document.getElementById("fileUpload").click()}
+                    >
+                        {previewUrl ? (
+                            <>
+                                <img
+                                    src={convertToImage(previewUrl)}
+                                    alt="Preview"
+                                    style={{
+                                        maxWidth: "100%",
+                                        maxHeight: "100%",
+                                        objectFit: "cover", // Ensures image fits nicely
+                                    }}
+                                />
+                                <FaPen
+                                    style={{
+                                        position: "absolute",
+                                        bottom: "10px",
+                                        right: "10px",
+                                        color: "white",
+                                        backgroundColor: "black",
+                                        borderRadius: "50%",
+                                        padding: "5px",
+                                        fontSize: "20px",
+                                        cursor: "pointer",
+                                    }}
+                                />
+                            </>
+                        ) : (
+                            <span className="text-black">Click to Upload Image</span>
+                        )}
+                    </div>
+                    <input
+                        type="file"
+                        id="fileUpload"
+                        style={{ display: "none" }}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                    />
+                    {isSending && <button>Uploading....</button>}
+                    {isUplaoded && <button onClick={sendMessage}>send</button>}
+                </Modal.Body>
+            </Modal>
+            <Modal
+                show={isImageView}
+                onHide={() => setIsImageView(false)}
+                dialogClassName=""
+                centered={false}
+                className=""
+            >
+                <Modal.Body className="d-flex flex-column justify-content-center align-items-center p-3">
+                    <img
+                        style={{
+                            height: "500px",
+                            width: "700px",
+                            objectFit: "contain", // Ensures the image fits within the container while maintaining aspect ratio
+                            display: "block", // Prevents inline spacing issues
+                            margin: "0 auto", // Centers the image horizontally if needed
+                        }}
+                        src={seeImageUrl}
+                        alt="Displayed"
+                    />
+                </Modal.Body>
+            </Modal>
         </>
     );
 };
