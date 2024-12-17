@@ -252,15 +252,15 @@ function SaleConframtion(props) {
 
     // Resuable function to convert byte code to image url
     function convertToImage(imageString) {
-        const byteCharacters = atob(imageString); // Decode base64 string
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        const url = URL.createObjectURL(blob);
-        return url;
+        // const byteCharacters = atob(imageString); // Decode base64 string
+        // const byteNumbers = new Array(byteCharacters.length);
+        // for (let i = 0; i < byteCharacters.length; i++) {
+        //     byteNumbers[i] = byteCharacters.charCodeAt(i);
+        // }
+        // const byteArray = new Uint8Array(byteNumbers);
+        // const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        // const url = URL.createObjectURL(blob);
+        // return url;
     }
     const handlePaymentChange = (e) => {
         setFormData((prev) => ({
@@ -562,11 +562,11 @@ console.log(orderDetails)
                                             </div>
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 <div>
-                                                    <img
-                                                        src={convertToImage(product.imageData)}
+                                                <img
+                                                        src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
-                                                        style={{ maxWidth: '60px', marginTop: '10px' }}
+                                                        style={{ maxHeight: '80px', marginTop: '10px' }}
                                                     />
                                                 </div>
                                                 <div className="ms-2 w-100">
