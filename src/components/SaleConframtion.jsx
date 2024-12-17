@@ -158,7 +158,7 @@ function SaleConframtion(props) {
     }, []);
     const fetchData = async () => {
         try {
-            const response = await axiosInstance.get('/product/getAllProductForInvoice');
+            const response = await axiosInstance.get('/product/getAllProducts');
             setProducts(response.data.dtoList);
         } catch (error) {
             console.error('Error fetching products:', error);
