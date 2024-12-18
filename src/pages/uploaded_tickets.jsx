@@ -212,9 +212,10 @@ function uploaded_tickets() {
 
   //click to call
   const handleClick = async (number) => {
+    console.log(number)
     try {
       const response = await axiosInstance.post('/third_party_api/ticket/clickToCall', {
-        number: checkTextStart(number),
+        number: number.includes("+")?formatNumberAccordingToHodu(number):checkTextStart(number),
         userId
       });
       setUserReportReloader((prev) => prev + 1)
@@ -229,6 +230,7 @@ function uploaded_tickets() {
       return "Input text is empty";
     }
 
+   
     const firstChar = inputText.charAt(0);
     console.log(inputText, firstChar)
     if (!isNaN(firstChar)) {
@@ -239,6 +241,14 @@ function uploaded_tickets() {
       return "1" + inputText.split(" ")[1];
     }
   };
+
+  const formatNumberAccordingToHodu = (number) => {
+    if (number.includes("+")) {
+      return number.replace(/[+-]/g, "")
+    } else {
+      return "1" + number
+    }
+  }
   //notification
   const playNotificationSound = () => {
     const audio = new Audio(R2ZWYCP);
