@@ -45,19 +45,23 @@ function SaleConframtion(props) {
         // Validation for empty fields
         if (!currency) {
             toast.error('Currency is required!');
+            setLoadingId(null); // Reset loading state
             return;
         }
         if (!enteredPrice) {
             toast.error('Price is required!');
+            setLoadingId(null); // Reset loading state
             return;
         }
         if (!enteredQuantity) {
             toast.error('Quantity is required!');
+            setLoadingId(null); // Reset loading state
             return;
         }
 
         // Proceed with the API request
         try {
+            setLoadingId(productId); // Set loading state before making the API call
             const response = await axiosInstance.post('/order/addToOrder', {
                 quantity: enteredQuantity,
                 productId: productId,
@@ -66,14 +70,16 @@ function SaleConframtion(props) {
                 price: enteredPrice,
                 currency: currency
             });
-
             toast.success('Added to order successfully!');
             fatchaddedproduct();
         } catch (error) {
             console.error('Error submitting form:', error);
             toast.error('Failed to add order');
+        } finally {
+            setLoadingId(null); // Reset loading state in both success and error cases
         }
     };
+
     // State for modal visibility
     const [show, setShow] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -87,6 +93,7 @@ function SaleConframtion(props) {
     const [error, setError] = useState(null);
     const [ticketDetails, setTicketDetails] = useState(null);
     const [serchValue, setserchValue] = useState("");
+    const [loadingId, setLoadingId] = useState(null);
 
     const handleInputChange = (e) => {
         setserchValue(e.target.value); // Update state with the input's value
@@ -189,17 +196,20 @@ function SaleConframtion(props) {
 
     // Function to handle sending invoice
     const handleSendInvoice = async () => {
-       if(orderDetails.productOrders.length>0){
-        try {
-            const response = await axiosInstance.post(`/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`, formData); // Send formData instead of setFormData
-            toast.success('Marked as Sale done');
-        } catch (error) {
-            console.error('Error sending invoice:', error);
-            toast.error('Failed to send invoice');
+        if (orderDetails.productOrders.length > 0) {
+            setLoading(true);
+            try {
+                const response = await axiosInstance.post(`/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`, formData); // Send formData instead of setFormData
+                toast.success('Marked as Sale done');
+            } catch (error) {
+                console.error('Error sending invoice:', error);
+                toast.error('Failed to send invoice');
+            }finally {
+                setLoading(false);
+            }
+        } else {
+            toast.error("Please Add At least one poroduct")
         }
-       }else{
-        toast.error("Please Add At least one poroduct")
-       }
     };
 
 
@@ -268,7 +278,7 @@ function SaleConframtion(props) {
             [e.target.name]: e.target.value
         }));
     }
-console.log(orderDetails)
+    console.log(orderDetails)
 
     return (
         <>
@@ -486,11 +496,19 @@ console.log(orderDetails)
                                 {/* Order Items Details Ends Here */}
                                 <div className="d-flex justify-content-center">
 
-                                    <button onClick={handleSendInvoice} className="bg-primary mt-1"
-                                    disabled={address===null}
+                                    <button
+                                        onClick={handleSendInvoice}
+                                        className="btn btn-primary mt-1"
+                                        disabled={address === null || loading}
                                     >
-
-                                        Save Confirmation
+                                        {loading ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                                Loading...
+                                            </>
+                                        ) : (
+                                            "Save Confirmation"
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -534,7 +552,7 @@ console.log(orderDetails)
                     </div>
                 </div>
 
-                <div className="container mt-3">
+                < div className="container mt-3">
                     <div className="row">
                         {products &&
                             products
@@ -553,21 +571,21 @@ console.log(orderDetails)
                                                     fontSize: '10px',
                                                     borderTopRightRadius: '4px',
                                                     borderBottomLeftRadius: '4px',
-                                                    bottom: '-9px', // Move to the bottom with some space
-                                                    left: '-1px', // Align to the left with some space
-                                                    zIndex: '1' // Ensure it appears above other elements
+                                                    bottom: '-9px',
+                                                    left: '-1px',
+                                                    zIndex: '1'
                                                 }}
                                             >
                                                 {product.brand}
                                             </div>
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 <div>
-                                                <img
+                                                    {/* <img
                                                         src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxHeight: '80px', marginTop: '10px' }}
-                                                    />
+                                                    /> */}
                                                 </div>
                                                 <div className="ms-2 w-100">
                                                     <h6 className="card-title mb-1" style={{ fontSize: '12px' }}>
@@ -593,11 +611,16 @@ console.log(orderDetails)
                                                     </div>
                                                 </div>
                                                 <button
-                                                    className="bg-info mt-2 mt-md-0"
-                                                    style={{ height: "30px", fontSize: "12px" }}
+                                                    className="bg-info mt-2 mt-md-0 d-flex align-items-center justify-content-center"
+                                                    style={{ height: "30px", fontSize: "12px", minWidth: "60px" }}
                                                     onClick={() => handleSubmit(product.productId)}
+                                                    disabled={loadingId === product.productId}
                                                 >
-                                                    Add
+                                                    {loadingId === product.productId ? (
+                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                    ) : (
+                                                        'Add'
+                                                    )}
                                                 </button>
                                             </div>
                                         </div>

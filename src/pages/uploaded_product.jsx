@@ -544,7 +544,7 @@ function UploadedProduct() {
                                                         <>
                                                             <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                             <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                                <img
+                                                                {/* <img
                                                                     onClick={() =>
                                                                         handleView(
                                                                             `https://backend.rdvision.in/images/getProductImage/${product.productId}`
@@ -552,7 +552,7 @@ function UploadedProduct() {
                                                                     src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                                     alt="No Image Found"
                                                                     style={{ maxWidth: "80px" }}
-                                                                />
+                                                                /> */}
                                                             </td>
                                                         </>
                                                     )}

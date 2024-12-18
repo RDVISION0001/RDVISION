@@ -271,16 +271,16 @@ function MIS_Product() {
 
     const getImageIds = (productId) => {
         if (images[productId]) {
-         return(images[productId])
+            return (images[productId])
         } else {
-          return[];
+            return [];
         }
-      };
-   
-      const handleDeleteImage = async(imageId)=>{
+    };
+
+    const handleDeleteImage = async (imageId) => {
         await axiosInstance.delete(`/images/deleteImageById/${imageId}`);
         toast.success("Image Deleted")
-fetchProductImages()
+        fetchProductImages()
     }
 
 
@@ -318,9 +318,17 @@ fetchProductImages()
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "10px" }}>
-                                                        {getImageIds(product.productId).map((imageId) => (
-                                                       localStorage.getItem("roleName")==="Product_Coordinator"? <>  
-                                                        <i class="fa-solid fa-xmark" style={{color:"red",position:"relative", backgroundColor:"white", }}  onClick={()=>handleDeleteImage(imageId)}></i>
+                                                        {/* {getImageIds(product.productId).map((imageId) => (
+                                                            localStorage.getItem("roleName") === "Product_Coordinator" ? <>
+                                                                <i class="fa-solid fa-xmark" style={{ color: "red", position: "relative", backgroundColor: "white", }} onClick={() => handleDeleteImage(imageId)}></i>
+                                                                <img
+                                                                    key={imageId}
+                                                                    onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
+                                                                    src={`https://backend.rdvision.in/images/image/${imageId}`}
+                                                                    alt="No Image Found"
+                                                                    style={{ maxWidth: "100px" }}
+                                                                />
+                                                            </> : 
                                                             <img
                                                                 key={imageId}
                                                                 onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
@@ -328,15 +336,8 @@ fetchProductImages()
                                                                 alt="No Image Found"
                                                                 style={{ maxWidth: "100px" }}
                                                             />
-                                                            </>: <img
-                                                                key={imageId}
-                                                                onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
-                                                                src={`https://backend.rdvision.in/images/image/${imageId}`}
-                                                                alt="No Image Found"
-                                                                style={{ maxWidth: "100px" }}
-                                                            />
-                                                            
-                                                        ))}
+
+                                                        ))} */}
 
                                                         <div className="mt-3">
                                                             <button

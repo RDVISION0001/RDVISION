@@ -229,16 +229,15 @@ const Index = () => {
             onSelect={(k) => setActiveTab(k)}
             className="mb-3"
           >
-            <Tab eventKey="totalticket" title={`Total Tickets (${tickets.length})`} />
-            <Tab eventKey="todaytickets" title={`Today's Tickets (${todayTickets.length})`} />
-            <Tab eventKey="totalsales" title={`Total Sales (${invoices.length})`} />
-            <Tab eventKey="todaysales" title={`Today's Sales (${todayInvoices.length})`} />
-            <Tab eventKey="preparingforshipment" title={`Preparing for Shipment (${preparingShipment.length})`} />
-            <Tab eventKey="awaitingtracking" title={`Awaiting Tracking (${awaitingtracking.length})`} />
-            <Tab eventKey="existingcustomer" title={`Existing Customers (${customers.length})`} />
-            <Tab eventKey="newcustomer" title={`New Customers (${newCustomers.length})`} />
+            <Tab eventKey="totalticket" title={<>Total Tickets (<span style={{ color: 'red' }}>{tickets.length}</span>)</>} />
+            <Tab eventKey="todaytickets" title={<>Today's Tickets (<span style={{ color: 'red' }}>{todayTickets.length}</span>)</>} />
+            <Tab eventKey="totalsales" title={<> Total Sales (<span style={{ color: 'red' }}>{invoices.length}</span>)</>} />
+            <Tab eventKey="todaysales" title={<> Today's Sales (<span style={{ color: 'red' }}>{todayInvoices.length}</span>)   </>} />
+            <Tab eventKey="preparingforshipment" title={<>Preparing for Shipment (<span style={{ color: 'red' }}>{preparingShipment.length}</span>)</>} />
+            <Tab eventKey="awaitingtracking" title={<>Awaiting Tracking (<span style={{ color: 'red' }}>{awaitingtracking.length}</span>) </>} />
+            <Tab eventKey="existingcustomer" title={<> Existing Customers (<span style={{ color: 'red' }}>{customers.length}</span>)</>} />
+            <Tab eventKey="newcustomer" title={<>New Customers (<span style={{ color: 'red' }}>{newCustomers.length}</span>)  </>} />
           </Tabs>
-
 
           <div className="d-flex justify-content-between align-items-center mb-3">
             <InputGroup className="search-input">

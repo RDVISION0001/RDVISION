@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 //// Auth ////
 
 function InvoiceBox(props) {
-   const userId=localStorage.getItem("userId")
+    const userId = localStorage.getItem("userId")
 
     // State for modal visibility
     const [show, setShow] = useState(false);
@@ -289,19 +289,19 @@ function InvoiceBox(props) {
         }));
     };
 
-  //resuble function to convert byte code to image url
-  function convertToImage(imageString) {
-    const byteCharacters = atob(imageString); // Decode base64 string
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'image/jpeg' });
-    const url = URL.createObjectURL(blob);
-    return url;
+    //resuble function to convert byte code to image url
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
 
-}
+    }
     return (
         <>
             <div className="">
@@ -432,8 +432,8 @@ function InvoiceBox(props) {
                                     </div>
                                 </div>
                                 <div className='d-flex justify-content-center flex-column p-3'>
-                                    <label htmlFor="paymentLink" className='fw-bold' style={{fontSize:"20px"}}>Add Payment Link</label>
-                                    <input type="text" value={externalPaymentLink} onChange={(e)=>setExternalPaymentLink(e.target.value)} placeholder='Enter External Payment link' className=' p-2 rounded bg-white text-black' />
+                                    <label htmlFor="paymentLink" className='fw-bold' style={{ fontSize: "20px" }}>Add Payment Link</label>
+                                    <input type="text" value={externalPaymentLink} onChange={(e) => setExternalPaymentLink(e.target.value)} placeholder='Enter External Payment link' className=' p-2 rounded bg-white text-black' />
 
                                 </div>
 
@@ -624,12 +624,12 @@ function InvoiceBox(props) {
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
-                                                <img
+                                                    {/* <img
                                                         src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxHeight: '80px', marginTop: '10px' }}
-                                                    />
+                                                    /> */}
                                                 </div>
 
                                                 {/* Product Details Section */}
