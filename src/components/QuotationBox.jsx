@@ -329,19 +329,19 @@ function QuotationBox(props) {
             [productId]: e.target.value,
         }));
     };
- //resuble function to convert byte code to image url
- function convertToImage(imageString) {
-    const byteCharacters = atob(imageString); // Decode base64 string
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'image/jpeg' });
-    const url = URL.createObjectURL(blob);
-    return url;
+    //resuble function to convert byte code to image url
+    function convertToImage(imageString) {
+        const byteCharacters = atob(imageString); // Decode base64 string
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        const url = URL.createObjectURL(blob);
+        return url;
 
-}
+    }
 
     return (
         <>
@@ -656,12 +656,12 @@ function QuotationBox(props) {
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
-                                                <img
+                                                    {/* <img
                                                         src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxHeight: '80px', marginTop: '10px' }}
-                                                    />
+                                                    /> */}
                                                 </div>
 
                                                 {/* Product Details Section */}
@@ -746,7 +746,7 @@ function QuotationBox(props) {
                                 <tr>
                                     <th className="text-center">Quantity</th>
                                     <th className="text-center">Price</th>
-                                    
+
                                 </tr>
                             </thead>
                             {prices.length > 0 ? (
