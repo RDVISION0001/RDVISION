@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useNavigate, NavLink } from 'react-router-dom';
-import './login.css'
+import './login.css';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -10,7 +10,7 @@ function login() {
   const [email, setEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState(new Array(6).fill(''));
+  const [otp, setOtp] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
@@ -38,8 +38,7 @@ function login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const otpValue = otp.join('');
-      const status = await login(email, password, otpValue);
+      const status = await login(email, password, otp);
       navigateBasedOnRole(status);
       window.location.reload();
     } catch (error) {
@@ -88,17 +87,6 @@ function login() {
     if (localStorage.getItem("userId")) navigateBasedOnRole(status);
   }, []);
 
-  const handleOtpChange = (element, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = element.value;
-    setOtp(newOtp);
-
-    // Auto-focus on next input
-    if (element.nextSibling && element.value) {
-      element.nextSibling.focus();
-    }
-  };
-
   return (
     <section className="h-100 gradient-form">
       <div className="container py-5 h-100">
@@ -144,19 +132,16 @@ function login() {
                       {otpSent && (
                         <>
                           <label className="d-flex justify-content-center">Enter OTP</label>
-                          <div className="otp-inputs mb-4 d-flex justify-content-between">
-                            {otp.map((data, index) => (
-                              <input
-                                key={index}
-                                type="text"
-                                maxLength="1"
-                                value={data}
-                                onChange={(e) => handleOtpChange(e.target, index)}
-                                onKeyDown={handleKeyDownEnterLogin}
-                                className="form-control otp-input"
-                                style={{ width: '2.5rem', textAlign: 'center' }}
-                              />
-                            ))}
+                          <div className="form-outline mb-4">
+                            <input
+                              type="text"
+                              value={otp}
+                              onChange={(e) => setOtp(e.target.value)}
+                              onKeyDown={handleKeyDownEnterLogin}
+                              maxLength="6"
+                              className="form-control"
+                              placeholder="Enter 6-digit OTP"
+                            />
                           </div>
                         </>
                       )}

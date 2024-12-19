@@ -111,9 +111,9 @@ function live_tickets() {
 
   const handleClose = () => {
     setShow(false)
-    setFormData((prev)=>({
+    setFormData((prev) => ({
       ...prev,
-      ticketStatus:""
+      ticketStatus: ""
     }))
   };
   const handleShow = (queryId) => {
@@ -157,7 +157,7 @@ function live_tickets() {
   }
 
   const fetchData = async () => {
-    const response = await axiosInstance.get(`/third_party_api/ticket/${assignedTo!==0?`getAllNewTickets/${userId}`:`getAllNewTickets`}`)
+    const response = await axiosInstance.get(`/third_party_api/ticket/${assignedTo !== 0 ? `getAllNewTickets/${userId}` : `getAllNewTickets`}`)
     setData(response.data);
     const allData = response.data
     console.log(allData.length)
@@ -215,6 +215,18 @@ function live_tickets() {
       }
     };
   }, []);
+
+  const [agentDetails, setAgentDetails] = useState()
+
+  const getAgentDetails = async () => {
+    const response = await axiosInstance.get(`/user/getAgent/${userId}`)
+    setAgentDetails(response.data)
+  }
+
+  useEffect(() => {
+    getAgentDetails()
+  }, [])
+ 
 
   const handleSelecteRow = (index, ticketId) => {
     setSelectedKey(index);
@@ -428,27 +440,27 @@ function live_tickets() {
     setItemsPerPage(perPage);
     setCurrentPage(0); // Reset to the first page
   };
-  
+
   const generatePageNumbers = () => {
     const totalPages = Math.ceil(data && data.length / itemsPerPage); // Calculate total pages
     const pageNumbers = [];
     const maxPagesToShow = 9; // Maximum number of page buttons to display
     const halfMaxPagesToShow = Math.floor(maxPagesToShow / 2);
-  
+
     let startPage = Math.max(currentPage - halfMaxPagesToShow, 0);
     let endPage = Math.min(startPage + maxPagesToShow - 1, totalPages - 1);
-  
+
     if (endPage - startPage < maxPagesToShow - 1) {
       startPage = Math.max(endPage - maxPagesToShow + 1, 0);
     }
-  
+
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
-  
+
     return pageNumbers;
   };
-  
+
   const handleSendEmail = async (e) => {
     e.preventDefault();
     try {
