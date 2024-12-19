@@ -26,7 +26,7 @@ function MIS_Product() {
     const [enable, setEnable] = useState(false);
     const [images, setImages] = useState([])
     // State for modal inputs
-    const [unit, setUnit] = useState("Pills");
+    const [unit, setUnit] = useState("");
     const [currency, setCurrency] = useState("USD");
     const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
     const [requestBody, setRequestBody] = useState([]);
@@ -132,8 +132,13 @@ function MIS_Product() {
     };
 
     const handleAddMore = (e) => {
-        handleAddPriceInBody(e)
-        setQuantities([...quantities, { quantity: "", price: "" }]);
+        if (unit.length > 0 && currency.length > 0) {
+            handleAddPriceInBody(e)
+            setQuantities([...quantities, { quantity: "", price: "" }]);
+
+        } else {
+            toast.info("Please fill all fields")
+        }
     };
 
     const handleRemoveRow = (index) => {
@@ -156,26 +161,32 @@ function MIS_Product() {
             setSubmitError("All fields are required.");
             return;
         }
-
-        const payload = {
+        const latestQuantity = quantities[quantities.length - 1]
+        let newBody = requestBody;
+        newBody.push({
             product: {
-                productId: selectedProduct?.productId,
+                productId: selectedProduct.productId,
             },
-            quantity: quantities[0]?.quantity,
-            price: quantities[0]?.price,
-            productCode: selectedProduct?.productCode || "N/A",
+            quantity: latestQuantity.quantity,
+            price: latestQuantity.price,
             unit,
-            currency: currency || "USD",
-        };
+            currency: currency || "USD", // Default to USD if currency is not set
+        })
+
+
 
         try {
-            const response = await axiosInstance.post("/product/addFixedPriceList", requestBody);
+            const response = await axiosInstance.post("/product/addFixedPriceList", newBody);
             console.log("Response:", response.data);
             handleZero();
+            setSelectedProduct(null)
             fetchProducts();
         } catch (err) {
             setSubmitError(err.response?.data?.message || "Failed to submit data.");
         }
+        setUnit("")
+        setSelectedProduct(null)
+
     };
 
     const rowDetails = [
@@ -197,18 +208,22 @@ function MIS_Product() {
         e.preventDefault()
         const latestQuantity = quantities[quantities.length - 1]; // Get the last entry in the array
 
-        setRequestBody((prev) => [
-            ...prev,
-            {
-                product: {
-                    productId: selectedProduct.productId,
+        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0) {
+            setRequestBody((prev) => [
+                ...prev,
+                {
+                    product: {
+                        productId: selectedProduct.productId,
+                    },
+                    quantity: latestQuantity.quantity,
+                    price: latestQuantity.price,
+                    unit,
+                    currency: currency || "USD", // Default to USD if currency is not set
                 },
-                quantity: latestQuantity.quantity,
-                price: latestQuantity.price,
-                unit,
-                currency: currency || "USD", // Default to USD if currency is not set
-            },
-        ]);
+            ]);
+        } else {
+            toast.info("please add proper quantity and price")
+        }
     };
 
     const handleUpdateCategory = async () => {
@@ -283,6 +298,14 @@ function MIS_Product() {
         fetchProductImages()
     }
 
+    const deletePrice = async (id) => {
+        console.log(id)
+
+        axiosInstance.delete(`/product/deletePrice/${id}`)
+        console.log(id)
+    }
+
+    console.log(requestBody)
 
     return (
         <div className="container-fluid" >
@@ -318,26 +341,26 @@ function MIS_Product() {
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "10px" }}>
-                                                        {/* {getImageIds(product.productId).map((imageId) => (
+                                                        {getImageIds(product.productId).map((imageId) => (
                                                             localStorage.getItem("roleName") === "Product_Coordinator" ? <>
                                                                 <i class="fa-solid fa-xmark" style={{ color: "red", position: "relative", backgroundColor: "white", }} onClick={() => handleDeleteImage(imageId)}></i>
                                                                 <img
                                                                     key={imageId}
-                                                                    onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
-                                                                    src={`https://backend.rdvision.in/images/image/${imageId}`}
+                                                                    onClick={() => handleView(`https://image.rdvision.in/images/image/${imageId}`)}
+                                                                    src={`https://image.rdvision.in/images/image/${imageId}`}
                                                                     alt="No Image Found"
                                                                     style={{ maxWidth: "100px" }}
                                                                 />
-                                                            </> : 
-                                                            <img
-                                                                key={imageId}
-                                                                onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
-                                                                src={`https://backend.rdvision.in/images/image/${imageId}`}
-                                                                alt="No Image Found"
-                                                                style={{ maxWidth: "100px" }}
-                                                            />
+                                                            </> :
+                                                                <img
+                                                                    key={imageId}
+                                                                    onClick={() => handleView(`https://image.rdvision.in/images/image/${imageId}`)}
+                                                                    src={`https://image.rdvision.in/images/image/${imageId}`}
+                                                                    alt="No Image Found"
+                                                                    style={{ maxWidth: "100px" }}
+                                                                />
 
-                                                        ))} */}
+                                                        ))}
 
                                                         <div className="mt-3">
                                                             <button
@@ -392,7 +415,8 @@ function MIS_Product() {
                                                                         <tr key={priceItem.priceId}>
                                                                             <td>{priceItem.productCode || "N/A"}</td>
                                                                             <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
-                                                                            <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
+                                                                            <td>{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
+                                                                            <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
@@ -411,7 +435,7 @@ function MIS_Product() {
                                                                 className="btn btn-sm btn-success mt-2 rounded"
                                                                 onClick={() => handleOne(product)}
                                                             >
-                                                                Add Moree
+                                                                Add More
                                                             </button>
                                                         )}
                                                     </td>
@@ -452,7 +476,7 @@ function MIS_Product() {
                                 <input
                                     type="text"
                                     id="unit"
-                                    placeholder="Pills"
+                                    placeholder=""
                                     className="form-control"
                                     value={unit}
                                     onChange={(e) => setUnit(e.target.value)}
@@ -464,7 +488,7 @@ function MIS_Product() {
                                 <input
                                     type="text"
                                     id="currency"
-                                    placeholder="USD"
+                                    placeholder=""
                                     className="form-control"
                                     value={currency}
                                     onChange={(e) => setCurrency(e.target.value)}
