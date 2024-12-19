@@ -117,33 +117,42 @@ function InNegotiation() {
       setError('Unique Query ID is not defined');
       return;
     }
+    if (!formData.ticketStatus || formData.ticketStatus.length === 0) {
+      setError('Ticket Status cannot be empty');
+      return;
+    }
     try {
       const params = {
         userId,
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
-        call_id: callId
+        call_id: callId,
       };
-      const res = await axiosInstance.post(`/${uniqueQueryId.length < 15 ? "third_party_api/ticket" : "upload"}/updateTicketResponse/${uniqueQueryId}`, {}, { params }); setResponse(res.data.dtoList);
+
+      const apiPath = uniqueQueryId.length < 15 ? "third_party_api/ticket" : "upload";
+      const res = await axiosInstance.post(`/${apiPath}/updateTicketResponse/${uniqueQueryId}`, {}, { params });
+
+      setResponse(res.data.dtoList);
       toast.success('Update successfully!');
-      setFolowupUpdate(uniqueQueryId)
+      setFolowupUpdate(uniqueQueryId);
       handleClose();
       fetchData(params[activeTab], currentPage, negosPerPage);
       setError(null);
-      setCallId(0)
-      setUserReportReloader((prev) => prev + 1)
+      setCallId(0);
+      setUserReportReloader((prev) => prev + 1);
     } catch (err) {
       setError(err.message);
       setResponse(null);
     }
-    if (!list) {
-      fetchDatas1()
-      fetchDatas2()
-      fetchDatas3()
-    }
-    setDropedinStage(null)
 
+    if (!list) {
+      fetchDatas1();
+      fetchDatas2();
+      fetchDatas3();
+    }
+
+    setDropedinStage(null);
   };
 
   // Update handleStatusChange function
@@ -1280,7 +1289,6 @@ function InNegotiation() {
                 name="comment"
                 value={formData.comment}
                 onChange={handleChange}
-                required
                 style={{ borderRadius: '4px' }}
               ></textarea>
             </div>

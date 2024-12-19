@@ -389,10 +389,13 @@ function live_tickets() {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     if (!uniqueQueryId) {
       setError('Unique Query ID is not defined');
+      return;
+    }
+    if (!formData.ticketStatus || formData.ticketStatus.length === 0) {
+      setError('Ticket Status cannot be empty');
       return;
     }
     try {
@@ -401,7 +404,7 @@ function live_tickets() {
         ticketStatus: formData.ticketStatus,
         comment: formData.comment,
         followUpDateTime: formData.followUpDateTime,
-        call_id: callId
+        call_id: callId,
       };
       const res = await axiosInstance.post(`/third_party_api/ticket/updateTicketResponse/${uniqueQueryId}`, {}, { params });
       setResponse(res.data.dtoList);
@@ -409,9 +412,9 @@ function live_tickets() {
       handleClose();
       fetchData(params[activeTab], currentPage, itemsPerPage);
       setError(null);
-      setCallId(0)
-      setFolowupUpdate(uniqueQueryId)
-      setUserReportReloader((prev) => prev + 1)
+      setCallId(0);
+      setFolowupUpdate(uniqueQueryId);
+      setUserReportReloader((prev) => prev + 1);
     } catch (err) {
       setError(err.message);
       setResponse(null);
@@ -972,7 +975,6 @@ function live_tickets() {
                       name="transactionDetails"
                       value={formData.SaleTransaction}
                       onChange={handleChange}
-                      required
                       style={{ borderRadius: '4px' }}
                     />
                   </div>
