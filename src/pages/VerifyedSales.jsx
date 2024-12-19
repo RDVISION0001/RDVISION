@@ -3,8 +3,11 @@ import axiosInstance from '../axiosInstance';
 import { Modal, Button } from "react-bootstrap";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+import { useAuth } from '../auth/AuthContext';
+
 
 function VerifiedSales() {
+    const { roleName } = useAuth()
     const [invoices, setInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -154,11 +157,11 @@ function VerifiedSales() {
                                         <th scope="col" className='text-center'>Product Details  </th>
                                         <th scope="col">Doses</th>
                                         <th scope="col">Tracking Number</th>
-                                        <th scope="col">Paymnent Windows</th>
+                                        <th scope="col">Payment Windows</th>
                                         <th scope="col">Shipping Through</th>
                                         <th scope="col">Paid Amount</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
+                                        {roleName === 'admin' && <th scope="col">Action</th>}
+                                        </tr>
                                 </thead>
                                 <tbody>
                                     {filteredInvoices.map((invoice, index) => (
@@ -214,12 +217,14 @@ function VerifiedSales() {
                                                 {invoice.currency || 'USD'} {invoice.payment?.amount}
                                             </td>
                                             <td>
-                                                <Button
-                                                    variant="success rounded"
-                                                    onClick={() => handleVerifyInvoice(invoice.invoiceId)}
-                                                >
-                                                    Next
-                                                </Button>
+                                                {roleName === 'admin' && (
+                                                    <Button
+                                                        variant="success rounded"
+                                                        onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                                                    >
+                                                        Next
+                                                    </Button>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

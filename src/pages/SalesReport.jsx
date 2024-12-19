@@ -332,7 +332,7 @@ function SalesReport() {
                                                     </td>
                                                 </tr>
                                             ))}
-                                        </tbody> : <div className='text-center'>No Invioces Pending For Verification</div>}
+                                        </tbody> : <div className='text-center'>No Invoices Pending For Verification</div>}
                                 </table>
                             </div>
                         </div>
