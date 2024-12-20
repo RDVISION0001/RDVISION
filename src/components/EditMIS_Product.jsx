@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 
-const EditMIS_Product = ({ id }) => {
+const EditMIS_Product = ({ id,closeFunction }) => {
     // State for form data
     const productData = id;
     const [formData, setFormData] = useState({
@@ -31,6 +31,7 @@ const EditMIS_Product = ({ id }) => {
             .then(response => {
                 console.log('Product updated successfully:', response.data);
                 toast.success('Product updated successfully');
+                closeFunction()
             })
             .catch(error => {
                 console.error('Error updating product:', error);

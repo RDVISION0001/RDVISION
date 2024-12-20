@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { Modal, Button } from 'react-bootstrap';
 
 
-function UploadedProduct() {
+function UploadedProduct({ closeFunction, selectedProduct, productName }) {
     const [products, setProducts] = useState([]);
     const [productId, setProductId] = useState([]);
     const [filterText, setFilterText] = useState("");
@@ -64,27 +64,7 @@ function UploadedProduct() {
     ];
 
 
-    useEffect(() => {
-        // Fetch data from API
-        fetchProducts()
-    }, []);
 
-    const fetchProducts = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await axiosInstance.get("/product/getAllProducts");
-            if (response.data?.dtoList) {
-                setProducts(response.data.dtoList);
-            } else {
-                setError("Unexpected response format");
-            }
-        } catch (err) {
-            setError(err.message || "Error fetching products");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const [isBasicActive, setBasicActive] = useState(true);
     const [basicData, setBasicData] = useState({
@@ -94,7 +74,8 @@ function UploadedProduct() {
         unit: '',
         description: '',
         productVideo: '',
-        productBrochure: ''
+        productBrochure: '',
+        productId: selectedProduct ? selectedProduct : 0
     });
 
     const [imageList, setimageList] = useState([])
@@ -117,6 +98,65 @@ function UploadedProduct() {
         }
     };
 
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     if (imageList.length === 0) {
+    //         toast.info("Add atlist one Image ")
+    //     } else {
+    //         let newImage = [];
+    //         for (let i = 0; i < imageList.length; i++) {
+    //             newImage.push({
+    //                 imageData: imageList[i]
+    //             })
+    //         }
+
+    //         const payload = {
+    //             productCode: basicData.productCode,
+    //             name: basicData.name,
+    //             price: basicData.price,
+    //             unit: basicData.unit,
+    //             description: basicData.description,
+    //             productVideo: basicData.productVideo,
+    //             bruchureLink: basicData.productBrochure,
+    //             imageListInByte: newImage,
+    //             composition: advanceData.composition,
+    //             brand: advanceData.brand,
+    //             treatment: advanceData.treatment,
+    //             packagingSize: advanceData.packagingSize,
+    //             strength: advanceData.strength,
+    //             packagingType: advanceData.packagingType,
+    //         };
+
+    //         try {
+    //             const response = await axiosInstance.post('/product/addproduct', payload);
+    //             console.log('Product added successfully:', response.data);
+    //             toast.success("Product Added Successfully!"); 
+    //             setBasicData({
+    //                 name: '',
+    //                 productCode: '',
+    //                 price: '',
+    //                 unit: '',
+    //                 description: '',
+    //                 productVideo: '',
+    //                 productBrochure: ''
+    //             })
+    //             setimageList([])
+    //             setAdvanceData({
+    //                 strength: '',
+    //                 packagingType: '',
+    //                 packagingSize: '',
+    //                 brand: '',
+    //                 composition: '',
+    //                 treatment: '',
+    //             })
+    //             closeFunction()
+    //         } catch (error) {
+    //             console.error('Error adding product:', error);
+    //             toast.error("Failed to add product!"); 
+    //         }
+    //     }
+    // };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (imageList.length === 0) {
@@ -128,51 +168,97 @@ function UploadedProduct() {
                     imageData: imageList[i]
                 })
             }
+            if (selectedProduct) {
+                const payload = {
+                    productCode: basicData.productCode,
+                    name: basicData.name,
+                    price: basicData.price,
+                    unit: basicData.unit,
+                    description: basicData.description,
+                    productVideo: basicData.productVideo,
+                    bruchureLink: basicData.productBrochure,
+                    imageListInByte: newImage,
+                    composition: advanceData.composition,
+                    brand: advanceData.brand,
+                    treatment: advanceData.treatment,
+                    packagingSize: advanceData.packagingSize,
+                    strength: advanceData.strength,
+                    packagingType: advanceData.packagingType,
+                    productId: selectedProduct
+                };
 
-            const payload = {
-                productCode: basicData.productCode,
-                name: basicData.name,
-                price: basicData.price,
-                unit: basicData.unit,
-                description: basicData.description,
-                productVideo: basicData.productVideo,
-                bruchureLink: basicData.productBrochure,
-                imageListInByte: newImage,
-                composition: advanceData.composition,
-                brand: advanceData.brand,
-                treatment: advanceData.treatment,
-                packagingSize: advanceData.packagingSize,
-                strength: advanceData.strength,
-                packagingType: advanceData.packagingType,
-            };
+                try {
+                    const response = await axiosInstance.put('/product/updateProduct', payload);
+                    toast.success("Product Updated Successfully!");
+                    setBasicData({
+                        name: '',
+                        productCode: '',
+                        price: '',
+                        unit: '',
+                        description: '',
+                        productVideo: '',
+                        productBrochure: ''
+                    })
+                    setimageList([])
+                    setAdvanceData({
+                        strength: '',
+                        packagingType: '',
+                        packagingSize: '',
+                        brand: '',
+                        composition: '',
+                        treatment: '',
+                    })
+                    closeFunction()
+                } catch (error) {
+                    console.error('Error adding product:', error);
+                    toast.error("Failed to add product!");
+                }
+            } else {
+                const payload = {
+                    productCode: basicData.productCode,
+                    name: basicData.name,
+                    price: basicData.price,
+                    unit: basicData.unit,
+                    description: basicData.description,
+                    productVideo: basicData.productVideo,
+                    bruchureLink: basicData.productBrochure,
+                    imageListInByte: newImage,
+                    composition: advanceData.composition,
+                    brand: advanceData.brand,
+                    treatment: advanceData.treatment,
+                    packagingSize: advanceData.packagingSize,
+                    strength: advanceData.strength,
+                    packagingType: advanceData.packagingType
+                };
 
-            try {
-                const response = await axiosInstance.post('/product/addproduct', payload);
-                console.log('Product added successfully:', response.data);
-                toast.success("Product Added Successfully!"); 
-                setBasicData({
-                    name: '',
-                    productCode: '',
-                    price: '',
-                    unit: '',
-                    description: '',
-                    productVideo: '',
-                    productBrochure: ''
-                })
-                setimageList([])
-                setAdvanceData({
-                    strength: '',
-                    packagingType: '',
-                    packagingSize: '',
-                    brand: '',
-                    composition: '',
-                    treatment: '',
-                })
-                fetchProducts()
-            } catch (error) {
-                console.error('Error adding product:', error);
-                toast.error("Failed to add product!"); 
+                try {
+                    const response = await axiosInstance.post('/product/addproduct', payload);
+                    toast.success("Product Added Successfully!");
+                    setBasicData({
+                        name: '',
+                        productCode: '',
+                        price: '',
+                        unit: '',
+                        description: '',
+                        productVideo: '',
+                        productBrochure: ''
+                    })
+                    setimageList([])
+                    setAdvanceData({
+                        strength: '',
+                        packagingType: '',
+                        packagingSize: '',
+                        brand: '',
+                        composition: '',
+                        treatment: '',
+                    })
+                    closeFunction()
+                } catch (error) {
+                    console.error('Error adding product:', error);
+                    toast.error("Failed to add product!");
+                }
             }
+
         }
     };
     const [imageLink, setImageLink] = useState("");
@@ -295,7 +381,11 @@ function UploadedProduct() {
 
     return (
         <div>
-
+            {selectedProduct && <div>
+                {/* <span>                selected product Id is {basicData.productId}
+                </span> */}
+                <strong> Product name :- {productName}</strong>
+            </div>}
             {/* Toggle between Basic and Advance Details */}
             {localStorage.getItem("roleName") === "Product_Coordinator" && <>
                 <section className="filter-section">
@@ -314,7 +404,7 @@ function UploadedProduct() {
                 </section>
                 {/* Conditionally render based on the state */}
                 {isBasicActive ? (
-                    <section className="filter-section">
+                    <section className="filter-section" style={{ height: "700px" }}>
                         <div className="container-fluid">
                             <div className="row">
                                 <div className="container mt-4">
@@ -323,7 +413,7 @@ function UploadedProduct() {
                                         <div className="card-body">
                                             <form onSubmit={handleSubmit}>
                                                 <div className="row">
-                                                    <div className="col-md-5 col-sm-12">
+                                                    <div className="col-md-12 col-sm-12">
                                                         <div className="text-center">
                                                             <div className="container">
                                                                 <div className="row row-cols-3">
@@ -410,12 +500,12 @@ function UploadedProduct() {
 
                                                     <div className="col-md-7 col-sm-12">
                                                         <div className="d-flex">
-                                                            <div className="form-group col-md-6 col-sm-12">
+                                                            {!selectedProduct && <div className="form-group col-md-6 col-sm-12">
                                                                 <label htmlFor="price">Product Name</label>
                                                                 <div className="input-group">
                                                                     <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
                                                                 </div>
-                                                            </div>
+                                                            </div>}
                                                             {/* <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
                                                                 <label htmlFor="unit">Product Code</label>
                                                                 <input type="text" className="form-control" id="productCode" value={basicData.productCode} onChange={handleInputChange} placeholder="Enter product code" />
@@ -455,8 +545,8 @@ function UploadedProduct() {
                         </div>
                     </section>
                 ) : (
-                    <section className="filter-section">
-                        <div className="container-fluid">
+                    <section className="filter-section" style={{ height: "700px", width: "700px" }}>
+                        <div className="container-fluid w-100">
                             <div className="row">
                                 <div className="container mt-4">
                                     <div className="card">
@@ -513,112 +603,7 @@ function UploadedProduct() {
             </>}
 
             {/* Product Card List */}
-            <section className="followup-table-section py-3">
-                <div className="container-fluid">
-                    <div className="mb-3">
-                        <input
-                            type="text"
-                            placeholder="Search by Name or Generic Name"
-                            className="form-control"
-                            value={filterText}
-                            onChange={handleFilterChange}
-                        />
-                    </div>
-                    <div className="table-responsive">
-                        <table className="table table-bordered border-dark">
-                            <thead>
-                                <tr>
-                                    <th style={{ width: "5%" }}>S.No.</th>
-                                    <th style={{ width: "10%" }}>Product Image</th>
-                                    <th style={{ width: "20%" }} colSpan="2">Product Details</th>
-                                    <th style={{ width: "15%" }} className="text-center">Price List</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredProducts.length > 0 ? (
-                                    filteredProducts.map((product, index) => (
-                                        <React.Fragment key={product.productId}>
-                                            {rowDetails.map((row, rowIndex) => (
-                                                <tr key={`${product.productId}-${rowIndex}`}>
-                                                    {rowIndex === 0 && (
-                                                        <>
-                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
-                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                                {/* <img
-                                                                    onClick={() =>
-                                                                        handleView(
-                                                                            `https://backend.rdvision.in/images/getProductImage/${product.productId}`
-                                                                        )}
-                                                                    src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
-                                                                    alt="No Image Found"
-                                                                    style={{ maxWidth: "80px" }}
-                                                                /> */}
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                    <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
-                                                    <td style={{ padding: "5px" }}>
-                                                        {row.valueKey === "category" && (
-                                                            <>
-                                                                {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
-                                                                    <>
-                                                                        {product[row.valueKey]}{" "}
-                                                                    </>
-                                                                ) : (
-                                                                    "No category added"
-                                                                )}
-                                                            </>
-                                                        )}
-                                                        {row.valueKey !== "category" && (
-                                                            <>
-                                                                {product[row.valueKey] || "N/A"}
-                                                            </>
-                                                        )}
-                                                    </td>
-                                                    {rowIndex === 0 && (
-                                                        <>
-                                                            <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
-                                                                {product.priceList && product.priceList.length > 0 ? (
-                                                                    <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>Product Code</th>
-                                                                                <th>Quantity</th>
-                                                                                <th>Price</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {product.priceList.map((priceItem) => (
-                                                                                <tr key={priceItem.priceId}>
-                                                                                    <td>{priceItem.productCode || "N/A"}</td>
-                                                                                    <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
-                                                                                    <td>{`$${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
-                                                                                </tr>
-                                                                            ))}
-                                                                        </tbody>
-                                                                    </table>
-                                                                ) : (
-                                                                    "No price list added"
-                                                                )}
-                                                            </td>
-                                                        </>
-                                                    )}
-                                                </tr>
-                                            ))}
-                                        </React.Fragment>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="text-center">
-                                            No products match your search.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
+
 
 
 

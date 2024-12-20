@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaCamera } from 'react-icons/fa';
 import UpProductImg from "../components/UpProductImg";
 import EditMIS_Product from "../components/EditMIS_Product";
-
+import Uploaded_product from '../pages/uploaded_product'
 
 function MIS_Product() {
     const [filterText, setFilterText] = useState("");
@@ -28,12 +28,22 @@ function MIS_Product() {
     // State for modal inputs
     const [unit, setUnit] = useState("");
     const [currency, setCurrency] = useState("USD");
-    const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
+    const [quantities, setQuantities] = useState([{ productCode: "", quantity: "", price: "" }]);
     const [requestBody, setRequestBody] = useState([]);
     const [submitError, setSubmitError] = useState(null);
     const [productId, setProductId] = useState(null);
     const [selectedImage, setSelectedImage] = useState("");
+    const [isAddProductOpen, setIsAddProductOepn] = useState(false)
 
+    const openAddProduct = () => {
+        setIsAddProductOepn(true)
+    }
+
+    const handleCloseProductAdd = () => {
+        setIsAddProductOepn(false)
+        fetchProductImages()
+        fetchProducts()
+    }
     const [view, setView] = useState(false);
     const handleView = (imageUrl) => {
         setSelectedImage(imageUrl);
@@ -110,6 +120,7 @@ function MIS_Product() {
     //EDIT action
     const handleDesable = () => {
         setEnable(false);
+        fetchProducts()
     };
 
     const handleEnable = (id) => {
@@ -168,6 +179,7 @@ function MIS_Product() {
                 productId: selectedProduct.productId,
             },
             quantity: latestQuantity.quantity,
+            productCode: latestQuantity.productCode,
             price: latestQuantity.price,
             unit,
             currency: currency || "USD", // Default to USD if currency is not set
@@ -186,6 +198,7 @@ function MIS_Product() {
         }
         setUnit("")
         setSelectedProduct(null)
+        setRequestBody([])
 
     };
 
@@ -201,14 +214,14 @@ function MIS_Product() {
         { label: "Treatment", valueKey: "treatment" },
     ];
 
-    if (loading) return <div className="text-center">Loading...</div>;
+    // if (loading) return <div className="text-center">Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     const handleAddPriceInBody = (e) => {
         e.preventDefault()
         const latestQuantity = quantities[quantities.length - 1]; // Get the last entry in the array
 
-        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0) {
+        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0 && latestQuantity.productCode.length > 0) {
             setRequestBody((prev) => [
                 ...prev,
                 {
@@ -217,6 +230,7 @@ function MIS_Product() {
                     },
                     quantity: latestQuantity.quantity,
                     price: latestQuantity.price,
+                    productCode: latestQuantity.productCode,
                     unit,
                     currency: currency || "USD", // Default to USD if currency is not set
                 },
@@ -299,13 +313,25 @@ function MIS_Product() {
     }
 
     const deletePrice = async (id) => {
-        console.log(id)
+        try {
+            await axiosInstance.delete(`/product/deletePrice/${id}`)
+            toast.success("Deleted")
+            fetchProducts()
+        } catch (e) {
+            toast.error("Some error occures")
+        }
 
-        axiosInstance.delete(`/product/deletePrice/${id}`)
-        console.log(id)
+    }
+    const handleDeleteProduct = async (product) => {
+        try {
+            await axiosInstance.delete(`/product/deleteproduct/${product.productId}`)
+            toast.success("deleted")
+            fetchProducts()
+        } catch (e) {
+            toast.error("Some Error Occures")
+        }
     }
 
-    console.log(requestBody)
 
     return (
         <div className="container-fluid" >
@@ -321,6 +347,9 @@ function MIS_Product() {
             </div>
 
             <div className="table-responsive">
+              {localStorage.getItem("roleName")==="Product_Coordinator" && <div className="d-flex justify-content-end p-3">
+                    <button onClick={openAddProduct} className="rounded">Add New Product</button>
+                </div>}
                 <table className="table table-bordered border-dark">
                     <thead>
                         <tr>
@@ -328,12 +357,12 @@ function MIS_Product() {
                             <th style={{ width: "10%" }}>Product Image</th>
                             <th style={{ width: "20%" }} colSpan="2">Product Details</th>
                             <th style={{ width: "15%" }} className="text-center">Price List</th>
-                            <th style={{ width: "10%" }}>Actions</th>
+                           {localStorage.getItem("roleName")==="Product_Coordinator" &&  <th style={{ width: "10%" }}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
                         {filteredProducts.length > 0 ? (
-                            filteredProducts.map((product, index) => (
+                            filteredProducts.filter((product)=>product.strength ).map((product, index) => (
                                 <React.Fragment key={product.productId}>
                                     {rowDetails.map((row, rowIndex) => (
                                         <tr key={`${product.productId}-${rowIndex}`}>
@@ -363,12 +392,12 @@ function MIS_Product() {
                                                         ))}
 
                                                         <div className="mt-3">
-                                                            <button
+                                                           {localStorage.getItem("roleName")==="Product_Coordinator"&& <button
                                                                 className="btn btn-sm btn-primary rounded"
                                                                 onClick={() => handleOn(product.productId)}
                                                             >
                                                                 Upload Image
-                                                            </button>
+                                                            </button>}
                                                         </div>
                                                     </td>
                                                 </>
@@ -380,15 +409,16 @@ function MIS_Product() {
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
                                                             <>
                                                                 {product[row.valueKey]}{" "}
-                                                                <button
+                                                                {localStorage.getItem("roleName")==="Product_Coordinator"?<button
                                                                     className="btn btn-sm btn-warning ms-2 rounded"
                                                                     onClick={() => handleShow(product.productId)}
                                                                 >
                                                                     Edit
-                                                                </button>
+                                                                </button>:"N/A"}
+
                                                             </>
                                                         ) : (
-                                                            <button onClick={() => handleShow(product.productId)}>Add Category</button>
+                                                            localStorage.getItem("roleName")==="Product_Coordinator"?<button onClick={() => handleShow(product.productId)}>Add Category</button>:"N/A"
                                                         )}
                                                     </>
                                                 )}
@@ -416,22 +446,22 @@ function MIS_Product() {
                                                                             <td>{priceItem.productCode || "N/A"}</td>
                                                                             <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
                                                                             <td>{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
-                                                                            <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>
+                                                                            {localStorage.getItem("roleName")==="Product_Coordinator" && <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
                                                         ) : (
-                                                            <button
+                                                            localStorage.getItem("roleName")==="Product_Coordinator"? <button
                                                                 className=""
                                                                 onClick={() => handleOne(product)}
                                                             >
                                                                 Add Price
-                                                            </button>
+                                                            </button>:"Price Not updated yet"
                                                         )}
                                                         {/* Add More button below the table */}
                                                         {product.priceList && product.priceList.length > 0 && (
-                                                            <button
+                                                           localStorage.getItem("roleName")==="Product_Coordinator" && <button
                                                                 className="btn btn-sm btn-success mt-2 rounded"
                                                                 onClick={() => handleOne(product)}
                                                             >
@@ -440,9 +470,10 @@ function MIS_Product() {
                                                         )}
                                                     </td>
 
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                   {localStorage.getItem("roleName")==="Product_Coordinator" &&  <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                         <button onClick={() => handleEnable(product)}>EDIT</button>
-                                                    </td>
+                                                        <button style={{ marginLeft: "3px",backgroundColor:"transparent" }} onClick={() => handleDeleteProduct(product)}><img src="https://cdn-icons-png.flaticon.com/128/17381/17381043.png" style={{height:"50px"}}/>  </button>
+                                                    </td>}
                                                 </>
                                             )}
                                         </tr>
@@ -501,6 +532,14 @@ function MIS_Product() {
                             <label className="form-label">Quantities and Prices</label>
                             {quantities.map((item, index) => (
                                 <div className="d-flex gap-2 mb-2 align-items-center" key={index}>
+                                    <input
+                                        type="text"
+                                        placeholder="productCode"
+                                        className="form-control"
+                                        value={item.productCode}
+                                        onChange={(e) => handleQuantityChange(index, "productCode", e.target.value)}
+                                        required
+                                    />
                                     <input
                                         type="number"
                                         placeholder="Quantity"
@@ -606,7 +645,7 @@ function MIS_Product() {
                 <div className="m-3 d-flex justify-content-end" >
                     <i onClick={handleDesable} class="fa-solid fa-xmark  fa-xl"></i>
                 </div>
-                <EditMIS_Product id={productId} />
+                <EditMIS_Product id={productId} closeFunction={handleDesable} />
             </Modal>
 
             {/* Modal to view image */}
@@ -623,6 +662,17 @@ function MIS_Product() {
                     >
                         Close
                     </button>
+                </Modal.Body>
+            </Modal>
+
+            <Modal
+                show={isAddProductOpen}
+                onHide={handleCloseProductAdd}
+                centered
+                dialogClassName="custom-modal-width"
+            >
+                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                    <Uploaded_product closeFunction={handleCloseProductAdd}/>
                 </Modal.Body>
             </Modal>
 
