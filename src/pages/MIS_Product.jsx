@@ -28,7 +28,7 @@ function MIS_Product() {
     // State for modal inputs
     const [unit, setUnit] = useState("");
     const [currency, setCurrency] = useState("USD");
-    const [quantities, setQuantities] = useState([{ productCode: "", quantity: "", price: "" }]);
+    const [quantities, setQuantities] = useState([{ quantity: "", price: "" }]);
     const [requestBody, setRequestBody] = useState([]);
     const [submitError, setSubmitError] = useState(null);
     const [productId, setProductId] = useState(null);
@@ -179,7 +179,7 @@ function MIS_Product() {
                 productId: selectedProduct.productId,
             },
             quantity: latestQuantity.quantity,
-            productCode: latestQuantity.productCode,
+            // productCode: latestQuantity.productCode,
             price: latestQuantity.price,
             unit,
             currency: currency || "USD", // Default to USD if currency is not set
@@ -221,7 +221,7 @@ function MIS_Product() {
         e.preventDefault()
         const latestQuantity = quantities[quantities.length - 1]; // Get the last entry in the array
 
-        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0 && latestQuantity.productCode.length > 0) {
+        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0 ) {
             setRequestBody((prev) => [
                 ...prev,
                 {
@@ -230,7 +230,7 @@ function MIS_Product() {
                     },
                     quantity: latestQuantity.quantity,
                     price: latestQuantity.price,
-                    productCode: latestQuantity.productCode,
+                    // productCode: latestQuantity.productCode,
                     unit,
                     currency: currency || "USD", // Default to USD if currency is not set
                 },
@@ -532,14 +532,14 @@ function MIS_Product() {
                             <label className="form-label">Quantities and Prices</label>
                             {quantities.map((item, index) => (
                                 <div className="d-flex gap-2 mb-2 align-items-center" key={index}>
-                                    <input
+                                    {/* <input
                                         type="text"
                                         placeholder="productCode"
                                         className="form-control"
                                         value={item.productCode}
                                         onChange={(e) => handleQuantityChange(index, "productCode", e.target.value)}
                                         required
-                                    />
+                                    /> */}
                                     <input
                                         type="number"
                                         placeholder="Quantity"
