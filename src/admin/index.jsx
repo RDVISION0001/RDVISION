@@ -111,7 +111,7 @@ const Index = () => {
         setInvoices(response.data);
         const today = new Date().toISOString().split("T")[0];
         const filteredToday = response.data.filter((invoice) => {
-          const saleDate = formatDateToString(invoice.saleDate);
+          const saleDate = formatDateToString(invoice.verificationDate);
           return saleDate === today;
         });
         setTodayInvoices(filteredToday);
@@ -219,6 +219,7 @@ const Index = () => {
       invoice.customerEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
+  console.log(todayInvoices)
   return (
     <section className="followup-table-section">
       <div className="container-fluid">
@@ -438,7 +439,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredTodayInvoices.map((invoice, index) => (
+                {todayInvoices.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -538,7 +539,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPreparingShipment.map((invoice, index) => (
+                {preparingShipment.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -638,7 +639,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredAwaitingtracking.map((invoice, index) => (
+                {awaitingtracking.map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td className="text-center">{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
