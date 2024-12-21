@@ -83,7 +83,8 @@ import Invoicesss from './senior_supervisor/invoicesss';
 import Tocaptain from './senior_supervisor/toCaptain';
 import AssignTktReport from './components/AssignTktReport';
 
-
+// inventory management
+import Indexi from './inventory/Indexi';
 
 // componenets css
 import './components/css/themedigproX01.css';
@@ -141,35 +142,29 @@ function App() {
   return (
     <>
       <div className='d-flex justify-content-end'>
-        <NotificationContainer/> {/* This will handle WebSocket notifications */}
+        <NotificationContainer /> {/* This will handle WebSocket notifications */}
         {/* Other app content */}
       </div>
       <ToastContainer />
       <AuthProvider>
         <Router>
           <div className="superadmin-page">
-
-            {localStorage.getItem("userId") && <Sidenav />}
-
-            <div className="my-container main-content-block2658 active-cont bg-white">
-
-              {localStorage.getItem("userId") && <Topnav />}
+            {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}
+            <div className={`${localStorage.getItem("roleName")==="Inventory"?"":"my-container main-content-block2658 active-cont bg-white"}`}>
+              {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Topnav />}
               <div className='d-flex'>
                 <div>
-                {localStorage.getItem("roleName") !== "Admin" &&   <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
+                  {localStorage.getItem("roleName") !== "Admin" &&  localStorage.getItem("roleName")!=="Inventory" && <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
                   <div className='d-flex '>
                     {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
                       {localStorage.getItem("userId") && <TicketTrack />}
                     </div> : ""}
                   </div>
                 </div>
-
-
-
                 <div className="w-100 overflow-auto">
                   {localStorage.getItem("roleName") !== "Admin" &&
                     <div>
-                      {localStorage.getItem("userId") && <TicketDistribution />}
+                      {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <TicketDistribution />}
                     </div>}
                   <Routes>
                     {/* Customer Invoice */}
@@ -248,7 +243,10 @@ function App() {
                       <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
                       <Route exact path="/ticket_house" element={<TicketHouse />} />
                       <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
-                      
+
+                      {/* inventory  management*/}
+                      <Route exact path="/index" element={<Indexi />} />
+
                     </Route>
                   </Routes>
                 </div>

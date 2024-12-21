@@ -62,6 +62,7 @@ function login() {
       SeniorSuperVisor: "/senior_supervisor_index",
       SuperAdmin: "/super_admin_index",
       Product_Coordinator: "/upload_products",
+      Inventory: "/index",
     };
     if (routes[status]) navigate(routes[status]);
   };
