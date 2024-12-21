@@ -117,8 +117,6 @@ function Sidenav() {
 
   }
 
-
-
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column bg-white" id="sidebar">
       <ul className="nav sidebar2658 flex-column w-100">
@@ -404,6 +402,32 @@ function Sidenav() {
               <NavLink to="/admin_upload_tickets" className="nav-link">
                 <i class="fa fa-upload" aria-hidden="true"></i>
                 <span className="nav-text">Upload Tickets</span>
+              </NavLink>
+            </li>
+          </>
+        )}
+
+        {/* inventory management*/}
+        {roleName === 'Inventory' && (
+          localStorage.getItem("userId") && <>
+            <li className="nav-item d-flex align-items-center user-logo">
+              <div className="profile-icon d-flex justify-content-center align-items-center overflow-hidden rounded-circle" style={{ width: '60px', height: '60px' }}>
+                <img
+                  className="img-fluid rounded-circle"
+                  src={convertToImage(localStorage.getItem("imageData"))}
+                  alt="no Image"
+                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                />
+              </div>
+              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+                {firstName} {lastName}
+                <small className="d-block">{roleName}</small>
+              </a>
+            </li>
+            <li className="nav-item">
+              <NavLink to="/index" className="nav-link">
+                <i className="fa-solid fa-chalkboard fa-fw"></i>
+                <span className="nav-text">Index</span>
               </NavLink>
             </li>
           </>
