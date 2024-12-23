@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
-import { Form, Modal, Button } from 'react-bootstrap';
+import { Form, Modal, Button, FormLabel } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
 // Authentication context
 import { useAuth } from '../auth/AuthContext';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import Logout from '../auth/logout';
+import { FaPen } from 'react-icons/fa';
+import axios from 'axios';
+import Oreder_update from '../components/Oreder_update'
 
 function Indexi() {
   const { roleName, userId } = useAuth();
   const [invoices, setInvoices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState([])
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -19,18 +23,65 @@ function Indexi() {
   const [showTrackingModal, setShowTrackingModal] = useState(false);
   const [tracking, setTracking] = useState("");
   const [currentInvoiceId, setCurrentInvoiceId] = useState(null);
+  const [selectedOrderId, setSelectedOrderId] = useState(0)
+  const [isImageUplaoderOpen, setIsImageUploadeOpen] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [isSending, setIsSending] = useState(false)
+  const [isUplaoded, setIsUploaded] = useState(false)
+  const [files, setFiles] = useState("");
+  const [imageUrlToSend, setImageUrlToSend] = useState("")
+  const [isUpdateOPen, setIsUpdateOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState(0)
+  const [isImageOpen, setIsIMageOpen] = useState(false)
+  const [selectedImage, setSelectedImage] = useState("")
 
+  const openImage = (image) => {
+    let newtext = image.replace("backend", "image")
+    let newImage = newtext.replace("getChatImageById", "getChatImageGoodQualityById")
+    console.log(newImage)
+    setIsIMageOpen(true)
+    setSelectedImage(newImage)
+  }
+
+  const closeImge = () => {
+    setIsIMageOpen(false)
+    setSelectedImage("")
+  }
+
+
+
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setFiles(reader.result.split(",")[1]); // Store the base64 string of the file
+      setPreviewUrl(reader.result.split(",")[1])
+      handleUplaodImage(reader.result.split(",")[1])
+    };
+
+    if (file) {
+      reader.readAsDataURL(file); // Convert the file to a Base64 string
+    }
+  };
+
+  const openImageUploader = (id) => {
+    setIsImageUploadeOpen(true)
+    setSelectedOrderId(id)
+  }
   // Fetch careers data when the modal is opened
   const handleShowModal = (invoice) => {
-    console.log("Current Invoice ID:", invoice.invoiceId);
-    setCurrentInvoiceId(invoice.invoiceId);
-    setTracking(""); // Reset the tracking input
+    setCurrentInvoiceId(invoice.id);
+    setSelectedOrderId(invoice.orderId)
+    setTracking("");
     setShowTrackingModal(true);
   };
 
   const handleCloseModal = () => {
     // Reset modal-specific states
-    setTracking("");                // Reset tracking number
+    setTracking("");
+    setSelectedOrderId(0)         // Reset tracking number
     setCurrentInvoiceId(null);      // Reset the current invoice ID
     setShowTrackingModal(false);    // Close the tracking modal
     setShowCustomerModal(false);   // Close the customer details modal if open
@@ -49,21 +100,16 @@ function Indexi() {
     }
 
     try {
-      const invoice = invoices.find((inv) => inv.invoiceId === currentInvoiceId);
-      const uniqueQueryId = invoice?.orderDto?.ticketId;
 
-      if (!uniqueQueryId) {
-        toast.error("No ticket ID associated with this invoice.");
-        return;
-      }
 
-      const response = await axiosInstance.post(`/invoice/addTrackingNumber`, {
+      const response = await axiosInstance.put(`/inventory/addTrackingNumber`, {
         trackingNumber: tracking,
-        ticketId: uniqueQueryId,
+        orderId: currentInvoiceId,
       });
 
       toast.success(response.data.message || "Tracking added successfully!");
       handleCloseModal();
+      fetchOrders()
     } catch (error) {
       console.error("Error adding tracking:", error);
       toast.error(error.response?.data?.message || "Failed to add tracking.");
@@ -86,8 +132,14 @@ function Indexi() {
       }
     };
 
-    fetchInvoices();
+    // fetchInvoices();
+    fetchOrders()
   }, []);
+
+  const fetchOrders = async () => {
+    const response = await axiosInstance.get('/inventory/getAllOrders')
+    setOrders(response.data)
+  }
 
   // API call to verify invoice
   const handleVerifyInvoice = async (invoiceId) => {
@@ -142,160 +194,228 @@ function Indexi() {
     return <div>Error: {error}</div>;
   }
 
+  function convertToImage(imageString) {
+    const byteCharacters = atob(imageString); // Decode base64 string
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: 'image/jpeg' });
+    const url = URL.createObjectURL(blob);
+    return url;
+
+  }
+  const handleUplaodImage = async (imageData) => {
+    setIsSending(true)
+    try {
+      const response = await axios.post('https://backend.rdvision.in/images/uplaodChatImage', {
+        imageData: imageData
+      })
+      setImageUrlToSend(response.data)
+      setIsSending(false)
+      setIsUploaded(true)
+
+    }
+
+    catch (e) {
+      setIsSending(false)
+    }
+  }
+  const saveShippingLabel = async () => {
+    await axiosInstance.put("/inventory/addShippingLabel", {
+      orderId: selectedOrderId,
+      imageUrl: imageUrlToSend
+    })
+    setIsImageUploadeOpen(false)
+    fetchOrders()
+  }
+
+  const oepnUpdate = (id, orderId) => {
+    setIsUpdateOpen(true)
+    setSelectedOrderId(orderId)
+    setSelectedProductId(id)
+  }
+  const closeUpdate = () => {
+    setIsUpdateOpen(false)
+    setSelectedOrderId(0)
+    setSelectedProductId(0)
+    fetchOrders()
+  }
   return (
     <>
       <section className="followup-table-section py-3">
-        <div className="container-fluid">
-          <div className="table-wrapper tabbed-table">
-            <h3 className="title mb-4">Verified Sales</h3>
-            <div className="d-flex justify-content-between">
-              {/* Filter Buttons */}
-              <div className="mb-3 d-flex justify-content-start gap-3">
-                {/* <Button
-                variant={filter === 'today' ? 'primary' : 'outline-primary'}
-                onClick={() => setFilter('today')}
-                className="btn-lg"
+        <div className="m-3">
+          <div className="d-flex justify-content-between">
+            {/* Filter Buttons */}
+            <div className="mb-3 d-flex justify-content-start gap-3">
+              <Button
+                variant={filter === 'all' ? 'primary' : 'outline-primary'}
+                onClick={() => setFilter('all')}
+                className="btn btn-primary"
               >
-                Today
+                All
               </Button>
               <Button
-                variant={filter === 'yesterday' ? 'primary' : 'outline-primary'}
-                onClick={() => setFilter('yesterday')}
-                className="btn-lg"
+                className="btn btn-primary"
               >
-                Yesterday
+                Product List
               </Button>
-              <Button
-                variant={filter === 'parsho' ? 'primary' : 'outline-primary'}
-                onClick={() => setFilter('parsho')}
-                className="btn-lg"
-              >
-                Day Before Yesterday
-              </Button> */}
-                <Button
-                  variant={filter === 'all' ? 'primary' : 'outline-primary'}
-                  onClick={() => setFilter('all')}
-                  className="btn btn-primary"
-                >
-                  All
-                </Button>
-                <Button
-                  className="btn btn-primary"
-                >
-                  Product List
-                </Button>
-              </div>
-              {localStorage.getItem("userId") && (
-                <p className="nav-item">
-                  <Link className="nav-link">
-                    <i className="fa-solid fa-power-off text-danger" style={{ fontSize: '2rem' }}></i>
-                    <span className="nav-text cursor-pointer"><Logout /></span>
-                  </Link>
-                </p>
-              )}
             </div>
-
-            {/* Invoice Table */}
-            <div className="followups-table table-responsive table-height">
-              <table className="table table-bordered table-hover table-sm excel-table" style={{ border: '2px solid #000' }}>
-                <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
-                  <tr>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Order ID</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Sale Date</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Number</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Status</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Shipping Label</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Customer Name</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Street</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>City</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>State</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Zip Code</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Country</th>
-                    <th className="border-dark text-center" style={{ backgroundColor: '#FFC300' }}>Product Details</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Doses</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Rate/Qty </th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Total Goods Cost</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Shipping Charges</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Total cost</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Paid Amount</th>
-                    <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Due Amount</th>
-                    {/* {roleName === 'admin' && <th className="border-dark">Action</th>} */}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {filteredInvoices.map((invoice) => (
-                    <tr key={invoice.invoiceId}>
-                      <td className="border-dark">{invoice.invoiceId || "N/A"}</td>
-                      <td className="border-dark">{formatDate(invoice.saleDate)}</td>
-                      <td>
-                        {invoice.trackingNumber ? (
-                          invoice.trackingNumber
-                        ) : (
-                          <Button variant="warning rounded" onClick={() => handleShowModal(invoice)}>
-                            Add Tracking
-                          </Button>
-                        )}
-                      </td>
-                      <td className={`border-dark ${!invoice.deliveryStatus ? 'text-danger' : ''}`}>
-                        {invoice.deliveryStatus || 'Inactive'}
-                      </td>
-                      <td className="border-dark"><i class="fa-solid fa-truck-fast fa-2xl"></i></td>
-                      <td className="border-dark">
-                        {invoice.customerName}
-                      </td>
-                      <td className="border-dark">{invoice.address?.landmark || "N/A"}</td>
-                      <td className="border-dark">{invoice.address?.city || "N/A"}</td>
-                      <td className="border-dark">{invoice.address?.state || "N/A"}</td>
-                      <td className="border-dark">{invoice.address?.zipCode || "N/A"}</td>
-                      <td className="border-dark">
-                        <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                      </td>
-                      <td className='text-center'>
-                        <table className="table-bordered">
-                          <thead>
-                            <tr>
-                              <th className="px-4" style={{ width: '200px' }}>Name</th>
-                              <th className="px-3" style={{ width: '150px' }}>Quantity</th>
-                              <th className="px-3" style={{ width: '150px' }}>Price</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoice.orderDto.productOrders.map((order, i) =>
-                              order.product?.map((product, index) => (
-                                <tr key={`${i}-${index}`} className="table table-bordered">
-                                  <td>{product.name}</td>
-                                  <td>{order.quantity || 'N/A'}</td>
-                                  <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
-                                </tr>
-                              ))
-                            )}
-                          </tbody>
-                        </table>
-                      </td>
-                      <td className="border-dark">{invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}</td>
-                      <td className="border-dark"></td>
-                      <td className="border-dark"></td>
-                      <td className="border-dark"></td>
-                      <td className="border-dark"></td>
-                      <td className="border-dark"></td>
-                      <td className="border-dark"></td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
+            {localStorage.getItem("userId") && (
+              <p className="nav-item">
+                <Link className="nav-link">
+                  {/* <i className="fa-solid fa-power-off text-danger" style={{ fontSize: '2rem' }}></i> */}
+                  <span className="nav-text cursor-pointer text-danger fw-bold"><Logout /></span>
+                </Link>
+              </p>
+            )}
           </div>
+
+          {/* Invoice Table */}
+          <div className="followups-table table-responsive table-height">
+            <table className="table table-bordered table-hover table-sm excel-table" style={{ border: '2px solid #000' }}>
+              <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
+                <tr>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Order ID</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Sale Date</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Number</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Status</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Shipping Label</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Customer Name</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Street</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>City</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>State</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Zip Code</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Country</th>
+                  <th className="border-dark text-center border p-1" style={{ backgroundColor: '#FFC300' }}>Product Details
+
+                  </th>
+
+                </tr>
+              </thead>
+
+              <tbody>
+                {orders.map((invoice) => (
+                  <tr key={invoice.invoiceId}>
+                    <td className="border-dark border text-center">{invoice.orderId || "N/A"}</td>
+                    <td className="border-dark border text-center">{formatDate(invoice.orderReceivedDate)}</td>
+                    <td className='border border-dark  text-center'>
+                      {invoice.trackingNumber ? (
+                        <div >
+                          {invoice.trackingNumber}
+                          <div className='d-flex justify-content-end m-3 text-primary'>
+                            <span  onClick={() => handleShowModal(invoice)}>edit</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <Button variant="warning rounded" onClick={() => handleShowModal(invoice)}>
+                          Add Tracking
+                        </Button>
+                      )}
+                    </td>
+                    <td className={`border-dark border text-center ${!invoice.trackingStatus ? 'text-danger' : ''}`}>
+                      {invoice.trackingStatus || 'Inactive'}
+                    </td>
+                    <td className="border-dark border text-center">
+                      {invoice.shippingLabel ? (
+                        <div className="d-flex align-items-center justify-content-between">
+                          {/* Display the shipping label image */}
+                          <img
+                            src={invoice.shippingLabel}
+                            className="img-fluid"
+                            style={{ height: "30px", maxWidth: "100px" }}
+                            alt="Shipping Label"
+                            onClick={() => openImage(invoice.shippingLabel)}
+                          />
+                          {/* Edit button */}
+                          <button
+                            className="btn btn-transparent text-primary p-0 ms-2"
+                            onClick={() => openImageUploader(invoice.id)}
+                            style={{ border: "none", backgroundColor: "transparent" }}
+                          >
+                            edit
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="btn btn-outline-dark d-flex align-items-center justify-content-center"
+                          onClick={() => openImageUploader(invoice.id)}
+                          style={{ height: "40px", width: "40px", borderRadius: "50%" }}
+                        >
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/128/6176/6176491.png"
+                            style={{ height: "20px" }}
+                            alt="Upload Icon"
+                          />
+                        </button>
+                      )}
+                    </td>
+
+                    <td className="border-dark border text-center">
+                      {invoice.customerName}
+                    </td>
+                    <td className="border-dark border text-center">{invoice.street || "N/A"}</td>
+                    <td className="border-dark border text-center">{invoice.city || "N/A"}</td>
+                    <td className="border-dark border text-center">{invoice.state || "N/A"}</td>
+                    <td className="border-dark border text-center">{invoice.zipCode || "N/A"}</td>
+                    <td className="border-dark border text-center">
+                      <img src={getFlagUrl(invoice.country ? invoice.country : "NA")} alt="" /> {invoice.country}
+                    </td>
+                    <td className="text-center border-dark border">
+                      <table className="table-bordered">
+                        {<thead>
+                          <tr>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Name</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Quantity</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Doses</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Rate/Qty</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Total Goods Cost</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Shipping Charges</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Total Cost</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Paid Amount</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Due Amount</th>
+                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Action</th>
+
+                          </tr>
+                        </thead>}
+                        <tbody>
+                          {invoice.orderDetails.map((order, i) => (
+                            <tr key={i}>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.productName}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.quantity || 'N/A'}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.does || 'N/A'}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.rate}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalGoodsCost}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.shippingCharge}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalCost}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.paidAmount}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.dueAmount}</td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1"><button onClick={() => oepnUpdate(order.id, invoice.orderId)} className='bg-warning text-black'>Add</button></td>
+
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </td>
+
+                    {/* <td className="border-dark border text-center">{invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}</td> */}
+
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
         </div>
+
         {/* Add Tracking Modal */}
         <Modal show={showTrackingModal} onHide={handleCloseModal}>
           <Modal.Header closeButton>
-            <Modal.Title>Add Tracking Number</Modal.Title>
+            <Modal.Title>Add Tracking Number for Order no. : {selectedOrderId}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form.Group controlId="formTrackingNumber">
-              <Form.Label>Tracking Number</Form.Label>
               <Form.Control
                 type="text"
                 placeholder="Enter tracking number"
@@ -316,6 +436,103 @@ function Indexi() {
 
       </section>
       <ToastContainer />
+      <Modal
+        show={isImageUplaoderOpen}
+        onHide={() => setIsImageUploadeOpen(false)}
+        dialogClassName=""
+        centered={false}
+        className=""
+      >
+        <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+          <FormLabel className="mb-3 text-black">Upload Image to Send</FormLabel>
+          <div
+            style={{
+              width: "300px",
+              height: "200px",
+              position: "relative", // To position the pen icon over the image
+              border: previewUrl ? "none" : "2px dashed black",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "8px",
+              marginBottom: "10px",
+              cursor: "pointer",
+              overflow: "hidden", // To ensure image doesn't overflow
+            }}
+            onClick={() => document.getElementById("fileUpload").click()}
+          >
+            {previewUrl ? (
+              <>
+                <img
+                  src={convertToImage(previewUrl)}
+                  alt="Preview"
+                  style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    objectFit: "cover", // Ensures image fits nicely
+                  }}
+                />
+                <FaPen
+                  style={{
+                    position: "absolute",
+                    bottom: "10px",
+                    right: "10px",
+                    color: "white",
+                    backgroundColor: "black",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    fontSize: "20px",
+                    cursor: "pointer",
+                  }}
+                />
+              </>
+            ) : (
+              <span className="text-black">Click to Upload Image</span>
+            )}
+          </div>
+          <input
+            type="file"
+            id="fileUpload"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+            accept="image/*"
+          />
+          {isSending && <button>Uploading....</button>}
+          {isUplaoded && <button onClick={saveShippingLabel}>Save Label</button>}
+        </Modal.Body>
+      </Modal>
+
+      {/* Add Tracking Modal */}
+      <Modal show={isUpdateOPen} onHide={closeUpdate}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Tracking Number for Order no. : {selectedOrderId}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Oreder_update productId={selectedProductId} closeFunction={closeUpdate} />
+        </Modal.Body>
+
+      </Modal>
+
+      <Modal show={isImageOpen} onHide={closeImge}>
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <Modal.Body>
+          <div className='d-flex justify-content-center'>
+
+            <img
+              style={{
+
+                objectFit: "contain",
+                alignItems: "center"
+              }}
+              src={selectedImage}
+              alt="Selected"
+            />
+          </div>
+
+        </Modal.Body>
+
+      </Modal>
     </>
   );
 }
