@@ -330,7 +330,7 @@ const Index = () => {
                   <th scope="col" className='text-center'>Product Details  </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
-                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Payment Windows</th>
                   <th scope="col">Shipping Through</th>
                   <th scope="col">Delivery Status</th>
                   <th scope="col">Paid Amount</th>
@@ -359,22 +359,22 @@ const Index = () => {
                     <td className='text-center'>
                       <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
                     </td>
-                    <td className='text-center'>
+                    <td className="text-center">
                       <table className="table-bordered">
                         <thead>
                           <tr>
-                            <th className="px-4">Name</th>
-                            <th className="px-3">Quantity</th>
-                            <th className="px-3">Price</th>
+                            <th style={{ width: "200px" }} className="px-4">Name</th>
+                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                            <th style={{ width: "150px" }} className="px-3">Price</th>
                           </tr>
                         </thead>
                         <tbody>
                           {invoice.orderDto.productOrders.map((order, i) =>
                             order.product?.map((product, index) => (
                               <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td scope="col">{product.name}</td>
-                                <td scope="col">{order.quantity || 'N/A'}</td>
-                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                <td>{product.name}</td>
+                                <td>{order.quantity || "N/A"}</td>
+                                <td>{invoice.currency}{order.totalAmount || "N/A"}</td>
                               </tr>
                             ))
                           )}
@@ -432,7 +432,7 @@ const Index = () => {
                   <th scope="col" className='text-center'>Product Details </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
-                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Payment Windows</th>
                   <th scope="col">Shipping Through</th>
                   <th scope="col">Paid Amount</th>
                   <th scope="col">Action</th>
@@ -464,18 +464,18 @@ const Index = () => {
                       <table className="table-bordered">
                         <thead>
                           <tr>
-                            <th className="px-4">Name</th>
-                            <th className="px-3">Quantity</th>
-                            <th className="px-3">Price</th>
+                            <th style={{ width: "200px" }} className="px-4">Name</th>
+                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                            <th style={{ width: "150px" }} className="px-3">Price</th>
                           </tr>
                         </thead>
                         <tbody>
                           {invoice.orderDto.productOrders.map((order, i) =>
                             order.product?.map((product, index) => (
                               <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td scope="col">{product.name}</td>
-                                <td scope="col">{order.quantity || 'N/A'}</td>
-                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                <td>{product.name}</td>
+                                <td>{order.quantity || 'N/A'}</td>
+                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
                               </tr>
                             ))
                           )}
@@ -532,7 +532,7 @@ const Index = () => {
                   <th scope="col" className='text-center'>Product Details </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
-                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Payment Windows</th>
                   <th scope="col">Shipping Through</th>
                   <th scope="col">Paid Amount</th>
                   <th scope="col">Action</th>
@@ -564,18 +564,18 @@ const Index = () => {
                       <table className="table-bordered">
                         <thead>
                           <tr>
-                            <th className="px-4">Name</th>
-                            <th className="px-3">Quantity</th>
-                            <th className="px-3">Price</th>
+                            <th style={{ width: "200px" }} className="px-4">Name</th>
+                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                            <th style={{ width: "150px" }} className="px-3">Price</th>
                           </tr>
                         </thead>
                         <tbody>
                           {invoice.orderDto.productOrders.map((order, i) =>
                             order.product?.map((product, index) => (
                               <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td scope="col">{product.name}</td>
-                                <td scope="col">{order.quantity || 'N/A'}</td>
-                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                <td>{product.name}</td>
+                                <td>{order.quantity || 'N/A'}</td>
+                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
                               </tr>
                             ))
                           )}
@@ -632,7 +632,7 @@ const Index = () => {
                   <th scope="col" className='text-center'>Product Details </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
-                  <th scope="col">Paymnent Windows</th>
+                  <th scope="col">Payment Windows</th>
                   <th scope="col">Shipping Through</th>
                   <th scope="col">Paid Amount</th>
                   <th scope="col">Action</th>
@@ -664,18 +664,18 @@ const Index = () => {
                       <table className="table-bordered">
                         <thead>
                           <tr>
-                            <th className="px-4">Name</th>
-                            <th className="px-3">Quantity</th>
-                            <th className="px-3">Price</th>
+                            <th style={{ width: "200px" }} className="px-4">Name</th>
+                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                            <th style={{ width: "150px" }} className="px-3">Price</th>
                           </tr>
                         </thead>
                         <tbody>
                           {invoice.orderDto.productOrders.map((order, i) =>
                             order.product?.map((product, index) => (
                               <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td scope="col">{product.name}</td>
-                                <td scope="col">{order.quantity || 'N/A'}</td>
-                                <td scope="col">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                <td>{product.name}</td>
+                                <td>{order.quantity || 'N/A'}</td>
+                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
                               </tr>
                             ))
                           )}

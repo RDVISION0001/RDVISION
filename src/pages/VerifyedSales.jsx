@@ -161,7 +161,7 @@ function VerifiedSales() {
                                         <th scope="col">Shipping Through</th>
                                         <th scope="col">Paid Amount</th>
                                         {roleName === 'admin' && <th scope="col">Action</th>}
-                                        </tr>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     {filteredInvoices.map((invoice, index) => (
@@ -189,18 +189,18 @@ function VerifiedSales() {
                                                 <table className="table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th className="px-4">Name</th>
-                                                            <th className="px-3">Quantity</th>
-                                                            <th className="px-3">Price</th>
+                                                            <th style={{ width: "200px" }} className="px-4">Name</th>
+                                                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                                                            <th style={{ width: "150px" }} className="px-3">Price</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {invoice.orderDto.productOrders.map((order, i) =>
                                                             order.product?.map((product, index) => (
                                                                 <tr key={`${i}-${index}`} className="table table-bordered">
-                                                                    <td >{product.name}</td>
-                                                                    <td >{order.quantity || 'N/A'}</td>
-                                                                    <td >{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                    <td>{product.name}</td>
+                                                                    <td>{order.quantity || 'N/A'}</td>
+                                                                    <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
                                                                 </tr>
                                                             ))
                                                         )}
