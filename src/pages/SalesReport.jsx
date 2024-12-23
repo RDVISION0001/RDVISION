@@ -245,6 +245,7 @@ function SalesReport() {
             setIsModalOpen(false);
         }
     };
+
     return (
         <>
             <section className="followup-table-section py-3">
@@ -278,7 +279,7 @@ function SalesReport() {
                                             </th>
                                             <th scope="col">Doses</th>
                                             <th scope="col">Paid Amount</th>
-                                            <th scope="col">Paymnent Windows</th>
+                                            <th scope="col">Payment Windows</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>

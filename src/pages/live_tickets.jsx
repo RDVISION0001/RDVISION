@@ -469,7 +469,7 @@ function live_tickets() {
     try {
       await fetchDataForEmail();
       handleOff()
-      toast.success("Email sent successfully");
+      toast.success("📧 Email sent successfully");
     } catch (error) {
       toast.error("Error sending email");
     }
@@ -586,7 +586,7 @@ function live_tickets() {
           productsIds: productsIds,
           userId
         })
-        toast.success("Email Sent")
+        toast.success("📧 Email Sent");
       } catch (e) {
         toast.error("Some Error Occurs")
       }

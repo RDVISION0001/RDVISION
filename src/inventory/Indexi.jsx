@@ -251,25 +251,25 @@ function Indexi() {
                       <td className="border-dark">
                         <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
                       </td>
-                      <td className='text-center'>
-                        <table className="table-bordered">
+                      <td className="text-center">
+                        <table className="table table-bordered">
                           <thead>
                             <tr>
-                              <th className="px-4" style={{ width: '200px' }}>Name</th>
-                              <th className="px-3" style={{ width: '150px' }}>Quantity</th>
-                              <th className="px-3" style={{ width: '150px' }}>Price</th>
+                              <th style={{ width: "200px" }} className="px-4">Name</th>
+                              <th style={{ width: "100px" }} className="px-3">Quantity</th>
+                              <th style={{ width: "150px" }} className="px-3">Price</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {invoice.orderDto.productOrders.map((order, i) =>
+                            {invoice.orderDto.productOrders.map((order, i) => (
                               order.product?.map((product, index) => (
-                                <tr key={`${i}-${index}`} className="table table-bordered">
-                                  <td>{product.name}</td>
+                                <tr key={`${i}-${index}`}>
+                                  <td>{product.name || 'N/A'}</td>
                                   <td>{order.quantity || 'N/A'}</td>
                                   <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
                                 </tr>
                               ))
-                            )}
+                            ))}
                           </tbody>
                         </table>
                       </td>
