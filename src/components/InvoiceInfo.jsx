@@ -182,7 +182,6 @@ const InvoiceInfo = (props) => {
         let newdate = date && (JSON.stringify(date).split("[")[1]).split("]")[0]
         return newdate && `${newdate.split(",")[2]}-${convertNumberToStringMonth(newdate.split(",")[1])}-${newdate.split(",")[0]}`;
     }
-    console.log(invoices)
     return (
         <>
             {props.stage !== 4 && <section className="sadmin-top-section">
