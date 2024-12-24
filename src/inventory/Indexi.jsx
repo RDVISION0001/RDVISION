@@ -51,10 +51,11 @@ function Indexi() {
   const [copiedInvoiceId, setCopiedInvoiceId] = useState(null);
 
   const handleCopy = (invoice) => {
+    console.log(invoice)
     const textToCopy = `${invoice.customerName}, ${invoice.street}, ${invoice.city}, ${invoice.state}, ${invoice.zipCode}, ${invoice.country}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
-      setCopiedInvoiceId(invoice.invoiceId); // Set the copied invoice ID
-      setTimeout(() => setCopiedInvoiceId(null), 2000); // Reset after 2 seconds
+      setCopiedInvoiceId(invoice.orderId); // Set the copied invoice ID
+           setTimeout(() => setCopiedInvoiceId(null), 2000); // Reset after 2 seconds
     });
   };
 
@@ -301,7 +302,7 @@ function Indexi() {
               </thead>
 
               <tbody>
-                {orders.map((invoice,index) => (
+                {orders.slice().reverse().map((invoice,index) => (
                   <tr key={invoice.invoiceId}>
                     <td className="border-dark border text-center">{index+1}</td>
                     <td className="border-dark border text-center">{invoice.orderId || "N/A"}</td>
@@ -368,10 +369,11 @@ function Indexi() {
                     <td className="border-dark border text-center">
                       <img src={getFlagUrl(invoice.country ? invoice.country : "NA")} alt="" /> {invoice.country}
                       <button
-                        className={`btn btn-warning rounded ${copiedInvoiceId === invoice.invoiceId ? "btn-success" : ""}`}
+                        className={`btn  rounded ${copiedInvoiceId === invoice.orderId ? "btn-success" : "btn-warning"}`}
+                        style={{width:"70px"}}
                         onClick={() => handleCopy(invoice)}
                       >
-                        {copiedInvoiceId === invoice.invoiceId ? "Copied" : "Copy"}
+                        {copiedInvoiceId === invoice.orderId ? "Copied" : "Copy"}
                       </button>
                     </td>
                     <td className="text-center border-dark border">

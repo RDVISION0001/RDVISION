@@ -338,7 +338,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredInvoices.map((invoice, index) => (
+                {filteredInvoices.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -439,7 +439,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {todayInvoices.map((invoice, index) => (
+                {todayInvoices.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -539,7 +539,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {preparingShipment.map((invoice, index) => (
+                {preparingShipment.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -639,7 +639,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {awaitingtracking.map((invoice, index) => (
+                {awaitingtracking.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td className="text-center">{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
@@ -737,7 +737,7 @@ const Index = () => {
                 {filteredCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
                     <td>{index + 1}</td>
-                    <td>{customer.queryTime}</td>
+                    <td>{formatDate(customer.customerAddDate && customer.customerAddDate)}</td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>
@@ -771,7 +771,7 @@ const Index = () => {
                 {filteredNewCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
                     <td>{index + 1}.</td>
-                    <td>{customer.queryTime}</td>
+                    <td>{formatDate(customer.customerAddDate && customer.customerAddDate)}</td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>

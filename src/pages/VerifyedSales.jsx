@@ -164,7 +164,7 @@ function VerifiedSales() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredInvoices.map((invoice, index) => (
+                                    {filteredInvoices.slice().reverse().map((invoice, index) => (
                                         <tr key={invoice.invoiceId} className='table-success'>
                                             {/* <td className="text-center">{index + 1}.</td> */}
                                             <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
