@@ -276,91 +276,149 @@ function InvoiceNewTemp() {
                         ) : error ? (
                             <p className="text-danger">{error}</p>
                         ) : (
-                            <table className="table">
-                                <thead>
-                                    <tr>
-                                        <th className="selection-cell-header" data-row-selection="true">
-                                            <input type="checkbox" />
-                                        </th>
-                                        <th scope="col">Closer Name</th>
-                                        <th scope="col">Sale Date</th>
-                                        <th scope="col">Customer Name</th>
-                                        <th scope="col" className='text-center'>Product Details
-                                            <thead>
-                                                <tr>
-                                                    <th className="px-3">Name</th>|
-                                                    <th className="px-3">Quantity</th>|
-                                                    <th className="px-3">Price</th>
-                                                </tr>
-                                            </thead>
-                                        </th>
-                                        <th scope="col">Invoice Generate Date</th>
-                                        <th scope="col">Order Amount</th>
-                                        <th scope="col">Payment Status</th>
-                                        <th scope="col">Seen</th>
-                                        <th scope="col">IP Address</th>
-                                        <th scope="col">Verification Status</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {invoices.map((invoice) => (
-                                        <tr className="border" key={invoice.invoiceId}>
-                                            <td><input type="checkbox" /></td>
-                                            <td>{invoice.closerName}</td>
-                                            <td>{formatDate(invoice.saleDate)}</td>
-                                            <td>{invoice.customerName}</td>
-                                            <td className='text-center'>
-                                                {/* Product details section */}
-                                                <table className="table table-bordered">
-                                                    <tbody>
-                                                        {invoice.orderDto.productOrders.map((order, i) =>
-                                                            order.product?.map((product, index) => (
-                                                                <tr key={`${i}-${index}`}>
-                                                                    <td className="px-">{product.name}</td>
-                                                                    <td className="px-">{order.quantity || 'N/A'}</td>
-                                                                    <td className="px-">{invoice.currency}{order.totalAmount || 'N/A'}</td>
-                                                                </tr>
-                                                            ))
-                                                        )}
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                            <td>{formatDate(invoice.invoiceGenerateDate)}</td>
-                                            <td className="text-success bold-text">
-                                                {invoice.currency || 'USD'} {invoice.orderAmount}
-                                            </td>
-                                            <td className={invoice.paymentStatus === "paid" ? "text-success" : "text-danger"}>
-                                                {invoice.paymentStatus || "Pending"}
-                                            </td>
-                                            <td className={invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
-                                                {invoice.opened ? <i className="fa-solid fa-check-double fa-2xl" style={{ color: "#05a836" }}></i> : <i className="fa-solid fa-check-double fa-2xl" style={{ color: "#58595a" }}></i>}
-                                            </td>
-                                            <td className={invoice.opened === "paid" ? "text-success fw-bold" : "text-danger"}>
-                                                {invoice.ipAddress ? invoice.ipAddress : "not opened yet"}
-                                            </td>
-                                            <td className={invoice.verificationDate ? "text-success fw-bold text-center" : "text-danger text-center"}>
-                                                {invoice.verificationDate ? <i class="fa-solid fa-circle-check fa-2xl" style={{ color: "#2f850a" }}></i> : <i class="fa-solid fa-hourglass-half fa-xl" style={{ color: "#ff3838" }}></i>}
-                                            </td>
-                                            <td>
-                                                {invoice.paymentStatus !== "paid" && (
-                                                    invoice.address ? <button className="btn btn-success rounded" onClick={() => handleMarkAsPaidClick(invoice)}>
-                                                        Mark paid
-
-                                                    </button> : <button className="btn btn-success rounded" onClick={() => openModel(invoice.uniqueQueryId)}>
-                                                        Add Address
-
-                                                    </button>
-                                                )}
-                                            </td>
+                            <div style={{ overflowX: "auto" }}>
+                                <table className="table">
+                                    <thead>
+                                        <tr>
+                                            <th className="selection-cell-header" data-row-selection="true">
+                                                <input type="checkbox" />
+                                            </th>
+                                            <th scope="col">Closer Name</th>
+                                            <th scope="col">Sale Date</th>
+                                            <th scope="col">Customer Name</th>
+                                            <th scope="col" className="text-center">
+                                                Product Details
+                                                <thead>
+                                                    <tr>
+                                                        <th className="px-3">Name</th>|
+                                                        <th className="px-3">Quantity</th>|
+                                                        <th className="px-3">Price</th>
+                                                    </tr>
+                                                </thead>
+                                            </th>
+                                            <th scope="col">Invoice Generate Date</th>
+                                            <th scope="col">Order Amount</th>
+                                            <th scope="col">Payment Status</th>
+                                            <th scope="col">Seen</th>
+                                            <th scope="col">IP Address</th>
+                                            <th scope="col">Verification Status</th>
+                                            <th scope="col">Action</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {invoices.map((invoice) => (
+                                            <tr className="border" key={invoice.invoiceId}>
+                                                <td>
+                                                    <input type="checkbox" />
+                                                </td>
+                                                <td>{invoice.closerName}</td>
+                                                <td>{formatDate(invoice.saleDate)}</td>
+                                                <td>{invoice.customerName}</td>
+                                                <td className="text-center">
+                                                    {/* Product details section */}
+                                                    <table className="table table-bordered">
+                                                        <tbody>
+                                                            {invoice.orderDto.productOrders.map((order, i) =>
+                                                                order.product?.map((product, index) => (
+                                                                    <tr key={`${i}-${index}`}>
+                                                                        <td className="px-">{product.name}</td>
+                                                                        <td className="px-">{order.quantity || "N/A"}</td>
+                                                                        <td className="px-">{invoice.currency}{order.totalAmount || "N/A"}</td>
+                                                                    </tr>
+                                                                ))
+                                                            )}
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td>{formatDate(invoice.invoiceGenerateDate)}</td>
+                                                <td className="text-success bold-text">
+                                                    {invoice.currency || "USD"} {invoice.orderAmount}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        invoice.paymentStatus === "paid"
+                                                            ? "text-success"
+                                                            : "text-danger"
+                                                    }
+                                                >
+                                                    {invoice.paymentStatus || "Pending"}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        invoice.opened === "paid"
+                                                            ? "text-success fw-bold"
+                                                            : "text-danger"
+                                                    }
+                                                >
+                                                    {invoice.opened ? (
+                                                        <i
+                                                            className="fa-solid fa-check-double fa-2xl"
+                                                            style={{ color: "#05a836" }}
+                                                        ></i>
+                                                    ) : (
+                                                        <i
+                                                            className="fa-solid fa-check-double fa-2xl"
+                                                            style={{ color: "#58595a" }}
+                                                        ></i>
+                                                    )}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        invoice.opened === "paid"
+                                                            ? "text-success fw-bold"
+                                                            : "text-danger"
+                                                    }
+                                                >
+                                                    {invoice.ipAddress || "not opened yet"}
+                                                </td>
+                                                <td
+                                                    className={
+                                                        invoice.verificationDate
+                                                            ? "text-success fw-bold text-center"
+                                                            : "text-danger text-center"
+                                                    }
+                                                >
+                                                    {invoice.verificationDate ? (
+                                                        <i
+                                                            className="fa-solid fa-circle-check fa-2xl"
+                                                            style={{ color: "#2f850a" }}
+                                                        ></i>
+                                                    ) : (
+                                                        <i
+                                                            className="fa-solid fa-hourglass-half fa-xl"
+                                                            style={{ color: "#ff3838" }}
+                                                        ></i>
+                                                    )}
+                                                </td>
+                                                <td>
+                                                    {invoice.paymentStatus !== "paid" && (
+                                                        invoice.address ? (
+                                                            <button
+                                                                className="btn btn-success rounded"
+                                                                onClick={() => handleMarkAsPaidClick(invoice)}
+                                                            >
+                                                                Mark paid
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-success rounded"
+                                                                onClick={() => openModel(invoice.uniqueQueryId)}
+                                                            >
+                                                                Add Address
+                                                            </button>
+                                                        )
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </div>
                 </div>
             </section>
+
 
             {/* mark as paid Modal */}
             {isModalOpen && (
