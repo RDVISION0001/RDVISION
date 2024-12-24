@@ -255,11 +255,16 @@ function QuotationBox(props) {
 
     const handleSendQuotation = async () => {
         try {
+            setLoading(true)
             const response = await axiosInstance.post(`/invoice/sendquote?ticketId=${selectedTicketId}&userId=${userId}`);
             toast.success('Quotation sent successfully!');
+            setLoading(false)
+
         } catch (error) {
             console.error('Error sending quotation:', error);
             toast.error('Failed to send quotation');
+            setLoading(false)
+
         }
     };
 
@@ -578,9 +583,10 @@ function QuotationBox(props) {
 
                                 {/* <!-- order items details ends here --> */}
                                 <div className='d-flex justify-content-center '>
-                                    <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
-                                    {/* <button onClick={handleSendInvoice} className='bg-primary mt-1'>Send Invoice</button> */}
-
+                                    {loading ? 
+                                    <button  className='bg-success mt-1' style={{ marginRight: "3px" }}>Sending</button> 
+                                    : <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -630,6 +636,7 @@ function QuotationBox(props) {
                     <div className="container mt-3">
                         <div className="row">
                             {products && products
+                            .filter((product)=>product.strength )
                                 .filter(product =>
                                     serchValue.length > 0
                                         ? product.name.toLowerCase().includes(serchValue.toLowerCase())
@@ -656,12 +663,12 @@ function QuotationBox(props) {
                                             <div className="d-flex flex-column flex-md-row align-items-center">
                                                 {/* Image Section */}
                                                 <div>
-                                                    {/* <img
-                                                        src={`https://backend.rdvision.in/images/getProductImage/${product.productId}`}
+                                                    <img
+                                                        src={`https://image.rdvision.in/images/getProductImage/${product.productId}`}
                                                         alt="Product"
                                                         className="img-fluid rounded"
                                                         style={{ maxHeight: '80px', marginTop: '10px' }}
-                                                    /> */}
+                                                    />
                                                 </div>
 
                                                 {/* Product Details Section */}

@@ -277,6 +277,7 @@ function Indexi() {
             <table className="table table-bordered table-hover table-sm excel-table" style={{ border: '2px solid #000' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                 <tr>
+                <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>S.No.</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Order ID</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Sale Date</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Number</th>
@@ -296,8 +297,9 @@ function Indexi() {
               </thead>
 
               <tbody>
-                {orders.map((invoice) => (
+                {orders.map((invoice,index) => (
                   <tr key={invoice.invoiceId}>
+                    <td className="border-dark border text-center">{index+1}</td>
                     <td className="border-dark border text-center">{invoice.orderId || "N/A"}</td>
                     <td className="border-dark border text-center">{formatDate(invoice.orderReceivedDate)}</td>
                     <td className='border border-dark  text-center'>

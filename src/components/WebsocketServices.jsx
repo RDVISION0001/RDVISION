@@ -143,19 +143,17 @@ const WebsocketService = () => {
     useEffect(() => {
         const socket = new SockJS("https://backend.rdvision.in/ws");
         const client = Stomp.over(socket);
-
         client.connect({}, (frame) => {
-            console.log("Connected: " + frame);
-
             // Subscribe to public and private messages only once
             client.subscribe("/topic/messages", (messageOutput) => {
                 const messageData = JSON.parse(messageOutput.body);
                 if (messageData.sentToUserId === parseInt(userId)) {
-                    console.log(messageData.sentToUserId)
                     playNotificationSound()
 
                     if (!notificationCount.includes(messageData.sentByUserId)) {
-                        setNotificationCOunt((prev) => [...prev, messageData.sentByUserId])
+                        if (selectedRecipient !== messageData.sentByUser) {
+                            setNotificationCOunt((prev) => [...prev, messageData.sentByUserId])
+                        }
 
                     }
                     setMessages((prevMessages) => {
@@ -175,8 +173,6 @@ const WebsocketService = () => {
             });
 
             client.subscribe(`/user/${username.toLowerCase()}/queue/messages`, (message) => {
-
-                console.log("Private Message: ", JSON.parse(message.body));
             });
 
             setStompClient(client); // Store the client in state after connection
@@ -205,10 +201,6 @@ const WebsocketService = () => {
                 recipientName: messageBox.recipientName, // Add recipient name to the message object
                 imageUrl: imageUrlToSend
             };
-            console.log(messageObject)
-
-            console.log("Message object before sending:", messageObject); // Debug log
-
             stompClient.send("/app/send", {}, JSON.stringify(messageObject));
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -317,8 +309,10 @@ const WebsocketService = () => {
             setIsSending(false)
         }
     }
-    const openImageView = (imageurl) => {
-        setSeeImageUrl(imageurl)
+    const openImageView = (image) => {
+        let newtext = image.replace("backend", "image")
+        let newImage = newtext.replace("getChatImageById", "getChatImageGoodQualityById")
+        setSeeImageUrl(newImage)
         setIsImageView(true)
     }
     return (

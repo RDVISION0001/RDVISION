@@ -1473,7 +1473,7 @@ function InNegotiation() {
       >
         <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="ticket-content-spacing">
-            <div className="modal-body">
+            <div className="">
               <div className="row">
                 <div className="col-4">
                   <div className="heading-area">
@@ -1603,7 +1603,7 @@ function InNegotiation() {
       {/* when select Sale */}
       <Modal show={showModal} onHide={handleClosee} id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <SaleConframtion ticketId={uniqueQueryId} />
-        <div className="modal-body">
+        <div className="">
           <button type="button" className="btn btn-secondary" onClick={handleClosee}>
             Close
           </button>

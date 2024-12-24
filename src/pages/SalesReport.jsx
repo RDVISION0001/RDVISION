@@ -27,6 +27,12 @@ function SalesReport() {
         setShowCustomerModal(true);
     };
 
+    const [formValues, setFormValues] = useState({
+        customerName: selectedCustomer?.customerName || '',
+        customerEmail: selectedCustomer?.customerEmail || '',
+        customerMobile: selectedCustomer?.customerMobile || ''
+    });
+
     const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
     useEffect(() => {
@@ -56,6 +62,7 @@ function SalesReport() {
     const [selectedAddress, setSelectedAddress] = useState()
     const [paymnet, setSelectedPaymnet] = useState()
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCustomerEditModelOpen, setIsCustomerEditModelOpen] = useState(false)
 
 
 
@@ -129,8 +136,8 @@ function SalesReport() {
 
         // Array of month names for easy formatting
         const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            'Jan', 'Feb', 'March', 'April', 'May', 'June',
+            'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
         ];
 
         // Array of weekday names for easy formatting
@@ -143,7 +150,7 @@ function SalesReport() {
         const year = date.getFullYear();  // Get the year
         const weekday = weekdays[date.getDay()];  // Get the weekday name
 
-        return `${weekday}, ${day}-${month}-${year}`;
+        return ` ${day}-${month}-${year}`;
     };
     const handleVerify = () => {
 
@@ -246,6 +253,36 @@ function SalesReport() {
         }
     };
 
+    const openCustomerEditModel = (ticket) => {
+        setIsCustomerEditModelOpen(true)
+        setFormValues({
+            customerName: selectedCustomerName,
+            customerMobile: selectedCustomerMObile,
+            customerEmail: selectedCustomerEmal,
+            uniqueQueryId: ticket
+        })
+    }
+
+    const closeCustomerEditModel = () => {
+        setIsCustomerEditModelOpen(false)
+
+    }
+    const handleCustomerEditSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            axiosInstance.put("/third_party_api/ticket/updateCustomer", formValues)
+            toast.success("New Info Saved")
+            setSelectedCustomerName(formValues.customerName)
+            setSelectedCustomerEmail(formValues.customerEmail)
+            setSelectedCustomerMobile(formValues.customerMobile)
+            fetchVerificationList()
+        } catch (e) {
+            toast.error("Some Error Occures")
+        }
+
+        closeCustomerEditModel(); // Close modal after saving
+    };
+
     return (
         <>
             <section className="followup-table-section py-3">
@@ -257,78 +294,77 @@ function SalesReport() {
                                 <table className="table table-borderless table-hover">
                                     <thead className="text-dark" style={{ backgroundColor: 'gray' }}>
                                         <tr>
-                                            <th scope="col">Closer Name</th>
-                                            <th scope="col">Sale Date</th>
-                                            <th scope="col">Tracking Number</th>
-                                            <th scope="col">Payment Status</th>
-                                            <th scope="col">Order ID</th>
-                                            <th scope="col">Customer Name</th>
-                                            <th scope="col">Street</th>
-                                            <th scope="col">City</th>
-                                            <th scope="col">State</th>
-                                            <th scope="col">Zip Code</th>
-                                            <th scope="col">Country</th>
-                                            <th scope="col" className='text-center'>Product Details
-                                                <thead>
-                                                    <tr>
-                                                        <th className="px-3">Name</th>|
-                                                        <th className="px-3">Quantity</th>|
-                                                        <th className="px-3">Price</th>
-                                                    </tr>
-                                                </thead>
-                                            </th>
-                                            <th scope="col">Doses</th>
-                                            <th scope="col">Paid Amount</th>
-                                            <th scope="col">Payment Windows</th>
-                                            <th scope="col">Action</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Closer Name</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Sale Date</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Tracking Number</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Payment Status</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Order ID</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Customer Name</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Street</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">City</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">State</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Zip Code</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Country</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col" >Product Details                                            </th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Doses</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Paid Amount</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Payment Windows</th>
+                                            <th className='text-center border border-dark px-2 ' scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     {invoices.length > 0 ?
                                         <tbody>
                                             {invoices.map((invoice) => (
                                                 <tr className="border" key={invoice.invoiceId}>
-                                                    <td> {invoice.closerName} </td>
-                                                    <td>{formatDate(invoice.saleDate)}</td>
-                                                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.paymentStatus || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
-                                                    <td>{invoice.customerName}
+                                                    <td className='text-center border border-dark px-2'> {invoice.closerName} </td>
+                                                    <td className='text-center border border-dark px-2'>{formatDate(invoice.saleDate)}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.trackingNumber || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.paymentStatus || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.invoiceId || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.customerName}
                                                         <button
                                                             type="button"
                                                             onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
                                                             className="btn btn-link p-0">....
                                                         </button>
                                                     </td>
-                                                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                                                    <td className='text-center'>
+                                                    <td className='text-center border border-dark px-2'>{invoice.address?.landmark || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.address?.city || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.address?.state || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.address?.zipCode || "N/A"}</td>
+                                                    <td className='text-center border border-dark px-2'>
                                                         <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
                                                     </td>
-                                                    <td className='text-center'>
+                                                    <td className='text-center border border-dark'>
                                                         <table className="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th className='text-center border border-dark px-3'>Name</th>
+                                                                    <th className='text-center border border-dark px-3'>Quantity</th>
+                                                                    <th className='text-center border border-dark px-3'>Price</th>
+                                                                </tr>
+                                                            </thead>
                                                             <tbody>
                                                                 {invoice.orderDto.productOrders.map((order, i) =>
                                                                     order.product?.map((product, index) => (
                                                                         <tr key={`${i}-${index}`} className="table table-bordered">
-                                                                            <td className="px-2">{product.name}</td>
-                                                                            <td className="px-2">{order.quantity || 'N/A'}</td>
-                                                                            <td className="px-2">{invoice.currency}{order.totalAmount || 'N/A'}</td>
+                                                                            <td className="border border-dark px-2">{product.name}</td>
+                                                                            <td className="border border-dark px-2">{order.quantity || 'N/A'}</td>
+                                                                            <td className="border border-dark px-2">{invoice.currency}{order.totalAmount || 'N/A'}</td>
                                                                         </tr>
                                                                     ))
                                                                 )}
                                                             </tbody>
                                                         </table>
                                                     </td>
-                                                    <td className='text-center'>
+                                                    <td className='text-center border border-dark px-2'>
                                                         {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
                                                     </td>
-                                                    <td className="text-success bold-text">
+                                                    <td className="text-success border border-dark px-2 bold-text">
                                                         {invoice.currency || 'USD'} {invoice.payment?.amount}
                                                     </td>
-                                                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                                                    <td>
+                                                    <td className='text-center border border-dark px-2'>{invoice.payment?.paymentWindow || 'N/A'}</td>
+                                                    <td className='text-center border border-dark px-2'>
                                                         <button type="button" onClick={() => handleView(invoice.invoiceId, invoice.closerName, invoice.saleDate, invoice.orderDto.productOrders, invoice.customerMobile, invoice.customerEmail, invoice.customerName, invoice.orderAmount, invoice.address, invoice.payment)} className="btn btn-success">Verify</button>
                                                     </td>
                                                 </tr>
@@ -344,7 +380,7 @@ function SalesReport() {
             {/* Customer Details Modal */}
             <Modal show={showCustomerModal} onHide={handleCloseCustomerModal} centered>
                 <div className="modal-header" style={{ backgroundColor: '#5f6368', color: '#fff', borderBottom: '2px solid #ccc' }}>
-                    <h5 className="modal-title w-100 text-center" style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                    <h5 className="modal-title  text-center" style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
                         Customer Details
                     </h5>
                     <button type="button" className="close" onClick={handleCloseCustomerModal} style={{ color: '#fff' }}>&times;</button>
@@ -370,7 +406,7 @@ function SalesReport() {
 
 
             <Modal show={view} onHide={handleCloses} centered>
-                <div className="d-flex justify-content-between w-100" style={{ fontSize: "20px" }}>
+                <div className="d-flex justify-content-between " style={{ fontSize: "20px" }}>
                     <div className="border p-2 flex-fill text-center">
                         Close By :- {selectedCloser}
                     </div>
@@ -393,6 +429,7 @@ function SalesReport() {
                                     <div>Name:-{selectedCustomerName}</div>
                                     <div>Email:- {selectedCustomerEmal}</div>
                                     <div>Mobile :- {selectedCustomerMObile}</div>
+                                    <button onClick={() => openCustomerEditModel(selectedAddress.ticketId)} style={{ height: "25px", padding: "1px 5px", fontSize: "15px" }}>Edit</button>
                                 </div>
                                 {selectedAddress && <div>
                                     <div style={{ fontWeight: "bold" }}>Customer Shipping Address </div>
@@ -423,7 +460,7 @@ function SalesReport() {
                                             <tr key={index}>
                                                 <td className='text-center'>
                                                     <img style={{ height: "50px" }} src={
-                                                        `https://rdvision.in/images/getProductImage/${product.productId}`
+                                                        `https://image.rdvision.in/images/getProductImage/${product.productId}`
                                                     } alt="Product Image" class="img-fluid" />
 
                                                 </td>
@@ -645,6 +682,67 @@ function SalesReport() {
                     <button style={{ maxWidth: "70px" }} onClick={() => setIsModalOpen(false)}>close</button>
                 </div>
             </Modal>
+
+            {/* //customer Edit modal */}
+
+            <Modal show={isCustomerEditModelOpen} onHide={closeCustomerEditModel} centered>
+                <form onSubmit={handleCustomerEditSubmit}>
+                    <div className="modal-header" style={{ backgroundColor: '#5f6368', color: '#fff', borderBottom: '2px solid #ccc' }}>
+                        <h5 className="modal-title  text-center" style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+                            Edit Customer Details
+                        </h5>
+                        <button type="button" className="close" onClick={closeCustomerEditModel} style={{ color: '#fff' }}>&times;</button>
+                    </div>
+                    <div className="modal-body" style={{ backgroundColor: '#f4f7fa', color: '#333' }}>
+
+                        <div>
+                            <div className="form-group">
+                                <label htmlFor="customerName"><strong>Name:</strong></label>
+                                <input
+                                    type="text"
+                                    id="customerName"
+                                    className="form-control"
+                                    value={formValues.customerName}
+                                    onChange={(e) => setFormValues({ ...formValues, customerName: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="customerEmail"><strong>Email:</strong></label>
+                                <input
+                                    type="email"
+                                    id="customerEmail"
+                                    className="form-control"
+                                    value={formValues.customerEmail}
+                                    onChange={(e) => setFormValues({ ...formValues, customerEmail: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="customerMobile"><strong>Mobile:</strong></label>
+                                <input
+                                    type="text"
+                                    id="customerMobile"
+                                    className="form-control"
+                                    value={formValues.customerMobile}
+                                    onChange={(e) => setFormValues({ ...formValues, customerMobile: e.target.value })}
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div className="modal-footer justify-content-center" style={{ borderTop: '2px solid #ccc' }}>
+                        <button type="button" className="btn btn-secondary" onClick={closeCustomerEditModel} style={{ fontWeight: 'bold' }}>
+                            Cancel
+                        </button>
+                        <button type="submit" className="btn btn-primary" style={{ fontWeight: 'bold' }}>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </Modal>
+
 
         </>
     );
