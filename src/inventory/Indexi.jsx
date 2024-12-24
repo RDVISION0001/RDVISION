@@ -48,8 +48,15 @@ function Indexi() {
     setSelectedImage("")
   }
 
+  const [copiedInvoiceId, setCopiedInvoiceId] = useState(null);
 
-
+  const handleCopy = (invoice) => {
+    const textToCopy = `${invoice.customerName}, ${invoice.street}, ${invoice.city}, ${invoice.state}, ${invoice.zipCode}, ${invoice.country}`;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      setCopiedInvoiceId(invoice.invoiceId); // Set the copied invoice ID
+      setTimeout(() => setCopiedInvoiceId(null), 2000); // Reset after 2 seconds
+    });
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -289,10 +296,7 @@ function Indexi() {
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>State</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Zip Code</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Country</th>
-                  <th className="border-dark text-center border p-1" style={{ backgroundColor: '#FFC300' }}>Product Details
-
-                  </th>
-
+                  <th className="border-dark text-center border p-1" style={{ backgroundColor: '#FFC300' }}>Product Details</th>
                 </tr>
               </thead>
 
@@ -307,7 +311,7 @@ function Indexi() {
                         <div >
                           {invoice.trackingNumber}
                           <div className='d-flex justify-content-end m-3 text-primary'>
-                            <span  onClick={() => handleShowModal(invoice)}>edit</span>
+                            <span onClick={() => handleShowModal(invoice)}>edit</span>
                           </div>
                         </div>
                       ) : (
@@ -363,6 +367,12 @@ function Indexi() {
                     <td className="border-dark border text-center">{invoice.zipCode || "N/A"}</td>
                     <td className="border-dark border text-center">
                       <img src={getFlagUrl(invoice.country ? invoice.country : "NA")} alt="" /> {invoice.country}
+                      <button
+                        className={`btn btn-warning rounded ${copiedInvoiceId === invoice.invoiceId ? "btn-success" : ""}`}
+                        onClick={() => handleCopy(invoice)}
+                      >
+                        {copiedInvoiceId === invoice.invoiceId ? "Copied" : "Copy"}
+                      </button>
                     </td>
                     <td className="text-center border-dark border">
                       <table className="table-bordered">
