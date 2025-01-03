@@ -269,7 +269,7 @@ const InvoiceInfo = (props) => {
                 <div className="container-fluid">
                     <div className="table-wrapper">
                         {props.stage === 4 ? <h3 className="title">Invoice Tracking</h3> : <h3 className="title">Invoices for after sales service</h3>}
-                        <table className="table">
+                        <table className="table table-bordered">
                             <thead>
                                 <tr className='border'>
                                     <th className='text-center'>Created Date</th>
@@ -284,44 +284,88 @@ const InvoiceInfo = (props) => {
                                     <th className='text-center'>Recording</th>
                                 </tr>
                             </thead>
-                            <tbody className='overflow'>
+                            <tbody className="overflow">
                                 {invoices.length > 0 ? (
-                                    invoices.map((invoice, index) => (
-                                        <tr key={index} className='border'>
-                                            <td className='text-center'>
-                                                {invoice.saleDate && invoice.saleDate[2]}-{convertNumberToStringMonth(invoice.saleDate && invoice.saleDate[1])}-{invoice.saleDate && invoice.saleDate[0]}
-                                            </td>
-                                            <td className='text-center'>{invoice.orderDto.productOrders[0].currency} {invoice.orderDto.totalPayableAmount}</td>
-                                            <td className='text-center'>{invoice.customerName}</td>
-                                            <td className='text-center'><img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}</td>
-                                            <td className='text-center'>{
-                                                invoice.orderDto.productOrders.map((order, index) => (
-                                                    <span>{order.product[0].name}</span>
-                                                ))
-                                            }</td>
-                                            {localStorage.getItem("roleName") === "SeniorSuperVisor" && <td className='text-center'>{invoice.trackingNumber ? invoice.trackingNumber : <button className='bg-primary' onClick={() => openTrackingBox(invoice.uniqueQueryId)}>Add Tracking Number</button>}</td>}
-
-                                            <td className='text-center'>{invoice.deliveryStatus ? invoice.deliveryStatus : "N/A"}</td>
-                                            <td className='text-center'>{invoice.assCallStatus}</td>
-                                            <td className='text-center'>
-                                                <Button
-                                                    onClick={() => handleClick(invoice.uniqueQueryId)}
-                                                    className="btn-action call rounded-circle"
-                                                    title="Get connect on call"
-                                                >
-                                                    <i className="fa-solid fa-phone"></i>
-                                                </Button>
-                                            </td>
-                                            <td className='text-center'>
-                                                {invoice.callRecording ? <Button
-                                                    className=""
-                                                    onClick={() => playRecording(invoice.callRecording, index)}
-                                                >
-                                                    {isPlaying && selectedIndex === index ? <i class="fa-solid fa-pause"></i> : <i class="fa-solid fa-play"></i>}
-                                                </Button> : "Recording not Available"}
-                                            </td>
-                                        </tr>
-                                    ))
+                                    invoices
+                                        .slice(0, 10) // Limit to the first 10 invoices
+                                        .reverse() // Reverse the order
+                                        .map((invoice, index) => (
+                                            <tr key={index} className="border">
+                                                <td className="text-center">
+                                                    {invoice.saleDate && invoice.saleDate[2]}-{convertNumberToStringMonth(invoice.saleDate && invoice.saleDate[1])}-{invoice.saleDate && invoice.saleDate[0]}
+                                                </td>
+                                                <td className="text-center">
+                                                    {invoice.orderDto.productOrders[0].currency} {invoice.orderDto.totalPayableAmount}
+                                                </td>
+                                                <td className="text-center">{invoice.customerName}</td>
+                                                <td className="text-center">
+                                                    <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                                                </td>
+                                                <td className="text-center">
+                                                    <div className="product-details">
+                                                        <table className="table table-sm table-bordered table-striped table-hover">
+                                                            <thead className="table-light">
+                                                                <tr>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col" className="text-center">Quantity</th>
+                                                                    <th scope="col" className="text-center">Price</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                                    invoice.orderDto.productOrders.map((order, i) =>
+                                                                        order.product?.map((product, index) => (
+                                                                            <tr key={`${i}-${index}`}>
+                                                                                <td>{product.name || "N/A"}</td>
+                                                                                <td className="text-center">{order.quantity || "N/A"}</td>
+                                                                                <td className="text-center">
+                                                                                    {invoice.currency || "$"}{order.totalAmount || "0.00"}
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))
+                                                                    )
+                                                                ) : (
+                                                                    <tr>
+                                                                        <td colSpan="3" className="text-center">No products found</td>
+                                                                    </tr>
+                                                                )}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                                {localStorage.getItem("roleName") === "SeniorSuperVisor" && (
+                                                    <td className="text-center">
+                                                        {invoice.trackingNumber ? invoice.trackingNumber : (
+                                                            <button className="bg-primary" onClick={() => openTrackingBox(invoice.uniqueQueryId)}>
+                                                                Add Tracking Number
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                                )}
+                                                <td className="text-center">{invoice.deliveryStatus || "N/A"}</td>
+                                                <td className="text-center">{invoice.assCallStatus}</td>
+                                                <td className="text-center">
+                                                    <Button
+                                                        onClick={() => handleClick(invoice.uniqueQueryId)}
+                                                        className="btn-action call rounded-circle"
+                                                        title="Get connect on call"
+                                                    >
+                                                        <i className="fa-solid fa-phone"></i>
+                                                    </Button>
+                                                </td>
+                                                <td className="text-center">
+                                                    {invoice.callRecording ? (
+                                                        <Button onClick={() => playRecording(invoice.callRecording, index)}>
+                                                            {isPlaying && selectedIndex === index ? (
+                                                                <i className="fa-solid fa-pause"></i>
+                                                            ) : (
+                                                                <i className="fa-solid fa-play"></i>
+                                                            )}
+                                                        </Button>
+                                                    ) : "Recording not Available"}
+                                                </td>
+                                            </tr>
+                                        ))
                                 ) : (
                                     <tr>
                                         <td colSpan="11" className="text-center">
@@ -330,6 +374,7 @@ const InvoiceInfo = (props) => {
                                     </tr>
                                 )}
                             </tbody>
+
                         </table>
                     </div>
                     <div className="text-center">
@@ -368,7 +413,7 @@ const InvoiceInfo = (props) => {
                         )}
 
                         <div className="table-container" style={{ maxHeight: '800px', overflowY: 'auto' }}>
-                            <table className="table">
+                            <table className="table table-bordered">
                                 <thead className="sticky-header">
                                     <tr className="border">
                                         <th className="text-center">Sale Date</th>
