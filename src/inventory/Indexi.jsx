@@ -34,6 +34,9 @@ function Indexi() {
   const [selectedProductId, setSelectedProductId] = useState(0)
   const [isImageOpen, setIsIMageOpen] = useState(false)
   const [selectedImage, setSelectedImage] = useState("")
+  const [selecteOrderProductName, setSelectedOrderProductName] = useState("")
+  const [selectedOrderProductQuantity, setselectedOrderProductQuantity] = useState("")
+  const [selectedOrderProductDose, setSelectedOrderProductDose] = useState("")
 
   const openImage = (image) => {
     let newtext = image.replace("backend", "image")
@@ -55,7 +58,7 @@ function Indexi() {
     const textToCopy = `${invoice.customerName}, ${invoice.street}, ${invoice.city}, ${invoice.state}, ${invoice.zipCode}, ${invoice.country}`;
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopiedInvoiceId(invoice.orderId); // Set the copied invoice ID
-           setTimeout(() => setCopiedInvoiceId(null), 2000); // Reset after 2 seconds
+      setTimeout(() => setCopiedInvoiceId(null), 2000); // Reset after 2 seconds
     });
   };
 
@@ -239,10 +242,13 @@ function Indexi() {
     fetchOrders()
   }
 
-  const oepnUpdate = (id, orderId) => {
+  const oepnUpdate = (id, orderId, name, quantity, dose) => {
     setIsUpdateOpen(true)
     setSelectedOrderId(orderId)
     setSelectedProductId(id)
+    setSelectedOrderProductName(name)
+    setselectedOrderProductQuantity(quantity)
+    setSelectedOrderProductDose(dose)
   }
   const closeUpdate = () => {
     setIsUpdateOpen(false)
@@ -285,7 +291,7 @@ function Indexi() {
             <table className="table table-bordered table-hover table-sm excel-table" style={{ border: '2px solid #000' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                 <tr>
-                <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>S.No.</th>
+                  <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>S.No.</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Order ID</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Sale Date</th>
                   <th className="border-dark" style={{ backgroundColor: '#FFC300' }}>Tracking Number</th>
@@ -302,9 +308,9 @@ function Indexi() {
               </thead>
 
               <tbody>
-                {orders.slice().reverse().map((invoice,index) => (
+                {orders.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    <td className="border-dark border text-center">{index+1}</td>
+                    <td className="border-dark border text-center">{index + 1}</td>
                     <td className="border-dark border text-center">{invoice.orderId || "N/A"}</td>
                     <td className="border-dark border text-center">{formatDate(invoice.orderReceivedDate)}</td>
                     <td className='border border-dark  text-center'>
@@ -370,7 +376,7 @@ function Indexi() {
                       <img src={getFlagUrl(invoice.country ? invoice.country : "NA")} alt="" /> {invoice.country}
                       <button
                         className={`btn  rounded ${copiedInvoiceId === invoice.orderId ? "btn-success" : "btn-warning"}`}
-                        style={{width:"70px"}}
+                        style={{ width: "70px" }}
                         onClick={() => handleCopy(invoice)}
                       >
                         {copiedInvoiceId === invoice.orderId ? "Copied" : "Copy"}
@@ -405,7 +411,7 @@ function Indexi() {
                               <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalCost}</td>
                               <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.paidAmount}</td>
                               <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.dueAmount}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1"><button onClick={() => oepnUpdate(order.id, invoice.orderId)} className='bg-warning text-black'>Add</button></td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1"><button onClick={() => oepnUpdate(order.id, invoice.orderId, order.productName, order.quantity, order.does)} className='bg-warning text-black'>Add</button></td>
 
                             </tr>
                           ))}
@@ -519,8 +525,35 @@ function Indexi() {
       {/* Add Tracking Modal */}
       <Modal show={isUpdateOPen} onHide={closeUpdate}>
         <Modal.Header closeButton>
-          <Modal.Title>Add Tracking Number for Order no. : {selectedOrderId}</Modal.Title>
+          <Modal.Title> Order no. : {selectedOrderId}</Modal.Title>
+
         </Modal.Header>
+        <div className="table-responsive">
+          <table className="table table-bordered table-striped">
+            <thead className="thead-dark">
+              <tr>
+                <th>Field</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Product Name</strong></td>
+                <td>{selecteOrderProductName}</td>
+              </tr>
+              <tr>
+                <td><strong>Quantity</strong></td>
+                <td>{selectedOrderProductQuantity}</td>
+              </tr>
+              <tr>
+                <td><strong>Dose</strong></td>
+                <td>{selectedOrderProductDose} Mg</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
         <Modal.Body>
           <Oreder_update productId={selectedProductId} closeFunction={closeUpdate} />
         </Modal.Body>
