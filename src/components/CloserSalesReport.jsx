@@ -155,11 +155,10 @@ const CloserSalesReport = (props) => {
                 <div className="container-fluid">
                     <div className="table-wrapper">
                         <div className="table-responsive">
-                            <table className="table">
+                            <table className="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th scope="col">Date</th>
-                                        {/* <th scope="col">Tracking Number</th> */}
                                         <th scope="col">Delivery Status</th>
                                         <th scope="col">Name</th>
                                         <th scope="col">Street Address</th>
@@ -167,67 +166,67 @@ const CloserSalesReport = (props) => {
                                         <th scope="col">State</th>
                                         <th scope="col">Zip Code</th>
                                         <th scope="col">Country</th>
-                                        <th scope="col" className='text-center'>Product Details
-                                            <thead>
-                                                <tr>
-                                                    <th className="px-3">Name</th>|
-                                                    <th className="px-3">Quantity</th>|
-                                                    <th className="px-3">Price</th>
-                                                </tr>
-                                            </thead>
-                                        </th>
+                                        <th scope="col" className='text-center'>Product Details  </th>
                                         <th scope="col">Doses</th>
                                         <th scope="col">Quantity</th>
-                                        {/* <th scope="col">Paid Amount</th>
-                                        <th scope="col">Payment Window</th> */}
                                     </tr>
                                 </thead>
-                                <tbody className='overflow'>
+                                <tbody className="overflow">
                                     {invoices.length > 0 ? (
                                         invoices.map((invoice, index) => (
-                                            <React.Fragment key={index}>
-                                                <tr className='border'>
-                                                    <td className='text-center'>
-                                                        {invoice.saleDate && `${invoice.saleDate[2]}-${convertNumberToStringMonth(invoice.saleDate[1])}-${invoice.saleDate[0]}`}
-                                                    </td>
-                                                    {/* <td className='text-center'> {invoice.trackingNumber || "Awating.."}  </td> */}
-                                                    <td className='text-center'>{invoice.deliveryStatus || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.customerName}</td>
-                                                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                                                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                                                    <td className='text-center'>
-                                                        <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                                                    </td>
-                                                    <td className='text-center'>
-                                                        <table className="table table-bordered">
+                                            <tr className="border" key={index}>
+                                                <td className="text-center">
+                                                    {invoice.saleDate && `${invoice.saleDate[2]}-${convertNumberToStringMonth(invoice.saleDate[1])}-${invoice.saleDate[0]}`}
+                                                </td>
+                                                <td className="text-center">{invoice.deliveryStatus || "N/A"}</td>
+                                                <td className="text-center">{invoice.customerName}</td>
+                                                <td className="text-center">{invoice.address?.landmark || "N/A"}</td>
+                                                <td className="text-center">{invoice.address?.city || "N/A"}</td>
+                                                <td className="text-center">{invoice.address?.state || "N/A"}</td>
+                                                <td className="text-center">{invoice.address?.zipCode || "N/A"}</td>
+                                                <td className="text-center">
+                                                    <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                                                </td>
+                                                <td className="text-center">
+                                                    <div className="product-details">
+                                                        <table className="table table-sm table-bordered table-striped table-hover">
+                                                            <thead className="table-light">
+                                                                <tr>
+                                                                    <th scope="col">Name</th>
+                                                                    <th scope="col" className="text-center">Quantity</th>
+                                                                    <th scope="col" className="text-center">Price</th>
+                                                                </tr>
+                                                            </thead>
                                                             <tbody>
-                                                                {invoice.orderDto.productOrders.map((order, i) =>
-                                                                    order.product?.map((product, index) => (
-                                                                        <tr key={`${i}-${index}`} className="table table-bordered">
-                                                                            <td className="px-2">{product.name}</td>
-                                                                            <td className="px-2">{order.quantity || 'N/A'}</td>
-                                                                            <td className="px-2">{invoice.orderDto?.productOrders[0]?.currency} {order.totalAmount || 'N/A'}</td>
-                                                                        </tr>
-                                                                    ))
+                                                                {invoice.orderDto?.productOrders?.length > 0 ? (
+                                                                    invoice.orderDto.productOrders.map((order, i) =>
+                                                                        order.product?.map((product, index) => (
+                                                                            <tr key={`${i}-${index}`}>
+                                                                                <td>{product.name || "N/A"}</td>
+                                                                                <td className="text-center">{order.quantity || "N/A"}</td>
+                                                                                <td className="text-center">
+                                                                                    {invoice.currency || "$"}{order.totalAmount || "0.00"}
+                                                                                </td>
+                                                                            </tr>
+                                                                        ))
+                                                                    )
+                                                                ) : (
+                                                                    <tr>
+                                                                        <td colSpan="3" className="text-center">No products found</td>
+                                                                    </tr>
                                                                 )}
                                                             </tbody>
                                                         </table>
-                                                    </td>
-                                                    <td className='text-center'>
-                                                        {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
-                                                    </td>
-                                                    <td className='text-center'>
-                                                        {invoice.orderDto?.productOrders[0]?.quantity || "N/A"}
-                                                    </td>
-                                                    {/* <td className='text-center text-success fw-bold'>
-                                                        {invoice.orderDto?.productOrders[0]?.currency} {invoice.orderDto?.totalPayableAmount}
-                                                    </td>
+                                                    </div>
+                                                </td>
 
-                                                    <td className='text-center'>{invoice.currency}{invoice.paymentStatus || "N/A"}</td> */}
-                                                </tr>
-                                            </React.Fragment>
+                                                <td className="text-center">
+                                                    {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
+                                                </td>
+                                                <td className="text-center">
+                                                    {invoice.orderDto?.productOrders[0]?.quantity || "N/A"}
+                                                </td>
+                                            </tr>
                                         ))
                                     ) : (
                                         <tr>
@@ -239,6 +238,7 @@ const CloserSalesReport = (props) => {
                                 </tbody>
                             </table>
                         </div>
+
                     </div>
                 </div>
             </section>
