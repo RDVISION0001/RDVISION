@@ -165,6 +165,7 @@ function VerifiedSales() {
                     {/* <th scope="col">Ser n.</th> */}
                     <th className="py-2 text-nowrap" scope="col">Order Id </th>
                     <th scope="col">Sale Date</th>
+                    <th scope="col" className="text-nowrap">Verification Date</th>
                     <th scope="col">Closer </th>
                     <th scope="col">Customer </th>
                     {/* <th scope="col">Customer Email</th> */}
@@ -189,13 +190,17 @@ function VerifiedSales() {
                     .slice()
                     .reverse()
                     .map((invoice, index) => (
-                      <tr key={invoice.invoiceId} className="table-success">
+                        <tr 
+                        key={invoice.invoiceId} className={invoice.trackingNumber ? "table-success" : ""}>                      
                         {/* <td className="text-center">{index + 1}.</td> */}
                         <td className="text-center">
                           {invoice.invoiceId || "N/A"}
                         </td>
                         <td className="text-nowrap">
                           {formatDate(invoice.saleDate)}
+                        </td>
+                        <td className="text-nowrap">
+                          {formatDate(invoice.verificationDate)}
                         </td>
                         <td> {invoice.closerName} </td>
                         <td>
