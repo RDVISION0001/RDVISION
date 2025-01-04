@@ -26,7 +26,7 @@ function Sidenav() {
 
         if (Live && uploded) {
           setLiveTickets({
-            totalAssignTickets: Live.totalAssignTickets,
+            totalAssignTickets: Live.totalNewTickets,
             totalFollowupsTickets: Live.totalFollowupsTickets,
           });
           setUploadedTickets({
@@ -94,8 +94,8 @@ function Sidenav() {
         const currentTime = new Date().getTime();
         const timeDiff = currentTime - loginTime;
         if (timeDiff >= 12 * 60 * 60 * 1000) { // 10000 ms = 10 seconds
-          logout();
           navigate("/");
+          logout();
           clearInterval(interval); // Stop checking after logging out
         }
       }
@@ -152,9 +152,9 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/verifyed_sales" className="nav-link">
+              <NavLink to="/Verified_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verifyed Sales</span>
+                <span className="nav-text">Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -226,9 +226,9 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/verifyed_sales" className="nav-link">
+              <NavLink to="/Verified_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verifyed Sales</span>
+                <span className="nav-text">Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -351,7 +351,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/closer_sales_report" className="nav-link">
                 <i class="fa-regular fa-flag"></i>
-                <span className="nav-text">Sales Report</span>
+                <span className="nav-text">Today Sales Report</span>
               </NavLink>
             </li>
           </>
@@ -559,13 +559,13 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/sales_report" className="nav-link">
                 <i className="fa-solid fa-trophy"></i>
-                <span className="nav-text">Sales Report</span>
+                <span className="nav-text">Today Sales Report</span>
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/verifyed_sales" className="nav-link">
+              <NavLink to="verified_sales" className="nav-link">
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verifyed Sales</span>
+                <span className="nav-text">Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
@@ -591,10 +591,10 @@ function Sidenav() {
           </Link>
         </li>}
       </ul>
-      {localStorage.getItem("userId") && <div className="userIP-wrapper">
+      {/* {localStorage.getItem("userId") && <div className="userIP-wrapper">
         <small>Your IP</small>
         <p className="m-0">https://127.2.2.225</p>
-      </div>}
+      </div>} */}
     </div>
   );
 }

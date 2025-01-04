@@ -339,24 +339,30 @@ const Index = () => {
               </thead>
               <tbody>
                 {filteredInvoices.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}>
+                  <tr
+                    key={invoice.invoiceId}
+                    className={invoice.trackingNumber ? 'table-success' : ''}
+                  >
                     <td>{index + 1}.</td>
-                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
+                    <td className="text-center">{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
-                    <td> {invoice.closerName} </td>
-                    <td>{invoice.customerName}
+                    <td>{invoice.closerName}</td>
+                    <td>
+                      {invoice.customerName}
                       <button
                         type="button"
                         onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
-                        className="btn btn-link p-0">....
+                        className="btn btn-link p-0"
+                      >
+                        ....
                       </button>
                     </td>
-                    <td> {invoice.customerEmail} </td>
-                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                    <td className='text-center'>
+                    <td>{invoice.customerEmail}</td>
+                    <td className="text-center">{invoice.address?.landmark || "N/A"}</td>
+                    <td className="text-center">{invoice.address?.city || "N/A"}</td>
+                    <td className="text-center">{invoice.address?.state || "N/A"}</td>
+                    <td className="text-center">{invoice.address?.zipCode || "N/A"}</td>
+                    <td className="text-center">
                       <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
                     </td>
                     <td className="text-center">
@@ -381,15 +387,20 @@ const Index = () => {
                         </tbody>
                       </table>
                     </td>
-                    <td className='text-center'>
+                    <td className="text-center">
                       {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
                     </td>
-                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
+                    <td className="text-center">{invoice.trackingNumber || "N/A"}</td>
                     <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
                     <td>
-                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
-                        Add
-                      </Button>}
+                      {invoice.shippingCareer ? invoice.shippingCareer : (
+                        <Button
+                          variant="info rounded"
+                          onClick={() => handleShowModal(invoice.invoiceId)}
+                        >
+                          Add
+                        </Button>
+                      )}
                     </td>
                     <td>{invoice.deliveryStatus || 'N/A'}</td>
                     <td className="text-success bold-text">
@@ -410,6 +421,7 @@ const Index = () => {
                   </tr>
                 ))}
               </tbody>
+
             </Table>
           )}
 
@@ -440,7 +452,9 @@ const Index = () => {
               </thead>
               <tbody>
                 {todayInvoices.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}>
+                  <tr key={invoice.invoiceId}
+                  className={invoice.trackingNumber ? 'table-success' : ''}
+                  >
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
@@ -540,7 +554,9 @@ const Index = () => {
               </thead>
               <tbody>
                 {preparingShipment.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}>
+                  <tr key={invoice.invoiceId}
+                  className={invoice.trackingNumber ? 'table-success' : ''}
+                  >
                     <td>{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
                     <td>{formatDate(invoice.saleDate)}</td>
