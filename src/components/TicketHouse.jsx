@@ -48,13 +48,32 @@ const TicketHouse = () => {
         setCpuntryList(countriesList);
         setSaleCount(dataList);
     }
-
+    function getColorForStatus(status) {
+        const colorMap = {
+            "totalTickets":"yellow",
+          'New': '#FF5733',              // Custom color for 'New'
+          'Not_Pickup': '#FFB533',       // Custom color for 'Not_Pickup'
+          'Follow': '#FFC300',           // Custom color for 'Follow'
+          'Place_with_other': '#33FF57', // Custom color for 'Place_with_other'
+          'Not_Interested': '#FF33A6',   // Custom color for 'Not_Interested'
+        };
+      
+        // If status is 'Sale', return green color
+        if (status === 'Sale') {
+          return 'green';
+        }
+      
+        // Default to a gray color if the status is not in the color map
+        return colorMap[status] || '#808080'; // Return gray if status is not recognized
+      }
+      
     const funnelData = ticketData.map(ticket => {
         const key = Object.keys(ticket)[0];
         const value = ticket[key];
         return {
             name: key==="totalTickets"?"All":key,
-            y: value
+            y: value,
+            color:getColorForStatus(key)
         };
     }).filter(item => item.y > 0);
     // Funnel chart options
@@ -155,56 +174,7 @@ const TicketHouse = () => {
                         </div>
                     </div>
 
-                    <div className="container " style={{ marginTop: "100px" }}>
-                        <div className="row">
-                            {/* # of lost leads */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-warning text-center" style={{ borderRadius: '8px', backgroundColor: '#fff8e1' }}>
-                                    <h6 style={{ color: '#ff6f00' }}># of lost leads</h6>
-                                    <h3>2</h3>
-                                </div>
-                            </div>
-
-                            {/* Lost leads budget */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-warning text-center" style={{ borderRadius: '8px', backgroundColor: '#fff8e1' }}>
-                                    <h6 style={{ color: '#ff6f00' }}>Lost leads budget</h6>
-                                    <h3>$ 14,400.00</h3>
-                                </div>
-                            </div>
-
-                            {/* Average leads budget */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
-                                    <h6 style={{ color: '#43a047' }}>Average leads budget</h6>
-                                    <h3>$ 3,315.85</h3>
-                                </div>
-                            </div>
-
-                            {/* Current month average leads budget */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
-                                    <h6 style={{ color: '#43a047' }}>Current month average leads budget</h6>
-                                    <h3>$ 15,740.90</h3>
-                                </div>
-                            </div>
-                            {/* Average leads budget */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
-                                    <h6 style={{ color: '#43a047' }}>Average leads budget</h6>
-                                    <h3>$ 3,315.85</h3>
-                                </div>
-                            </div>
-
-                            {/* Current month average leads budget */}
-                            <div className="col-md-6 mb-4">
-                                <div className="p-3 border border-success text-center" style={{ borderRadius: '8px', backgroundColor: '#e8f5e9' }}>
-                                    <h6 style={{ color: '#43a047' }}>Current month average leads budget</h6>
-                                    <h3>$ 15,740.90</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        
 
                 </Col>
 
@@ -214,11 +184,12 @@ const TicketHouse = () => {
                     <div style={{ flex: 1 }}>
                         <HighchartsReact highcharts={Highcharts} options={pieOptions} />
                     </div>
-                    <h6>Sales vs country</h6>
+                   
+                </Col>
+                <h6>Sales vs country</h6>
                     <div style={{ flex: 1 }}>
                         <HighchartsReact highcharts={Highcharts} options={barOptions} />
                     </div>
-                </Col>
             </Row>
 
             <div className="legend p-3 d-flex justify-content-center bg-light">

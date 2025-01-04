@@ -79,11 +79,11 @@ function toEveryone(props) {
     const [liveNotAssigned, setLiveNotassigned] = useState(0)
     const [uploadedNotAssigned, setUploadedNotAssigned] = useState(0)
 
-    const fetchNumbersOfUnassignedTickets = async () => {
-        const response = await axiosInstance.get("/third_party_api/ticket/numberOfNotassignedTickets")
-        setLiveNotassigned(response.data.liveCount)
-        setUploadedNotAssigned(response.data.uploadedCount)
-    }
+    // const fetchNumbersOfUnassignedTickets = async () => {
+    //     const response = await axiosInstance.get("/third_party_api/ticket/numberOfNotassignedTickets")
+    //     setLiveNotassigned(response.data.liveCount)
+    //     setUploadedNotAssigned(response.data.uploadedCount)
+    // }
     //hnadling multiple selection
     const handleMultipleUploadTicketSelection = (e) => {
         const checked = e.target.checked; // Use `checked` instead of `value` to determine if the checkbox is checked
@@ -117,7 +117,7 @@ function toEveryone(props) {
 
                 fetchTickets()
                 setSelectedTickets([])
-                fetchNumbersOfUnassignedTickets()
+                // fetchNumbersOfUnassignedTickets()
             } catch (error) {
                 console.error('Error:', error);
                 toast.error('Failed to assign tickets.');
@@ -137,9 +137,9 @@ function toEveryone(props) {
                 toast.success('Uploaded Tickets assigned successfully!');
                 handleClose();
 
-                fetchUploadedTickets()
+                await fetchUploadedTickets(currentPage, itemsPerPage);
                 setSelectedTickets([])
-                fetchNumbersOfUnassignedTickets()
+                // fetchNumbersOfUnassignedTickets()
 
             } catch (error) {
                 console.error('Error:', error);
@@ -153,8 +153,8 @@ function toEveryone(props) {
             const response = await axiosInstance.get('/team/getAllTeams');
             setTeam(response.data.dtoList);
         };
-        fetchData();
-        fetchNumbersOfUnassignedTickets()
+        // fetchData();
+        // fetchNumbersOfUnassignedTickets()
     }, []);
 
     const handleSelectUserOfSelectedUserType = (e) => {
@@ -173,6 +173,7 @@ function toEveryone(props) {
             setData(response.data.dtoList);
             setCurrentPage(response.data.currentPage);
             setTotalPages(response.data.totalPages);
+            setLiveNotassigned(response.data.totalElement)
         } catch (error) {
             console.error('Error fetching tickets:', error);
         }
@@ -186,20 +187,15 @@ function toEveryone(props) {
             setUploadedData(response.data.dtoList);
             setCurrentPage(response.data.currentPage);
             setTotalPages(response.data.totalPages);
+            setUploadedNotAssigned(response.data.totalElement)
+
         } catch (error) {
             console.error('Error fetching tickets:', error);
         }
     };
 
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await fetchTickets(params[activeTab], currentPage, itemsPerPage);
 
-        };
-
-        fetchData();
-    }, [activeTab, currentPage, itemsPerPage]); // Ensure these dependencies are correct
 
 
     useEffect(() => {
@@ -214,17 +210,17 @@ function toEveryone(props) {
     }, []);
 
     useEffect(() => {
-        fetchUploadedTickets(currentPage, itemsPerPage);
-    }, [itemsPerPage])
+        const fetchData = async () => {
+            if (isLive) {
+                await fetchTickets(params[activeTab], currentPage, itemsPerPage);
+            } else {
+                await fetchUploadedTickets(currentPage, itemsPerPage);
+            }
+        };
+        fetchData();
+    }, [currentPage, itemsPerPage, isLive]); // Ensure these dependencies are correct
 
 
-    //handle row click
-    const handleRowClick = (tabName) => {
-        setActiveTab(tabName);
-        setCurrentPage(0);
-        fetchTickets(params[tabName], 0, itemsPerPage);
-        fetchUploadedTickets(0, itemsPerPage);
-    };
 
     //handle Previous Page
     const handlePreviousPage = () => {
@@ -275,9 +271,31 @@ function toEveryone(props) {
         if (number.length < 4) return number;
         return number.slice(0, -4) + 'XXXX';
     };
+
+    const formatDate = (dateString) => {
+        if (!dateString) return "";
+
+        // Parse the date string
+        const date = new Date(dateString);
+
+        if (isNaN(date.getTime())) {
+            return "Invalid Date"; // Handle invalid dates
+        }
+
+        // Array of month abbreviations
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        // Extract day, month, and year
+        const day = date.getDate();
+        const month = monthNames[date.getMonth()];
+        const year = date.getFullYear();
+
+        // Return formatted string
+        return `${day}-${month}-${year}`;
+    };
     return (
         <>
-            <div className='w-25 d-flex justify-content-center' >
+            <div className='w-25 d-flex justify-content-center w-100' >
 
                 <div className="form-check" style={{ marginLeft: "10px" }}>
                     <input
@@ -309,25 +327,26 @@ function toEveryone(props) {
                     <div className="container-fluid mt-3">
                         <section className="data-table-bgs_02x24 py-3">
                             <div className="container-fluid">
-                                <div className="table-wrapper tabbed-table">
+                                <div className="table-wrapper">
                                     <div className="heading-wrapper">
-                                        <h3 className="title">All Tickets</h3>
                                         <div>
-                                           {isLive && <><span>Available Tickets:- </span> <span> {liveNotAssigned}</span></>}
-                                           {!isLive && <><span>Available Tickets:- </span> <span> {uploadedNotAssigned}</span></>}
+                                            {isLive && <><span>Available Tickets:- </span> <span> {liveNotAssigned}</span></>}
+                                            {!isLive && <><span>Available Tickets:- </span> <span> {uploadedNotAssigned}</span></>}
                                         </div>
                                         <Button onClick={handleShow} className="btn btn-assign" data-bs-toggle="modal" data-bs-target="#assignTicketModal" id="assignButton">Assign Ticket</Button>
                                     </div>
 
                                     <div className="tab-content recent-transactions-tab-body" id="myTabContent">
                                         <div className="tab-pane fade show active" id="all-transactions-tab-pane" role="tabpanel" aria-labelledby="all-transactions-tab" tabIndex="0">
-                                            <div className="tickets-table table-responsive">
+                                            <div className="tickets-table table-responsive" style={{ maxHeight: "600px" }}>
                                                 <table className="table">
                                                     <thead>
                                                         <tr>
+
                                                             <th className="selection-cell-header" data-row-selection="true">
                                                                 <input type="checkbox" id='checkedInput' className="" onChange={(e) => handleMultipleTicketSelection(e)} />
                                                             </th>
+                                                            <th tabindex="0">S.No.</th>
                                                             <th tabindex="0">Date/Time</th>
                                                             <th tabindex="0">Country</th>
                                                             <th tabIndex="0">Customer Name</th>
@@ -335,7 +354,7 @@ function toEveryone(props) {
                                                             <th tabIndex="0">Customer Email</th>
                                                             {/* <th tabIndex="0">Ticket ID</th> */}
                                                             {/* <th tabIndex="0">Requirement</th> */}
-                                                            {isLive && <th tabIndex="0">Product Name</th>}
+                                                            {/* {isLive && <th tabIndex="0">Product Name</th>} */}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -348,6 +367,7 @@ function toEveryone(props) {
                                                                         onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                                                     />
                                                                 </td>
+                                                                <td>{(currentPage*itemsPerPage)+index + 1}.</td>
                                                                 <td>{item.queryTime}</td>
                                                                 <td>{item.senderCountryIso}</td>
                                                                 <td>{item.senderName}</td>
@@ -355,10 +375,10 @@ function toEveryone(props) {
                                                                 <td>{maskEmail(item.senderEmail)}</td>
                                                                 {/* <td>{item.uniqueQueryId}</td> */}
                                                                 {/* <td>{item.subject}</td> */}
-                                                                <td>{item.queryProductName}</td>
+                                                                {/* <td>{item.queryProductName}</td> */}
                                                             </tr>
                                                         ))}
-                                                        {!isLive && uploadedData.map((item) => (
+                                                        {!isLive && uploadedData.map((item, index) => (
                                                             <tr key={item.uniqueQueryId}>
                                                                 <td className="selection-cell">
                                                                     <input
@@ -367,7 +387,9 @@ function toEveryone(props) {
                                                                         onChange={(e) => handleTicketSelect(e, item.uniqueQueryId)}
                                                                     />
                                                                 </td>
-                                                                <td>{item.uploadDate}</td>
+                                                                <td>{(currentPage*itemsPerPage)+index + 1}.</td>
+
+                                                                <td>{formatDate(item.uploadDate)}</td>
                                                                 <td>NA</td>
                                                                 <td>{item.firstName}</td>
                                                                 <td>{maskMobileNumber(item.mobileNumber)}</td>

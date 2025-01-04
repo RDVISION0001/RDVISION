@@ -44,7 +44,7 @@ function InNegotiation() {
   const [senderEmailFormail, setSenderEmailForMail] = useState("");
   const [senderMobile, setSenderMobile] = useState("");
   const [productArray, setProductArray] = useState([]);
-  const [assignedTo, setAssignedTo] = useState(userId)
+  const [assignedTo, setAssignedTo] = useState(localStorage.getItem("roleName") === "SeniorSuperVisor"?0:userId)
   const [buttonFilterValue, setbuttonFilterValue] = useState("")
   const [emailData, setEmailData] = useState({
     ticketId: "",
@@ -491,12 +491,27 @@ function InNegotiation() {
   const [followCount, setFollowupCount] = useState(0)
   const [saleCount, setSaleCount] = useState(0)
   const [interestedCount, setInterestedCOunt] = useState(0)
+  const [hangUpCount,setHangupCount]=useState(0)
   const [placeWithOtherCOunt, setPlaceWithOtherCount] = useState(0)
   const [notPickupCount, setNotPickupCount] = useState(0)
   const [wrongNumberCount, setWrongNumberCount] = useState(0)
   const [notInteresteCount, setNotIntrestedCount] = useState(0)
   const [users, setAllUsers] = useState([])
   const [selectedCloser, setSelectedCloser] = useState()
+
+
+  const changeUser =(e)=>{
+    setAssignedTo(e.target.value)
+    setFollowupCount(0)
+    setSaleCount(0)
+    setInterestedCOunt(0)
+    setNotIntrestedCount(0)
+    setNotPickupCount(0)
+    setPlaceWithOtherCount(0)
+    setWrongNumberCount(0)
+    setHangupCount(0)
+
+   }
 
   useEffect(() => {
     fetchNoOfTickets()
@@ -527,6 +542,8 @@ function InNegotiation() {
         setInterestedCOunt(resutl[i].Interested)
       } else if (resutl[i].Sale) {
         setSaleCount(resutl[i].Sale)
+      } else if (resutl[i].hang_up) {
+        setHangupCount(resutl[i].hang_up)
       }
 
     }
@@ -764,9 +781,9 @@ function InNegotiation() {
   return (
     <>
       {localStorage.getItem("roleName") === "SeniorSuperVisor" &&
-        <div className='p-3 bg-success' style={{ textAlign: "start" }}>
+        <div className='p-3' style={{ textAlign: "start" }}>
           <label className='m-3 fw-bold'>Select Closer to see their Negotiation tickets</label>
-          <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="form-select w-25" aria-label="Default select example">
+          <select value={assignedTo} onChange={changeUser} className="form-select w-25" aria-label="Default select example">
             <option selected value="0">All negotiations</option>
             {users.filter((user) => user.roleId === 4).map((user, index) =>
               <option value={user.userId}>{user.firstName} {user.lastName}</option>
@@ -774,7 +791,7 @@ function InNegotiation() {
           </select>
         </div>}
       <div className='d-flex justify-content-end '>
-        <div className=' d-flex justify-content-center' >
+        {localStorage.getItem("roleName") !== "SeniorSuperVisor" && <div className=' d-flex justify-content-center' >
 
           <div className="form-check" style={{ marginLeft: "10px" }}>
             <input
@@ -800,7 +817,7 @@ function InNegotiation() {
               All negotiation tickets
             </label>
           </div>
-        </div>
+        </div>}
         <div className='w-25 d-flex justify-content-center' >
           <div>choose view</div>
           <div className="form-check" style={{ marginLeft: "10px" }}>
@@ -902,7 +919,7 @@ function InNegotiation() {
                         >
                           {stage.stage < 4 && "Number OF tickets :-"}
                           {stage.stage === 1 &&
-                            notPickupCount + notInteresteCount + wrongNumberCount}
+                            notPickupCount + notInteresteCount + wrongNumberCount+hangUpCount}
                           {stage.stage === 2 &&
                             followCount + interestedCount + placeWithOtherCOunt}
                           {stage.stage === 3 && saleCount}

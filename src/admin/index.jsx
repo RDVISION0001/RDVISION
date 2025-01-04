@@ -219,7 +219,6 @@ const Index = () => {
       invoice.customerEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
-  console.log(todayInvoices)
   return (
     <section className="followup-table-section">
       <div className="container-fluid">
@@ -451,7 +450,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {todayInvoices.slice().reverse().map((invoice, index) => (
+                {filteredTodayInvoices.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}
                   className={invoice.trackingNumber ? 'table-success' : ''}
                   >
@@ -553,7 +552,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {preparingShipment.slice().reverse().map((invoice, index) => (
+                {filteredPreparingShipment.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}
                   className={invoice.trackingNumber ? 'table-success' : ''}
                   >
@@ -655,7 +654,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {awaitingtracking.slice().reverse().map((invoice, index) => (
+                {filteredAwaitingtracking.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
                     <td className="text-center">{index + 1}.</td>
                     <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
