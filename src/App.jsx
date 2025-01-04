@@ -194,7 +194,7 @@ function App() {
                       <Route exact path="/new_products" element={<New_Products />} />
                       <Route exact path="/action_mode" element={<ActionMode />} />
                       <Route exact path="/sales_report" element={<SalesReport />} />
-                      <Route exact path="/verifyed_sales" element={<VerifyedSales />} />
+                      <Route exact path="/Verified_sales" element={<VerifyedSales />} />
                       <Route exact path="/invoice" element={<InvoiceNewTemp />} />
                       <Route exact path="/mis_product" element={<MIS_Product />} />
                       <Route exact path="/image_upload" element={<ImgUpload />} />
