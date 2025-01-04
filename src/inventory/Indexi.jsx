@@ -10,6 +10,8 @@ import Logout from '../auth/logout';
 import { FaPen } from 'react-icons/fa';
 import axios from 'axios';
 import Oreder_update from '../components/Oreder_update'
+import EditOrderDetails from './EditOrderDetails'
+
 
 function Indexi() {
   const { roleName, userId } = useAuth();
@@ -162,27 +164,6 @@ function Indexi() {
     }
   };
 
-  const [editing, setEditing] = useState({ column: null, rowIndex: null });
-  const [tempData, setTempData] = useState({});
-
-  const handleDoubleClick = (column, rowIndex) => {
-    setEditing({ column, rowIndex }); // This sets the specific cell to be editable
-  };
-
-  const handleChange = (e, column, rowIndex) => {
-    const value = e.target.innerText;
-
-    setTempData((prev) => ({
-      ...prev,
-      [`${rowIndex}-${column}`]: value, // Update only the specific cell
-    }));
-  };
-
-  const handleBlur = () => {
-    setEditing({ column: null, rowIndex: null }); // Reset the editing state
-  };
-
-
   // Filter invoices based on verificationDate
   const getFilteredInvoices = () => {
     const now = new Date();
@@ -278,6 +259,11 @@ function Indexi() {
     fetchOrders()
   }
 
+  const handleClick =(order,id)=>{
+    console.log(order)
+    console.log(id)
+  }
+
 
   return (
     <>
@@ -346,7 +332,7 @@ function Indexi() {
                         </div>
                       ) : (
                         <Button variant="warning rounded" onClick={() => handleShowModal(invoice)}>
-                          Add Tracking
+                          Add Tracking 
                         </Button>
                       )}
                     </td>
@@ -405,137 +391,95 @@ function Indexi() {
                         {copiedInvoiceId === invoice.orderId ? "Copied" : "Copy"}
                       </button>
                     </td>
-                    <td className="text-center border-dark border">
-                      <table className="table-bordered">
-                        <thead>
-                          <tr>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Name</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Quantity</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Doses</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Rate/Qty</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Total Goods Cost</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Shipping Charges</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Total Cost</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Paid Amount</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Due Amount</th>
-                            <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invoice.orderDetails.map((order, i) => (
-                            <tr key={i}>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark border text-center p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'productName'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('productName', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'productName', i)}
-                              >
-                                {tempData[`${i}-productName`] || order.productName}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark border text-center p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'quantity'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('quantity', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'quantity', i)}
-                              >
-                                {tempData[`${i}-quantity`] || order.quantity || 'N/A'}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark border text-center p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'does'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('does', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'does', i)}
-                              >
-                                {tempData[`${i}-does`] || order.does || 'N/A'}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'rate'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('rate', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'rate', i)}
-                              >
-                                INR {tempData[`${i}-rate`] || order.rate}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'totalGoodsCost'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('totalGoodsCost', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'totalGoodsCost', i)}
-                              >
-                                INR {tempData[`${i}-totalGoodsCost`] || order.totalGoodsCost}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'shippingCharge'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('shippingCharge', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'shippingCharge', i)}
-                              >
-                                INR {tempData[`${i}-shippingCharge`] || order.shippingCharge || 'N/A'}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'totalCost'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('totalCost', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'totalCost', i)}
-                              >
-                                INR {tempData[`${i}-totalCost`] || order.totalCost}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'paidAmount'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('paidAmount', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'paidAmount', i)}
-                              >
-                                INR {tempData[`${i}-paidAmount`] || order.paidAmount}
-                              </td>
-                              <td
-                                style={{ width: '50px', whiteSpace: 'nowrap' }}
-                                className="border-dark text-center border p-1"
-                                contentEditable={editing.rowIndex === i && editing.column === 'dueAmount'}
-                                suppressContentEditableWarning={true}
-                                onDoubleClick={() => handleDoubleClick('dueAmount', i)}
-                                onBlur={handleBlur}
-                                onInput={(e) => handleChange(e, 'dueAmount', i)}
-                              >
-                                INR {tempData[`${i}-dueAmount`] || order.dueAmount}
-                              </td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">
-                                <button
-                                  onClick={() => openUpdate(order.id, invoice.orderId, order.productName, order.quantity, order.does)}
-                                  className='bg-warning text-black'
-                                >
-                                  Add
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </td>
+                             <td className="text-center border-dark border">
+                                  <div className="d-flex justify-content-between">
+                                    {/* First Table */}
+                                    <table className="table-bordered me-3">
+                                      <thead>
+                                        <tr>
+                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Name</th>
+                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Quantity</th>
+                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Doses</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {invoice.orderDetails.map((order, i) => (
+                                          <tr key={i}>
+                                            <td className="border-dark border text-center p-1 table-column" style={{fontSize:12}}>{order.productName}</td>
+                                            <td className="border-dark border text-center p-1 table-column"style={{fontSize:12}}>{order.quantity || 'N/A'}</td>
+                                            <td className="border-dark border text-center p-1 table-column"style={{fontSize:12}}>{order.does || 'N/A'}</td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+
+
+                                    {/* Second Table */}
+                                    
+                                    <EditOrderDetails data={invoice}/>
+                                    {/* <table className="table-bordered">
+                                      <thead className='' >
+                                        <tr>
+                                          <th style={{ width: '50px', whiteSpace: 'nowrap',backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Rate/Qty</th>
+                                          <th style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Total Goods Cost</th>
+                                          <th style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Shipping Charges</th>
+                                          <th style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Total Cost</th>
+                                          {
+                                            invoice.orderDetails.map((order, i) => (
+                                              order.paidAmount && order.dueAmount == 0 ? (
+                                                <>
+                                                  <th key={i} style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor: '#f59682' }} className="border-dark text-center border p-1">  Paid Amount</th>
+                                                  <th style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor: '#f59682' }} className="border-dark text-center border p-1">Due Amount</th>
+                                                </>
+                                               
+                                              ) : (
+                                                <th key={i} style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor: '#f59682' }} className="border-dark text-center border p-1">
+                                                  Payment Status 
+                                                </th>
+                                              )
+                                            ))
+                                          }                                         
+                                          <th style={{ width: '50px', whiteSpace: 'nowrap', backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {invoice.orderDetails.map((order, i) => (
+                                          <tr key={i}>
+                                            <td
+                                            onClick={()=>handleClick(order)}
+                                            
+                                            style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.rate}</td>
+                                            <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalGoodsCost}</td>
+                                            <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.shippingCharge}</td>
+                                            <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalCost}</td>
+                                            {
+                                                invoice.orderDetails.map((order, i) => (
+                                                  order.paidAmount && order.dueAmount == 0 ? (
+                                                    <>
+                                                      <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.paidAmount}</td>
+                                                      <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.dueAmount}</td>
+                                                    </>                                                 
+                                                   
+                                                  ) : (
+                                                    <>
+                                                      <td style={{ width: '50px', whiteSpace: 'nowrap', }} className="border-dark text-center border p-1">
+                                                        <p className='py-1' style={{backgroundColor:'#dda15e'}}>Due Amount</p>
+                                                      </td>
+                                                    </>
+                                                  )
+                                                ))
+                                            }
+                                          
+                                            <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">
+                                              <button onClick={() => oepnUpdate(order.id, invoice.orderId, order.productName, order.quantity, order.does)} className='bg-warning text-black'>Add</button>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table> */}
+                                  </div>
+                                </td>
+
 
                     {/* <td className="border-dark border text-center">{invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}</td> */}
 
