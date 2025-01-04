@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import Highcharts from 'highcharts';
-import HighchartsReact from 'highcharts-react-official';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import axiosInstance from '../axiosInstance';
-import { toast } from 'react-toastify';
-import Report from './Report'
-import UserWorkTimeReport from './UserWorkTimeReport';
-import LiveCalander from '../components/LiveCalander';
+import React, { useState, useEffect } from "react";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import "bootstrap/dist/css/bootstrap.min.css";
+import axiosInstance from "../axiosInstance";
+import { toast } from "react-toastify";
+import Report from "./Report";
+import UserWorkTimeReport from "./UserWorkTimeReport";
+import LiveCalander from "../components/LiveCalander";
 // Authentication context
-import { useAuth } from '../auth/AuthContext';
-
+import { useAuth } from "../auth/AuthContext";
 
 const ChartWorktime = () => {
   const { userId } = useAuth();
 
   const [teammates, setTeammates] = useState([]);
-  const [liveClosers, setliveClosers] = useState([])
+  const [liveClosers, setliveClosers] = useState([]);
 
   const [timeElapsed, setTimeElapsed] = useState(0); // Working time in seconds
   const [initialWorkingTime, setInitialWorkingTime] = useState(0); // Initial working time in seconds
@@ -28,7 +27,9 @@ const ChartWorktime = () => {
   useEffect(() => {
     if (initialWorkingTime > 0 && !takingBreak) {
       const interval = setInterval(() => {
-        setTimeElapsed(initialWorkingTime + Math.floor((Date.now() - loginTime) / 1000));
+        setTimeElapsed(
+          initialWorkingTime + Math.floor((Date.now() - loginTime) / 1000)
+        );
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -38,7 +39,7 @@ const ChartWorktime = () => {
   useEffect(() => {
     if (takingBreak && breakStartTime) {
       const interval = setInterval(() => {
-        setBreakTime(prev => prev + 1); // Increment by 1 second
+        setBreakTime((prev) => prev + 1); // Increment by 1 second
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -46,57 +47,71 @@ const ChartWorktime = () => {
 
   // Fetch initial working hours and break hours on component load
   useEffect(() => {
-    setInitialWorkingTime(parseInt(localStorage.getItem("workTime")))
-    setBreakTime(parseInt(localStorage.getItem("breakTime")))
+    setInitialWorkingTime(parseInt(localStorage.getItem("workTime")));
+    setBreakTime(parseInt(localStorage.getItem("breakTime")));
   }, []);
 
   const shiftDurationHours = 12;
   const totalShiftTime = shiftDurationHours * 3600;
-  const timeElapsedPercentage = Math.min((timeElapsed / totalShiftTime) * 100, 100);
+  const timeElapsedPercentage = Math.min(
+    (timeElapsed / totalShiftTime) * 100,
+    100
+  );
 
-  const hours = String(Math.floor(timeElapsed / 3600)).padStart(2, '0');
-  const minutes = String(Math.floor((timeElapsed % 3600) / 60)).padStart(2, '0');
-  const seconds = String(timeElapsed % 60).padStart(2, '0');
+  const hours = String(Math.floor(timeElapsed / 3600)).padStart(2, "0");
+  const minutes = String(Math.floor((timeElapsed % 3600) / 60)).padStart(
+    2,
+    "0"
+  );
+  const seconds = String(timeElapsed % 60).padStart(2, "0");
 
-  const breakHours = String(Math.floor(breakTime / 3600)).padStart(2, '0');
-  const breakMinutes = String(Math.floor((breakTime % 3600) / 60)).padStart(2, '0');
-  const breakSeconds = String(breakTime % 60).padStart(2, '0');
+  const breakHours = String(Math.floor(breakTime / 3600)).padStart(2, "0");
+  const breakMinutes = String(Math.floor((breakTime % 3600) / 60)).padStart(
+    2,
+    "0"
+  );
+  const breakSeconds = String(breakTime % 60).padStart(2, "0");
   const today = new Date();
-  const formatedToday = new Date().toISOString().split('T')[0];
+  const formatedToday = new Date().toISOString().split("T")[0];
   const pastDate = new Date(today); // Create a new Date object based on today
   pastDate.setDate(pastDate.getDate() - 7); // Subtract 30 days
-  const formattedPastDate = pastDate.toISOString().split('T')[0];
-  const [startDate, setStartDate] = useState(formattedPastDate)
-  const [endDate, setEndDate] = useState(formatedToday)
+  const formattedPastDate = pastDate.toISOString().split("T")[0];
+  const [startDate, setStartDate] = useState(formattedPastDate);
+  const [endDate, setEndDate] = useState(formatedToday);
 
   const options = {
-    chart: { type: 'column' },
+    chart: { type: "column" },
     title: false,
-    credits: { text: "CEO: Anuj Partap Singh", href: "https://wa.me/917080906913" },
-    xAxis: {
-      categories: ['A', 'B', 'C', 'D', 'E', '5'],
-      crosshair: true,
-      accessibility: { description: 'Countries' }
+    credits: {
+      text: "CEO: Anuj Partap Singh",
+      href: "https://wa.me/917080906913",
     },
-    yAxis: { min: 0, title: { text: 'Values' } },
-    tooltip: { valueSuffix: ' (1000 MT)' },
+    xAxis: {
+      categories: ["A", "B", "C", "D", "E", "5"],
+      crosshair: true,
+      accessibility: { description: "Countries" },
+    },
+    yAxis: { min: 0, title: { text: "Values" } },
+    tooltip: { valueSuffix: " (1000 MT)" },
     plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } },
     series: [
-      { name: 'Approach', data: [406292, 260000, 107000, 68300, 27500, 14500] },
-      { name: 'Sale', data: [51086, 136000, 5500, 141000, 107180, 77000] }
-    ]
+      { name: "Approach", data: [406292, 260000, 107000, 68300, 27500, 14500] },
+      { name: "Sale", data: [51086, 136000, 5500, 141000, 107180, 77000] },
+    ],
   };
 
   const toggleBreak = () => {
-    toggleBreakOnServer()
+    toggleBreakOnServer();
     if (!takingBreak) {
       // Starting the break
       setBreakStartTime(Date.now());
     } else {
       // Ending the break: update the break time based on how long the break was
       if (breakStartTime) {
-        const timeSpentOnBreak = Math.floor((Date.now() - breakStartTime) / 1000); // in seconds
-        setBreakTime(prev => prev + timeSpentOnBreak); // add the time spent on break to the total break time
+        const timeSpentOnBreak = Math.floor(
+          (Date.now() - breakStartTime) / 1000
+        ); // in seconds
+        setBreakTime((prev) => prev + timeSpentOnBreak); // add the time spent on break to the total break time
         setBreakStartTime(null); // reset the break start time
       }
     }
@@ -104,19 +119,23 @@ const ChartWorktime = () => {
   };
 
   const toggleBreakOnServer = async () => {
-    const response = await axiosInstance.get(`/user/toggleBreak/${localStorage.getItem("userId")}`)
+    const response = await axiosInstance.get(
+      `/user/toggleBreak/${localStorage.getItem("userId")}`
+    );
     if (response.data) {
-      toast.info("You Are Taking Break")
+      toast.info("You Are Taking Break");
     } else {
-      toast.info("Returned on Work")
+      toast.info("Returned on Work");
     }
-  }
+  };
 
   useEffect(() => {
     // Function to call the API and set the data
     const fetchBestSellingTeammates = async () => {
       try {
-        const response = await axiosInstance.get(`/team/bestsellingTeammates/${userId}`);
+        const response = await axiosInstance.get(
+          `/team/bestsellingTeammates/${userId}`
+        );
         setTeammates(response.data); // Assuming the data is in response.data
       } catch (error) {
         console.error("Error fetching best selling teammates", error);
@@ -124,65 +143,48 @@ const ChartWorktime = () => {
     };
     const fetchLiveStatus = async () => {
       try {
-        const response = await axiosInstance.get(`/user/getLiveTeammates/${userId}`);
+        const response = await axiosInstance.get(
+          `/user/getLiveTeammates/${userId}`
+        );
         setliveClosers(response.data); // Assuming the data is in response.data
       } catch (error) {
         console.error("Error fetching best selling teammates", error);
       }
     };
-    fetchLiveStatus()
+    fetchLiveStatus();
     fetchBestSellingTeammates();
   }, [userId]);
   const checkuserLive = (userName) => {
-    if (liveClosers.filter((closer) => closer.firstName === userName.split(" ")[0]).length > 0) {
+    if (
+      liveClosers.filter(
+        (closer) => closer.firstName === userName.split(" ")[0]
+      ).length > 0
+    ) {
       return true;
     } else {
       return false;
     }
-  }
+  };
 
   return (
     <section className="">
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-8">
-            <LiveCalander/>
+            <LiveCalander />
           </div>
-          <div className="col-md-4 " >
-            <div className="bg-white  d-flex justify-content-between align-items-center p-3">
-              <div>
-            <div className='d-flex justify-content-between items-align-center'>
-                        <div></div>
-                        {/* <div className='d-flex '>
-                            <div className='d-flex justify-content-center align-items-center' style={{ paddingTop:"15px" }}>
-                                <i class="fa-solid fa-filter fa-xl"></i>
-                            </div>
-                            <div className='d-flex flex-column'>
-                                <label htmlFor="startDate">From</label>
-                                <input
-                                    value={startDate}
-                                    max={formatedToday}    // Maximum date is today
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
-                                    type="date"
-                                />
-                            </div>
-                            <div className='d-flex flex-column'>
-                                <label htmlFor="endDate">To</label>
-                                <input
-                                    value={endDate}
-                                    max={formatedToday}    // Maximum date is today
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                    className='bg-white text-black rounded mx-1 mb-1 p-1'
-                                    type="date"
-                                />
-                            </div>
-                        </div> */}
-                    </div>
-                    <UserWorkTimeReport user={userId} start={startDate} end={endDate} isShowingToUser={true}/>
-                    </div>
-              <div className='' style={{ width: "120px" }}>
-                <div className=' d-flex flex-column align-items-center justify-content-between' >
+          <div className="col-md-4 ">
+            <div className="bg-white  d-flex justify-content-evenly align-items-center">
+              <div>                
+                <UserWorkTimeReport
+                  user={userId}
+                  start={startDate}
+                  end={endDate}
+                  isShowingToUser={true}
+                />
+              </div>
+              <div className="" style={{ width: "120px" }}>
+                <div className=" d-flex flex-column align-items-center justify-content-between ">
                   <div className="position-relative d-flex align-items-center justify-content-center">
                     <svg width="160" height="160">
                       <circle
@@ -201,19 +203,42 @@ const ChartWorktime = () => {
                         stroke="#007bff"
                         strokeWidth="10"
                         strokeDasharray="408"
-                        strokeDashoffset={408 - (408 * timeElapsedPercentage) / 100}
+                        strokeDashoffset={
+                          408 - (408 * timeElapsedPercentage) / 100
+                        }
                         transform="rotate(90 80 80)" // Start from the bottom
                       />
                     </svg>
                     <div className="position-absolute text-center d-flex flex-row">
-                      <strong style={{ fontWeight: 'bold', fontSize: '10px' }}>{hours} : {minutes}</strong>
-                      <strong style={{ fontWeight: 'bold', fontSize: '10px' }}>Hrs.</strong>
+                      <strong style={{ fontWeight: "bold", fontSize: "10px" }}>
+                        {hours} : {minutes}
+                      </strong>
+                      <strong style={{ fontWeight: "bold", fontSize: "10px" }}>
+                        Hrs.
+                      </strong>
                     </div>
                   </div>
-                  <div className='d-flex flex-column  bg-light'>
-                    <span style={{ fontSize: "15px", fontWeight: "semibold", color: "gray" }}>Work Tracker</span>
+                  <div className="d-flex flex-column  bg-light">
+                    <span
+                      style={{
+                        fontSize: "15px",
+                        fontWeight: "semibold",
+                        color: "gray",
+                      }}
+                    >
+                      Work Tracker
+                    </span>
                     <span>
-                      <button className='' style={{ fontSize: "12px", backgroundColor: "rgb(255, 0, 0)", padding: "1px 20px", borderRadius: "5px" }} onClick={toggleBreak}>
+                      <button
+                        className=""
+                        style={{
+                          fontSize: "12px",
+                          backgroundColor: "rgb(255, 0, 0)",
+                          padding: "1px 20px",
+                          borderRadius: "5px",
+                        }}
+                        onClick={toggleBreak}
+                      >
                         {takingBreak ? "Continue" : "Take Break"}
                       </button>
                     </span>
@@ -222,13 +247,34 @@ const ChartWorktime = () => {
                 </div>
                 <div className="d-flex flex-column align-items-center justify-content-center  w-100">
                   <div>
-                    <div className=' mt-2 items-content-center p-1'>
-                      <p className=" " style={{ fontSize: '20px' }}><strong>{hours} : {minutes} : {seconds}</strong></p>
-                      <p className='text-danger ' style={{ fontSize: '20px' }}><strong>{breakHours} : {breakMinutes} : {breakSeconds}</strong></p>
+                    <div className=" mt-2 items-content-center p-1">
+                      <p className=" " style={{ fontSize: "20px" }}>
+                        <strong>
+                          {hours} : {minutes} : {seconds}
+                        </strong>
+                      </p>
+                      <p className="text-danger " style={{ fontSize: "20px" }}>
+                        <strong>
+                          {breakHours} : {breakMinutes} : {breakSeconds}
+                        </strong>
+                      </p>
                     </div>
-                    <div className='d-flex mt-2 justify-content-center' style={{ color: "gray" }}>
-                      <p className=" " style={{ fontSize: '15px' }}>Working </p>  <span className='mx-2 ' style={{ fontSize: "15px", color: "gray" }}>| </span>
-                      <p className=' ' style={{ fontSize: '15px' }}>Break</p>
+                    <div
+                      className="d-flex mt-2 justify-content-center"
+                      style={{ color: "gray" }}
+                    >
+                      <p className=" " style={{ fontSize: "15px" }}>
+                        Working{" "}
+                      </p>{" "}
+                      <span
+                        className="mx-2 "
+                        style={{ fontSize: "15px", color: "gray" }}
+                      >
+                        |{" "}
+                      </span>
+                      <p className=" " style={{ fontSize: "15px" }}>
+                        Break
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -240,9 +286,9 @@ const ChartWorktime = () => {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th className='text-center'>Closer Name</th>
-                      <th className='text-center'>Sales Count</th>
-                      <th className='text-center'>Status</th>
+                      <th className="text-center">Closer Name</th>
+                      <th className="text-center">Sales Count</th>
+                      <th className="text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -250,9 +296,19 @@ const ChartWorktime = () => {
                       teammates.map((teammate, index) => (
                         <>
                           <tr>
-                            <td className='text-center'>{teammate.userName}</td>
-                            <td className='text-center'>{teammate.count}</td>
-                            <td className={`${checkuserLive(teammate.userName)?"text-success":"text-danger"} fw-bold text-center`}>{checkuserLive(teammate.userName) ? "Online" : "Offline"}</td>
+                            <td className="text-center">{teammate.userName}</td>
+                            <td className="text-center">{teammate.count}</td>
+                            <td
+                              className={`${
+                                checkuserLive(teammate.userName)
+                                  ? "text-success"
+                                  : "text-danger"
+                              } fw-bold text-center`}
+                            >
+                              {checkuserLive(teammate.userName)
+                                ? "Online"
+                                : "Offline"}
+                            </td>
                           </tr>
                         </>
                       ))
