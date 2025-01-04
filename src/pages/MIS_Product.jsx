@@ -35,6 +35,13 @@ function MIS_Product() {
     const [selectedImage, setSelectedImage] = useState("");
     const [isAddProductOpen, setIsAddProductOepn] = useState(false)
 
+    //Pagination States
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemPerPage, setItemPerPage] = useState(10)
+    const [totalPages, setTotalPages] = useState(0)
+    const startIndex = (currentPage - 1) * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
+
     const openAddProduct = () => {
         setIsAddProductOepn(true)
     }
@@ -74,6 +81,7 @@ function MIS_Product() {
             const response = await axiosInstance.get("/product/getAllProducts");
             if (response.data?.dtoList) {
                 setProducts(response.data.dtoList);
+                setTotalPagesForPagination(response.data.dtoList)
             } else {
                 setError("Unexpected response format");
             }
@@ -84,6 +92,10 @@ function MIS_Product() {
         }
     };
 
+    const setTotalPagesForPagination = (pages) => {
+        const actualPages = pages.filter((product) => product.strength)
+        setTotalPages(Math.ceil(actualPages.length / itemPerPage))
+    }
     const handleFilterChange = (e) => {
         setFilterText(e.target.value.toLowerCase());
     };
@@ -221,7 +233,7 @@ function MIS_Product() {
         e.preventDefault()
         const latestQuantity = quantities[quantities.length - 1]; // Get the last entry in the array
 
-        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0 ) {
+        if (latestQuantity.quantity.length > 0 && latestQuantity.price.length > 0) {
             setRequestBody((prev) => [
                 ...prev,
                 {
@@ -332,6 +344,28 @@ function MIS_Product() {
         }
     }
 
+    const generatePagination = () => {
+        const buttons = [];
+        for (let i = 1; i <= totalPages; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`px-3 py-1 m-1 rounded-md ${currentPage === i
+                            ? 'bg-primary text-white'
+                            : 'bg-secondary text-gray-800 hover:bg-gray-300'
+                        }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+        return buttons;
+    };
+
+    const handlePageChange=(i)=>{
+        setCurrentPage(i)
+    }
 
     return (
         <div className="container-fluid" >
@@ -346,29 +380,29 @@ function MIS_Product() {
                 />
             </div>
 
-            <div className="table-responsive">
-              {localStorage.getItem("roleName")==="Product_Coordinator" && <div className="d-flex justify-content-end p-3">
+            <div className="table-responsive"  style={{ maxHeight: "1000px", overflowY: "auto" }}>
+                {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
                     <button onClick={openAddProduct} className="rounded">Add New Product</button>
                 </div>}
                 <table className="table table-bordered border-dark">
-                    <thead>
+                    <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                         <tr>
                             <th style={{ width: "5%" }}>S.No.</th>
                             <th style={{ width: "10%" }}>Product Image</th>
                             <th style={{ width: "20%" }} colSpan="2">Product Details</th>
                             <th style={{ width: "15%" }} className="text-center">Price List</th>
-                           {localStorage.getItem("roleName")==="Product_Coordinator" &&  <th style={{ width: "10%" }}>Actions</th>}
+                            {localStorage.getItem("roleName") === "Product_Coordinator" && <th style={{ width: "10%" }}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
                         {filteredProducts.length > 0 ? (
-                            filteredProducts.filter((product)=>product.strength ).map((product, index) => (
+                            filteredProducts.filter((product) => product.strength).slice(startIndex, endIndex).map((product, index) => (
                                 <React.Fragment key={product.productId}>
                                     {rowDetails.map((row, rowIndex) => (
                                         <tr key={`${product.productId}-${rowIndex}`}>
                                             {rowIndex === 0 && (
                                                 <>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{index + 1}</td>
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex+index + 1}</td>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "10px" }}>
                                                         {getImageIds(product.productId).map((imageId) => (
                                                             localStorage.getItem("roleName") === "Product_Coordinator" ? <>
@@ -392,7 +426,7 @@ function MIS_Product() {
                                                         ))}
 
                                                         <div className="mt-3">
-                                                           {localStorage.getItem("roleName")==="Product_Coordinator"&& <button
+                                                            {localStorage.getItem("roleName") === "Product_Coordinator" && <button
                                                                 className="btn btn-sm btn-primary rounded"
                                                                 onClick={() => handleOn(product.productId)}
                                                             >
@@ -409,16 +443,16 @@ function MIS_Product() {
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
                                                             <>
                                                                 {product[row.valueKey]}{" "}
-                                                                {localStorage.getItem("roleName")==="Product_Coordinator"?<button
+                                                                {localStorage.getItem("roleName") === "Product_Coordinator" ? <button
                                                                     className="btn btn-sm btn-warning ms-2 rounded"
                                                                     onClick={() => handleShow(product.productId)}
                                                                 >
                                                                     Edit
-                                                                </button>:"N/A"}
+                                                                </button> : "N/A"}
 
                                                             </>
                                                         ) : (
-                                                            localStorage.getItem("roleName")==="Product_Coordinator"?<button onClick={() => handleShow(product.productId)}>Add Category</button>:"N/A"
+                                                            localStorage.getItem("roleName") === "Product_Coordinator" ? <button onClick={() => handleShow(product.productId)}>Add Category</button> : "N/A"
                                                         )}
                                                     </>
                                                 )}
@@ -446,22 +480,22 @@ function MIS_Product() {
                                                                             <td>{priceItem.productCode || "N/A"}</td>
                                                                             <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
                                                                             <td>{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
-                                                                            {localStorage.getItem("roleName")==="Product_Coordinator" && <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
+                                                                            {localStorage.getItem("roleName") === "Product_Coordinator" && <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
                                                         ) : (
-                                                            localStorage.getItem("roleName")==="Product_Coordinator"? <button
+                                                            localStorage.getItem("roleName") === "Product_Coordinator" ? <button
                                                                 className=""
                                                                 onClick={() => handleOne(product)}
                                                             >
                                                                 Add Price
-                                                            </button>:"Price Not updated yet"
+                                                            </button> : "Price Not updated yet"
                                                         )}
                                                         {/* Add More button below the table */}
                                                         {product.priceList && product.priceList.length > 0 && (
-                                                           localStorage.getItem("roleName")==="Product_Coordinator" && <button
+                                                            localStorage.getItem("roleName") === "Product_Coordinator" && <button
                                                                 className="btn btn-sm btn-success mt-2 rounded"
                                                                 onClick={() => handleOne(product)}
                                                             >
@@ -470,9 +504,9 @@ function MIS_Product() {
                                                         )}
                                                     </td>
 
-                                                   {localStorage.getItem("roleName")==="Product_Coordinator" &&  <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
+                                                    {localStorage.getItem("roleName") === "Product_Coordinator" && <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                         <button onClick={() => handleEnable(product)}>EDIT</button>
-                                                        <button style={{ marginLeft: "3px",backgroundColor:"transparent" }} onClick={() => handleDeleteProduct(product)}><img src="https://cdn-icons-png.flaticon.com/128/17381/17381043.png" style={{height:"50px"}}/>  </button>
+                                                        <button style={{ marginLeft: "3px", backgroundColor: "transparent" }} onClick={() => handleDeleteProduct(product)}><img src="https://cdn-icons-png.flaticon.com/128/17381/17381043.png" style={{ height: "50px" }} />  </button>
                                                     </td>}
                                                 </>
                                             )}
@@ -492,7 +526,10 @@ function MIS_Product() {
 
 
             </div>
+            <div style={{ paddingLeft: "100px", paddingRight: "100px" }} className="m-3">
+                {generatePagination()}
 
+            </div>
             {/* Add Price Modal */}
             <Modal show={one} onHide={handleZero} centered>
                 <div className="modal-header bg-primary text-white">
@@ -672,7 +709,7 @@ function MIS_Product() {
                 dialogClassName="custom-modal-width"
             >
                 <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
-                    <Uploaded_product closeFunction={handleCloseProductAdd}/>
+                    <Uploaded_product closeFunction={handleCloseProductAdd} />
                 </Modal.Body>
             </Modal>
 
