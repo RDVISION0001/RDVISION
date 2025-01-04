@@ -7,8 +7,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserWorkTimeReport from '../components/UserWorkTimeReport'
 import { useAuth } from '../auth/AuthContext';
+import TicketStatusView from './TicketStatusView'
 
-const UserReport = () => {
+const UserReport = (props) => {
     const [users, setUsers] = useState([]);
     const [noOfAssignedTickets, setnumberOfassinedticket] = useState({});
     const [selectedUser, setSelectedUser] = useState(0);
@@ -26,6 +27,7 @@ const UserReport = () => {
     const [endDate, setEndDate] = useState(formatedToday)
     const { userReportReloader, setUserReportReloader } = useAuth()
     const [Closer, setCloser] = useState("")
+    const[selectedusername,setSelectedUserName] = useState([])
     useEffect(() => {
         fetchUsers();
         fetchNoOfAssigned();
@@ -51,6 +53,16 @@ const UserReport = () => {
             setFetchingUsers(false); // End fetching, hide loading
         }
     };
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = (userId,name) =>{
+        setSelectedUser(userId)
+        setSelectedUserName(name)
+        setIsModalOpen(true)
+    };
+    const handleCloseModal = () => setIsModalOpen(false);
+
 
     const fetchNoOfAssigned = async () => {
         try {
@@ -139,7 +151,7 @@ const UserReport = () => {
         }
         return usersActionData[usersFirstName][action] ?? "0";
     };
-    
+
     return (
         <>
             <section className="followup-table-section py-3">
@@ -147,7 +159,7 @@ const UserReport = () => {
                     <div className='d-flex justify-content-between items-align-center'>
                         <div></div>
                         <div className='d-flex '>
-                            <div className='d-flex justify-content-center align-items-center' style={{ paddingTop:"15px" }}>
+                            <div className='d-flex justify-content-center align-items-center' style={{ paddingTop: "15px" }}>
                                 <i class="fa-solid fa-filter fa-xl"></i>
                             </div>
                             <div className='d-flex flex-column'>
@@ -208,9 +220,19 @@ const UserReport = () => {
 
                                             {findNoOfAssignedTicketsToUser(user.userId) > 0 ? (
                                                 <div className='d-flex flex-column'>
-                                                    <span style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", marginTop: "5px" }}>
-                                                        Today Assigned: {findNoOfAssignedTicketsToUser(user.userId)}
-                                                    </span>
+                                                    <div>
+                                                        <span style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", marginTop: "5px" }}>
+                                                            Today Assigned: {findNoOfAssignedTicketsToUser(user.userId)}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-dark rounded"
+                                                            onClick={() => handleOpenModal(user.userId,user.firstName)}
+                                                            style={{ marginLeft: "10px" }}
+                                                        >
+                                                            Report
+                                                        </button>
+                                                    </div>
                                                     <span className='text-primary mb-3 ' onClick={() => openModal(user.userId, user.firstName)} style={{ cursor: "pointer" }}>Assign more....</span>
                                                 </div>
                                             ) : (
@@ -285,13 +307,40 @@ const UserReport = () => {
                 </div>
             </section>
 
+            {/* Bootstrap Modal */}
+           
+                <Modal show={isModalOpen} onHide={handleCloseModal} className="modal show d-block" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Ticket Status View</h5>
+                            </div>
+                            <TicketStatusView userId={selectedUser} name={selectedusername}/>
+
+                            <div className="modal-footer">
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={handleCloseModal}
+                                >
+                                    Close
+                                </button>
+                                <button type="button" className="btn btn-primary">
+                                    Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Modal>
+          
+
             {/* Modal for ToCaptain */}
             < Modal show={showModal} onHide={closeModal} centered dialogClassName="custom-modal-width" >
                 <Modal.Header closeButton>
                     <Modal.Title>Assign Ticket to {Closer}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ToEveryOne userId={selectedUser} />
+                    <ToEveryOne userId={selectedUser}  />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={closeModal}>
