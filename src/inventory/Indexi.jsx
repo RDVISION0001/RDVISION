@@ -162,6 +162,27 @@ function Indexi() {
     }
   };
 
+  const [editing, setEditing] = useState({ column: null, rowIndex: null });
+  const [tempData, setTempData] = useState({});
+
+  const handleDoubleClick = (column, rowIndex) => {
+    setEditing({ column, rowIndex }); // This sets the specific cell to be editable
+  };
+
+  const handleChange = (e, column, rowIndex) => {
+    const value = e.target.innerText;
+
+    setTempData((prev) => ({
+      ...prev,
+      [`${rowIndex}-${column}`]: value, // Update only the specific cell
+    }));
+  };
+
+  const handleBlur = () => {
+    setEditing({ column: null, rowIndex: null }); // Reset the editing state
+  };
+
+
   // Filter invoices based on verificationDate
   const getFilteredInvoices = () => {
     const now = new Date();
@@ -256,6 +277,8 @@ function Indexi() {
     setSelectedProductId(0)
     fetchOrders()
   }
+
+
   return (
     <>
       <section className="followup-table-section py-3">
@@ -384,7 +407,7 @@ function Indexi() {
                     </td>
                     <td className="text-center border-dark border">
                       <table className="table-bordered">
-                        {<thead>
+                        <thead>
                           <tr>
                             <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Name</th>
                             <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Quantity</th>
@@ -396,23 +419,118 @@ function Indexi() {
                             <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Paid Amount</th>
                             <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Due Amount</th>
                             <th style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">Action</th>
-
                           </tr>
-                        </thead>}
+                        </thead>
                         <tbody>
                           {invoice.orderDetails.map((order, i) => (
                             <tr key={i}>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.productName}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.quantity || 'N/A'}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark border text-center p-1">{order.does || 'N/A'}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.rate}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalGoodsCost}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.shippingCharge}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.totalCost}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.paidAmount}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">INR {order.dueAmount}</td>
-                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1"><button onClick={() => oepnUpdate(order.id, invoice.orderId, order.productName, order.quantity, order.does)} className='bg-warning text-black'>Add</button></td>
-
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark border text-center p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'productName'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('productName', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'productName', i)}
+                              >
+                                {tempData[`${i}-productName`] || order.productName}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark border text-center p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'quantity'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('quantity', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'quantity', i)}
+                              >
+                                {tempData[`${i}-quantity`] || order.quantity || 'N/A'}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark border text-center p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'does'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('does', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'does', i)}
+                              >
+                                {tempData[`${i}-does`] || order.does || 'N/A'}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'rate'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('rate', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'rate', i)}
+                              >
+                                INR {tempData[`${i}-rate`] || order.rate}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'totalGoodsCost'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('totalGoodsCost', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'totalGoodsCost', i)}
+                              >
+                                INR {tempData[`${i}-totalGoodsCost`] || order.totalGoodsCost}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'shippingCharge'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('shippingCharge', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'shippingCharge', i)}
+                              >
+                                INR {tempData[`${i}-shippingCharge`] || order.shippingCharge || 'N/A'}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'totalCost'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('totalCost', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'totalCost', i)}
+                              >
+                                INR {tempData[`${i}-totalCost`] || order.totalCost}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'paidAmount'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('paidAmount', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'paidAmount', i)}
+                              >
+                                INR {tempData[`${i}-paidAmount`] || order.paidAmount}
+                              </td>
+                              <td
+                                style={{ width: '50px', whiteSpace: 'nowrap' }}
+                                className="border-dark text-center border p-1"
+                                contentEditable={editing.rowIndex === i && editing.column === 'dueAmount'}
+                                suppressContentEditableWarning={true}
+                                onDoubleClick={() => handleDoubleClick('dueAmount', i)}
+                                onBlur={handleBlur}
+                                onInput={(e) => handleChange(e, 'dueAmount', i)}
+                              >
+                                INR {tempData[`${i}-dueAmount`] || order.dueAmount}
+                              </td>
+                              <td style={{ width: '50px', whiteSpace: 'nowrap' }} className="border-dark text-center border p-1">
+                                <button
+                                  onClick={() => openUpdate(order.id, invoice.orderId, order.productName, order.quantity, order.does)}
+                                  className='bg-warning text-black'
+                                >
+                                  Add
+                                </button>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
