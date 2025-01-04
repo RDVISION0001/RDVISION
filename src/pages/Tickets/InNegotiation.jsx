@@ -247,8 +247,19 @@ function InNegotiation() {
 
   const handleSelecteRow = (index, ticketId) => {
     setSelectedKey(index);
-    localStorage.setItem("selectedNego", ticketId);
+
+    // Get the current list of selected tickets from localStorage
+    let selectedTickets = JSON.parse(localStorage.getItem("selectedNego")) || [];
+    console.log(selectedTickets)
+    // Add the new ticket ID if it doesn't already exist
+    if (!selectedTickets.includes(ticketId)) {
+      selectedTickets.push(ticketId);
+    }
+
+    // Update localStorage with the updated list
+    localStorage.setItem("selectedNego", JSON.stringify(selectedTickets));
   };
+
 
   // Define stages
   const stages = [
@@ -478,7 +489,7 @@ function InNegotiation() {
   };
 
   const [followCount, setFollowupCount] = useState(0)
-  const [saleCount,setSaleCount]=useState(0)
+  const [saleCount, setSaleCount] = useState(0)
   const [interestedCount, setInterestedCOunt] = useState(0)
   const [placeWithOtherCOunt, setPlaceWithOtherCount] = useState(0)
   const [notPickupCount, setNotPickupCount] = useState(0)
@@ -489,7 +500,6 @@ function InNegotiation() {
 
   useEffect(() => {
     fetchNoOfTickets()
-
     if (localStorage.getItem("roleName") === "SeniorSuperVisor") {
       fetchAllUsers()
     }
@@ -500,7 +510,7 @@ function InNegotiation() {
     setAllUsers(response.data)
   }
   const fetchNoOfTickets = async () => {
-    const response = await axiosInstance.get(`/third_party_api/ticket/getcountoftcikets/${assignedTo===0?userId:assignedTo}`)
+    const response = await axiosInstance.get(`/third_party_api/ticket/getcountoftcikets/${assignedTo}`)
     const resutl = response.data;
     for (let i = 0; i < resutl.length; i++) {
       if (resutl[i].Follow) {
@@ -515,7 +525,7 @@ function InNegotiation() {
         setPlaceWithOtherCount(resutl[i].Place_with_other)
       } else if (resutl[i].Interested) {
         setInterestedCOunt(resutl[i].Interested)
-      }else if (resutl[i].Sale) {
+      } else if (resutl[i].Sale) {
         setSaleCount(resutl[i].Sale)
       }
 
@@ -753,15 +763,16 @@ function InNegotiation() {
 
   return (
     <>
-   {localStorage.getItem("roleName")==="SeniorSuperVisor"&&   <div className='p-3' style={{textAlign:"start"}}>
-        <label className='m-3 fw-bold'>Select Closer to see their Negotiation tickets</label>
-        <select value={assignedTo} onChange={(e)=>setAssignedTo(e.target.value)} className="form-select w-25" aria-label="Default select example">
-          <option selected value="0">All negotiations</option>
-          {users.filter((user)=>user.roleId===4).map((user, index) =>
-            <option value={user.userId}>{user.firstName } {user.lastName}</option>
-          )}
-        </select>
-      </div>}
+      {localStorage.getItem("roleName") === "SeniorSuperVisor" &&
+        <div className='p-3 bg-success' style={{ textAlign: "start" }}>
+          <label className='m-3 fw-bold'>Select Closer to see their Negotiation tickets</label>
+          <select value={assignedTo} onChange={(e) => setAssignedTo(e.target.value)} className="form-select w-25" aria-label="Default select example">
+            <option selected value="0">All negotiations</option>
+            {users.filter((user) => user.roleId === 4).map((user, index) =>
+              <option value={user.userId}>{user.firstName} {user.lastName}</option>
+            )}
+          </select>
+        </div>}
       <div className='d-flex justify-content-end '>
         <div className=' d-flex justify-content-center' >
 
@@ -825,107 +836,125 @@ function InNegotiation() {
           <div style={{ width: "100%" }}>
             {/* Stages */}
             <section className="followup-table-section py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
+              <div
+                className="pipeline-container"
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                {stages.map((stage, index) => (
                   <div
-                    className="pipeline-container"
+                    key={index}
+                    onClick={() => stageSelection(stage.stage)} // Set selected stage
                     style={{
-                      width: "100%",
                       display: "flex",
-                      justifyContent: "space-between",
                       alignItems: "center",
+                      position: "relative",
+                      width: `calc(100% / ${stages.length})`,
+                      cursor: "pointer", // Add cursor pointer to indicate it's clickable
+                      fontSize: "inherit", // Default to inherit if not selected
+                      color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
                     }}
                   >
-                    {stages.map((stage, index) => (
+                    <div
+                      style={{
+                        backgroundColor: stage.color,
+                        width: "100%", // Responsive width
+                        maxWidth: "23rem", // Restrict the maximum width
+                        height: "auto", // Allow height to adjust
+                        minHeight: "100px", // Set minimum height
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: "bold",
+                        flexDirection: "column",
+                        clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
+                        margin: "10px auto", // Add margin for spacing
+                        zIndex: 1,
+                        boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none",
+                      }}
+                    >
                       <div
-                        key={index}
-                        onClick={() => stageSelection(stage.stage)} // Set selected stage
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          position: "relative",
-                          width: `calc(100% / ${stages.length})`,
-                          cursor: "pointer", // Add cursor pointer to indicate it's clickable
-                          fontSize: "inherit", // Default to inherit if not selected
-                          color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
+                          fontSize: selectedStage === stage.stage ? "1.5rem" : "1rem", // Responsive font size
+                          color: selectedStage === stage.stage ? "black" : "white",
+                          textAlign: "center", // Ensure text is centered
                         }}
                       >
+                        Stage: {stage.stage}
+                      </div>
+                      <div style={{ padding: "5px", fontSize: "0.75rem" }}>{stage.name}</div>
+                      {stage.stage < 4 && (
                         <div
                           style={{
-                            backgroundColor: stage.color, // Highlight selected stage
-                            width: "100%",
-                            height: "100px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: "bold",
-                            flexDirection: "column",
-                            clipPath: "polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%)",
-                            marginRight: "-25px",
-                            zIndex: 1,
-                            boxShadow: selectedStage === stage.stage ? "0 0 10px 5px black" : "none", // Optional box-shadow for highlighting
+                            padding: "5px",
+                            fontSize: "0.75rem",
+                            textAlign: "center",
+                            backgroundColor: "white",
+                            borderRadius: "5px",
+                            width: "90%", // Responsive width
+                            maxWidth: "200px", // Limit max width
                           }}
+                          className="text-info"
                         >
-                          <div
-                            style={{
-
-                              fontSize: selectedStage === stage.stage ? "25px" : "inherit", // Default to inherit if not selected
-                              color: selectedStage === stage.stage ? "black	" : "white", // Change text color for selected stage
-                            }}
-                          >Stage :{stage.stage}</div>
-                          <div style={{ padding: "5px", fontSize: "12px" }}>{stage.name}</div>
-                          {stage.stage < 4 && <div style={{ paddingBottom: "5px", fontSize: "12px" }} className='text-info text-center p-2 bg-white rounded'>{stage.stage < 4 && "Number OF tickets :-"}{stage.stage === 1 && (notPickupCount + notInteresteCount + wrongNumberCount)}{stage.stage === 2 && (followCount + interestedCount + placeWithOtherCOunt)}{stage.stage===3&& saleCount}</div>}
+                          {stage.stage < 4 && "Number OF tickets :-"}
+                          {stage.stage === 1 &&
+                            notPickupCount + notInteresteCount + wrongNumberCount}
+                          {stage.stage === 2 &&
+                            followCount + interestedCount + placeWithOtherCOunt}
+                          {stage.stage === 3 && saleCount}
                         </div>
+                      )}
+                    </div>
 
-                        {index < stages.length - 1 && (
-                          <div
-                            style={{
-                              width: "0",
-                              height: "0",
-                              borderTop: "50px solid transparent",
-                              borderBottom: "50px solid transparent",
-                              borderLeft: `25px solid ${stages[index + 1].color}`,
-                              position: "absolute",
-                              right: "-25px",
-                              zIndex: 0,
-                            }}
-                          ></div>
-                        )}
-                      </div>
-                    ))}
+                    {index < stages.length - 1 && (
+                      <div
+                        style={{
+                          width: "0",
+                          height: "0",
+                          borderTop: "50px solid transparent",
+                          borderBottom: "50px solid transparent",
+                          borderLeft: `25px solid ${stages[index + 1].color}`,
+                          position: "absolute",
+                          right: "-25px",
+                          zIndex: 0,
+                        }}
+                      ></div>
+                    )}
                   </div>
-
-                </div>
+                ))}
               </div>
             </section>
             <section className="filter-section">
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-md-5">
-                    <div className="search-wrapper">
-                      <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
-                      <div className="search-icon">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-                      </div>
+              <div className="row">
+                <div className="col-md-5">
+                  <div className="search-wrapper">
+                    <input type="text" name="search-user" id="searchUsers" className="form-control" placeholder="Search Department or Name..." value={shortValue} onChange={handleShortDataValue} />
+                    <div className="search-icon">
+                      <i className="fa-solid fa-magnifying-glass"></i>
                     </div>
                   </div>
-                  {selectedStage === 2 && <div className="col-md-5">
-                    <div className="search-wrapper d-flex justify-content-center align-items-center">
-                      <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
-                      <div className="search-icon">
-                        <i className="fa-solid fa-magnifying-glass"></i>
-
-                      </div>
-                      <i
-                        className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
-                        onClick={() => setFilterDate(null)}
-                      ></i>
+                </div>
+                {selectedStage === 2 && <div className="col-md-5">
+                  <div className="search-wrapper d-flex justify-content-center align-items-center">
+                    <input type="date" name="filterdate" className="form-control" placeholder="Search Department or Name..." value={filterdate} onChange={(e) => setFilterDate(e.target.value)} />
+                    <div className="search-icon">
+                      <i className="fa-solid fa-magnifying-glass"></i>
 
                     </div>
+                    <i
+                      className="fa-solid fa-filter-circle-xmark fa-xl ms-2 hover-scale"
+                      onClick={() => setFilterDate(null)}
+                    ></i>
 
-                  </div>}
-                </div>
+                  </div>
+
+                </div>}
               </div>
+
             </section>
             {/*Filters*/}
 
@@ -947,8 +976,8 @@ function InNegotiation() {
             }
             {/* Table */}
             {selectedStage < 4 && <section className="followup-table-section py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
+              <div className="">
+                <div className="">
                   <div className="followups-table table-responsive table-height">
                     <table className="table table-hover">
                       <thead className="sticky-header">
@@ -975,11 +1004,14 @@ function InNegotiation() {
                         {currentData.filter((data) => filterdate ? extracxtDate(data.followUpDateTime) : data).map((nego, index) => (
                           // ${localStorage.getItem("selectedNego") && localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "table-success" :  for selected row 
                           <tr key={index}
-                            className={`${rowcolor(nego.ticketstatus)}`}
+                            className={`${localStorage.getItem("selectedNego")?.includes(nego.uniqueQueryId)
+                                ? "table-danger"
+                                : ""
+                              } ${rowcolor(nego.ticketstatus)}`}
                             style={{
-                              boxShadow: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
-                              zIndex: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? 1 : "auto",
-                              position: localStorage.getItem("selectedNego") === nego.uniqueQueryId ? "relative" : "static"
+                              boxShadow: localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "0px 5px 15px 0px gray" : "",
+                              zIndex: localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? 1 : "auto",
+                              position: localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "relative" : "static"
                             }}
                             onClick={() => handleSelecteRow(index, nego.uniqueQueryId)}
                           >
@@ -1088,13 +1120,13 @@ function InNegotiation() {
                                   className="btn-action whatsapp"
                                   title="Get connect on whatsapp"
                                 ><i className="fa-brands fa-whatsapp"></i></a>
-                                <Button
+                                {selectedStage !== 3 && <Button
                                   onClick={() => handleQuotation(nego.uniqueQueryId)}
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
                                   <i class="fa-share-from-square" ></i>
-                                </Button>
+                                </Button>}
                                 <Button
                                   onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
                                   className="rounded-circle "
@@ -1106,7 +1138,7 @@ function InNegotiation() {
                             </td>
 
                             <td><i className="fa-solid fa-ticket"></i> {nego.uniqueQueryId.slice(0, 10)}</td>
-                            <td>{formatDate(nego.lastActionDate && nego.lastActionDate)}</td>
+                            {selectedStage === 3 && <td>{formatDate(nego.lastActionDate && nego.lastActionDate)}</td>}
                           </tr>
                         ))}
                       </tbody>
