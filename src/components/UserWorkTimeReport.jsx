@@ -80,7 +80,6 @@ function UserWorkTimeReport(props) {
     const loadWorks = async () => {
         const response = await axiosInstance.post("/user/userreport", workData);
         setApiData(processData(response.data));
-        console.log(processData(response.data));
     };
 
     const numberToMonthName = (number) => {

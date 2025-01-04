@@ -118,7 +118,7 @@ const TicketJourney = (props) => {
                 <div className='d-flex justify-content-center'>Loading.....</div>
             ) : stages.length > 0 ? (
                 <ul className="events" style={{ maxHeight: '50vh', width: '95%', overflowY: 'auto' }}>
-                    {stages.slice().reverse().map((stage, index) => (
+                    {stages.map((stage, index) => (
                         <li className={`text-primary ${index % 2 === 0 ? "bg-light" : "bg-white"} `} key={index}>
                             <time dateTime={`${stage.updateDate[0]}-${getMonthName(stage.updateDate[1])}-${stage.updateDate[2]}`} style={{ width: "130px" }}>
                                 {stage.updateDate[2]}-{getMonthName(stage.updateDate[1])}-{stage.updateDate[0]}
