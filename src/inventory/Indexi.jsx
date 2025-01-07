@@ -39,7 +39,7 @@ function Indexi() {
   const [selecteOrderProductName, setSelectedOrderProductName] = useState("")
   const [selectedOrderProductQuantity, setselectedOrderProductQuantity] = useState("")
   const [selectedOrderProductDose, setSelectedOrderProductDose] = useState("")
-
+  const { edit, setEdit } = useAuth(); // Track which field is being edited
   const openImage = (image) => {
     let newtext = image.replace("backend", "image")
     let newImage = newtext.replace("getChatImageById", "getChatImageGoodQualityById")
@@ -259,14 +259,14 @@ function Indexi() {
     fetchOrders()
   }
 
-  const handleClick =(order,id)=>{
+  const handleClick = (order, id) => {
     console.log(order)
     console.log(id)
   }
 
 
   return (
-    <>
+    <div onClick={() => setEdit(false)} style={{ height: "100vh" }}>
       <section className="followup-table-section py-3">
         <div className="m-3">
           <div className="d-flex justify-content-between">
@@ -332,12 +332,12 @@ function Indexi() {
                         </div>
                       ) : (
                         <Button variant="warning rounded" onClick={() => handleShowModal(invoice)}>
-                          Add Tracking 
+                          Add Tracking
                         </Button>
                       )}
                     </td>
-                    <td className={`border-dark border text-center ${!invoice.trackingStatus ? 'text-danger' : ''}`}>
-                      {invoice.trackingStatus || 'Inactive'}
+                    <td className={`border-dark border text-center ${!invoice.trackingNumber ? 'text-danger' : 'text-success fw-bold'}`}>
+                      {invoice.trackingNumber ? "Live" : 'Awaiting'}
                     </td>
                     <td className="border-dark border text-center">
                       {invoice.shippingLabel ? (
@@ -391,33 +391,36 @@ function Indexi() {
                         {copiedInvoiceId === invoice.orderId ? "Copied" : "Copy"}
                       </button>
                     </td>
-                             <td className="text-center border-dark border">
-                                  <div className="d-flex justify-content-between">
-                                    {/* First Table */}
-                                    <table className="table-bordered me-3">
-                                      <thead>
-                                        <tr>
-                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Name</th>
-                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Quantity</th>
-                                          <th className="border-dark text-center border p-1 table-column" style={{fontSize:12 }} >Doses</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {invoice.orderDetails.map((order, i) => (
-                                          <tr key={i}>
-                                            <td className="border-dark border text-center p-1 table-column" style={{fontSize:12}}>{order.productName}</td>
-                                            <td className="border-dark border text-center p-1 table-column"style={{fontSize:12}}>{order.quantity || 'N/A'}</td>
-                                            <td className="border-dark border text-center p-1 table-column"style={{fontSize:12}}>{order.does || 'N/A'}</td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
+                    <td className="text-center border-dark border">
+                      <div className="d-flex justify-content-between">
+                        {/* First Table */}
+                        <table className="table-bordered me-3">
+                          <thead>
+                            <tr>
+                              <th className="border-dark text-center border p-1 table-column" style={{ fontSize: 12 }} >Name</th>
+                              <th className="border-dark text-center border p-1 table-column" style={{ fontSize: 12 }} >Quantity</th>
+                              <th className="border-dark text-center border p-1 table-column" style={{ fontSize: 12 }} >Doses</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoice.orderDetails.map((order, i) => (
+                              <tr key={i}>
+                                <td className="border-dark border text-center p-1 table-column" style={{ fontSize: 12 }}>{order.productName}</td>
+                                <td className="border-dark border text-center p-1 table-column" style={{ fontSize: 12 }}>{order.quantity || 'N/A'}</td>
+                                <td className="border-dark border text-center p-1 table-column" style={{ fontSize: 12 }}>{order.does || 'N/A'}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
 
 
-                                    {/* Second Table */}
-                                    
-                                    <EditOrderDetails data={invoice}/>
-                                    {/* <table className="table-bordered">
+                        {/* Second Table */}
+
+                        <div onClick={(e) => e.stopPropagation()} 
+                        >
+                          <EditOrderDetails data={invoice} datareload={fetchOrders} />
+
+                        </div>                                    {/* <table className="table-bordered">
                                       <thead className='' >
                                         <tr>
                                           <th style={{ width: '50px', whiteSpace: 'nowrap',backgroundColor:'#f59682' }} className="border-dark text-center border p-1">Rate/Qty</th>
@@ -477,8 +480,8 @@ function Indexi() {
                                         ))}
                                       </tbody>
                                     </table> */}
-                                  </div>
-                                </td>
+                      </div>
+                    </td>
 
 
                     {/* <td className="border-dark border text-center">{invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}</td> */}
@@ -642,7 +645,7 @@ function Indexi() {
         </Modal.Body>
 
       </Modal>
-    </>
+    </div>
   );
 }
 
