@@ -155,11 +155,9 @@ function uploaded_tickets() {
   };
 
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
-  const handleInvoice = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId)
-    setSelectNameForInvoice(name)
-    setSelectEmailForInvoice(email)
-    setSelectMobileForInvoice(mobile)
+  const [ ticketitem,setTicketItem] = useState([])
+  const handleInvoice = (item) => {
+    setTicketItem(item)
     setIsInvoiceOn(!isInvoiceOn)
   }
 
@@ -834,7 +832,7 @@ function uploaded_tickets() {
                                       <i class="fa-share-from-square" ></i>
                                     </Button>
                                     <Button
-                                      onClick={() => handleInvoice(item.uniqueQueryId)}
+                                      onClick={() => handleInvoice(item)}
                                       className="rounded-circle "
                                       title="Get connect on"
                                     >
@@ -1268,10 +1266,7 @@ function uploaded_tickets() {
             <u> Raise Invoice</u>
           </h1>
           <InvoiceBox
-            ticketId={selectTicketForInvoice}
-            name={selectNameForInvoice}
-            email={selectEmailForInvoice}
-            mobile={selectMobileForInvoice}
+            ticket={ticketitem}            
           />
         </Modal>
         <Modal
