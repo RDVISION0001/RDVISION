@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function InvoiceBox({ ticket }) {
   const userId = localStorage.getItem("userId");
-  console.log("upload", ticket);
+  // console.log("upload", ticket);
 
   // State for modal visibility
   const [show, setShow] = useState(false);
@@ -37,7 +37,7 @@ function InvoiceBox({ ticket }) {
 
   // Fetch ticket details when selectedTicketId changes
 
-  console.log("ticket r", ticket && ticket.uniqueQueryId);
+  // console.log("ticket r", ticket && ticket.uniqueQueryId);
 
   useEffect(() => {
     if (ticket && ticket.uniqueQueryId) {
@@ -123,11 +123,11 @@ function InvoiceBox({ ticket }) {
   }, []);
 
   const fatchaddedproduct = () => {
-    if (selectedTicketId) {
+    if (ticket.uniqueQueryId) {
       const fetchOrderDetails = async () => {
         try {
           const response = await axiosInstance.get(
-            `/order/getOrder/${selectedTicketId}`
+            `/order/getOrder/${ticket.uniqueQueryId}`
           );
           setOrderDetails(response.data.dtoList);
         } catch (err) {
@@ -141,20 +141,19 @@ function InvoiceBox({ ticket }) {
 
   // Create shipping address
   useEffect(() => {
-    const fetchAddressDetails = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/address/getAddress/${ticket.uniqueQueryId}`
-        );
-        setAddressData(response.data.dto);
-        console.log("Addredd", response);
-      } catch (err) {
-        console.error("Error fetching address details:", err);
-      }
-    };
-
     fetchAddressDetails();
   }, []);
+  const fetchAddressDetails = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/address/getAddress/${ticket.uniqueQueryId}`
+      );
+      setAddressData(response.data.dto);
+      console.log("Addredd 2", response);
+    } catch (err) {
+      console.error("Error fetching address details:", err);
+    }
+  };
 
   const [response, setResponse] = useState(null);
 
@@ -168,7 +167,7 @@ function InvoiceBox({ ticket }) {
   const handleshipSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+
     try {
       const response = await axiosInstance.post("/address/createAddress", {
         houseNumber: String(addressData ? addressData.houseNumber : ""),
@@ -177,10 +176,11 @@ function InvoiceBox({ ticket }) {
         zipCode: String(addressData ? addressData.zipCode : ""),
         state: String(addressData ? addressData.state : ""),
         country: String(addressData ? addressData.country : ""),
-        ticketId: String(selectedTicketId),
+        ticketId: String(ticket.uniqueQueryId),
       });
       setResponse(response.data);
       toast.success("Address added successfully!");
+      fetchAddressDetails();
     } catch (err) {
       setError(err);
       toast.error("Failed to add address");
@@ -382,19 +382,34 @@ function InvoiceBox({ ticket }) {
                           <h6>{ticket.productEnquiry}</h6>
                         )}
 
-                        
                         <div className="address-items mt-2 d-flex justify-content-start gap-2">
                           <img
-                          className="mt-1"
+                            className="mt-1"
                             style={{ height: 16 }}
                             src="https://cdn-icons-png.flaticon.com/128/1865/1865269.png"
                             alt=""
                           />
                           <address>
-                            {ticket.senderAddress
-                              ? ticket.senderAddress
-                              : "No address found"}
+                              {/* Display ticket sender address if it exists */}
+                              {ticket.senderAddress && (
+                                <>
+                                  <strong>Sender Address:</strong> {ticket.senderAddress} <br />
+                                </>
+                              )}
+
+                              {/* Display addressData if it exists */}
+                              {addressData && (
+                                <>
+                                  <strong>Alternate Address:</strong> {addressData.houseNumber},{" "}
+                                  {addressData.landmark}, {addressData.city}, {addressData.state},{" "}
+                                  {addressData.zipCode}, {addressData.country}
+                                </>
+                              )}
+
+                              {/* Fallback when no address is found */}
+                              {!ticket.senderAddress && !addressData && "No address found"}
                           </address>
+
                         </div>
                         <div className=""></div>
                       </div>
@@ -717,7 +732,10 @@ function InvoiceBox({ ticket }) {
                               </label>
                             </div>
                             <div className="col-12">
-                              <button className="btn btn-primary w-100">
+                              <button
+                                type="submit"
+                                className="btn btn-primary w-100"
+                              >
                                 Submit Address
                               </button>
                             </div>

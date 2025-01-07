@@ -270,19 +270,23 @@ const InvoiceInfo = (props) => {
                         {props.stage === 4 ? <h3 className="title">Invoice Tracking</h3> : <h3 className="title">Invoices for after sales service</h3>}
                         <table className="table table-bordered">
                             <thead>
-                                <tr className='border'>
-                                    <th className='text-center'>Created Date</th>
-                                    <th className='text-center'>Total Amount</th>
-                                    <th className='text-center'>Customer Name</th>
-                                    <th className='text-center'>Country</th>
-                                    <th className='text-center'>Order Details</th>
-                                    {localStorage.getItem("roleName") === "SeniorSuperVisor" && <th className='text-center'>Tracking Number</th>}
-                                    <th className='text-center'>Delivery Status</th>
-                                    <th className='text-center'>Last Call Status</th>
-                                    <th className='text-center'>Action</th>
-                                    <th className='text-center'>Recording</th>
+                                <tr className="border">
+                                    <th className="text-center whitespace-nowrap">S.No.</th>
+                                    <th className="text-center whitespace-nowrap">Created Date</th>
+                                    <th className="text-center whitespace-nowrap">Total Amount</th>
+                                    <th className="text-center whitespace-nowrap">Customer Name</th>
+                                    <th className="text-center whitespace-nowrap">Country</th>
+                                    <th className="text-center whitespace-nowrap">Order Details</th>
+                                    {localStorage.getItem("roleName") === "SeniorSuperVisor" && (
+                                    <th className="text-center whitespace-nowrap">Tracking Number</th>
+                                    )}
+                                    <th className="text-center whitespace-nowrap">Delivery Status</th>
+                                    <th className="text-center whitespace-nowrap">Last Call Status</th>
+                                    <th className="text-center whitespace-nowrap">Action</th>
+                                    <th className="text-center whitespace-nowrap">Recording</th>
                                 </tr>
                             </thead>
+
                             <tbody className="overflow">
                                 {invoices.length > 0 ? (
                                     invoices
@@ -290,6 +294,7 @@ const InvoiceInfo = (props) => {
                                         .reverse() // Reverse the order
                                         .map((invoice, index) => (
                                             <tr key={index} className="border">
+                                                <td>{index+1}</td>
                                                 <td className="text-center">
                                                     {invoice.saleDate && invoice.saleDate[2]}-{convertNumberToStringMonth(invoice.saleDate && invoice.saleDate[1])}-{invoice.saleDate && invoice.saleDate[0]}
                                                 </td>
@@ -298,7 +303,7 @@ const InvoiceInfo = (props) => {
                                                 </td>
                                                 <td className="text-center">{invoice.customerName}</td>
                                                 <td className="text-center">
-                                                    <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
+                                                    <img style={{height:14}} src={getFlagUrl(invoice.countryIso)} alt="" /> <span style={{fontSize:14}}>{invoice.countryIso}</span>
                                                 </td>
                                                 <td className="text-center">
                                                     <div className="product-details">
@@ -415,6 +420,7 @@ const InvoiceInfo = (props) => {
                             <table className="table table-bordered">
                                 <thead className="sticky-header">
                                     <tr className="border">
+                                        <th className="text-center">S.no</th>
                                         <th className="text-center">Sale Date</th>
                                         <th className="text-center">Name</th>
                                         <th className="text-center">Tracking Id</th>
@@ -428,6 +434,7 @@ const InvoiceInfo = (props) => {
                                     {saleTicketData.length > 0 ? (
                                         saleTicketData.map((invoice, index) => (
                                             <tr key={index} className="border">
+                                                <td className='text-center'>{index+1}</td>
                                                 <td className="text-center">
                                                     {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate) : 'N/A'}
                                                 </td>
