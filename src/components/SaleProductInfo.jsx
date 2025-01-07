@@ -1,31 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-import axiosInstance from "../axiosInstance";
-import ProductPriceModal from "../components/ProductPriceModal";
-
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axiosInstance from "../axiosInstance";
 
 //// Auth ////
-import { useAuth } from "../auth/AuthContext";
 
-function QuotationBox({ ticket }) {
-  const { userId } = useAuth();
-  console.log("qua:", ticket);
+function InvoiceBox({ ticket }) {
+  const userId = localStorage.getItem("userId");
+//   console.log("upload", ticket);
 
   // State for modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
+  const [externalPaymentLink, setExternalPaymentLink] = useState("");
   // State for tickets
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [tickets, setTickets] = useState([]);
-  const [selectedTicketId, setSelectedTicketId] = useState(
-    ticket && ticket.uniqueQueryId
-  );
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [ticketDetails, setTicketDetails] = useState(null);
   const [addressData, setAddressData] = useState({
     houseNumber: "",
@@ -39,80 +32,18 @@ function QuotationBox({ ticket }) {
 
   const handleInputChange = (e) => {
     setserchValue(e.target.value); // Update state with the input's value
-    console.log("Input Value:", e.target.value); // Log the current input value
-  };
-
-  const [listView, setListView] = useState(false);
-  const [view, setView] = useState(false);
-  const [selectedProductIdForPriceLIst, setSelectedProductIdForPriceLIst] =
-    useState(0);
-  const [prices, setPrices] = useState([]);
-  const [selectedProductName, setSelectedProductName] = useState("");
-  const toggleList = () => {
-    if (listView) {
-      setListView(false);
-    } else {
-      setListView(true);
-    }
-  };
-  const toggleModel = () => {
-    if (view) {
-      setView(false);
-      handleSubmit(selectedProductIdForPriceLIst);
-    } else {
-      if (formData.currency) {
-        setView(true);
-      } else {
-        toast.info("Please selecte Currency First");
-      }
-    }
-  };
-  const viewListOfProducts = (id, name) => {
-    setSelectedProductIdForPriceLIst(id);
-    setSelectedProductName(name);
-    toggleList();
-  };
-  const fetchPriceLIst = async () => {
-    try {
-      const response = await axiosInstance.post(`/product/getProductPrices`, {
-        productId: selectedProductIdForPriceLIst,
-        ticketId: selectedTicketId,
-      });
-      setPrices(response.data);
-    } catch (e) {
-      toast.error("Some Error occures");
-    }
-  };
-  useEffect(() => {
-    if (selectedProductIdForPriceLIst > 0 && listView) {
-      fetchPriceLIst();
-    }
-  }, [selectedProductIdForPriceLIst]);
-
-  const openPriceAddModa = (id, name) => {
-    setSelectedProductIdForPriceLIst(id);
-    setSelectedProductName(name);
-    toggleModel();
+    // console.log("Input Value:", e.target.value); // Log the current input value
   };
 
   // Fetch ticket details when selectedTicketId changes
+
+//   console.log("ticket r", ticket && ticket.uniqueQueryId);
+
   useEffect(() => {
-    if (selectedTicketId) {
-      const fetchTicketDetails = async () => {
-        try {
-          const response = await axiosInstance.get(
-            `/${
-              selectedTicketId.length < 15 ? "third_party_api/ticket" : "upload"
-            }/getTicket/${selectedTicketId}`
-          );
-          setTicketDetails(response.data.dtoList);
-        } catch (err) {
-          console.error("Error fetching ticket details:", err);
-        }
-      };
-      fetchTicketDetails();
+    if (ticket && ticket.uniqueQueryId) {
+      setSelectedTicketId(ticket.uniqueQueryId);
     }
-  }, [selectedTicketId]);
+  }, [ticket]);
 
   // Form state for adding products
   const [formData, setFormData] = useState({
@@ -128,6 +59,21 @@ function QuotationBox({ ticket }) {
     const enteredPrice = priceValues[productId] || "";
     const enteredQuantity = quantityValues[productId] || "";
     const currency = formData.currency || "";
+    // Validation for empty fields
+    if (!currency) {
+      toast.error("Currency is required!");
+      return;
+    }
+    if (!enteredPrice) {
+      toast.error("Price is required!");
+      return;
+    }
+    if (!enteredQuantity) {
+      toast.error("Quantity is required!");
+      return;
+    }
+
+    // Proceed with the API request
     try {
       const response = await axiosInstance.post("/order/addToOrder", {
         quantity: enteredQuantity,
@@ -137,14 +83,13 @@ function QuotationBox({ ticket }) {
         price: enteredPrice,
         currency: currency,
       });
-      console.log(productId);
+
       toast.success("Added to order successfully!");
       fatchaddedproduct();
     } catch (error) {
       console.error("Error submitting form:", error);
       toast.error("Failed to add order");
     }
-    setSelectedProductIdForPriceLIst(0);
   };
 
   const handleChange = (e) => {
@@ -162,6 +107,7 @@ function QuotationBox({ ticket }) {
     const fetchData = async () => {
       try {
         const response = await axiosInstance.get("/product/getAllProducts");
+        console.log(response);
         setProducts(response.data.dtoList);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -196,21 +142,19 @@ function QuotationBox({ ticket }) {
 
   // Create shipping address
   useEffect(() => {
-    if (selectedTicketId) {
-      const fetchAddressDetails = async () => {
-        try {
-          const response = await axiosInstance.get(
-            `/address/getAddress/${selectedTicketId}`
-          );
-          setAddressData(response.data.dto);
-        } catch (err) {
-          console.error("Error fetching address details:", err);
-        }
-      };
-
-      fetchAddressDetails();
+    fetchAddressDetails();
+  }, []);
+  const fetchAddressDetails = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `/address/getAddress/${ticket.uniqueQueryId}`
+      );
+      setAddressData(response.data.dto);
+      console.log("Address", response.data);
+    } catch (err) {
+      console.error("Error fetching address details:", err);
     }
-  }, [selectedTicketId]);
+  };
 
   const [response, setResponse] = useState(null);
 
@@ -237,8 +181,9 @@ function QuotationBox({ ticket }) {
       });
       setResponse(response.data);
       toast.success("Address added successfully!");
+      fetchAddressDetails();
     } catch (err) {
-      setError(err);
+      //   setError(err);
       toast.error("Failed to add address");
     } finally {
       setLoading(false);
@@ -248,28 +193,28 @@ function QuotationBox({ ticket }) {
   // Function to handle sending invoice
   const handleSendInvoice = async () => {
     try {
+      setLoading(true);
       const response = await axiosInstance.post(
-        `/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}`
+        `/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`
       );
       toast.success("Invoice sent successfully!");
+      setLoading(false);
     } catch (error) {
       console.error("Error sending invoice:", error);
       toast.error("Failed to send invoice");
+      setLoading(false);
     }
   };
 
   const handleSendQuotation = async () => {
     try {
-      setLoading(true);
       const response = await axiosInstance.post(
-        `/invoice/sendquote?ticketId=${selectedTicketId}&userId=${userId}`
+        `/invoice/send_quotation?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`
       );
       toast.success("Quotation sent successfully!");
-      setLoading(false);
     } catch (error) {
       console.error("Error sending quotation:", error);
       toast.error("Failed to send quotation");
-      setLoading(false);
     }
   };
 
@@ -349,6 +294,7 @@ function QuotationBox({ ticket }) {
       [productId]: e.target.value,
     }));
   };
+
   //resuble function to convert byte code to image url
   function convertToImage(imageString) {
     const byteCharacters = atob(imageString); // Decode base64 string
@@ -361,7 +307,6 @@ function QuotationBox({ ticket }) {
     const url = URL.createObjectURL(blob);
     return url;
   }
-
   return (
     <>
       <div className="">
@@ -378,7 +323,7 @@ function QuotationBox({ ticket }) {
             tabindex="0"
           >
             <div className="order-s-details-wrapper-main">
-              {ticketDetails ? (
+              {ticket ? (
                 <div className="order-details-">
                   <div className="">
                     <div className="content-wrapper d-flex justify-content-between">
@@ -396,8 +341,7 @@ function QuotationBox({ ticket }) {
                               src="https://cdn-icons-png.flaticon.com/128/3135/3135715.png"
                               alt=""
                             />{" "}
-                           <p>{ticket?.senderName ? ticket.senderName : ticket?.firstName}</p>
-
+                            <p>{ticket.senderName || ticket.firstName}</p>
                           </div>
                           <div className="d-flex justify-content-start align-items-center gap-2">
                             <img
@@ -405,8 +349,7 @@ function QuotationBox({ ticket }) {
                               src="https://cdn-icons-png.flaticon.com/128/432/432312.png"
                               alt=""
                             />
-                            <p>{ticket?.uniqueQueryId || "N/A"}</p>
-
+                            <p>{ticket.uniqueQueryId}</p>
                           </div>
                           <div className="d-flex justify-content-start align-items-center gap-2">
                             <img
@@ -414,8 +357,7 @@ function QuotationBox({ ticket }) {
                               src="https://cdn-icons-png.flaticon.com/128/732/732200.png"
                               alt=""
                             />
-                            <p>{ticket?.senderEmail || "No Email"}</p>
-
+                            <p> {ticket.senderEmail || "No Email"} </p>
                           </div>
                           <div className="d-flex justify-content-start align-items-center gap-2">
                             <img
@@ -424,8 +366,8 @@ function QuotationBox({ ticket }) {
                               alt=""
                             />
                             <p>
-                              {ticket?.senderMobile ||
-                                ticket?.mobileNumber ||
+                              {ticket.senderMobile ||
+                                ticket.mobileNumber ||
                                 "N/A"}
                             </p>
                           </div>
@@ -435,10 +377,10 @@ function QuotationBox({ ticket }) {
                         className="border rounded p-4 m-2"
                         style={{ width: "50%", backgroundColor: "#edede9" }}
                       >
-                        {ticket?.queryProductName ? (
-                          <h3 className="title">{ticket?.queryProductName}</h3>
+                        {ticket.queryProductName ? (
+                          <h3 className="title">{ticket.queryProductName}</h3>
                         ) : (
-                          <h6>{ticket?.productEnquiry}</h6>
+                          <h6>{ticket.productEnquiry}</h6>
                         )}
 
                         <div className="address-items mt-2 d-flex justify-content-start gap-2">
@@ -449,9 +391,18 @@ function QuotationBox({ ticket }) {
                             alt=""
                           />
                           <address>
-                            {ticket?.senderAddress
-                              ? ticket.senderAddress
-                              : "No address found"}
+                            {addressData ? (
+                              <>
+                                {addressData.houseNumber},{" "}
+                                {addressData.landmark},{" "}
+                                {addressData.city},{" "}
+                                {addressData.state},{" "}
+                                {addressData.zipCode},{" "}
+                                {addressData.country}
+                              </>
+                            ) : (
+                              "No address found"
+                            )}
                           </address>
                         </div>
                         <div className=""></div>
@@ -464,6 +415,13 @@ function QuotationBox({ ticket }) {
               )}
               {/* <!-- ticket details ends here --> */}
               <div className="accordion status-wrappers" id="accordionExample">
+                <div className="text-danger">
+                  {" "}
+                  !Impotent Before Sending Invoice Make sure every Product is
+                  added with proper{" "}
+                  <span className="fw-bold">Quantity and Price</span>
+                </div>
+
                 <div className="accordion-item">
                   <h2 className="accordion-header">
                     <button
@@ -498,7 +456,7 @@ function QuotationBox({ ticket }) {
                         {orderDetails &&
                         orderDetails.productOrders &&
                         orderDetails.productOrders.length > 0 ? (
-                          <div className="overflow-x-auto d-flex justify-content-center">
+                          <div className="overflow-x-auto">
                             <table className="min-w-full table-auto border-collapse border border-gray-200">
                               <thead>
                                 <tr className="bg-gray-100">
@@ -512,7 +470,13 @@ function QuotationBox({ ticket }) {
                                     Composition
                                   </th>
                                   <th className="border border-gray-300 px-3 py-2  text-left">
-                                    Price List
+                                    Size
+                                  </th>
+                                  <th className="border border-gray-300 px-3 py-2  text-left">
+                                    Quantity
+                                  </th>
+                                  <th className="border border-gray-300 px-3 py-2  text-left">
+                                    Price
                                   </th>
                                   <th className="border border-gray-300 px-3 py-2  text-center">
                                     Action
@@ -537,21 +501,17 @@ function QuotationBox({ ticket }) {
                                         <td className="border border-gray-300 py-2 px-3 ">
                                           {productOrder.product[0].composition}
                                         </td>
-                                        <td className="border border-gray-300 py-2 px-3 text-center">
-                                          <div
-                                            onClick={() =>
-                                              viewListOfProducts(
-                                                productOrder.product[0]
-                                                  .productId,
-                                                productOrder.product[0].name
-                                              )
-                                            }
-                                          >
-                                            <i
-                                              class="fa-solid fa-table-list fa-xl"
-                                              style={{ cursor: "Pointer" }}
-                                            ></i>
-                                          </div>
+                                        <td className="border border-gray-300 py-2 px-3 ">
+                                          {
+                                            productOrder.product[0]
+                                              .packagingSize
+                                          }
+                                        </td>
+                                        <td className="border border-gray-300 py-2 px-3 ">
+                                          {productOrder.quantity}
+                                        </td>
+                                        <td className="border border-gray-300 py-2 px-3 ">
+                                          {productOrder.totalAmount}
                                         </td>
                                         <td className="h-100 border border-gray-300 py-2 px-3 text-center">
                                           <i
@@ -591,13 +551,17 @@ function QuotationBox({ ticket }) {
 
                         {orderDetails && (
                           <div className="total d-flex justify-content-end">
-                            {/* <div className='d-flex'>
-                                                        <p className='fw-semibold'>Total:- </p>
-                                                        <p>{orderDetails.productOrders[0] && orderDetails.productOrders[0].currency}  {orderDetails.totalPayableAmount}</p>
-                                                    </div> */}
+                            <div className="d-flex">
+                              <p className="fw-semibold">Total:- </p>
+                              <p>
+                                {orderDetails.productOrders[0] &&
+                                  orderDetails.productOrders[0].currency}{" "}
+                                {orderDetails.totalPayableAmount}
+                              </p>
+                            </div>
                           </div>
                         )}
-                        <div className="add-more-products-wrapper m-3">
+                        <div className="add-more-products-wrapper ">
                           <Button
                             onClick={handleShow}
                             data-bs-toggle="modal"
@@ -611,133 +575,182 @@ function QuotationBox({ ticket }) {
                     </div>
                   </div>
                 </div>
+                {/* <div className="d-flex justify-content-center flex-column p-3">
+                  <label
+                    htmlFor="paymentLink"
+                    className="fw-bold"
+                    style={{ fontSize: "20px" }}
+                  >
+                    Add Payment Link
+                  </label>
+                  <input
+                    type="text"
+                    value={externalPaymentLink}
+                    onChange={(e) => setExternalPaymentLink(e.target.value)}
+                    placeholder="Enter External Payment link"
+                    className=" p-2 rounded bg-white text-black"
+                  />
+                </div> */}
 
                 {/* /////////////////shipping address */}
                 {/* <div className="accordion-item">
-                                    <h2 className="accordion-header">
-                                        <button
-                                            className="accordion-button"
-                                            type="button"
-                                            onClick={toggleCollapse} // Handle click to toggle collapse
-                                            aria-expanded={!isCollapsed}
-                                            aria-controls="shippingDetils">
-                                            Sales/Invoice Details
-                                        </button>
-                                    </h2>
+                  <h2 className="accordion-header">
+                    <button
+                      className="accordion-button"
+                      type="button"
+                      onClick={toggleCollapse} // Handle click to toggle collapse
+                      aria-expanded={!isCollapsed}
+                      aria-controls="shippingDetils"
+                    >
+                      Sales/Invoice Details
+                    </button>
+                  </h2>
 
-                                    <div
-                                        id="shippingDetils"
-                                        className={`accordion-collapse collapse ${isCollapsed ? '' : 'show'}`}
-                                        data-bs-parent="#accordionAddressDetails">
-                                        {true && ( // Adjust condition if necessary
-                                            <div className="p-3">
-                                                <form onSubmit={handleshipSubmit}>
-                                                    <div className="row g-3 p-3">
-                                                        <div className="col-12">
-                                                            <label htmlFor="name" className="form-label">Shipping To :</label>
-                                                            <input type="text" id="name" className="form-control" placeholder="Eg. Jane Kapoor" />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <h3 className="fieldset-heading">Shipping Address</h3>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="hNo" className="form-label">House No./ Street</label>
-                                                            <input
-                                                                name="houseNumber"
-                                                                value={addressData ? addressData.houseNumber : ""}
-                                                                onChange={handleshipChange}
-                                                                id="hNo"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="landmark" className="form-label">Landmark</label>
-                                                            <input
-                                                                type="text"
-                                                                name="landmark"
-                                                                value={addressData ? addressData.landmark : ""}
-                                                                onChange={handleshipChange}
-                                                                id="landmark"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="city" className="form-label">City</label>
-                                                            <input
-                                                                type="text"
-                                                                name="city"
-                                                                value={addressData ? addressData.city : ""}
-                                                                onChange={handleshipChange}
-                                                                id="city"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="zipCode" className="form-label">Zip Code</label>
-                                                            <input
-                                                                type="text"
-                                                                name="zipCode"
-                                                                value={addressData ? addressData.zipCode : ""}
-                                                                onChange={handleshipChange}
-                                                                id="zipCode"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="state" className="form-label">State</label>
-                                                            <input
-                                                                type="text"
-                                                                name="state"
-                                                                value={addressData ? addressData.state : ""}
-                                                                onChange={handleshipChange}
-                                                                id="state"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <label htmlFor="country" className="form-label">Country</label>
-                                                            <input
-                                                                type="text"
-                                                                name="country"
-                                                                value={addressData ? addressData.country : ""}
-                                                                onChange={handleshipChange}
-                                                                id="country"
-                                                                className="form-control"
-                                                            />
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <input type="checkbox" id="checkSame" className="form-check-inline" />
-                                                            <label htmlFor="checkSame" className="form-label checkSame-Address">Billing address is same as shipping</label>
-                                                        </div>
-                                                        <div className="col-12">
-                                                            <button className="btn btn-primary w-100">Submit Address</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div> */}
+                  <div
+                    id="shippingDetils"
+                    className={`accordion-collapse collapse ${
+                      isCollapsed ? "" : "show"
+                    }`}
+                    data-bs-parent="#accordionAddressDetails"
+                  >
+                    {true && ( // Adjust condition if necessary
+                      <div className="p-3">
+                        <form onSubmit={handleshipSubmit}>
+                          <div className="row g-3 p-3">
+                            <div className="col-12">
+                              <label htmlFor="name" className="form-label">
+                                Shipping To :
+                              </label>
+                              <input
+                                type="text"
+                                id="name"
+                                className="form-control"
+                                placeholder="Eg. Jane Kapoor"
+                              />
+                            </div>
+                            <div className="col-12">
+                              <h3 className="fieldset-heading">
+                                Shipping Address
+                              </h3>
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="hNo" className="form-label">
+                                House No./ Street
+                              </label>
+                              <input
+                                name="houseNumber"
+                                value={
+                                  addressData ? addressData.houseNumber : ""
+                                }
+                                onChange={handleshipChange}
+                                id="hNo"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="landmark" className="form-label">
+                                Landmark
+                              </label>
+                              <input
+                                type="text"
+                                name="landmark"
+                                value={addressData ? addressData.landmark : ""}
+                                onChange={handleshipChange}
+                                id="landmark"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="city" className="form-label">
+                                City
+                              </label>
+                              <input
+                                type="text"
+                                name="city"
+                                value={addressData ? addressData.city : ""}
+                                onChange={handleshipChange}
+                                id="city"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="zipCode" className="form-label">
+                                Zip Code
+                              </label>
+                              <input
+                                type="text"
+                                name="zipCode"
+                                value={addressData ? addressData.zipCode : ""}
+                                onChange={handleshipChange}
+                                id="zipCode"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="state" className="form-label">
+                                State
+                              </label>
+                              <input
+                                type="text"
+                                name="state"
+                                value={addressData ? addressData.state : ""}
+                                onChange={handleshipChange}
+                                id="state"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-6">
+                              <label htmlFor="country" className="form-label">
+                                Country
+                              </label>
+                              <input
+                                type="text"
+                                name="country"
+                                value={addressData ? addressData.country : ""}
+                                onChange={handleshipChange}
+                                id="country"
+                                className="form-control"
+                              />
+                            </div>
+                            <div className="col-12">
+                              <input
+                                type="checkbox"
+                                id="checkSame"
+                                className="form-check-inline"
+                              />
+                              <label
+                                htmlFor="checkSame"
+                                className="form-label checkSame-Address"
+                              >
+                                Billing address is same as shipping
+                              </label>
+                            </div>
+                            <div className="col-12">
+                              <button className="btn btn-primary w-100">
+                                Submit Address
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    )}
+                  </div>
+                </div> */}
 
                 {/* <!-- order items details ends here --> */}
-                <div className="d-flex justify-content-center ">
+                {/* <div className="d-flex justify-content-center ">
+                  <button onClick={handleSendQuotation} className='bg-warning mt-1' style={{ marginRight: "3px" }}>Send Quotation</button>
                   {loading ? (
-                    <button
-                      className="bg-success mt-1"
-                      style={{ marginRight: "3px" }}
-                    >
-                      Sending
-                    </button>
+                    <button className="bg-warning mt-1">Sending.....</button>
                   ) : (
                     <button
-                      onClick={handleSendQuotation}
-                      className="bg-warning mt-1"
-                      style={{ marginRight: "3px" }}
+                      onClick={handleSendInvoice}
+                      className="bg-primary mt-1"
                     >
-                      Send Quotation
+                      Send Invoice
                     </button>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -863,36 +876,41 @@ function QuotationBox({ ticket }) {
                               className="card-title mb-1"
                               style={{ fontSize: "12px" }}
                             >
-                              {product.name} {product.Price}
+                              {product.name} ({product.strength})
                             </h6>
 
                             {/* Price and Quantity Input Section */}
-                            {/* <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>
-                                                        <input
-                                                            type="text"
-                                                            className="form-control form-control-sm mx-2"
-                                                            placeholder="Price"
-                                                            style={{ maxWidth: '70px' }}
-                                                            value={priceValues[product.productId] || ''}
-                                                            onChange={(e) => handlePriceChange(e, product.productId)}
-                                                        />
-                                                        <input
-                                                            type="text"
-                                                            className="form-control form-control-sm mx-2"
-                                                            placeholder="Quantity"
-                                                            style={{ maxWidth: '70px' }}
-                                                            value={quantityValues[product.productId] || ''}
-                                                            onChange={(e) => handleQuantityChange(e, product.productId)}
-                                                        />
-                                                    </div> */}
+                            <div
+                              className="input-group mb-1 d-flex justify-content-around"
+                              style={{ fontSize: "12px" }}
+                            >
+                              <input
+                                type="text"
+                                className="form-control form-control-sm mx-2"
+                                placeholder="Quantity"
+                                style={{ maxWidth: "70px" }}
+                                value={quantityValues[product.productId] || ""}
+                                onChange={(e) =>
+                                  handleQuantityChange(e, product.productId)
+                                }
+                              />
+                              <input
+                                type="text"
+                                className="form-control form-control-sm mx-2"
+                                placeholder="Price"
+                                style={{ maxWidth: "70px" }}
+                                value={priceValues[product.productId] || ""}
+                                onChange={(e) =>
+                                  handlePriceChange(e, product.productId)
+                                }
+                              />
+                            </div>
                           </div>
 
                           <button
                             className="bg-info mt-2 mt-md-0"
                             style={{ height: "30px", fontSize: "12px" }}
-                            onClick={() =>
-                              openPriceAddModa(product.productId, product.name)
-                            }
+                            onClick={() => handleSubmit(product.productId)}
                           >
                             Add
                           </button>
@@ -905,73 +923,6 @@ function QuotationBox({ ticket }) {
         </>
       </Modal>
 
-      {/* add price list modal for qouatationn send */}
-      <Modal show={view} onHide={handleSubmit} centered>
-        <Modal.Header toggleModel>
-          <div className="d-flex justify-content-between  w-100">
-            <Modal.Title>Add Price List</Modal.Title>
-            <Button variant="secondary" onClick={toggleModel}>
-              Close
-            </Button>
-          </div>
-        </Modal.Header>
-
-        <Modal.Body>
-          <ProductPriceModal
-            productId={selectedProductIdForPriceLIst}
-            productName={selectedProductName}
-            onClose={toggleModel}
-            ticketId={selectedTicketId}
-            currency={formData.currency}
-          />
-        </Modal.Body>
-      </Modal>
-      <Modal show={listView} onHide={toggleList} centered>
-        <Modal.Header toggleModel>
-          <div className="d-flex justify-content-between  w-100">
-            <Modal.Title> Price List of :-{selectedProductName}</Modal.Title>
-            <Button variant="secondary" onClick={toggleList}>
-              Close
-            </Button>
-          </div>
-        </Modal.Header>
-
-        <Modal.Body>
-          <div className="container mt-3">
-            <h3> Prices list</h3>
-            <table className="table table-bordered table-striped table-hover shadow-sm">
-              <thead className="thead-dark">
-                <tr>
-                  <th className="text-center">Quantity</th>
-                  <th className="text-center">Price</th>
-                </tr>
-              </thead>
-              {prices.length > 0 ? (
-                <tbody>
-                  {prices.map((price) => (
-                    <tr key={price.priceId}>
-                      <td className="text-center align-middle border">
-                        {price.quantity} {price.unit}
-                      </td>
-                      <td className="text-center align-middle border">
-                        {price.currency} {price.price}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              ) : (
-                <tbody>
-                  <tr>
-                    <td colSpan="3" className="text-center text-muted">
-                      No price available
-                    </td>
-                  </tr>
-                </tbody>
-              )}
-            </table>
-          </div>
-        </Modal.Body>
-      </Modal>
       {/* <!-- Modal --> */}
       <div
         className="modal ticket-modal fade"
@@ -1027,4 +978,4 @@ function QuotationBox({ ticket }) {
     </>
   );
 }
-export default QuotationBox;
+export default InvoiceBox;

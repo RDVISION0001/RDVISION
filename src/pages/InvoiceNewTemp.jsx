@@ -14,6 +14,7 @@ function InvoiceNewTemp() {
   const { userId } = useAuth();
   const [addressFrom, setAddressForm] = useState(false);
   const [ticketId, setTicketId] = useState();
+  const [cpoy,setCopy] = useState(false)
 
   // State to store the dropdown options
   const [options, setOptions] = useState([]);
@@ -288,18 +289,15 @@ function InvoiceNewTemp() {
             ) : error ? (
               <p className="text-danger">{error}</p>
             ) : (
-              <div className="table-responsive" style={{ maxHeight:'600px'}}>
+              <div className="table-responsive" style={{ maxHeight:'37.5rem'}}>
                 <table className="table table-bordered w-100">
                   <thead className="sticky-top bg-white">
                     <tr>
-                      <th
-                        className="selection-cell-header"
-                        data-row-selection="true"
-                      >
-                        <input type="checkbox" />
+                    <th scope="col" style={{ fontSize: 13 }}>
+                        S.No
                       </th>
                       <th scope="col" style={{ fontSize: 13 }}>
-                        Closer Name
+                        Closer 
                       </th>
                       <th scope="col" style={{ fontSize: 13 }}>
                         Sale Date
@@ -344,7 +342,7 @@ function InvoiceNewTemp() {
                     {invoices
                       .slice()
                       .reverse()
-                      .map((invoice) => (
+                      .map((invoice,index) => (
                         <tr
                           key={invoice.invoiceId}
                           className={
@@ -354,7 +352,7 @@ function InvoiceNewTemp() {
                           }
                         >
                           <td>
-                            <input type="checkbox" />
+                           {index+1}
                           </td>
                           <td style={{ fontSize: 13 }}>{invoice.closerName}</td>
                           <td style={{ fontSize: 13 }}>
