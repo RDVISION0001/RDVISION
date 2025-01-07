@@ -380,12 +380,12 @@ function Sidenav() {
                 <span className="nav-text">Img Upload</span>
               </NavLink>
             </li>
-            <li className="nav-item">
+            {/* <li className="nav-item">
               <NavLink to="/mis_product" className="nav-link">
                 <i class="fa-solid fa-file"></i>
                 <span className="nav-text">Products Information</span>
               </NavLink>
-            </li>
+            </li> */}
             <li className="nav-item">
               <NavLink to="/new_products" className="nav-link">
                 <i class="fa-solid fa-pills"></i>

@@ -81,7 +81,6 @@ function MIS_Product() {
             const response = await axiosInstance.get("/product/getAllProducts");
             if (response.data?.dtoList) {
                 setProducts(response.data.dtoList);
-                setTotalPagesForPagination(response.data.dtoList)
             } else {
                 setError("Unexpected response format");
             }
@@ -92,18 +91,24 @@ function MIS_Product() {
         }
     };
 
-    const setTotalPagesForPagination = (pages) => {
-        const actualPages = pages.filter((product) => product.strength)
-        setTotalPages(Math.ceil(actualPages.length / itemPerPage))
-    }
+ 
     const handleFilterChange = (e) => {
         setFilterText(e.target.value.toLowerCase());
+        setCurrentPage(1)
     };
 
     const filteredProducts = (products || []).filter((product) =>
         product.name?.toLowerCase().includes(debouncedFilterText) ||
         product.genericName?.toLowerCase().includes(debouncedFilterText) || product.category?.toLowerCase().includes(debouncedFilterText)
     );
+
+    useEffect(()=>{
+        const setTotalPagesForPagination = (pages) => {
+            const actualPages = pages.filter((product) => product.strength)
+            setTotalPages(Math.ceil(actualPages.length / itemPerPage))
+        }
+        setTotalPagesForPagination(filteredProducts)
+    },[filteredProducts])
 
     const handleClose = () => {
         setShow(false);
@@ -443,12 +448,12 @@ function MIS_Product() {
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
                                                             <>
                                                                 {product[row.valueKey]}{" "}
-                                                                {localStorage.getItem("roleName") === "Product_Coordinator" ? <button
+                                                                {localStorage.getItem("roleName") === "Product_Coordinator" && <button
                                                                     className="btn btn-sm btn-warning ms-2 rounded"
                                                                     onClick={() => handleShow(product.productId)}
                                                                 >
                                                                     Edit
-                                                                </button> : "N/A"}
+                                                                </button> }
 
                                                             </>
                                                         ) : (
