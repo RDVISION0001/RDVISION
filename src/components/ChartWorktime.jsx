@@ -9,6 +9,8 @@ import UserWorkTimeReport from "./UserWorkTimeReport";
 import LiveCalander from "../components/LiveCalander";
 // Authentication context
 import { useAuth } from "../auth/AuthContext";
+import { Modal } from "react-bootstrap";
+import OnBreak from "./OnBreak";
 
 const ChartWorktime = () => {
   const { userId } = useAuth();
@@ -122,11 +124,7 @@ const ChartWorktime = () => {
     const response = await axiosInstance.get(
       `/user/toggleBreak/${localStorage.getItem("userId")}`
     );
-    if (response.data) {
-      toast.info("You Are Taking Break");
-    } else {
-      toast.info("Returned on Work");
-    }
+    
   };
 
   useEffect(() => {
@@ -175,7 +173,7 @@ const ChartWorktime = () => {
           </div>
           <div className="col-md-4 ">
             <div className="bg-white  d-flex justify-content-evenly align-items-center">
-              <div>                
+              <div>
                 <UserWorkTimeReport
                   user={userId}
                   start={startDate}
@@ -299,11 +297,10 @@ const ChartWorktime = () => {
                             <td className="text-center">{teammate.userName}</td>
                             <td className="text-center">{teammate.count}</td>
                             <td
-                              className={`${
-                                checkuserLive(teammate.userName)
-                                  ? "text-success"
-                                  : "text-danger"
-                              } fw-bold text-center`}
+                              className={`${checkuserLive(teammate.userName)
+                                ? "text-success"
+                                : "text-danger"
+                                } fw-bold text-center`}
                             >
                               {checkuserLive(teammate.userName)
                                 ? "Online"
@@ -324,6 +321,10 @@ const ChartWorktime = () => {
           </div>
         </div>
       </div>
+
+      < Modal show={takingBreak}  centered dialogClassName="custom-modal-width p-0 rounded" >
+        <OnBreak />
+      </Modal >
     </section>
   );
 };
