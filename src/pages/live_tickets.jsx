@@ -139,20 +139,17 @@ function live_tickets() {
     setView(true);
   };
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
-  const handleInvoice = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId)
-    setSelectNameForInvoice(name)
-    setSelectEmailForInvoice(email)
-    setSelectMobileForInvoice(mobile)
+  const [ticketinvoicedata,setTicketInvoiceData] = useState([])
+  const handleInvoice = (item) => {
+    console.log("function",item)
+    setTicketInvoiceData(item)
     setIsInvoiceOn(!isInvoiceOn)
   }
 
   const [isQuotationOn, setIsQuotationOn] = useState(false)
-  const handleQuotation = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId)
-    setSelectNameForInvoice(name)
-    setSelectEmailForInvoice(email)
-    setSelectMobileForInvoice(mobile)
+  const [ticketquattiondata,setTicketQutationData] = useState([])
+  const handleQuotation = (item) => {
+    setTicketQutationData(item)
     setIsQuotationOn(!isQuotationOn)
   }
 
@@ -869,7 +866,7 @@ function live_tickets() {
                                           <i className="fa-brands fa-whatsapp"></i>
                                         </a>
                                         <Button
-                                          onClick={() => handleQuotation(item.uniqueQueryId)}
+                                          onClick={() => handleQuotation(item)}
                                           className="rounded-circle "
                                           title="Get connect on"
                                         >
@@ -877,7 +874,7 @@ function live_tickets() {
                                         </Button>
 
                                         <Button
-                                          onClick={() => handleInvoice(item.uniqueQueryId)}
+                                          onClick={() => handleInvoice(item  )}
                                           className="rounded-circle "
                                           title="Get connect on"
                                         >
@@ -1282,10 +1279,7 @@ function live_tickets() {
               <u> Raise Invoice</u>
             </h1>
             <InvoiceBox
-              ticketId={selectTicketForInvoice}
-              name={selectNameForInvoice}
-              email={selectEmailForInvoice}
-              mobile={selectMobileForInvoice}
+              ticket={ticketinvoicedata}             
             />
           </Modal>
           <Modal
@@ -1301,10 +1295,7 @@ function live_tickets() {
               <u> Send quotation</u>
             </h1>
             <QuotationBox
-              ticketId={selectTicketForInvoice}
-              name={selectNameForInvoice}
-              email={selectEmailForInvoice}
-              mobile={selectMobileForInvoice}
+              ticket={ticketquattiondata}            
             />
           </Modal>
 

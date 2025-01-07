@@ -32,7 +32,7 @@ function InNegotiation() {
   const [list, setlist] = useState(true)
   const [ticketData, setTicketData] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedStage, setSelectedStage] = useState(2); // Default stage is 2
+  const [selectedStage, setSelectedStage] = useState(2); // Default stage is 2  
   const { userId } = useAuth();
   const [show, setShow] = useState(false);
   const [formData, setFormData] = useState({ ticketStatus: '', comment: '', followUpDateTime: '' });
@@ -81,11 +81,10 @@ function InNegotiation() {
   };
   const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
   const [isInvoiceOn, setIsInvoiceOn] = useState(false)
-  const handleInvoice = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId)
-    setSelectNameForInvoice(name)
-    setSelectEmailForInvoice(email)
-    setSelectMobileForInvoice(mobile)
+  const [negodata,setNegoData] = useState([])
+  const handleInvoice = (nego) => {
+    console.log("nego:",nego)
+    setNegoData(nego)
     setIsInvoiceOn(!isInvoiceOn)
   }
 
@@ -132,7 +131,7 @@ function InNegotiation() {
 
       const apiPath = uniqueQueryId.length < 15 ? "third_party_api/ticket" : "upload";
       const res = await axiosInstance.post(`/${apiPath}/updateTicketResponse/${uniqueQueryId}`, {}, { params });
-
+      console.log(res)
       setResponse(res.data.dtoList);
       toast.success('Update successfully!');
       setFolowupUpdate(uniqueQueryId);
@@ -1144,8 +1143,9 @@ function InNegotiation() {
                                 >
                                   <i class="fa-share-from-square" ></i>
                                 </Button>}
+                                {console.log("Negoo:",nego)}
                                 <Button
-                                  onClick={() => handleInvoice(nego.uniqueQueryId, nego.senderName, nego.senderEmail, nego.senderMobile)}
+                                  onClick={() => handleInvoice(nego)}
                                   className="rounded-circle "
                                   title="Get connect on"
                                 >
@@ -1609,9 +1609,8 @@ function InNegotiation() {
         <Modal.Body>
           <div className="">
             <div className="card shadow-sm">
-
               <div>
-                <InvoiceBox ticketId={selectTicketForInvoice} name={selectNameForInvoice} email={selectEmailForInvoice} mobile={selectMobileForInvoice} />
+                <InvoiceBox ticket={negodata}  />
               </div>
             </div>
           </div>
