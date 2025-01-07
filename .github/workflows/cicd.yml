@@ -17,7 +17,7 @@ jobs:
       - name: Build Docker Image
         run: docker build -t hanusahani4/rdvisioncrmui .
       - name: Publish image to docker hub
-        run: docker push hanusahani4/rdvisioncrmui:latest   
+        run: docker push hanusahani4/rdvisioncrmui:latest --debug  
 
   deploy: 
     needs: build
