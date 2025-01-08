@@ -8,6 +8,9 @@ import { FaCamera } from 'react-icons/fa';
 import UpProductImg from "../components/UpProductImg";
 import EditMIS_Product from "../components/EditMIS_Product";
 import Uploaded_product from '../pages/uploaded_product'
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function MIS_Product() {
     const [filterText, setFilterText] = useState("");
@@ -91,7 +94,7 @@ function MIS_Product() {
         }
     };
 
- 
+
     const handleFilterChange = (e) => {
         setFilterText(e.target.value.toLowerCase());
         setCurrentPage(1)
@@ -102,13 +105,13 @@ function MIS_Product() {
         product.genericName?.toLowerCase().includes(debouncedFilterText) || product.category?.toLowerCase().includes(debouncedFilterText)
     );
 
-    useEffect(()=>{
+    useEffect(() => {
         const setTotalPagesForPagination = (pages) => {
             const actualPages = pages.filter((product) => product.strength)
             setTotalPages(Math.ceil(actualPages.length / itemPerPage))
         }
         setTotalPagesForPagination(filteredProducts)
-    },[filteredProducts])
+    }, [filteredProducts])
 
     const handleClose = () => {
         setShow(false);
@@ -274,38 +277,6 @@ function MIS_Product() {
         }
     };
 
-    //resuble function to convert byte code to image url
-    function convertToImage(imageString) {
-        const byteCharacters = atob(imageString); // Decode base64 string
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        const url = URL.createObjectURL(blob);
-        return url;
-
-    }
-
-    const handleUpdateProImg = async () => {
-        try {
-            const response = await axiosInstance.post("/product/addImage", {
-                productId,
-                image,
-            });
-            console.log("image updated successfully:", response.data);
-            toast.success("image updated successfully");
-            fetchProducts();
-            setOn(false);
-
-            handleOff();
-        } catch (error) {
-            console.error("Error updating image:", error);
-            toast.error("Failed to update image. Please try again.");
-        }
-    };
-
     const fetchProductImages = async (productId) => {
         try {
             const response = await axiosInstance.get(`/images/getProductImages`);
@@ -357,8 +328,8 @@ function MIS_Product() {
                     key={i}
                     onClick={() => handlePageChange(i)}
                     className={`px-3 py-1 m-1 rounded-md ${currentPage === i
-                            ? 'bg-primary text-white'
-                            : 'bg-secondary text-gray-800 hover:bg-gray-300'
+                        ? 'bg-primary text-white'
+                        : 'bg-secondary text-gray-800 hover:bg-gray-300'
                         }`}
                 >
                     {i}
@@ -368,9 +339,20 @@ function MIS_Product() {
         return buttons;
     };
 
-    const handlePageChange=(i)=>{
+    const handlePageChange = (i) => {
         setCurrentPage(i)
     }
+
+    // corosoul
+    const carouselSettings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000, // Carousel changes every 2 seconds
+    };
 
     return (
         <div className="container-fluid" >
@@ -385,15 +367,23 @@ function MIS_Product() {
                 />
             </div>
 
-            <div className="table-responsive"  style={{ maxHeight: "1000px", overflowY: "auto" }}>
+            <div className="table-responsive" style={{ maxHeight: "1000px", overflowY: "auto" }}>
                 {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
                     <button onClick={openAddProduct} className="rounded">Add New Product</button>
                 </div>}
                 <table className="table table-bordered border-dark">
                     <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                         <tr>
-                            <th style={{ width: "5%" }}>S.No.</th>
-                            <th style={{ width: "10%" }}>Product Image</th>
+                            <th style={{ width: "0%" }}>S.No.</th>
+                            <th
+                                style={{
+                                    width: localStorage.getItem("roleName") !== "Product_Coordinator"
+                                        ? "5%"
+                                        : "10%"
+                                }}
+                            >
+                                Product Image
+                            </th>
                             <th style={{ width: "20%" }} colSpan="2">Product Details</th>
                             <th style={{ width: "15%" }} className="text-center">Price List</th>
                             {localStorage.getItem("roleName") === "Product_Coordinator" && <th style={{ width: "10%" }}>Actions</th>}
@@ -407,10 +397,10 @@ function MIS_Product() {
                                         <tr key={`${product.productId}-${rowIndex}`}>
                                             {rowIndex === 0 && (
                                                 <>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex+index + 1}</td>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "10px" }}>
-                                                        {getImageIds(product.productId).map((imageId) => (
-                                                            localStorage.getItem("roleName") === "Product_Coordinator" ? <>
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
+                                                    <td rowSpan={rowDetails.length} style={{ padding: "10px", }}>
+                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && getImageIds(product.productId).map((imageId) => (
+                                                            <>
                                                                 <i class="fa-solid fa-xmark" style={{ color: "red", position: "relative", backgroundColor: "white", }} onClick={() => handleDeleteImage(imageId)}></i>
                                                                 <img
                                                                     key={imageId}
@@ -419,16 +409,28 @@ function MIS_Product() {
                                                                     alt="No Image Found"
                                                                     style={{ maxWidth: "100px" }}
                                                                 />
-                                                            </> :
-                                                                <img
-                                                                    key={imageId}
-                                                                    onClick={() => handleView(`https://image.rdvision.in/images/image/${imageId}`)}
-                                                                    src={`https://image.rdvision.in/images/image/${imageId}`}
-                                                                    alt="No Image Found"
-                                                                    style={{ maxWidth: "100px" }}
-                                                                />
+                                                            </>
 
-                                                        ))}
+                                                        )
+                                                        )}
+                                                        {localStorage.getItem("roleName") !== "Product_Coordinator" &&
+                                                           <div  className="d-flex justify-content-center">
+                                                             <div style={{ height: "200px", width: "200px" }}>
+                                                                <Slider {...carouselSettings}>
+                                                                    {getImageIds(product.productId).map(imageId => (
+                                                                        <div key={imageId}>
+                                                                            <img
+                                                                                onClick={() => handleView(`https://image.rdvision.in/images/image/${imageId}`)}
+                                                                                src={`https://image.rdvision.in/images/image/${imageId}`}
+                                                                                alt="No Image Found"
+                                                                                style={{ maxWidth: "100%", height: "200px" }}
+                                                                            />
+                                                                        </div>
+                                                                    ))}
+                                                                </Slider>
+                                                            </div>
+                                                           </div>
+                                                           }
 
                                                         <div className="mt-3">
                                                             {localStorage.getItem("roleName") === "Product_Coordinator" && <button
@@ -453,7 +455,7 @@ function MIS_Product() {
                                                                     onClick={() => handleShow(product.productId)}
                                                                 >
                                                                     Edit
-                                                                </button> }
+                                                                </button>}
 
                                                             </>
                                                         ) : (
@@ -481,10 +483,10 @@ function MIS_Product() {
                                                                 </thead>
                                                                 <tbody>
                                                                     {product.priceList.map((priceItem) => (
-                                                                        <tr key={priceItem.priceId}>
-                                                                            <td>{priceItem.productCode || "N/A"}</td>
-                                                                            <td>{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
-                                                                            <td>{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
+                                                                        <tr className="border-dark border" key={priceItem.priceId}>
+                                                                            <td className="border-dark border" >{priceItem.productCode || "N/A"}</td>
+                                                                            <td className="border-dark border" >{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
+                                                                            <td className="border-dark border" >{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
                                                                             {localStorage.getItem("roleName") === "Product_Coordinator" && <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
                                                                         </tr>
                                                                     ))}
