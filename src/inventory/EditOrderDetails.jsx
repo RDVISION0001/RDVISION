@@ -6,18 +6,25 @@ import { useAuth } from "../auth/AuthContext";
 
 function Check({ data, datareload }) {
   const [product, setProduct] = useState([]);
-  const [selectedId, setSelectedId] = useState(0)
-  const [selectedItem, setSelectedItem] = useState()
+  const [selectedId, setSelectedId] = useState(0);
+  const [selectedItem, setSelectedItem] = useState();
   const [rate, setRate] = useState(selectedItem ? selectedItem.rate : null);
-  const [totalgoodcost, setTotalGoodCost] = useState(selectedItem ? selectedItem.totalGoodsCost : null);
-  const [shippingCharge, setShippingCharge] = useState(selectedItem ? selectedItem.shippingCharge : null);
-  const [totalCost, setTotalCost] = useState(selectedItem ? selectedItem.totalCost : null);
-  const [paid, setPaid] = useState(selectedItem ? selectedItem.paidAmount : null);
+  const [totalgoodcost, setTotalGoodCost] = useState(
+    selectedItem ? selectedItem.totalGoodsCost : null
+  );
+  const [shippingCharge, setShippingCharge] = useState(
+    selectedItem ? selectedItem.shippingCharge : null
+  );
+  const [totalCost, setTotalCost] = useState(
+    selectedItem ? selectedItem.totalCost : null
+  );
+  const [paid, setPaid] = useState(
+    selectedItem ? selectedItem.paidAmount : null
+  );
   const [due, setDue] = useState(selectedItem ? selectedItem.dueAmount : null);
   const { edit, setEdit } = useAuth(); // Track which field is being edited
   const [initialData, setInitialData] = useState({});
   const [loading, setLoading] = useState(false);
-
 
   useEffect(() => {
     if (data && data.orderDetails) {
@@ -38,8 +45,8 @@ function Check({ data, datareload }) {
 
   const handleDoubleClick = (field, value, item, index) => {
     if (selectedId === 0 || selectedId === item.id) {
-      setSelectedId(item.id)
-      setSelectedItem(item)
+      setSelectedId(item.id);
+      setSelectedItem(item);
       setEdit(field);
       if (field === "rate") setRate(value);
       if (field === "totalGoodsCost") setTotalGoodCost(value);
@@ -48,11 +55,8 @@ function Check({ data, datareload }) {
       if (field === "paid") setPaid(value);
       if (field === "due") setDue(value);
     } else {
-      handleSave(index, selectedItem, field, item)
-
+      handleSave(index, selectedItem, field, item);
     }
-
-
   };
 
   const handleKeyDown = (event, index, item) => {
@@ -79,7 +83,7 @@ function Check({ data, datareload }) {
     // Check if the updated data is different from initial data
     if (JSON.stringify(updatedData) === JSON.stringify(initialData[index])) {
       toast.info("No changes detected.");
-      setSelectedId(0)
+      setSelectedId(0);
       return; // No changes, no need to update
     }
 
@@ -93,20 +97,20 @@ function Check({ data, datareload }) {
       setLoading(false);
       const newInitialData = [...initialData];
       newInitialData[index] = updatedData;
-      datareload()
+      datareload();
       setInitialData(newInitialData);
-      setRate(null)
-      setDue(null)
-      setPaid(null)
-      setTotalGoodCost(null)
-      setShippingCharge(null)
-      setTotalCost(null)
+      setRate(null);
+      setDue(null);
+      setPaid(null);
+      setTotalGoodCost(null);
+      setShippingCharge(null);
+      setTotalCost(null);
       if (filed) {
-        setEdit(filed)
-        setSelectedId(newItem.id)
-        setSelectedItem(newItem)
-      }else{
-        setSelectedId(0)
+        setEdit(filed);
+        setSelectedId(newItem.id);
+        setSelectedItem(newItem);
+      } else {
+        setSelectedId(0);
       }
     } catch (e) {
       toast.error("Some Error Occurred");
@@ -114,7 +118,7 @@ function Check({ data, datareload }) {
   };
 
   return (
-    <div >
+    <div>
       {product.length > 0 ? (
         <table className="table table-bordered table-striped">
           <thead className="thead-dark">
@@ -150,7 +154,7 @@ function Check({ data, datareload }) {
                 style={{
                   backgroundColor: "#f5cac3",
                   fontSize: 12,
-                  width: '100px',
+                  width: "100px",
                   whiteSpace: "nowrap",
                 }}
               >
@@ -200,56 +204,77 @@ function Check({ data, datareload }) {
                 <td
                   style={{ backgroundColor: "#f1faee" }}
                   className="border border-gray"
-                  onDoubleClick={() => handleDoubleClick("rate", item.rate, item, index)}
+                  onDoubleClick={() =>
+                    handleDoubleClick("rate", item.rate, item, index)
+                  }
                 >
-                  {(edit === "rate" && selectedId === item.id) ? (
+                  {edit === "rate" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={rate}
                       onChange={(e) => setRate(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && rate ? (
+                    rate
                   ) : (
-                    ((selectedId === item.id) && rate) ? rate : item.rate
+                    item.rate
                   )}
                 </td>
                 <td
                   style={{ backgroundColor: "#f1faee" }}
                   className="border border-gray"
                   onDoubleClick={() =>
-                    handleDoubleClick("totalGoodsCost", item.totalGoodsCost, item, index)
+                    handleDoubleClick(
+                      "totalGoodsCost",
+                      item.totalGoodsCost,
+                      item,
+                      index
+                    )
                   }
                 >
-                  {(edit === "totalGoodsCost" && selectedId === item.id) ? (
+                  {edit === "totalGoodsCost" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={totalgoodcost}
                       onChange={(e) => setTotalGoodCost(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && totalgoodcost ? (
+                    totalgoodcost
                   ) : (
-                    ((selectedId === item.id) && totalgoodcost) ? totalgoodcost : item.totalGoodsCost
+                    item.totalGoodsCost
                   )}
                 </td>
                 <td
                   style={{ backgroundColor: "#f1faee" }}
                   className="border border-gray"
                   onDoubleClick={() =>
-                    handleDoubleClick("shippingCharge", item.shippingCharge, item, index)
+                    handleDoubleClick(
+                      "shippingCharge",
+                      item.shippingCharge,
+                      item,
+                      index
+                    )
                   }
                 >
-                  {(edit === "shippingCharge" && selectedId === item.id) ? (
+                  {edit === "shippingCharge" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={shippingCharge}
                       onChange={(e) => setShippingCharge(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && shippingCharge ? (
+                    shippingCharge
                   ) : (
-                    ((selectedId === item.id) && shippingCharge) ? shippingCharge : item.shippingCharge
+                    item.shippingCharge
                   )}
                 </td>
                 <td
@@ -259,16 +284,19 @@ function Check({ data, datareload }) {
                     handleDoubleClick("totalCost", item.totalCost, item, index)
                   }
                 >
-                  {(edit === "totalCost" && selectedId === item.id) ? (
+                  {edit === "totalCost" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={totalCost}
                       onChange={(e) => setTotalCost(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && totalCost ? (
+                    totalCost
                   ) : (
-                    ((selectedId === item.id) && totalCost) ? totalCost : item.totalCost
+                    item.totalCost
                   )}
                 </td>
                 <td
@@ -278,33 +306,41 @@ function Check({ data, datareload }) {
                     handleDoubleClick("paid", item.paidAmount, item, index)
                   }
                 >
-                  {(edit === "paid" && selectedId === item.id) ? (
+                  {edit === "paid" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={paid}
                       onChange={(e) => setPaid(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && paid ? (
+                    paid
                   ) : (
-                    ((selectedId === item.id) && paid) ? paid : item.paidAmount
+                    item.paidAmount
                   )}
                 </td>
                 <td
                   style={{ backgroundColor: "#f1faee" }}
                   className="border border-gray"
-                  onDoubleClick={() => handleDoubleClick("due", item.dueAmount, item, index)}
+                  onDoubleClick={() =>
+                    handleDoubleClick("due", item.dueAmount, item, index)
+                  }
                 >
-                  {(edit === "due" && selectedId === item.id) ? (
+                  {edit === "due" && selectedId === item.id ? (
                     <input
+                      autoFocus
                       type="text"
                       value={due}
                       onChange={(e) => setDue(e.target.value)}
                       style={{ width: "70px" }}
                       onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
                     />
+                  ) : selectedId === item.id && due ? (
+                    due
                   ) : (
-                    ((selectedId === item.id) && due) ? due : item.dueAmount
+                    item.dueAmount
                   )}
                 </td>
 
@@ -328,7 +364,7 @@ function Check({ data, datareload }) {
                   className="border border-gray"
                 >
                   <button
-                    style={{ width: '100px' }}
+                    style={{ width: "100px" }}
                     type="button" // Ensures the button doesn't submit a form
                     className="btn btn-primary"
                     onClick={(e) => {
@@ -336,7 +372,7 @@ function Check({ data, datareload }) {
                       handleSave(index, item); // Your save handler
                     }}
                   >
-                    {(loading && selectedId === item.id) ? (
+                    {loading && selectedId === item.id ? (
                       <i class="fa-solid fa-sync fa-spin px-2"></i>
                     ) : (
                       "Save"
