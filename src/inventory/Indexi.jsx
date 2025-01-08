@@ -341,12 +341,12 @@ function Indexi() {
                     </td>
                     <td className="border-dark border text-center">
                       {invoice.shippingLabel ? (
-                        <div className="d-flex align-items-center justify-content-between">
+                        <div style={{height:"180px"}} className="d-flex justify-content-center align-items-">
                           {/* Display the shipping label image */}
                           <img
                             src={invoice.shippingLabel}
                             className="img-fluid"
-                            style={{ height: "30px", maxWidth: "100px" }}
+                            style={{ height: "180px", maxWidth: "100px" }}
                             alt="Shipping Label"
                             onClick={() => openImage(invoice.shippingLabel)}
                           />
