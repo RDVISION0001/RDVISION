@@ -5,6 +5,7 @@ import Logout from '../auth/logout';
 import axiosInstance from '../axiosInstance';
 
 function Sidenav() {
+  const [hide,setHide] = useState()
   const { roleName, firstName, lastName } = useAuth();
 
   const [liveTickets, setLiveTickets] = useState({
@@ -39,10 +40,12 @@ function Sidenav() {
         console.error('Error fetching ticket data:', error);
       }
     };
-
     fetchTicketData();
+    
   }, []);
 
+ 
+  
 
   useEffect(() => {
     const menuBtn = document.querySelector("#menu-btn");
@@ -120,7 +123,6 @@ function Sidenav() {
   return (
     <div className="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column bg-white" id="sidebar">
       <ul className="nav sidebar2658 flex-column w-100">
-
         {/* SuperAdmin */}
         {roleName === 'SuperAdmin' && (
           localStorage.getItem("userId") &&
@@ -289,10 +291,10 @@ function Sidenav() {
                   style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                 />
               </div>
-              <a href="#" className="nav-link h3 my-2 w-100 d-block">
+             { localStorage.getItem('collapse') && <a href="#" className="nav-link h3 my-2 w-100 d-block">
                 {firstName} {lastName}
                 <small className="d-block">{roleName}</small>
-              </a>
+              </a>}
             </li>
             <li className="nav-item">
               <NavLink to="/closer_index" className="nav-link">

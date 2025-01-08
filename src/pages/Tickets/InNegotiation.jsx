@@ -1249,9 +1249,8 @@ function InNegotiation() {
                                 Follow Date/Time
                               </th>
                             )}
-                            <th tabIndex="0">Follow Comment</th>
+                            <th tabIndex="0" style={{width:'200px'}}>Follow Comment</th>
                             <th tabIndex="0">Action</th>
-
                             {selectedStage === 3 && (
                               <th tabIndex="0">Sale Date</th>
                             )}

@@ -783,7 +783,7 @@ function uploaded_tickets() {
                   >
                     <div
                       className="followups-table table-responsive border rounded "
-                      style={{ maxHeight: "37.5rem" }}
+                      style={{ maxHeight: "45rem" }}
                     >
                       <table className="table table-border table-striped">
                         <thead className=" sticky-top">

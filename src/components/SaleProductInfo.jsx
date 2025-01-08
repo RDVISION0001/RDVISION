@@ -190,33 +190,8 @@ function InvoiceBox({ ticket }) {
     }
   };
 
-  // Function to handle sending invoice
-  const handleSendInvoice = async () => {
-    try {
-      setLoading(true);
-      const response = await axiosInstance.post(
-        `/invoice/send-invoice?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`
-      );
-      toast.success("Invoice sent successfully!");
-      setLoading(false);
-    } catch (error) {
-      console.error("Error sending invoice:", error);
-      toast.error("Failed to send invoice");
-      setLoading(false);
-    }
-  };
+  
 
-  const handleSendQuotation = async () => {
-    try {
-      const response = await axiosInstance.post(
-        `/invoice/send_quotation?ticketId=${selectedTicketId}&userId=${userId}&externalPaymentLink=${externalPaymentLink}`
-      );
-      toast.success("Quotation sent successfully!");
-    } catch (error) {
-      console.error("Error sending quotation:", error);
-      toast.error("Failed to send quotation");
-    }
-  };
 
   const [isCollapsed, setIsCollapsed] = useState(false); // State to track collapse/expand
 
@@ -256,20 +231,7 @@ function InvoiceBox({ ticket }) {
   const [selectedProducts, setSelectedProducts] = useState([]); // State to store selected product IDs
 
   // Handle checkbox change
-  const handleCheckboxChange = (productId) => {
-    setSelectedProducts((prevSelected) => {
-      // Check if the product ID is already selected
 
-      console.log(productId);
-      if (prevSelected.includes(productId)) {
-        // If selected, remove it
-        return prevSelected.filter((id) => id !== productId);
-      } else {
-        // If not selected, add it
-        return [...prevSelected, productId];
-      }
-    });
-  };
 
   // Log selected products to console
   React.useEffect(() => {
@@ -478,9 +440,9 @@ function InvoiceBox({ ticket }) {
                                   <th className="border border-gray-300 px-3 py-2  text-left">
                                     Price
                                   </th>
-                                  <th className="border border-gray-300 px-3 py-2  text-center">
+                                  {/* <th className="border border-gray-300 px-3 py-2  text-center">
                                     Action
-                                  </th>
+                                  </th> */}
                                 </tr>
                               </thead>
                               <tbody>
@@ -513,7 +475,7 @@ function InvoiceBox({ ticket }) {
                                         <td className="border border-gray-300 py-2 px-3 ">
                                           {productOrder.totalAmount}
                                         </td>
-                                        <td className="h-100 border border-gray-300 py-2 px-3 text-center">
+                                        {/* <td className="h-100 border border-gray-300 py-2 px-3 text-center">
                                           <i
                                             onClick={() =>
                                               handleDeleteProduct(
@@ -527,7 +489,7 @@ function InvoiceBox({ ticket }) {
                                               cursor: "pointer",
                                             }}
                                           ></i>
-                                        </td>
+                                        </td> */}
                                       </tr>
                                     ) : (
                                       <tr key={index}>
@@ -550,7 +512,7 @@ function InvoiceBox({ ticket }) {
                         )}
 
                         {orderDetails && (
-                          <div className="total d-flex justify-content-end">
+                          <div className="total d-flex justify-content-end block" >
                             <div className="d-flex">
                               <p className="fw-semibold">Total:- </p>
                               <p>

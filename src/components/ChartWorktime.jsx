@@ -323,7 +323,7 @@ const ChartWorktime = () => {
       </div>
 
       < Modal show={takingBreak}  centered dialogClassName="custom-modal-width p-0 rounded" >
-        <OnBreak />
+        <OnBreak breakHours={breakHours} breakMinutes={breakMinutes} breakSeconds={breakSeconds}  Whours={hours}  Wminutes={minutes} Wseconds={seconds} />
       </Modal >
     </section>
   );

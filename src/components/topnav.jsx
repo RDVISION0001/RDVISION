@@ -102,12 +102,18 @@ function topnav() {
   }
 
   const toggleSidbar = () => {
-    setIsSideBarOpen(!isSideBarOpen)
-  }
+    setIsSideBarOpen((prevState) => {
+      const newState = !prevState;
+      localStorage.setItem('collapse', JSON.stringify(newState));
+      return newState;
+    });
+  };
+  
+  
   return (
     <>
       {localStorage.getItem("userId") &&
-        <div className="topnav">
+        <div className="topnav  sticky-top z-4 ">
           <nav className="navbar top-navbar navbar-light bg-white container-fluid">
             <div className="left-part">
               <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>

@@ -78,7 +78,7 @@ const TicketDistribution = () => {
 
 
     return (
-        <div className="container">
+        <div className="container  z-1  " >
             <div className="progress" style={{ height: '50px', position: 'relative' }}>
                 {sortedData.map(({ userId, userName, ticketCount, count, status, type }, index) => (
                     <div
@@ -143,7 +143,7 @@ const TicketDistribution = () => {
                         }}
                     ></div>
                 </div>
-            )}
+            )}  
 
         </div>
     );
