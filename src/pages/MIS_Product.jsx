@@ -368,11 +368,11 @@ function MIS_Product() {
                 />
             </div>
 
-            <div className={`table table-bordered ${dark ? `table-dark`:`` } `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
+            <div className={`table  ${dark ? `table-dark`:`` } `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
                 {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
                     <button onClick={openAddProduct} className={`rounded ${ dark ?`bg-secondary`:``} `}>Add New Product</button>
                 </div>}
-                <table className={`table table-bordered ${dark ? `table-dark`:`` } `}>
+                <table className={`table  ${dark ? `table-dark`:`` } `}>
                     <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                         <tr>
                             <th className={` text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "0%" }}>S.No.</th>
@@ -395,11 +395,11 @@ function MIS_Product() {
                             filteredProducts.filter((product) => product.strength).slice(startIndex, endIndex).map((product, index) => (
                                 <React.Fragment key={product.productId}>
                                     {rowDetails.map((row, rowIndex) => (
-                                        <tr key={`${product.productId}-${rowIndex}`}>
+                                        <tr className="border" key={`${product.productId}-${rowIndex}`}>
                                             {rowIndex === 0 && (
                                                 <>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
-                                                    <td rowSpan={rowDetails.length} style={{ padding: "10px", }}>
+                                                    <td className="border" rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
+                                                    <td className="border" rowSpan={rowDetails.length} style={{ padding: "10px", }}>
                                                         {localStorage.getItem("roleName") === "Product_Coordinator" && getImageIds(product.productId).map((imageId) => (
                                                             <>
                                                                 <i class="fa-solid fa-xmark" style={{ color: "red", position: "relative", backgroundColor: "white", }} onClick={() => handleDeleteImage(imageId)}></i>
@@ -444,8 +444,8 @@ function MIS_Product() {
                                                     </td>
                                                 </>
                                             )}
-                                            <td className="fw-bold" style={{ padding: "5px" }}>{row.label}</td>
-                                            <td style={{ padding: "5px" }}>
+                                            <td className="fw-bold border" style={{ padding: "5px" }}>{row.label}</td>
+                                            <td className="border" style={{ padding: "5px" }}>
                                                 {row.valueKey === "category" && (
                                                     <>
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
@@ -686,8 +686,7 @@ function MIS_Product() {
             </Modal>
 
             {/* action/EDIT */}
-            <Modal show={enable} onHide={handleDesable}>
-
+            <Modal className="" show={enable} onHide={handleDesable}>
                 <div className="m-3 d-flex justify-content-end" >
                     <i onClick={handleDesable} class="fa-solid fa-xmark  fa-xl"></i>
                 </div>
@@ -711,13 +710,13 @@ function MIS_Product() {
                 </Modal.Body>
             </Modal>
 
-            <Modal
+            <Modal           
                 show={isAddProductOpen}
                 onHide={handleCloseProductAdd}
                 centered
                 dialogClassName="custom-modal-width"
             >
-                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                <Modal.Body className={`d-flex flex-column justify-content-center align-items-center ${dark?"bg-dark":""}`}>
                     <Uploaded_product closeFunction={handleCloseProductAdd} />
                 </Modal.Body>
             </Modal>

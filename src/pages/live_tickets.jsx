@@ -1308,6 +1308,7 @@ function live_tickets() {
                       name="followUpDateTime"
                       value={formData.followUpDateTime}
                       onChange={handleChange}
+                      onClick={(e)=>e.target.showPicker()}
                       step="2"
                       style={{ borderRadius: "4px" }}
                     />

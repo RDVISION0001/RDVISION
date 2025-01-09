@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthContext";
 
 const CloserSalesReport = (props) => {
   const [invoices, setInvoices] = useState([]);
-  const { userId } = useAuth();
+  const { userId,dark } = useAuth();
   const [currentSrc, setCurrentSrc] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
@@ -184,27 +184,27 @@ const CloserSalesReport = (props) => {
 
   return (
     <>
-      <section className="data-table-bgs_02x24 py-3">
+      <section className={`data-table-bgs_02x24 py-3 ${dark ? "bg-dark":""}`}>
         <div className="container-fluid">
           <div className="table-wrapper">
-            <div className="table-responsive" style={{maxHeight:'48rem'}}>
-              <table className="table table-bordered">
+            <div className="table-responsive border" style={{maxHeight:'52rem'}}>
+              <table className={` table table-bordered ${dark?"table-dark":""}`}>
                 <thead className="sticky-top">
                   <tr>
-                    <th scope="col">S.no</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Delivery Status</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Street Address</th>
-                    <th scope="col">City</th>
-                    <th scope="col">State</th>
-                    <th scope="col">Zip Code</th>
-                    <th scope="col">Country</th>
-                    <th scope="col" className="text-center">
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">S.no</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Date</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Delivery Status</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Name</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Street Address</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">City</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">State</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Zip Code</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Country</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col" >
                       Product Details{" "}
                     </th>
-                    <th scope="col">Doses</th>
-                    <th scope="col">Quantity</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Doses</th>
+                    <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Quantity</th>
                   </tr>
                 </thead>
                 <tbody className="overflow">
@@ -245,11 +245,11 @@ const CloserSalesReport = (props) => {
                             <table className="table table-sm table-bordered table-striped table-hover">
                               <thead className="table-light">
                                 <tr>
-                                  <th scope="col">Name</th>
-                                  <th scope="col" className="text-center">
+                                  <th className={`text-center ${dark?"bg-secondary":""}`} scope="col">Name</th>
+                                  <th className={`text-center ${dark?"bg-secondary":""}`} scope="col" >
                                     Quantity
                                   </th>
-                                  <th scope="col" className="text-center">
+                                  <th className={`text-center ${dark?"bg-secondary":""}`} scope="col" >
                                     Price
                                   </th>
                                 </tr>

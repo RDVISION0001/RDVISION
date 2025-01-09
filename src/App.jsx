@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -134,13 +134,20 @@ import TicketHouse from './components/TicketHouse';
 import TicketTrack from './components/TicketTrack';
 import TicketDistribution from './components/TicketDistribution';
 import NotificationContainer from './components/NotificationContainer';
+import { useSelector } from 'react-redux';
+
 
 
 function App() {
-  const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
+  const [isTicketTrackOn,setIsTicketTrackOn] = useState(false)
+  const {theme} = useSelector((state)=>state.Theme)
+  
+  
+
 
   return (
-    <>
+    <div className={`${theme ?"bg-dark":"bg-white"}`} style={{height:'100vh'}} >
+    
       <div className='d-flex justify-content-end'>
         <NotificationContainer /> {/* This will handle WebSocket notifications */}
         {/* Other app content */}
@@ -148,19 +155,19 @@ function App() {
       <ToastContainer />
       <AuthProvider>
         <Router>
-          <div className="superadmin-page">
+          <div className="superadmin-page">            
             {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}
             <div className={`${localStorage.getItem("roleName")==="Inventory"?"":"my-container main-content-block2658 active-cont bg-white"}`}>
               {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Topnav />}
-              <div className='d-flex'>
-                {/* <div>
-                  {localStorage.getItem("roleName") !== "Admin" &&  localStorage.getItem("roleName")!=="Inventory" && <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
-                  <div className='d-flex '>
-                    {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
+              <div className={`d-flex  ${theme ?"bg-dark":"bg-white"}`}>
+                <div>
+                  {localStorage.getItem("roleName") !== "Admin" &&  localStorage.getItem("roleName")!=="Inventory" && <div className={`${theme ? 'text-white':'text-dark'}`} onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
+                  <div className={`d-flex ${theme ?"bg-dark":"bg-white"} `}>
+                    {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block '>
                       {localStorage.getItem("userId") && <TicketTrack />}
                     </div> : ""}
                   </div>
-                </div> */}
+                </div>
                 <div className="w-100 overflow-auto">
                   {localStorage.getItem("roleName") !== "Admin" &&
                     <div>
@@ -257,7 +264,7 @@ function App() {
         </Router>
       </AuthProvider>
 
-    </>
+    </div>
   );
 }
 

@@ -382,7 +382,7 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
     }
 
     return (
-        <div className={`${dark?`bg-dark text-light`:``}`}>
+        <div className={`p-4 ${dark?`bg-dark text-light`:``}`}>
             {selectedProduct && <div>
                 {/* <span>                selected product Id is {basicData.productId}
                 </span> */}
@@ -407,14 +407,14 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                 {/* Conditionally render based on the state */}
                 {isBasicActive ? (
                     <section className={`filter-section ${dark ? `bg-dark `:``}`} style={{ height: "700px" }}>
-                        <div className="container-fluid ">
-                            <div className="row">
-                                <div className="container mt-4">
-                                    <div className="card">
+                        <div className="container-fluid  ">
+                            <div className="row ">
+                                <div className="container mt-4 ">
+                                    <div className={`card ${dark? "bg-dark text-light":""}`}>
                                         <div className="card-body">
                                             <form onSubmit={handleSubmit}>
                                                 <div className="row">
-                                                    <div className="col-md-12 col-sm-12">
+                                                    <div className={`col-md-12 col-sm-12 ${dark?"bg-dark text-light":""}`}>
                                                         <div className="text-center">
                                                             <div className="container">
                                                                 <div className="row row-cols-3">
@@ -428,10 +428,10 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                                                                         ))}
                                                                     </div>
                                                                     <div className="col d-flex justify-content-center align-items-center">
-                                                                        <div className="form-group mb-3">
+                                                                        <div className="form-group mb-3" onClick={openLinkInput}>
                                                                             <label className="border rounded p-4 d-flex justify-content-center align-items-center" style={{ height: '200px', width: "200px", cursor: 'pointer' }}>
 
-                                                                                {imageList[0] ? <img src={convertToImage(imageList[0])} style={{ maxHeight: "200px" }} /> : <FaCamera size={24} onClick={openLinkInput} />
+                                                                                {imageList[0] ? <img src={convertToImage(imageList[0])} style={{ maxHeight: "200px" }} /> : <FaCamera size={24}  />
                                                                                 }
                                                                             </label>
                                                                             <div className='d-flex justify-content-between mt-2'>
@@ -453,20 +453,20 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                                                             <dialog id='inputLink' className='w-100 h-100  bg-transparent justify-content-center align-items-center' style={{ height: '100vh' }}>
                                                                 <>
 
-                                                                    <div className='d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded'>
-                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>close</button></div>
+                                                                    <div className={`d-flex flex-column justify-content-center align-items-center  p-3 rounded ${dark? " bg-secondary text-light":""}`}>
+                                                                        <div style={{ width: "100%", textAlign: "right", marginBottom: "4px" }}> <button onClick={closeLinkInput}>X</button></div>
 
                                                                         <label htmlFor="image">Add image list</label>
                                                                         <div className="custom-file">
                                                                             <input
                                                                                 type="file"
-                                                                                className="custom-file-input"
+                                                                                className="custom-file-input border"
                                                                                 id="upload-profile-img"
                                                                                 onChange={(e) => handleFileChange(e, 'image')}
                                                                                 name="upload-profile"
                                                                                 multiple // Allows multiple files to be selected
                                                                             />
-                                                                            <label className="custom-file-label" htmlFor="upload-profile-img">
+                                                                            <label className={`custom-file-label ${dark?"mx-1":""}`} htmlFor="upload-profile-img">
                                                                                 Choose files
                                                                             </label>
                                                                         </div>
@@ -499,12 +499,12 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                                                         </div>
                                                     </div>
 
-                                                    <div className="col-md-7 col-sm-12">
+                                                    <div className={`col-md-7 col-sm-12 ${dark?"bg-dark":""}`}>
                                                         <div className="d-flex">
                                                             {!selectedProduct && <div className="form-group col-md-6 col-sm-12">
-                                                                <label htmlFor="price">Product Name</label>
+                                                                <label htmlFor="price" className={`${dark?"text-light":""}`}>Product Name</label>
                                                                 <div className="input-group">
-                                                                    <input type="text" className="form-control" id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
+                                                                    <input type="text" className={`form-control ${dark ? 'bg-secondary border text-light':''}`} id="name" value={basicData.name} onChange={handleInputChange} placeholder="Enter product name" required />
                                                                 </div>
                                                             </div>}
                                                             {/* <div className="form-group col-md-6 col-sm-12" style={{ marginLeft: "3px" }}>
@@ -530,7 +530,7 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                                                         </div> */}
                                                         <div className="form-group">
                                                             <label htmlFor="description">Description</label>
-                                                            <textarea className="form-control" id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
+                                                            <textarea className={`form-control ${dark?"text-light bg-secondary":""}`} id="description" rows="5" value={basicData.description} onChange={handleInputChange} placeholder="Uses, details, benefits, etc." ></textarea>
                                                             <small className="text-muted">0 characters (maximum of 4000) including formatting.</small>
                                                         </div>
                                                     </div>

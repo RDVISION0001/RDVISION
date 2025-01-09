@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../auth/AuthContext";
 
 // Components
 import Uploaded_tickets from "../pages/uploaded_tickets";
@@ -14,6 +15,7 @@ function UploadTickets() {
   const [errors, setErrors] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0); // State to track upload progress
   const [isUploading, setIsUploading] = useState(false); // To track whether the file is uploading
+  const{dark} = useAuth()
 
   // Handle file input change
   const onFileChange = (e) => {
@@ -86,9 +88,8 @@ function UploadTickets() {
   return (
     <>
       <ToastContainer />
-      <div className="container-fluid mt-3">
-        <h2>Upload Tickets</h2>
-
+      <div className={`container-fluid pt-3 ${dark?"bg-dark text-light ":""}`}>
+        <h2 className={`${dark?"text-light":""}`}>Upload Tickets</h2>
         {/* File uploader with Bootstrap styling and drag-and-drop feature */}
         <div className="file-uploader d-flex flex-column align-items-center m-3" >
           <div className="text-center d-flex flex-column align-items-center" style={{  boxShadow: "1px 1px 5px 1px black",borderRadius:"10px", padding:'5px',width:"350px"}}>
@@ -98,7 +99,7 @@ function UploadTickets() {
               <div
                 className="file-drop-area p-5 border-dotted text-center"
                 style={{
-                  backgroundColor: "white",
+                  backgroundColor: dark ? "#6c757d" : "#ffffff",
                   borderRadius: "20px",
                   cursor: "pointer",
                   borderColor: "purple",

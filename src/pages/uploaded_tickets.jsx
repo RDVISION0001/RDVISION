@@ -648,11 +648,11 @@ function uploaded_tickets() {
 
   return (
     <>
-      <div className={`d-flex ${dark ? `bg-dark w-100` : ``}`}>
-        <div style={{ width: "100vw" }}>
+      <div className={`d-flex w-100 ${dark ? `bg-dark` : ``}`}>
+        <div className="" style={{ width: "100vw" }}>
           {/* <!-- Tabbed Ticket Table --> */}
           {localStorage.getItem("roleName") !== "Closer" && (
-            <section className={`d-flex ${dark ? `bg-secondary` : ``}`}>
+            <section className={`d-flex ${dark ? `bg-dark text-light` : ``}`}>
               <div className="row ">
                 {files.map((file, index) => (
                   <div
@@ -662,7 +662,7 @@ function uploaded_tickets() {
                     <div className="d-flex align-items-center border p-3 rounded hoverTickets shadow-sm">
                       <i className="fa-solid fa-file fa-2x me-3 text-info"></i>
                       <div>
-                        <h5 className="mb-1 text-dark fw-bold">
+                        <h5 className="mb-1 fw-bold">
                           Assign Date: {file[0]}
                         </h5>
                         <small className="text-secondary">
@@ -678,7 +678,7 @@ function uploaded_tickets() {
           )}
           {/* //Filter input */}
           {showAlltickets && (
-            <section class={`filter-section ${dark ? `bg-dark` : ``}`}>
+            <section class={`filter-section  ${dark ? `bg-dark` : ``}`}>
               <div className="d-flex justify-content-between align-items-center">
                 <div className="container ">
                   <div className="d-flex justify-content-start gap-2 align-items-center">
@@ -792,7 +792,7 @@ function uploaded_tickets() {
                             dark ? `table-dark` : ``
                           }`}
                         >
-                          <thead className=" sticky-top">
+                          <thead className=" sticky-top z-1">
                             <tr>
                               {localStorage.getItem("roleName") === "Admin" ? (
                                 <th
@@ -1307,6 +1307,7 @@ function uploaded_tickets() {
                       name="followUpDateTime"
                       value={formData.followUpDateTime}
                       onChange={handleChange}
+                      onClick={(e)=>e.target.showPicker()}
                     />
                   </div>
                 )}
