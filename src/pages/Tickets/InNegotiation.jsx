@@ -24,7 +24,7 @@ import SaleConframtion from "../../components/SaleConframtion";
 function InNegotiation() {
   const { date } = useParams(); // Retrieve the 'date' parameter
   const [selectedKey, setSelectedKey] = useState(null);
-  const { setFolowupUpdate } = useAuth();
+  const { setFolowupUpdate,dark } = useAuth();
   const { setUserReportReloader } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const handleClosee = () => setShowModal(false);
@@ -895,8 +895,8 @@ function InNegotiation() {
   return (
     <>
       {localStorage.getItem("roleName") === "SeniorSuperVisor" && (
-        <div className="p-3" style={{ textAlign: "start" }}>
-          <label className="m-3 fw-bold">
+        <div className={`p-3 ${dark? `bg-dark`:``}`} style={{ textAlign: "start" }}>
+          <label className={`m-3 fw-bold ${dark? `bg-dark`:`text-dark`}`}>
             Select Closer to see their Negotiation tickets
           </label>
           <select
@@ -918,18 +918,18 @@ function InNegotiation() {
           </select>
         </div>
       )}
-      <div className="d-flex justify-content-end ">
+      <div className={`d-flex justify-content-end ${dark? `bg-dark`:``} `}>
         {localStorage.getItem("roleName") !== "SeniorSuperVisor" && (
-          <div className=" d-flex justify-content-center">
+          <div className={`d-flex justify-content-center ${dark? `bg-dark`:``} `}>
             <div className="form-check" style={{ marginLeft: "10px" }}>
               <input
-                className="form-check-input"
+                className={`form-check-input ${dark? `text-white`:``} `}
                 type="checkbox"
                 id="flexCheckDefault"
                 checked={assignedTo === userId}
                 onChange={() => setAssignedTo(userId)} // Call toggle method on change
               />
-              <label className="form-check-label" htmlFor="flexCheckDefault">
+              <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckDefault">
                 Assigned to me
               </label>
             </div>
@@ -941,15 +941,15 @@ function InNegotiation() {
                 checked={assignedTo === 0} // Checked if 'list' is false
                 onChange={() => setAssignedTo(0)} // Call toggle method on change
               />
-              <label className="form-check-label" htmlFor="flexCheckChecked">
+              <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckChecked">
                 All negotiation tickets
               </label>
             </div>
           </div>
         )}
         <div className="w-25 d-flex justify-content-center">
-          <div>choose view</div>
-          <div className="form-check" style={{ marginLeft: "10px" }}>
+          <div className={`form-check-label ${dark? `text-white`:``} `}>choose view</div>
+          <div className={`form-check-label ${dark? `text-white`:``} `} style={{ marginLeft: "10px" }}>
             <input
               className="form-check-input"
               type="checkbox"
@@ -957,7 +957,7 @@ function InNegotiation() {
               checked={list}
               onChange={toggleCheckbox} // Call toggle method on change
             />
-            <label className="form-check-label" htmlFor="flexCheckDefault">
+            <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckDefault">
               List
             </label>
           </div>
@@ -969,7 +969,7 @@ function InNegotiation() {
               checked={!list} // Checked if 'list' is false
               onChange={toggleCheckbox} // Call toggle method on change
             />
-            <label className="form-check-label" htmlFor="flexCheckChecked">
+            <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckChecked">
               Card
             </label>
           </div>
@@ -979,7 +979,7 @@ function InNegotiation() {
         {list && (
           <div style={{ width: "100%" }}>
             {/* Stages */}
-            <section className="followup-table-section py-3">
+            <section className={`followup-table-section py-3 ${dark? `bg-dark`:``} `}>
               <div
                 className="pipeline-container"
                 style={{
@@ -1050,7 +1050,7 @@ function InNegotiation() {
                             width: "90%", // Responsive width
                             maxWidth: "200px", // Limit max width
                           }}
-                          className="text-info"
+                          className={`${dark? `bg-dark text-white`:`text-dark`} `}
                         >
                           {stage.stage < 4 && "Number OF tickets :-"}
                           {stage.stage === 1 &&
@@ -1084,7 +1084,7 @@ function InNegotiation() {
               </div>
             </section>
             
-            <section className="filter-section">
+            <section className={`filter-section ${dark? `bg-dark`:``} px-4 `}>
               <div className="row">
                 <div className="col-md-5">
                   <div className="search-wrapper">
@@ -1092,7 +1092,7 @@ function InNegotiation() {
                       type="text"
                       name="search-user"
                       id="searchUsers"
-                      className="form-control"
+                      className={`form-control  ${dark? `text-white bg-dark`:``}`}
                       placeholder="Search Department or Name..."
                       value={shortValue}
                       onChange={handleShortDataValue}
@@ -1108,7 +1108,7 @@ function InNegotiation() {
                       <input
                         type="date"
                         name="filterdate"
-                        className="form-control"
+                        className={`form-control  ${dark? `text-white bg-dark`:``}`}
                         placeholder="Search Department or Name..."
                         value={filterdate}
                         onChange={(e) => setFilterDate(e.target.value)}
@@ -1128,7 +1128,7 @@ function InNegotiation() {
             {/*Filters*/}
 
             {selectedStage < 4 && (
-              <section className="d-flex justify-content-center">
+              <section className={`d-flex justify-content-center ${dark ? `bg-dark`:``}`}>
                 <div className=" w-50 d-flex justify-content-around p-3">
                   {selectedStage !== 3 && (
                     <button
@@ -1225,32 +1225,32 @@ function InNegotiation() {
             )}
             {/* Table */}
             {selectedStage < 4 && (
-              <section className="followup-table-section py-3">
+              <section className={`followup-table-section py-3 ${dark ? `bg-dark`:``}`}>
                 <div className="">
                   <div className="">
-                    <div className="followups-table table-responsive border rounded table-height">
-                      <table className="table table-hover">
-                        <thead className="sticky-header">
+                    <div className={`followups-table table-responsive border rounded table-height ${dark ? `table-dark`:``}`}>
+                      <table className={`table table-hover ${dark ? `table-dark `:``}`}>
+                        <thead className={`sticky-header ${dark ? `bg-secondary `:``}`}>
                           <tr>
-                            <th tabIndex="0">S.No.</th>
-                            <th tabIndex="0" style={{ width: "120px" }}>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">S.No.</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0" style={{ width: "120px" }}>
                               Date/Time
                             </th>
-                            <th tabIndex="0">Country</th>
-                            <th tabIndex="0">Customer Name</th>
-                            <th tabIndex="0" className="whitespace-nowrap">
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Country</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Customer Name</th>
+                            <th className={`whitespace-nowrap ${dark ? `text-dark bg-secondary`:``}`} tabIndex="0" >
                               Mob Number
                             </th>
-                            <th tabIndex="0">Customer Email</th>
-                            <th tabIndex="0">Status</th>
-                            <th tabIndex="0">Requirement</th>
+                            <th  className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Customer Email</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Status</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Requirement</th>
                             {selectedStage === 2 && (
-                              <th className="whitespace-nowrap" tabIndex="0">
+                              <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">
                                 Follow Date/Time
                               </th>
                             )}
-                            <th tabIndex="0" style={{width:'200px'}}>Follow Comment</th>
-                            <th tabIndex="0">Action</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0" style={{width:'200px'}}>Follow Comment</th>
+                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Action</th>
                             {selectedStage === 3 && (
                               <th tabIndex="0">Sale Date</th>
                             )}

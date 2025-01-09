@@ -23,7 +23,7 @@ const ChartWorktime = () => {
   const [breakTime, setBreakTime] = useState(0); // Break time in seconds
   const [breakStartTime, setBreakStartTime] = useState(null); // When the break started
   const [loginTime] = useState(Date.now());
-  const { takingBreak, setTakingBreak } = useAuth();
+  const { takingBreak, setTakingBreak ,dark} = useAuth();
 
   // Update the working timer only if the user is not taking a break
   useEffect(() => {
@@ -165,15 +165,15 @@ const ChartWorktime = () => {
   };
 
   return (
-    <section className="">
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-md-8">
+    <section className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+      <div className={`container-fluid ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+        <div className={`row ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+          <div className={`col-md-8 ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
             <LiveCalander />
           </div>
-          <div className="col-md-4 ">
-            <div className="bg-white  d-flex justify-content-evenly align-items-center">
-              <div>
+          <div className={`col-md-4 ${dark ? `bg-dark text-white`:`bg-white text-dark`} `}>
+            <div className={`bg-white  d-flex justify-content-evenly align-items-center ${dark ? `bg-dark text-white`:`bg-white text-dark`} `}>
+              <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                 <UserWorkTimeReport
                   user={userId}
                   start={startDate}
@@ -181,7 +181,7 @@ const ChartWorktime = () => {
                   isShowingToUser={true}
                 />
               </div>
-              <div className="" style={{ width: "120px" }}>
+              <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ width: "120px" }}>
                 <div className=" d-flex flex-column align-items-center justify-content-between ">
                   <div className="position-relative d-flex align-items-center justify-content-center">
                     <svg width="160" height="160">
@@ -216,7 +216,7 @@ const ChartWorktime = () => {
                       </strong>
                     </div>
                   </div>
-                  <div className="d-flex flex-column  bg-light">
+                  <div className={ `d-flex flex-column  bg-light ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                     <span
                       style={{
                         fontSize: "15px",
@@ -228,7 +228,7 @@ const ChartWorktime = () => {
                     </span>
                     <span>
                       <button
-                        className=""
+                        className={`${dark ? `bg-warning text-white`:``}`}
                         style={{
                           fontSize: "12px",
                           backgroundColor: "rgb(255, 0, 0)",
@@ -243,10 +243,10 @@ const ChartWorktime = () => {
                   </div>
                   {/* <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${takingBreak ? "red" : "green"}` }}></div> */}
                 </div>
-                <div className="d-flex flex-column align-items-center justify-content-center  w-100">
+                <div className={`d-flex flex-column align-items-center justify-content-center  w-100 ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                   <div>
                     <div className=" mt-2 items-content-center p-1">
-                      <p className=" " style={{ fontSize: "20px" }}>
+                      <p className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontSize: "20px" }}>
                         <strong>
                           {hours} : {minutes} : {seconds}
                         </strong>
@@ -278,15 +278,15 @@ const ChartWorktime = () => {
                 </div>
               </div>
             </div>
-            <div className="rank-card top-rankers">
-              <h3 className="heading">Best Selling Closer</h3>
-              <div className="table-wrapper">
-                <table className="table">
+            <div className= {`rank-card top-rankers ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+              <h4 className="heading pt-4">Best Selling Closer</h4>
+              <div className="table-wrapper border">
+                <table className={`table ${dark ? `table-dark text-white`:`table-white text-dark`}`}>
                   <thead>
                     <tr>
-                      <th className="text-center">Closer Name</th>
-                      <th className="text-center">Sales Count</th>
-                      <th className="text-center">Status</th>
+                      <th className={`${dark ? `bg-primary text-white`:`bg-white text-dark`} text-center`}>Closer Name</th>
+                      <th className={`${dark ? `bg-primary text-white`:`bg-white text-dark`} text-center`}>Sales Count</th>
+                      <th className={`${dark ? `bg-primary text-white`:`bg-white text-dark`} text-center`}>Status</th>
                     </tr>
                   </thead>
                   <tbody>

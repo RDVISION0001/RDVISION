@@ -3,9 +3,11 @@ import { FaCamera } from 'react-icons/fa';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
 import { Modal, Button } from 'react-bootstrap';
+import { useAuth } from "../auth/AuthContext";
 
 
 function UploadedProduct({ closeFunction, selectedProduct, productName }) {
+    const {dark} = useAuth()
     const [products, setProducts] = useState([]);
     const [productId, setProductId] = useState([]);
     const [filterText, setFilterText] = useState("");
@@ -315,15 +317,15 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
     };
 
     //delete products
-    const handleDeleteProduct = async (productId) => {
-        try {
-            const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
-            toast.success("Product deleted successfully");
-            fetchProducts();
-        } catch (error) {
-            toast.error("Failed to delete product. Please try again.");
-        }
-    };
+    // const handleDeleteProduct = async (productId) => {
+    //     try {
+    //         const response = await axiosInstance.delete(`/product/deleteproduct/${productId}`);
+    //         toast.success("Product deleted successfully");
+    //         fetchProducts();
+    //     } catch (error) {
+    //         toast.error("Failed to delete product. Please try again.");
+    //     }
+    // };
 
     const [category, setCategory] = useState('');
 
@@ -380,20 +382,20 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
     }
 
     return (
-        <div>
+        <div className={`${dark?`bg-dark text-light`:``}`}>
             {selectedProduct && <div>
                 {/* <span>                selected product Id is {basicData.productId}
                 </span> */}
-                <strong> Product name :- {productName}</strong>
+                <strong className={`${dark?`text-light`:``}`}> Product name :- {productName}</strong>
             </div>}
             {/* Toggle between Basic and Advance Details */}
             {localStorage.getItem("roleName") === "Product_Coordinator" && <>
-                <section className="filter-section">
-                    <div className="container-fluid">
+                <section className={`filter-section ${dark ? 'bg-dark' : ''}`}>
+                    <div className={`container-fluid  ${dark ? 'bg-dark' : ''}`}>
                         <div className="row">
-                            <div className="container mt-4">
-                                <div className="card">
-                                    <div className="text-white d-flex">
+                            <div className={`container  ${dark ? 'bg-dark' : ''}`}>
+                                <div className={`card ${dark ? 'bg-dark' : ''} `}>
+                                    <div className="text-white d-flex gap-2">
                                         <button className={`${isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(true)}>Basic Details</button>
                                         <button className={`${!isBasicActive ? "bg-primary" : "bg-secondary"} w-50`} onClick={() => setBasicActive(false)}>Advance Details</button>
                                     </div>
@@ -404,12 +406,11 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                 </section>
                 {/* Conditionally render based on the state */}
                 {isBasicActive ? (
-                    <section className="filter-section" style={{ height: "700px" }}>
-                        <div className="container-fluid">
+                    <section className={`filter-section ${dark ? `bg-dark `:``}`} style={{ height: "700px" }}>
+                        <div className="container-fluid ">
                             <div className="row">
                                 <div className="container mt-4">
                                     <div className="card">
-
                                         <div className="card-body">
                                             <form onSubmit={handleSubmit}>
                                                 <div className="row">

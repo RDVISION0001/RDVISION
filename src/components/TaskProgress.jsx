@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './css/ProgressBar.css';
 import axiosInstance from '../axiosInstance';
+import { useAuth } from '../auth/AuthContext';
 
 // Component to display a single progress bar
 const ProgressBar = ({ label, value, max, colorClass }) => {
     const [percentage, setPercentage] = useState(0);
+    const {dark} = useAuth()
     const maxTarget = 10;
     useEffect(() => {
         // Smoothly transition from 0% to the current percentage
@@ -16,12 +18,12 @@ const ProgressBar = ({ label, value, max, colorClass }) => {
     }, [value, max]);   
 
     return (
-        <div className="progress-container">
+        <div className={`progress-container ${dark ? `bg-dark text-white`:`bg-white text-dark`} `}>
             <div className="progress-content">
                 <label>{label}</label>
-                <div className="progress-text">
+                <div className={`progress-text ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                     <span className="current-value">{value}</span> /
-                    <span className="max-value">{(label === "Total Sales Progress" ? maxTarget : max)}</span>
+                    <span className={`max-value ${dark ? `bg-dark text-white`:`bg-white text-dark`} `} > {(label === "Total Sales Progress" ? maxTarget : max)}</span>
                 </div>
             </div>
             <div className="progress-bar-background">

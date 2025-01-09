@@ -13,7 +13,7 @@ function LiveCalander(props) {
   const [calenderDataForUploaded, setCalenderDataForuploaded] = useState([]);
   const [events, setEvents] = useState([]);
   const [currentView, setCurrentView] = useState('month');
-  const { followupState } = useAuth();
+  const { followupState ,dark} = useAuth();
   const [isTicketJourneyOpen, setIsTicketJourneyOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [comments, setComments] = useState("")
@@ -99,7 +99,7 @@ function LiveCalander(props) {
     handleViewChange('day');
   };
   return (
-    <div className="container-fluid mt-4">
+    <div className={`container-fluid mt-4 ${dark ? `bg-dark text-white`:`bg-white text-dark`} `}>
       <div className="row">
         <div style={{ height: '80vh', width: '100%' }}>
           <Calendar

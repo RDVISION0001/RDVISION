@@ -3,6 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axiosInstance from '../axiosInstance';
+import { useAuth } from '../auth/AuthContext';
 
 // Register chart.js components
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -14,6 +15,7 @@ function UserWorkTimeReport(props) {
     const [totalBeakTime, setTotalBreakTime] = useState(0);
     const [defaultUrl, setDefaultUrl] = useState("/third_party_api/ticket");
     const [dateChange, setDateChange] = useState();
+    const {dark} = useAuth()
 
     useEffect(() => {
         loadeUserDetails();
@@ -173,13 +175,13 @@ function UserWorkTimeReport(props) {
     };
 
     return (
-        <div style={{ margin: "0", padding: "0" }}>
-            <div className='d-flex justify-content-between' style={{ padding: "0px 20px" }} >
-                <div style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hrs.</span></div>
-                <div style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} Minutes.</span></div>
+        <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`} `} style={{ margin: "0", padding: "0" }}>
+            <div className={`d-flex justify-content-between `} style={{ padding: "20px" }} >
+                <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontSize: "12px" }}>Total Work: <span className='text-primary'>{(totalWorktime / 3600).toFixed(2)} hrs.</span></div>
+                <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontSize: "12px" }}>Total Break: <span className='text-danger'>{(totalBeakTime / 3600).toFixed(2)} Minutes.</span></div>
             </div>
-            <p style={{ fontSize: "12px", marginLeft: "5px" }}>Work report</p>
-            <div style={{ height: '130px' }}> {/* Adjust height here */}
+            <p className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontSize: "12px", marginLeft: "5px" }}>Work report</p>
+            <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ height: '130px' }}> {/* Adjust height here */}
                 <Bar data={chartData} options={chartOptions} />
             </div>
         </div>

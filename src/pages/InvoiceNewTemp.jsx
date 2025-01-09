@@ -11,10 +11,10 @@ function InvoiceNewTemp() {
   const [invoices, setInvoices] = useState([]); // State to store invoice data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-  const { userId } = useAuth();
+  const { userId, dark } = useAuth();
   const [addressFrom, setAddressForm] = useState(false);
   const [ticketId, setTicketId] = useState();
-  const [cpoy,setCopy] = useState(false)
+  const [cpoy, setCopy] = useState(false);
 
   // State to store the dropdown options
   const [options, setOptions] = useState([]);
@@ -129,31 +129,37 @@ function InvoiceNewTemp() {
   return (
     <>
       {/* card section (unchanged) */}
-      <section className="sadmin-top-section mt-3">
+      <section
+        className={`sadmin-top-section py-3 ${dark ? `bg-dark` : "bg-white"} `}
+      >
         <div className="container-fluid">
           <div className="row justify-content-center">
             {/* Total Paid Amount Card */}
             <div className="col-md-3 col-sm-6 col-12">
               <div
-                className="card border shadow text-dark"
+                className="card border shadow text-dark "
                 style={{
                   width: "100%", // Make the card full width on small screens
                   height: "100px",
                   borderRadius: "10px",
-                  backgroundColor: "#A8E6CF",
+                  backgroundColor: dark ? "#000" : "#A8E6CF", // Green background if dark is true, else default color
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
               >
-                <div className="card-body d-flex align-items-center justify-content-center">
+                <div
+                  className={`card-body d-flex align-items-center justify-content-center ${
+                    dark ? " text-white" : ""
+                  }`}
+                >
                   <div>
                     <i
                       className="fas fa-dollar-sign"
                       style={{
                         fontSize: "3rem",
                         marginRight: "10px",
-                        color: "#4CAF50",
+                        color: dark ? "#FFEB3B" : "#4CAF50", // Adjust icon color based on dark mode
                       }}
                     ></i>
                   </div>
@@ -177,13 +183,17 @@ function InvoiceNewTemp() {
                   width: "100%", // Ensure card takes full width on smaller screens
                   height: "100px",
                   borderRadius: "10px",
-                  backgroundColor: "#FFCDD2",
+                  backgroundColor: dark ? "#000000" : "#FFCDD2",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
               >
-                <div className="card-body d-flex align-items-center justify-content-center">
+                <div
+                  className={`card-body d-flex align-items-center justify-content-center ${
+                    dark ? " text-white" : ""
+                  }`}
+                >
                   <div>
                     <i
                       className="fas fa-check-circle"
@@ -212,13 +222,17 @@ function InvoiceNewTemp() {
                   width: "100%", // Make the card full width on smaller screens
                   height: "100px",
                   borderRadius: "10px",
-                  backgroundColor: "#FFEB3B",
+                  backgroundColor: dark ? "#000000" : "#FFEB3B",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
               >
-                <div className="card-body d-flex align-items-center justify-content-center">
+                <div
+                  className={`card-body d-flex align-items-center justify-content-center ${
+                    dark ? " text-white" : ""
+                  }`}
+                >
                   <div>
                     <i
                       className="fas fa-clock"
@@ -249,13 +263,17 @@ function InvoiceNewTemp() {
                   width: "100%", // Ensure card takes full width on smaller screens
                   height: "100px",
                   borderRadius: "10px",
-                  backgroundColor: "#D1C4E9",
+                  backgroundColor: dark ? "#000" : "#D1C4E9",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                 }}
               >
-                <div className="card-body d-flex align-items-center justify-content-center">
+                <div
+                  className={`card-body d-flex align-items-center justify-content-center ${
+                    dark ? " text-white" : ""
+                  }`}
+                >
                   <div>
                     <i
                       className="fas fa-exclamation-circle"
@@ -280,24 +298,43 @@ function InvoiceNewTemp() {
       </section>
 
       {/* table section */}
-      <section className="followup-table-section py-4 d-flex">
+      <section
+        className={`followup-table-section py-2 d-flex ${
+          dark ? `bg-dark` : `bg-white`
+        } `}
+      >
         <div className="container-fluid">
-          <div className="table-wrapper tabbed-table">
-            <h5 className="title">Invoices</h5>
+          <div
+            className={`table-wrapper tabbed-table ${
+              dark ? `bg-dark` : `bg-white`
+            }`}
+          >
+            <h5 className={` ${dark ? `text-light` : `text-dark`}`}>
+              Invoices
+            </h5>
             {loading ? (
               <p>Loading invoices...</p>
             ) : error ? (
               <p className="text-danger">{error}</p>
             ) : (
-              <div className="table-responsive" style={{ maxHeight:'37.5rem'}}>
-                <table className="table table-bordered w-100">
-                  <thead className="sticky-top bg-white">
+              <div
+                className="table-responsive "
+                style={{ maxHeight: "37.5rem" }}
+              >
+                <table
+                  className={`table table-bordered w-100 ${
+                    dark ? "bg-dark text-light" : ""
+                  }`}
+                >
+                  <thead
+                    className={`sticky-top ${dark ? "bg-dark text-light" : ""}`}
+                  >
                     <tr>
-                    <th scope="col" style={{ fontSize: 13 }}>
+                      <th scope="col" style={{ fontSize: 13 }}>
                         S.No
                       </th>
                       <th scope="col" style={{ fontSize: 13 }}>
-                        Closer 
+                        Closer
                       </th>
                       <th scope="col" style={{ fontSize: 13 }}>
                         Sale Date
@@ -307,7 +344,7 @@ function InvoiceNewTemp() {
                       </th>
                       <th
                         scope="col"
-                        className="text-center"
+                        className={`text-center ${dark ? "text-dark" : ""}`}
                         style={{ fontSize: 13 }}
                       >
                         Product Details
@@ -336,24 +373,25 @@ function InvoiceNewTemp() {
                     </tr>
                   </thead>
                   <tbody
-                    style={{ height: 500, overflowY: scrollY }}
-                    className=""
+                    style={{ height: 500, overflowY: "scroll" }}
+                    className={`${dark ? "bg-dark text-light" : ""}`}
                   >
                     {invoices
                       .slice()
                       .reverse()
-                      .map((invoice,index) => (
+                      .map((invoice, index) => (
                         <tr
-                          key={invoice.invoiceId}
-                          className={
-                            invoice.opened === "paid"
-                              ? "table-danger"
-                              : "table-success"
-                          }
-                        >
-                          <td>
-                           {index+1}
-                          </td>
+                              key={invoice.invoiceId}
+                              className={`${
+                                dark 
+                                  ? "table-dark" 
+                                  : invoice.opened === "paid"
+                                  ? "table-danger"
+                                  : "table-success"
+                              } ${dark ? "bg-dark text-light" : ""}`}
+                            >
+
+                          <td>{index + 1}</td>
                           <td style={{ fontSize: 13 }}>{invoice.closerName}</td>
                           <td style={{ fontSize: 13 }}>
                             {formatDate(invoice.saleDate)}
@@ -361,9 +399,17 @@ function InvoiceNewTemp() {
                           <td style={{ fontSize: 13 }}>
                             {invoice.customerName}
                           </td>
-                          <td className="text-center">
+                          <td
+                            className={`text-center ${
+                              dark ? "text-light" : ""
+                            }`}
+                          >
                             {/* Product Details Section - Nested Table */}
-                            <table className="table table-bordered w-100">
+                            <table
+                              className={`table table-bordered w-100 ${
+                                dark ? "bg-dark text-light" : ""
+                              }`}
+                            >
                               <thead>
                                 <tr>
                                   <th
@@ -392,19 +438,19 @@ function InvoiceNewTemp() {
                                     order.product?.map((product, index) => (
                                       <tr key={`${i}-${index}`}>
                                         <td
-                                          className="border"
+                                          className={`border ${dark ? `bg-dark text-light`:""}`}
                                           style={{ fontSize: 12 }}
                                         >
                                           {product.name}
                                         </td>
                                         <td
-                                          className="border"
+                                          className={`border ${dark ? `bg-dark text-light`:""}`}
                                           style={{ fontSize: 12 }}
                                         >
                                           {order.quantity || "N/A"}
                                         </td>
                                         <td
-                                          className="border"
+                                          className={`border ${dark ? `bg-dark text-light`:"bg-white"}`}
                                           style={{ fontSize: 12 }}
                                         >
                                           {invoice.currency}{" "}
@@ -420,7 +466,9 @@ function InvoiceNewTemp() {
                             {formatDate(invoice.invoiceGenerateDate)}
                           </td>
                           <td
-                            className="text-success font-weight-bold"
+                            className={`text-success font-weight-bold ${
+                              dark ? "text-light" : ""
+                            }`}
                             style={{ fontSize: 13 }}
                           >
                             {invoice.currency || "USD"} {invoice.orderAmount}
@@ -457,9 +505,8 @@ function InvoiceNewTemp() {
                           <td style={{ fontSize: 13 }}>
                             {invoice.ipAddress
                               ? invoice.ipAddress.slice(0, 13)
-                              : "Not Opned Yet"}
+                              : "Not Opened Yet"}
                           </td>
-
                           <td
                             className={
                               invoice.verificationDate
@@ -482,7 +529,9 @@ function InvoiceNewTemp() {
                           <td>
                             {invoice.paymentStatus !== "paid" && (
                               <button
-                                className="btn btn-success rounded"
+                                className={`btn btn-success rounded ${
+                                  dark ? "text-light" : ""
+                                }`}
                                 onClick={() =>
                                   invoice.address
                                     ? handleMarkAsPaidClick(invoice)

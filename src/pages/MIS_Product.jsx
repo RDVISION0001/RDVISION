@@ -11,12 +11,13 @@ import Uploaded_product from '../pages/uploaded_product'
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { useAuth } from "../auth/AuthContext";
 
 function MIS_Product() {
     const [filterText, setFilterText] = useState("");
     const [debouncedFilterText, setDebouncedFilterText] = useState("");
     const debounceTimeout = useRef(null);
-
+    const {dark} = useAuth()
     const [category, setCategory] = useState("");
     const [products, setProducts] = useState([]);
     const [image, setImage] = useState([]);
@@ -355,27 +356,27 @@ function MIS_Product() {
     };
 
     return (
-        <div className="container-fluid" >
+        <div className={`container-fluid  ${dark ? `bg-dark text-white`:`` }`} >
             <h3 className="title text-center">MIS-Product Department</h3>
             <div className="mb-3">
                 <input
                     type="text"
                     placeholder="Search by Name or Generic Name"
-                    className="form-control"
+                    className={`form-control rounded ${dark?`bg-secondary`:``}`}
                     value={filterText}
                     onChange={handleFilterChange}
                 />
             </div>
 
-            <div className="table-responsive" style={{ maxHeight: "1000px", overflowY: "auto" }}>
+            <div className={`table table-bordered ${dark ? `table-dark`:`` } `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
                 {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
-                    <button onClick={openAddProduct} className="rounded">Add New Product</button>
+                    <button onClick={openAddProduct} className={`rounded ${ dark ?`bg-secondary`:``} `}>Add New Product</button>
                 </div>}
-                <table className="table table-bordered border-dark">
+                <table className={`table table-bordered ${dark ? `table-dark`:`` } `}>
                     <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                         <tr>
-                            <th style={{ width: "0%" }}>S.No.</th>
-                            <th
+                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "0%" }}>S.No.</th>
+                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`}
                                 style={{
                                     width: localStorage.getItem("roleName") !== "Product_Coordinator"
                                         ? "5%"
@@ -384,9 +385,9 @@ function MIS_Product() {
                             >
                                 Product Image
                             </th>
-                            <th style={{ width: "20%" }} colSpan="2">Product Details</th>
-                            <th style={{ width: "15%" }} className="text-center">Price List</th>
-                            {localStorage.getItem("roleName") === "Product_Coordinator" && <th style={{ width: "10%" }}>Actions</th>}
+                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "20%" }} colSpan="2">Product Details</th>
+                            <th className={`text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "15%" }} >Price List</th>
+                            {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={`text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "10%" }}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -473,12 +474,13 @@ function MIS_Product() {
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                         {product.priceList && product.priceList.length > 0 ? (
-                                                            <table className="table table-sm table-bordered" style={{ fontSize: "12px" }}>
+                                                            <table className={`table table-sm table-bordered ${dark ? `table-secondary`:``}`} style={{ fontSize: "12px" }}>
                                                                 <thead>
                                                                     <tr>
-                                                                        <th>Product Code</th>
-                                                                        <th>Quantity</th>
-                                                                        <th>Price</th>
+                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Product Code</th>
+                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Quantity</th>
+                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Price</th>
+                                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Ac</th>}
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -487,7 +489,7 @@ function MIS_Product() {
                                                                             <td className="border-dark border" >{priceItem.productCode || "N/A"}</td>
                                                                             <td className="border-dark border" >{`${priceItem.quantity || "N/A"} ${priceItem.unit || ""}`}</td>
                                                                             <td className="border-dark border" >{`${priceItem.price || "N/A"} ${priceItem.currency || "USD"}`}</td>
-                                                                            {localStorage.getItem("roleName") === "Product_Coordinator" && <td><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
+                                                                            {localStorage.getItem("roleName") === "Product_Coordinator" && <td className="border-dark border"><i onClick={() => deletePrice(priceItem.priceId)} class="fa-solid fa-trash" style={{ color: "#f04b05" }}></i></td>}
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
@@ -587,7 +589,7 @@ function MIS_Product() {
                                     <input
                                         type="number"
                                         placeholder="Quantity"
-                                        className="form-control"
+                                        className={`form-control ${dark?`bg-secondary text-light`:`` }`}
                                         value={item.quantity}
                                         onChange={(e) => handleQuantityChange(index, "quantity", e.target.value)}
                                         required

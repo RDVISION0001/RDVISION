@@ -1,22 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
-import LiveCalander from './LiveCalander';
-import TimezoneClocks from './TimezoneClocks';
-import axiosInstance from '../axiosInstance';
-import { useAuth } from '../auth/AuthContext';
-import FloatingButton from './FloatingButton';
-import Enotebook from './Enotebook';
-import WebsocketService from './WebsocketServices';
+import React, { useEffect, useRef, useState } from "react";
+import LiveCalander from "./LiveCalander";
+import TimezoneClocks from "./TimezoneClocks";
+import axiosInstance from "../axiosInstance";
+import { useAuth } from "../auth/AuthContext";
+import FloatingButton from "./FloatingButton";
+import Enotebook from "./Enotebook";
+import WebsocketService from "./WebsocketServices";
 
 // import TimeZone from './TimeZone';
 
 function topnav() {
-  const { takingBreak } = useAuth()
-  const { setUserReportReloader } = useAuth()
-  const { followupState } = useAuth()
-  const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth()
-  const { isSideBarOpen, setIsSideBarOpen } = useAuth()
-  const [isChatBotOPen, setIsChatBotOpen] = useState(false)
-
+  const { takingBreak } = useAuth();
+  const { setUserReportReloader } = useAuth();
+  const { followupState } = useAuth();
+  const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth();
+  const { isSideBarOpen, setIsSideBarOpen } = useAuth();
+  const [isChatBotOPen, setIsChatBotOpen] = useState(false);
 
   // Update the handle functions for the notebook
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
@@ -60,18 +59,17 @@ function topnav() {
   //handle close Calender
   const handleClose = () => {
     const dialog = document.getElementById("calender");
-    const note = document.getElementById("notebook")
+    const note = document.getElementById("notebook");
     if (dialog) {
       dialog.close();
-      note.close()
+      note.close();
     }
   };
-
 
   const [seconds, setSeconds] = useState(0);
   useEffect(() => {
     const interval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds + 1);
+      setSeconds((prevSeconds) => prevSeconds + 1);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -81,52 +79,118 @@ function topnav() {
     if (!takingBreak) {
       if (localStorage.getItem("userId")) {
         // axiosInstance.post(`/attendance/addworkingseconds/${localStorage.getItem("attendanceId")}`);
-        let workTime = parseInt(localStorage.getItem("workTime"))
-        localStorage.setItem("workTime", workTime += 1)
+        let workTime = parseInt(localStorage.getItem("workTime"));
+        localStorage.setItem("workTime", (workTime += 1));
       }
     } else {
       // axiosInstance.post(`/attendance/addBreakSeconds/${localStorage.getItem("attendanceId")}`);
-      let breakTime = parseInt(localStorage.getItem("breakTime"))
-      localStorage.setItem("breakTime", breakTime += 1)
+      let breakTime = parseInt(localStorage.getItem("breakTime"));
+      localStorage.setItem("breakTime", (breakTime += 1));
     }
   }, [seconds]);
 
-
-  const [todayFollowups, setTodayFollowups] = useState(0)
+  const [todayFollowups, setTodayFollowups] = useState(0);
   useEffect(() => {
-    fetchTodayFollowups()
-  }, [followupState])
+    fetchTodayFollowups();
+  }, [followupState]);
   const fetchTodayFollowups = async () => {
-    const response = await axiosInstance.get(`/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`)
-    setTodayFollowups(response.data)
-  }
+    const response = await axiosInstance.get(
+      `/third_party_api/ticket/todayfollowup/${localStorage.getItem("userId")}`
+    );
+    setTodayFollowups(response.data);
+  };
 
   const toggleSidbar = () => {
     setIsSideBarOpen((prevState) => {
       const newState = !prevState;
-      localStorage.setItem('collapse', JSON.stringify(newState));
+      localStorage.setItem("collapse", JSON.stringify(newState));
       return newState;
     });
   };
-  
-  
+
+  const { dark, setDrak } = useAuth();
+
+  const handleThemeToggler = () => {
+    setDrak(!dark);
+    console.log(dark);
+  };
+
   return (
     <>
-      {localStorage.getItem("userId") &&
+      {localStorage.getItem("userId") && (
         <div className="topnav  sticky-top z-4 ">
-          <nav className="navbar top-navbar navbar-light bg-white container-fluid">
+          <nav
+            className={`navbar top-navbar navbar-light ${
+              dark ? `bg-dark` : "bg-white"
+            }  container-fluid `}
+          >
             <div className="left-part">
-              <a className="btn border-0 ms-2 bg-white text-black" style={{ fontSize: "30px" }} onClick={toggleSidbar} id="menu-btn">{isSideBarOpen ? <i class="fa-solid fa-chevron-left fa-xl"></i> : <i class="fa-solid fa-chevron-right fa-xl"></i>}</a>
+              <a
+                className={`btn border-0 ms-2 ${
+                  dark ? `bg-dark` : `bg-white`
+                }  text-black`}
+                style={{ fontSize: "30px" }}
+                onClick={toggleSidbar}
+                id="menu-btn"
+              >
+                {isSideBarOpen ? (
+                  <i
+                    class={`fa-solid fa-chevron-left fa-xl ${
+                      dark ? `text-light` : `text-dark`
+                    }`}
+                  ></i>
+                ) : (
+                  <i
+                    class={`fa-solid fa-chevron-right fa-xl ${
+                      dark ? `text-light` : `text-dark`
+                    }`}
+                  ></i>
+                )}
+              </a>
             </div>
             <div className="right-part">
-              <div href="/timezone" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <span className="page-title"  >
-                  <i class="fa-solid fa-clock fa-2xl" onClick={handleOpenTimezone}></i>
+              <div>
+                <i
+                
+                  className={`fa-solid ${dark ? "fa-sun text-white" : "fa-moon"} ` }
+                  onClick={handleThemeToggler}
+                  style={{
+                    fontSize: "40px",
+                    marginRight: "10px",
+                    cursor: "pointer",
+                    transition: "transform 0.5s ease, opacity 0.5s ease",
+                    transform: dark ? "rotate(360deg)" : "rotate(0deg)",
+                    opacity: dark ? 0.5 : 1,
+                  }}
+                ></i>
+              </div>
+              
+
+              <div
+                href="/timezone"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <span className="page-title">
+                  <i
+                    class={`fa-solid fa-clock fa-2xl ${
+                      dark ? `text-light` : `text-dark`
+                    }  `}
+                    onClick={handleOpenTimezone}
+                  ></i>
                 </span>
               </div>
-              <a href="/action_mode" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <span className="page-title"  >
-                  <i className="fa-solid fa-jet-fighter-up fa-2xl"></i>
+              <a
+                href="/action_mode"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <span className="page-title">
+                  <i
+                    className={`fa-solid fa-jet-fighter-up fa-2xl ${
+                      dark ? `text-light` : `text-dark`
+                    }`}
+                  ></i>
                 </span>
               </a>
               {/* <a href="/live_tickets"  className="notification" style={{ position: "relative", display: "inline-block" }}>
@@ -144,29 +208,46 @@ function topnav() {
                   {noOfNweticketsRecevied}
                 </span>
               </a> */}
-              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i class="fa-solid fa-book fa-2xl" onClick={handleOpenNote}></i>
-
+              <a
+                href="#"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i
+                  class={`fa-solid fa-book fa-2xl ${
+                    dark ? `text-light` : `text-dark`
+                  } `}
+                  onClick={handleOpenNote}
+                ></i>
               </a>
 
-
-              <a href="#" className="notification" style={{ position: "relative", display: "inline-block" }}>
-                <i className="fa-solid fa-calendar-days fa-2xl pointer" onClick={handleOpenCalender}></i>
-                <span className='bg-danger text-white rounded-circle text-center' style={{
-                  height: "32px",
-                  width: "32px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "absolute",
-                  top: "-20px",
-                  right: "-20px"
-                }}>
+              <a
+                href="#"
+                className="notification"
+                style={{ position: "relative", display: "inline-block" }}
+              >
+                <i
+                  className={`fa-solid fa-calendar-days fa-2xl pointer ${
+                    dark ? `text-light` : `text-dark`
+                  }`}
+                  onClick={handleOpenCalender}
+                ></i>
+                <span
+                  className="bg-danger text-white rounded-circle text-center"
+                  style={{
+                    height: "32px",
+                    width: "32px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    top: "-20px",
+                    right: "-20px",
+                  }}
+                >
                   {todayFollowups}
                 </span>
               </a>
-
-
             </div>
           </nav>
 
@@ -189,10 +270,13 @@ function topnav() {
               transform: "translate(-50%, -50%)",
               border: "none",
               borderRadius: "8px",
-              padding: "5px"
+              padding: "5px",
             }}
           >
-            <div className="modal-content" style={{ width: "100%", height: "100%" }}>
+            <div
+              className="modal-content"
+              style={{ width: "100%", height: "100%" }}
+            >
               <i
                 className="fa-solid fa-times fa-xl pointer close-icon"
                 onClick={handleClose}
@@ -200,7 +284,7 @@ function topnav() {
                   position: "absolute",
                   top: "10px",
                   right: "10px",
-                  cursor: "pointer"
+                  cursor: "pointer",
                 }}
               ></i>
               <LiveCalander model={true} />
@@ -283,7 +367,6 @@ function topnav() {
             </div>
           </dialog> */}
 
-
           <div
             className="text-black"
             style={{
@@ -351,11 +434,10 @@ function topnav() {
           >
             <i className="fa-solid fa-comments fa-lg"></i>
           </div>
-
-
-        </div>}
+        </div>
+      )}
     </>
   );
 }
 
-export default topnav;              
+export default topnav;

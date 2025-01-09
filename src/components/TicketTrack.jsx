@@ -177,6 +177,7 @@ const TicketTrack = () => {
     return (
         <>
             <div className='text-center' style={{ width: "200px", marginLeft: "2px" }}>
+               
                 {/* Display ticket status counts */}
                 <div className="status-summary d-flex justify-content-center flex-wrap">
                     {/* // Example usage within the `status-summary` div */}

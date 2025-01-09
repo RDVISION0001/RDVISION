@@ -153,14 +153,14 @@ function App() {
             <div className={`${localStorage.getItem("roleName")==="Inventory"?"":"my-container main-content-block2658 active-cont bg-white"}`}>
               {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Topnav />}
               <div className='d-flex'>
-                <div>
+                {/* <div>
                   {localStorage.getItem("roleName") !== "Admin" &&  localStorage.getItem("roleName")!=="Inventory" && <div className='bg-white text-black' onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
                   <div className='d-flex '>
                     {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block'>
                       {localStorage.getItem("userId") && <TicketTrack />}
                     </div> : ""}
                   </div>
-                </div>
+                </div> */}
                 <div className="w-100 overflow-auto">
                   {localStorage.getItem("roleName") !== "Admin" &&
                     <div>

@@ -17,6 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [userReportReloader, setUserReportReloader] = useState(0)
   const [isSideBarOpen, setIsSideBarOpen] = useState(true)
   const [edit, setEdit] = useState(false); // Track which field is being edited
+  const [dark,setDrak] = useState(false)
 
 
   const [takingBreak, setTakingBreak] = useState(false)
@@ -115,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout, followupState, setFolowupUpdate, noOfNweticketsRecevied, setNoOfnewticketsReceived, userReportReloader, setUserReportReloader, isSideBarOpen, setIsSideBarOpen,edit, setEdit }}>
+    <AuthContext.Provider value={{dark,setDrak, isAuthenticated, roleName, userId, firstName, lastName, attendanceId, takingBreak, setTakingBreak, login, logout, followupState, setFolowupUpdate, noOfNweticketsRecevied, setNoOfnewticketsReceived, userReportReloader, setUserReportReloader, isSideBarOpen, setIsSideBarOpen,edit, setEdit }}>
       {children}
     </AuthContext.Provider>
 
