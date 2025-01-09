@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import { toast } from 'react-toastify';
+import { useAuth } from '../auth/AuthContext';
 
 const EditMIS_Product = ({ id,closeFunction }) => {
+    const {dark} = useAuth()
     // State for form data
     const productData = id;
     const [formData, setFormData] = useState({
@@ -39,9 +41,9 @@ const EditMIS_Product = ({ id,closeFunction }) => {
     };
 
     return (
-        <div className=""style={{padding:"20px"}}>
+        <div className={`${dark?"bg-dark text-light":""}`}style={{padding:"20px"}}>
             <div className="" >
-                <h2 className="text-center mb-4" style={{ color: "#343a40" }}>Edit Product Details</h2>
+                <h2 className={`text-center ${dark?"bg-dark text-light":""}`} style={{ color: "#343a40" }}>Edit Product Details</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="row mb-4">
                         <div className="col-md-12">
@@ -51,7 +53,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter the product name"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -69,7 +71,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="composition"
                                 value={formData.composition}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter the product name"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -87,7 +89,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="genericName"
                                 value={formData.genericName}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter generic name"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -102,7 +104,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="brand"
                                 value={formData.brand}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter brand name"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -119,7 +121,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="strength"
                                 value={formData.strength}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter strength"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -134,7 +136,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="packagingSize"
                                 value={formData.packagingSize}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter packaging size"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -151,7 +153,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="packagingType"
                                 value={formData.packagingType}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter packaging type"
                                 style={{
                                     border: "1px solid #ced4da",
@@ -166,7 +168,7 @@ const EditMIS_Product = ({ id,closeFunction }) => {
                                 name="treatment"
                                 value={formData.treatment}
                                 onChange={handleChange}
-                                className="form-control p-3 rounded-3"
+                                className={`form-control p-3 rounded-3 ${dark?"bg-secondary text-white":""}`}
                                 placeholder="Enter treatment"
                                 style={{
                                     border: "1px solid #ced4da",

@@ -3,12 +3,14 @@ import { FaCloudUploadAlt, FaLock } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "../axiosInstance";
+import { useAuth } from "../auth/AuthContext";
 
 function DocumentUploader() {
     const [files, setFiles] = useState("");
     const [title, setTitle] = useState("");
     const [uploadStatus, setUploadStatus] = useState(""); // To show upload status
     const [uploadedDocuments, setUploadedDocuments] = useState([]); // To store the uploaded documents
+    const {dark} = useAuth()
 
     // Fetch uploaded images and titles from the API
     const fetchUploadedDocuments = async () => {
@@ -87,20 +89,20 @@ function DocumentUploader() {
     }
 
     return (
-        <div className="container mt-5">
-            <div className="card shadow-sm">
+        <div className={`container pt-5 ${dark?"bg-dark text-light":""}`}>
+            <div className={`card shadow-sm ${dark?"bg-secondary":""}`}>
                 <div className="card-body">
                     <h5 className="card-title">Add Documents</h5>
                     <form onSubmit={handleSubmit}>
                         {/* Title Input */}
-                        <div className="d-flex justify-content-around">
-                            <div className="mb-3">
+                        <div className="d-flex justify-content-start">
+                            <div className="mb-3 w-50">
                                 <label htmlFor="title" className="form-label">
                                     Title
                                 </label>
                                 <input
                                     type="text"
-                                    className="form-control"
+                                    className={`form-control ${dark ? "bg-dark text-light":""} `}
                                     id="title"
                                     placeholder="Enter title"
                                     value={title}
@@ -117,7 +119,8 @@ function DocumentUploader() {
                                 className="border rounded p-4 text-center shadow"
                                 style={{
                                     borderStyle: "dashed",
-                                    backgroundColor: "#f9f9f9",
+                                    backgroundColor: dark?"#495057": "#f9f9f9",
+                                    color:dark?"#fff":""
                                 }}
                             >
                                 <FaCloudUploadAlt size={40} className="text-secondary mb-3" />
@@ -137,7 +140,7 @@ function DocumentUploader() {
                                         onChange={handleFileChange}
                                     />
                                 </p>
-                                <small className="text-muted">Accepted file types: .doc, .png, .jpg, etc.</small>
+                                <small className={`${dark?'text-light':'text-muted '}`}>Accepted file types: .doc, .png, .jpg, etc.</small>
                             </div>
                         </div>
 
@@ -178,16 +181,16 @@ function DocumentUploader() {
             />
 
             {/* Display Uploaded Documents */}
-            <div className="mt-5">
-                <h5>Uploaded Documents</h5>
+            <div className={`mt-5 ${dark?"bg-dark":""}`}>
+                <h5 className="py-2">Uploaded Documents</h5>
                 <div className="row">
                     {uploadedDocuments.map((doc, index) => (
                         <div key={index} className="col-md-4">
-                            <div className="card mb-3">
+                            <div className={`card mb-3 ${dark ? "bg-secondary":""}`}>
                                 <img
                                     src={convertToImage(doc.imageData)}
                                     alt={doc.imageTitle}
-                                    className="card-img-top"
+                                    className="card-img-top "
                                     style={{ height: "200px", objectFit: "cover" }}
                                 />
                                 <div className="card-body">

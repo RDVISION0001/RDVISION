@@ -6,6 +6,9 @@ import { useAuth } from "../auth/AuthContext";
 import FloatingButton from "./FloatingButton";
 import Enotebook from "./Enotebook";
 import WebsocketService from "./WebsocketServices";
+import { useDispatch } from "react-redux";
+import { toggleTheme } from "../Redux/features/ThemeSlice";
+import BootstrapSwitchButton from "bootstrap-switch-button-react";
 
 // import TimeZone from './TimeZone';
 
@@ -16,6 +19,7 @@ function topnav() {
   const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth();
   const { isSideBarOpen, setIsSideBarOpen } = useAuth();
   const [isChatBotOPen, setIsChatBotOpen] = useState(false);
+  const dispatch = useDispatch();
 
   // Update the handle functions for the notebook
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
@@ -112,7 +116,7 @@ function topnav() {
 
   const handleThemeToggler = () => {
     setDrak(!dark);
-    console.log(dark);
+    dispatch(toggleTheme());
   };
 
   return (
@@ -151,20 +155,18 @@ function topnav() {
             <div className="right-part">
               <div>
                 <i
-                
-                  className={`fa-solid ${dark ? "fa-sun text-white" : "fa-moon"} ` }
+                  className={`fa-solid fa-2xl ${
+                    dark ? "fa-sun text-white " : "fa-moon"
+                  } `}
                   onClick={handleThemeToggler}
                   style={{
-                    fontSize: "40px",
                     marginRight: "10px",
                     cursor: "pointer",
                     transition: "transform 0.5s ease, opacity 0.5s ease",
-                    transform: dark ? "rotate(360deg)" : "rotate(0deg)",
                     opacity: dark ? 0.5 : 1,
                   }}
                 ></i>
               </div>
-              
 
               <div
                 href="/timezone"
@@ -213,12 +215,18 @@ function topnav() {
                 className="notification"
                 style={{ position: "relative", display: "inline-block" }}
               >
-                <i
+                <img
+                  onClick={handleOpenNote}
+                  style={{ height: 36 }}
+                  src="https://cdn-icons-png.flaticon.com/128/3561/3561424.png"
+                  alt=""
+                />
+                {/* <i
                   class={`fa-solid fa-book fa-2xl ${
                     dark ? `text-light` : `text-dark`
                   } `}
                   onClick={handleOpenNote}
-                ></i>
+                ></i> */}
               </a>
 
               <a
@@ -368,17 +376,18 @@ function topnav() {
           </dialog> */}
 
           <div
-            className="text-black"
+            className={`text-black mt-10 rounded shadow py-1 ${dark?"bg-dark":""}`}
             style={{
               position: "fixed",
-              bottom: "200px",
+              bottom: "300px",
               right: "10px",
               width: isNotebookOpen ? "350px" : "5px", // Full width when open, small when hidden
-              height: isNotebookOpen ? "400px" : "5px", // Full height when open, small when hidden
+              height: isNotebookOpen ? "600px" : "5px", // Full height when open, small when hidden
               border: "none",
-              zIndex: 1000,
+              zIndex: 10,
               backgroundColor: isNotebookOpen ? "#fff" : "#f0f0f0", // Change background if needed
               cursor: "pointer", // Indicate clickable when minimized
+              overflow: isNotebookOpen ? "auto" : "hidden", // Add scrolling when open
             }}
             onClick={() => {
               if (!isNotebookOpen) {

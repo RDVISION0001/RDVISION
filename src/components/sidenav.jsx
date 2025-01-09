@@ -151,26 +151,26 @@ function Sidenav() {
                 className={`nav-link ${dark ? "text-dark" : "text-white"}`}
               >
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
-                <span>Dashboard</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Dashboard</span>
               </NavLink>
             </li>
 
             <li className="nav-item">
               <NavLink to="/super_admin_users" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-people-group"></i>
-                <span className="nav-text">Users</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Users</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/Verified_sales" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verified Sales</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/live_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-headset"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   Live Tickets{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ">
                     {liveTickets.totalAssignTickets}
@@ -181,13 +181,13 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/super_admin_orders" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-money-check-dollar"></i>
-                <span className="nav-text">Orders Status</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Orders Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>
               </NavLink>
             </li>
           </>
@@ -209,56 +209,56 @@ function Sidenav() {
                 />
               </div>
               <a href="#" className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light`:``} `}>
-                {firstName} {lastName}
-                <small className="d-block">{roleName}</small>
+                <span className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{firstName} {lastName}</span>
+                <small className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{roleName}</small>
               </a>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
-                <span className="nav-text">Dashboard</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/payment_window" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-money-check-dollar"></i>
-                <span className="nav-text">Payment Window</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Payment Window</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_to_everyone" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-user"></i>
-                <span className="nav-text">To Everyone</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>To Everyone</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/ticket_house" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-house-laptop"></i>
-                <span className="nav-text">Ticket-House</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Ticket-House</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_upload_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa fa-upload" aria-hidden="true"></i>
-                <span className="nav-text">Upload Tickets</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Upload Tickets</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/Verified_sales" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verified Sales</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_users" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-people-group"></i>
-                <span className="nav-text">Users</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Users</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/live_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-headset"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   Live Tickets{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ">
                     {liveTickets.totalAssignTickets}
@@ -269,7 +269,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/upload_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-upload"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   ABC{" "}
                   <span className="rounded-circle bg-danger text-white p-1 w">
                     {uploadedTickets.totalNewTickets}
@@ -280,7 +280,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/in_negotiation" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-handshake"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   In-Negotiation{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ">
                     {liveTickets.totalFollowupsTickets +
@@ -292,19 +292,19 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/mis_product" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file"></i>
-                <span className="nav-text">Products Information</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Products Information</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/admin_sales" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-hand-holding-dollar"></i>
-                <span className="nav-text">Sale's Status</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Sale's Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>
               </NavLink>
             </li>
           </>
@@ -332,12 +332,8 @@ function Sidenav() {
                     dark ? `text-light` : `text-dark`
                   }`}
                 >
-                  {firstName} {lastName}
-                  <small
-                    className={`d-block ${dark ? `text-light` : `text-dark`}`}
-                  >
-                    {roleName}
-                  </small>
+                  <h5 className="whitespace-nowrap">{firstName} {lastName}</h5>
+                  <p>{roleName}</p>                
                 </a>
               )}
             </li>
@@ -364,7 +360,7 @@ function Sidenav() {
                 className={`nav-link ${dark ? "text-light" : "text-dark"}`}
               >
                 <i className="fa-solid fa-headset"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   Live Tickets
                   <span className="rounded-circle bg-danger text-white p-1 ml-2">
                     {liveTickets.totalAssignTickets}
@@ -375,7 +371,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/upload_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-upload"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   ABC{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ml-2">
                     {uploadedTickets.totalNewTickets}
@@ -386,7 +382,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/in_negotiation" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-handshake"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   In-Negotiation{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ml-2">
                     {liveTickets.totalFollowupsTickets +
@@ -398,25 +394,25 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/after_sales_service" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-headphones"></i>
-                <span className="nav-text">ASS</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>ASS</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/mis_product" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-file"></i>
-                <span className="nav-text">Products Information</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Products Information</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/closer_sales_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-regular fa-flag"></i>
-                <span className="nav-text">Today Sales Report</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Today Sales Report</span>
               </NavLink>
             </li>
           </>
@@ -443,38 +439,38 @@ function Sidenav() {
                   />
                 </div>
                 <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                  {firstName} {lastName}
-                  <small className="d-block">{roleName}</small>
+                  <span className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{firstName} {lastName}</span>
+                  <small className={`d-block  ${dark ? "text-white" : "text-dark"}`} style={{fontSize:12}}>{roleName}</small>
                 </a>
               </li>
               <li className="nav-item">
                 <NavLink to="/image_upload" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                   <i class="fa-solid fa-image"></i>
-                  <span className="nav-text">Img Upload</span>
+                  <span className={` ${dark ? "text-white" : "text-dark"}`}>Img Upload</span>
                 </NavLink>
               </li>
               {/* <li className="nav-item">
               <NavLink to="/mis_product" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file"></i>
-                <span className="nav-text">Products Information</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Products Information</span>
               </NavLink>
             </li> */}
               <li className="nav-item">
                 <NavLink to="/new_products" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                   <i class="fa-solid fa-pills"></i>
-                  <span className="nav-text">New Products</span>
+                  <span className={` ${dark ? "text-white" : "text-dark"}`}>New Products</span>
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink to="/mis_product" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                   <i class="fa-solid fa-plus-minus"></i>
-                  <span className="nav-text">MIS-PRODUCT_DEP</span>
+                  <span className={` ${dark ? "text-white" : "text-dark"}`}>MIS-PRODUCT_DEP</span>
                 </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink to="/admin_upload_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                   <i class="fa fa-upload" aria-hidden="true"></i>
-                  <span className="nav-text">Upload Tickets</span>
+                  <span className={` ${dark ? "text-white" : "text-dark"}`}>Upload Tickets</span>
                 </NavLink>
               </li>
             </>
@@ -503,7 +499,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
-                <span className="nav-text">Index</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Index</span>
               </NavLink>
             </li>
           </>
@@ -532,19 +528,19 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/captain_index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
-                <span className="nav-text">Dashboard</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/captain_to_closer" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-people-group"></i>
-                <span className="nav-text">To Closer</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>To Closer</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/live_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-headset"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   Live Tickets{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ">
                     {liveTickets.totalAssignTickets}
@@ -555,7 +551,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/upload_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-upload"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   ABC{" "}
                   <span className="rounded-circle bg-danger text-white p-1 w">
                     {uploadedTickets.totalNewTickets}
@@ -566,7 +562,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/in_negotiation" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-handshake"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   In-Negotiation{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ">
                     {liveTickets.totalFollowupsTickets +
@@ -578,13 +574,13 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/captain_sales" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-hand-holding-dollar"></i>
-                <span className="nav-text">Sale's Status</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Sale's Status</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>
               </NavLink>
             </li>
           </>
@@ -613,20 +609,20 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/senior_supervisor_index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
-                <span className="nav-text">Dashboard</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Dashboard</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/senior_supervisor_to_captain" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-user"></i>
-                <span className="nav-text">Team</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Team</span>
               </NavLink>
             </li>
 
             <li className="nav-item">
               <NavLink to="/live_tickets" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-headset"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   {" "}
                   Live Tickets{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ml-2">
@@ -638,7 +634,7 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/in_negotiation" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-handshake"></i>
-                <span className="nav-text">
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>
                   In-Negotiation{" "}
                   <span className="rounded-circle bg-danger text-white p-1 ml-2">
                     {liveTickets.totalFollowupsTickets +
@@ -650,31 +646,31 @@ function Sidenav() {
             <li className="nav-item">
               <NavLink to="/assign_ticket_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-bug"></i>
-                <span className="nav-text">Assign Ticket Report</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Assign Ticket Report</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/ticket_house" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-house-laptop"></i>
-                <span className="nav-text">Ticket-House</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Ticket-House</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/sales_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-trophy"></i>
-                <span className="nav-text">Today Sales Report</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Today Sales Report</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="verified_sales" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-dollar-sign"></i>
-                <span className="nav-text">Verified Sales</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Verified Sales</span>
               </NavLink>
             </li>
             <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span className="nav-text">Invoice</span>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>
               </NavLink>
             </li>
           </>
@@ -683,7 +679,9 @@ function Sidenav() {
         <li className="nav-item">
           <NavLink to="/email" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
             <i className="fa-solid fa-gear"></i>
+
             <span className="nav-text">Emails</span>
+
           </NavLink>
         </li>
         {localStorage.getItem("userId") && (

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { Modal, Table } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import Uploaded_product from '../pages/uploaded_product'
+import { useAuth } from '../auth/AuthContext';
 
 
 function New_Products() {
@@ -13,6 +14,7 @@ function New_Products() {
     const [isEditProductOpen, setIsEditProductOpen] = useState(false)
     const [selectedProductId, setSelectedProductId]=useState()
     const [selectedPtoductName,setSelectedProductName]=useState("")
+    const {dark} = useAuth()
 
     // Filter products by search term
     const filteredProducts = products.filter(product =>
@@ -82,10 +84,10 @@ function New_Products() {
 
 
             {/* Product Card List */}
-            <section className="followup-table-section py-3">
-                <div className="container-fluid">
-                    <div className="table-wrapper tabbed-table">
-                        <h3 className="title">Products List</h3>
+            <section className={`followup-table-section py-3 ${dark ? "bg-dark":""}`}>
+                <div className="container-fluid ">
+                    <div className={`table-wrapper  tabbed-table ${dark ? "bg-dark text-light":""}`}>
+                        <h3 className={`${dark ? "text-light":""}`}>Products List</h3>
 
                         {/* Search Bar */}
                         <div className="col-md-5 mb-3">
@@ -108,17 +110,17 @@ function New_Products() {
                         {/* Products Table */}
                         <div className="tab-content recent-transactions-tab-body" id="followUpContent">
                             <div
-                                className="tab-pane fade show active"
+                                className="tab-pane fade show active border"
                                 id="new-arrivals-tkts-tab-pane"
                                 role="tabpanel"
                                 aria-labelledby="new-arrivals-tkts-tab"
                                 tabIndex="0"
                             >
-                                <table className="table table-striped">
+                                <table className={`table table-striped ${dark?"table-dark":""}`}>
                                     <thead>
                                         <tr>
-                                            <th scope="col">New Query Product Name</th>
-                                            <th scope="col">Action</th>
+                                            <th className={`px-2 border ${dark?"bg-secondary":""}`} scope="col">New Query Product Name</th>
+                                            <th className={`px-2 border ${dark?"bg-secondary":""}`} scope="col">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>

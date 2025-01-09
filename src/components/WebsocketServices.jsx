@@ -5,6 +5,7 @@ import axiosInstance from "../axiosInstance";
 import R2ZWYCP from '../assets/notification/chatN.mp3';
 import { FormLabel, Modal } from "react-bootstrap";
 import { FaPen } from "react-icons/fa";
+import { useAuth } from "../auth/AuthContext";
 
 
 const WebsocketService = () => {
@@ -26,7 +27,7 @@ const WebsocketService = () => {
     const [isUplaoded, setIsUploaded] = useState(false)
     const [seeImageUrl, setSeeImageUrl] = useState("")
     const [isImageView, setIsImageView] = useState(false)
-
+    const {dark} = useAuth()
     const [files, setFiles] = useState("");
     const [title, setTitle] = useState("");
     const [uploadStatus, setUploadStatus] = useState(""); // To show upload status
@@ -318,7 +319,7 @@ const WebsocketService = () => {
     return (
         <>
             {selectedRecipient ? <div
-                className="chat-widget"
+                className="chat-widget "
                 style={{
                     width: "350px",
                     height: "500px",
@@ -343,7 +344,7 @@ const WebsocketService = () => {
                     }}
                 >
                     <i class="fa-solid fa-arrow-right fa-rotate-180" onClick={() => setSelectedRecipient(null)}></i>
-                    <div className="d-flex justify-content-between align-items-center">
+                    <div className="d-flex justify-content-between align-items-center ">
                         <div className="d-flex justify-content-between align-items-center ">
                             <img
                                 style={{
@@ -369,7 +370,7 @@ const WebsocketService = () => {
                         flex: 1,
                         padding: "10px",
                         overflowY: "auto",
-                        background: "#F4F4F6",
+                        background: dark?'#000':'#fff',
                     }}
                 >
                     {messages.filter((message) => (message.sentByUserId === userId && message.sentToUserId === selectedRecipient) || (parseInt(message.sentByUserId) === selectedRecipient && message.sentToUserId === parseInt(userId))).map((msg, index) => (
@@ -607,10 +608,11 @@ const WebsocketService = () => {
                 centered={false}
                 className=""
             >
-                <Modal.Body className="d-flex flex-column justify-content-center align-items-center">
+                <Modal.Body className={`d-flex flex-column justify-content-center align-items-center ${dark?"bg-secondary":""}`}>
                     <FormLabel className="mb-3 text-black">Upload Image to Send</FormLabel>
                     <div
                         style={{
+                           
                             width: "300px",
                             height: "200px",
                             position: "relative", // To position the pen icon over the image

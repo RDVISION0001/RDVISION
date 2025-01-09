@@ -32,6 +32,7 @@ function ActionMode() {
     const [searchString, setSearchString] = useState("")
     const [selectedStatus, setSelectedStatus] = useState("New")
     const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket") ? localStorage.getItem("currentWorkingTicket") : 0)
+    const {dark} = useAuth()
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
@@ -373,14 +374,14 @@ function ActionMode() {
 
     return (
         <>
-            <section className="min-vh-100 bg-light py-3 ">
-                <div className="container-fluid">
-                    <div className="d-flex justify-content-center flex-column">
+            <section className={`container ${dark?"bg-dark":'bg-light'} `}>
+                <div className="container-fluid "> 
+                    <div className={`d-flex justify-content-center flex-column ${dark ?"bg-dark":""}`}>
                         <div className='text-center d-flex justify-content-center m-3'>
                             <button className="bg-light text-success border" onClick={() => setSelectedStatus("New")}>{selectedStatus === "New" && "✅"} New Tickets</button>
                             <button className="bg-light text-success border" style={{ marginLeft: "15px" }} onClick={() => setSelectedStatus("Follow")}>{selectedStatus !== "New" && "✅"} Negotiations</button>
                         </div>
-                        <div className="shadow border p-3 rounded bg-white w-100" style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+                        <div className={`shadow border p-3 rounded bg-white ${dark?"bg-dark":""} w-100`} style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
                             <div className="card " style={{ minHeight: "60vh" }}>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
                                     {ticket && <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>}
@@ -388,7 +389,7 @@ function ActionMode() {
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", right: "-20px" }}>
                                     {ticket && <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>}
                                 </div>
-                                <div className='d-flex justify-content-between mt-3'>
+                                <div className={`d-flex justify-content-between mt-3 ${dark ? "bg-secondary":""}`}>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Total Tickets:</span>
                                         <span className="ms-2 h4 text-primary">{totalTicket}</span>
@@ -400,7 +401,7 @@ function ActionMode() {
                                 </div>
 
 
-                                <div className="card-body" style={{ minHeight: "35vh" }}>
+                                <div className={`card-body  ${dark?"bg-secondary":""}`} style={{ minHeight: "35vh" }}>
                                     {ticket && (
                                         <div className="d-flex gap-2 justify-content-center" style={{ marginBottom: "30px" }}>
                                             {/* Info Button */}
@@ -541,7 +542,7 @@ function ActionMode() {
                                 </div>
                             </div>
 
-                            <div className="d-flex justify-content-between mt-3">
+                            <div className={`d-flex justify-content-between mt-3 ${dark?"bg-secondary":""}`}>
                                 <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
                                 <div>
                                     <label htmlFor="number ">Enter ticket number </label>
