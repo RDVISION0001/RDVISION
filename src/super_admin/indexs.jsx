@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axiosInstance from "../axiosInstance";
 import { Line, Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -12,46 +13,155 @@ import {
   Legend,
 } from "chart.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { subMonths, format } from "date-fns";
+import { useAuth } from "../auth/AuthContext";
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
 
 const indexs = () => {
+  const { dark } = useAuth();
+  const [widgetData, setWidgetData] = useState({
+    todaySale: 0,
+    totalDelivered: 0,
+    chargeBack: 0,
+    ordersCanceled: 0,
+  });
+
+  const [lineChartData, setLineChartData] = useState(null);
+  const [saleAmountData, setSaleAmountData] = useState(null)
+  const [dateRange, setDateRange] = useState({
+    from: subMonths(new Date(), 1), // Default: Previous month
+    to: new Date(), // Default: Today
+  });
+
+  const fetchData = async () => {
+    try {
+      const payload = {
+        from: format(dateRange.from, "yyyy-MM-dd"),
+        to: format(dateRange.to, "yyyy-MM-dd"),
+      };
+      const response = await axiosInstance.post("/invoice/salesChart", payload); // Replace with your API endpoint
+      const {
+        allCancelled,
+        allDelivered,
+        allInShipping,
+        returned,
+        totalAwaiting,
+        totalSales,
+      } = response.data;
+
+      setWidgetData({
+        todaySale: totalSales,
+        totalDelivered: allDelivered,
+        chargeBack: allCancelled, // Assuming chargeBack is same as allCancelled
+        ordersCanceled: returned, // Assuming ordersCanceled is same as returned
+      });
+    } catch (error) {
+      console.error("Error fetching widget data:", error);
+    }
+  };
+
+  const fetchLineChartData = async () => {
+    try {
+      const payload = {
+        from: format(dateRange.from, "yyyy-MM-dd"),
+        to: format(dateRange.to, "yyyy-MM-dd"),
+      };
+      const response = await axiosInstance.post("/invoice/salesChartData", payload); // Replace with your API endpoint
+      setLineChartData(response.data); // Assuming the response data contains the necessary chart data
+    } catch (error) {
+      console.error("Error fetching line chart data:", error);
+    }
+  };
+
+  const fetchBarChartAmountOfSales = async () => {
+    try {
+      const payload = {
+        from: format(dateRange.from, "yyyy-MM-dd"),
+        to: format(dateRange.to, "yyyy-MM-dd"),
+      };
+      const response = await axiosInstance.post("/invoice/salesAmountChart", payload); // Replace with your API endpoint
+      setSaleAmountData(response.data); // Assuming the response data contains the necessary chart data
+    } catch (error) {
+      console.error("Error fetching line chart data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchLineChartData();
+    fetchBarChartAmountOfSales()
+  }, [dateRange]);
+
+  const handleFromDateChange = (date) => {
+    setDateRange((prev) => ({ ...prev, from: date }));
+  };
+
+  const handleToDateChange = (date) => {
+    setDateRange((prev) => ({ ...prev, to: date }));
+  };
+
   return (
-    <div className="container-fluid">
+    <div className={`container-fluid ${dark ? "bg-dark text-light" : "bg-light text-dark"}`}>
       <div className="p-4">
-        {/* Widgets Section */}
-        <div className="row mb-4">
-          <div className="col-md-3">
-            <WidgetCard icon="🛍️" title="Today Sale" value="78" color="success" />
-          </div>
-          <div className="col-md-3">
-            <WidgetCard icon="📦" title="Total Delivered" value="459" color="success" />
-          </div>
-          <div className="col-md-3">
-            <WidgetCard icon="⚠️" title="Charge Back" value="78" color="primary" />
-          </div>
-          <div className="col-md-3">
-            <WidgetCard icon="❌" title="Orders Canceled" value="21" color="danger" />
+        <div className="mb-4 d-flex justify-content-between align-items-center">
+          <h4>Dashboard</h4>
+          <div className="d-flex align-items-center">
+            <div className="me-3">
+              <label className="fw-bold">From Date:</label>
+              <DatePicker
+                selected={dateRange.from}
+                onChange={handleFromDateChange}
+                className="form-control"
+                dateFormat="yyyy-MM-dd"
+              />
+            </div>
+            <div>
+              <label className="fw-bold">To Date:</label>
+              <DatePicker
+                selected={dateRange.to}
+                onChange={handleToDateChange}
+                className="form-control"
+                dateFormat="yyyy-MM-dd"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Charts Section */}
+        <div className="row mb-4">
+          <div className="col-md-3">
+            <WidgetCard icon="🛍️" title="Today Sale" value={widgetData.todaySale} color="success" />
+          </div>
+          <div className="col-md-3">
+            <WidgetCard icon="📦" title="Total Delivered" value={widgetData.totalDelivered} color="success" />
+          </div>
+          <div className="col-md-3">
+            <WidgetCard icon="⚠️" title="Charge Back" value={widgetData.chargeBack} color="primary" />
+          </div>
+          <div className="col-md-3">
+            <WidgetCard icon="❌" title="Orders Canceled" value={widgetData.chargeBack} color="danger" />
+          </div>
+        </div>
+
         <div className="row mb-4">
           <div className="col-md-8">
             <div className="card p-3">
               <h5>Orders Delivered</h5>
-              <LineChart />
+              {/* Pass lineChartData to LineChart */}
+              {lineChartData && <LineChart data={lineChartData} />}
             </div>
           </div>
           <div className="col-md-4">
             <div className="card p-3">
               <h5>Daily Orders Overview</h5>
-              <BarChart />
+              {saleAmountData && <LineChart data={saleAmountData} />}
             </div>
             {/* New "Recent sale"*/}
-            <div className="card p-4 mt-4 rounded-lg shadow-sm" style={{ backgroundColor: "rgba(144, 238, 144, 0.2)" }}>
-              <h5 className="text-center text-success" style={{ color: "#006400" }}>
+            <div className="card p-4 mt-4 rounded-lg shadow-sm" style={{ backgroundColor: dark ? "rgba(0, 128, 0, 0.2)" : "rgba(144, 238, 144, 0.2)" }}>
+              <h5 className="text-center text-success" style={{ color: dark ? "#32cd32" : "#006400" }}>
                 <a href="#" className="badge bg-success">
                   Recent Sale
                 </a>
@@ -77,7 +187,6 @@ const indexs = () => {
           </div>
         </div>
 
-        {/* Recently Placed Orders */}
         <div className="card p-3">
           <h5>Recently Placed Orders</h5>
           <OrderTable />
@@ -101,48 +210,7 @@ const WidgetCard = ({ icon, title, value, color }) => {
 };
 
 // Line Chart Component
-const LineChart = () => {
-  const data = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    datasets: [
-      {
-        label: "Orders Delivered",
-        data: [1000, 2000, 1500, 3000, 4000, 2500, 3500, 4500, 5000, 3000, 4000, 5000],
-        borderColor: "rgba(75, 192, 192, 1)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
-        tension: 0.4,
-      },
-      {
-        label: "Total Sales",
-        data: [1500, 2500, 2000, 3500, 4500, 3000, 4000, 5000, 5500, 4000, 5000, 6000],
-        borderColor: "rgba(0, 255, 0, 1)",  // Green color
-        backgroundColor: "rgba(0, 255, 0, 0.2)",
-        tension: 0.4,
-      },
-      {
-        label: "Canceled Orders",
-        data: [50, 100, 75, 150, 200, 100, 150, 175, 200, 100, 150, 175],
-        borderColor: "rgba(255, 99, 132, 1)",  // Red color
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        tension: 0.4,
-      },
-      {
-        label: "Pending Orders",
-        data: [200, 300, 250, 400, 450, 350, 500, 600, 700, 500, 600, 700],
-        borderColor: "rgba(255, 165, 0, 1)",  // Orange color
-        backgroundColor: "rgba(255, 165, 0, 0.2)",
-        tension: 0.4,
-      },
-      {
-        label: "Returned Orders",
-        data: [20, 30, 25, 40, 50, 30, 45, 55, 60, 40, 50, 60],
-        borderColor: "rgba(255, 255, 0, 1)",  // Yellow color
-        backgroundColor: "rgba(255, 255, 0, 0.2)",
-        tension: 0.4,
-      },
-    ],
-  };
-
+const LineChart = ({ data }) => {
   const options = {
     responsive: true,
     plugins: {
@@ -157,23 +225,7 @@ const LineChart = () => {
 };
 
 // Bar Chart Component
-const BarChart = () => {
-  const data = {
-    labels: ["Sep 01", "Sep 02", "Sep 03", "Sep 04", "Sep 05", "Sep 06", "Sep 07"],
-    datasets: [
-      {
-        label: "Total Orders",
-        data: [50, 60, 70, 80, 90, 75, 85],
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-      },
-      {
-        label: "Canceled Orders",
-        data: [10, 15, 8, 12, 10, 5, 7],
-        backgroundColor: "rgba(255, 99, 132, 0.6)",
-      },
-    ],
-  };
-
+const BarChart = ({ data }) => {
   const options = {
     responsive: true,
     plugins: {
