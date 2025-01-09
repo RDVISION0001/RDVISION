@@ -40,13 +40,13 @@ const logout = () => {
       toast.info("Please select a reason")
     }
   }
-  const { logout } = useAuth();
+  const { logout ,dark } = useAuth();
   const navigate = useNavigate()
 
 
   return (
     <div>
-      <a onClick={handleShow}>
+      <a className={ `${dark?`text-white`:`text-dark`}`} onClick={handleShow}>
         Log Out
       </a>
       <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
@@ -78,8 +78,8 @@ const logout = () => {
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleClose}>
                 Cancel
               </button>
-              <button className="btn btn-primary" onClick={handleSubmit}>
-                Logout
+              <button className={`btn btn-primary ${dark ? `text-light`:`text-dark`} `} onClick={handleSubmit}>
+                Logout 
               </button>
             </div>
           </form>

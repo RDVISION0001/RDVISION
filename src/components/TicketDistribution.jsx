@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 
 const TicketDistribution = () => {
     const [ticketData, setTicketData] = useState([]);
-    const { userId } = useAuth()
+    const { userId ,dark} = useAuth()
 
     // Sort the data in ascending order based on ticket count
     const sortedData = ticketData.sort((a, b) => a.ticketCount - b.ticketCount);
@@ -78,7 +78,7 @@ const TicketDistribution = () => {
 
 
     return (
-        <div className="container  z-1  " >
+        <div className={`container  z-1 ${dark ? `bg-dark`:`bg-white`} `} >
             <div className="progress" style={{ height: '50px', position: 'relative' }}>
                 {sortedData.map(({ userId, userName, ticketCount, count, status, type }, index) => (
                     <div

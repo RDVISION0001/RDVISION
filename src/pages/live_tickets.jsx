@@ -27,7 +27,7 @@ import TicketTrack from "../components/TicketTrack";
 import SaleConframtion from "../components/SaleConframtion";
 
 function live_tickets() {
-  const { userId } = useAuth();
+  const { userId,dark } = useAuth();
   const { setFolowupUpdate } = useAuth();
   const { setUserReportReloader } = useAuth();
 
@@ -632,13 +632,13 @@ function live_tickets() {
 
   return (
     <>
-      <div>
+      <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
         <div>
           <div>
             {/* <!-- Tabbed Ticket Table --> */}
-            <section className="followup-table-section d-flex">
+            <section className={`followup-table-section d-flex ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
               <div className="container-fluid">
-                <div className="table-wrapper">
+                <div className={`table-wrapper ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                   {/* <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3> */}
                   <ul
                     className="nav recent-transactions-tab-header nav-tabs"
@@ -651,9 +651,9 @@ function live_tickets() {
                     >
                       {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
                       {/* <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i> */}
-                      <div style={{ fontWeight: "bold", fontSize: "20px" }}>
+                      <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontWeight: "bold", fontSize: "20px" }}>
                         {" "}
-                        Live Tickets
+                        Live Tickets 
                       </div>
 
                       <div className="col-md-5">
@@ -762,7 +762,7 @@ function live_tickets() {
                     </li>
                   </ul>
                   {activeTab === "followUp" ? (
-                    <div className="d-flex justify-content-center">
+                    <div className={`d-flex justify-content-center ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                       <div
                         className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
                           followUpStatus === "Call_Back"
@@ -859,21 +859,21 @@ function live_tickets() {
                       tabindex="0"
                     >
                       <div
-                        className="followups-table table-responsive table-height border rounded"
+                        className={`followups-table table-responsive table-height border rounded ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}
                         style={{ maxHeight: "47rem" }}
                       >
-                        <table className="table table-border">
+                        <table className={`table table-border ${dark ? `table-dark text-white`:``}`}>
                           <thead className="sticky-top">
                             <tr>
-                              <th tabindex="0">S.No.</th>
-                              <th tabindex="0">Date/Time</th>
-                              <th tabindex="0">Country</th>
-                              <th tabindex="0">Customer Name</th>
-                              <th tabindex="0">Customer Number</th>
-                              <th tabindex="0">Customer Email</th>
-                              <th tabindex="0">Status</th>
-                              <th tabindex="0">Requirement</th>
-                              <th tabindex="0">Action</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">S.No.</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Date/Time</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Country</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Name</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Number</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Email</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Status</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Requirement</th>
+                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (

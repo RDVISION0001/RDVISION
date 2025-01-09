@@ -35,3 +35,15 @@
 .read-the-docs {
   color: #888;
 }
+
+
+/* Custom CSS for light mode */
+#searchUsers::placeholder {
+  color: gray;
+  opacity: 1; /* Ensure full opacity for the placeholder */
+}
+
+/* Custom CSS for dark mode */
+.dark-placeholder::placeholder {
+  color: white;
+}
