@@ -134,7 +134,11 @@ import TicketHouse from './components/TicketHouse';
 import TicketTrack from './components/TicketTrack';
 import TicketDistribution from './components/TicketDistribution';
 import NotificationContainer from './components/NotificationContainer';
+
 import { useSelector } from 'react-redux';
+
+
+import EmailView from './components/EmailView';
 
 
 
@@ -253,6 +257,8 @@ function App() {
 
                       {/* inventory  management*/}
                       <Route exact path="/index" element={<Indexi />} />
+                      <Route exact path="/email" element={<EmailView />} />
+
 
                     </Route>
                   </Routes>

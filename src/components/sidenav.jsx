@@ -676,12 +676,14 @@ function Sidenav() {
           </>
         )}
 
-        {/* <li className="nav-item">
-          <NavLink to="/settings" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
+        <li className="nav-item">
+          <NavLink to="/email" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
             <i className="fa-solid fa-gear"></i>
-            <span className={` ${dark ? "text-white" : "text-dark"}`}>Settings</span>
+
+            <span className="nav-text">Emails</span>
+
           </NavLink>
-        </li> */}
+        </li>
         {localStorage.getItem("userId") && (
           <li className="nav-item">
             <Link className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
