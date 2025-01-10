@@ -39,7 +39,7 @@ const ViewInvoice = () => {
     const fetchInvoice = async () => {
         try {
             const response = await axiosInstance.get(`/invoice/viewInvoice/${orderid}`);
-            console.log('Invoice viewed successfully:', response.data);
+            console.log(response.data)
         } catch (error) {
             console.error('Error viewing invoice:', error);
         }
@@ -67,7 +67,6 @@ const ViewInvoice = () => {
             setOrderData(response.data);
             setCurrency(response.data.orderDetails.productOrders[0].currency);
             setProductOrders(response.data.orderDetails.productOrders)
-            console.log(response.data.orderDetails.productOrders[0].currency);
         } catch (error) {
             console.error("Error fetching order details:", error);
             setError("Failed to load order details. Please try again later.");
@@ -87,8 +86,6 @@ const ViewInvoice = () => {
         try {
             const response = await axiosInstance.get(`/address/getAddress/${orderid}`);
             setAddressData(response.data.dto);
-            console.log(response.data.dto)
-            toast.success("Address Loaded")
 
         } catch (err) {
             console.error('Error fetching address details:', err);
@@ -120,7 +117,7 @@ const ViewInvoice = () => {
             try {
                 const stripe = await stripePromise;
 
-                const response = await fetch(`https://rdvision.in/invoice/create-checkout-session/${orderid}`, {
+                const response = await fetch(`https://backend.rdvision.in/invoice/create-checkout-session/${orderid}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -227,9 +224,8 @@ const ViewInvoice = () => {
                                     {productOrder.product[0].name}
                                 </td>
                                 <td className='border'>
-                                    {productOrder.product[0].images && productOrder.product[0].images.map((image, index) =>
-                                        <img key={index} style={{ maxHeight: "30px" }} onClick={() => viewImage(image)} src={image} alt="" />
-                                    )}
+                                <img key={index} style={{ maxHeight: "30px" }} onClick={() => viewImage(`https://image.rdvision.in/images/getProductImage/${productOrder.product[0].productId}`)} src={`https://image.rdvision.in/images/getProductImage/${productOrder.product[0].productId}`} alt="a" />
+
                                 </td>
                                 <td className='border'>{productOrder.product[0].composition} - {productOrder.product[0].treatment}</td>
                                 <td className='border'>{productOrder.quantity}</td>
