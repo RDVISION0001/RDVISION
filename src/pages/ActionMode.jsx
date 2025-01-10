@@ -375,14 +375,14 @@ function ActionMode() {
     return (
         <>
             <section className={`container ${dark?"bg-dark":'bg-light'} `}>
-                <div className="container-fluid "> 
+                <div className="container-fluid  "> 
                     <div className={`d-flex justify-content-center flex-column ${dark ?"bg-dark":""}`}>
                         <div className='text-center d-flex justify-content-center m-3'>
                             <button className="bg-light text-success border" onClick={() => setSelectedStatus("New")}>{selectedStatus === "New" && "✅"} New Tickets</button>
                             <button className="bg-light text-success border" style={{ marginLeft: "15px" }} onClick={() => setSelectedStatus("Follow")}>{selectedStatus !== "New" && "✅"} Negotiations</button>
                         </div>
-                        <div className={`shadow border p-3 rounded bg-white ${dark?"bg-dark":""} w-100`} style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
-                            <div className="card " style={{ minHeight: "60vh" }}>
+                        <div className={`shadow border    p-3 rounded ${dark?"bg-dark border border-secondary":""} w-100`} style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+                            <div className={`card  ${dark ? "bg-secondary":""} `} style={{ minHeight: "60vh" }}>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
                                     {ticket && <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>}
                                 </div>
@@ -392,11 +392,11 @@ function ActionMode() {
                                 <div className={`d-flex justify-content-between mt-3 ${dark ? "bg-secondary":""}`}>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Total Tickets:</span>
-                                        <span className="ms-2 h4 text-primary">{totalTicket}</span>
+                                        <span className={`ms-2 h4 text-primary ${dark?'text-warning':""} `}>{totalTicket}</span>
                                     </div>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Current Ticket Number:</span>
-                                        <span className="ms-2 h4 text-success">{currentTicket} / {totalTicket}</span>
+                                        <span className={`ms-2 h4 text-primary ${dark?'text-warning':""} `}>{currentTicket} / {totalTicket}</span>
                                     </div>
                                 </div>
 

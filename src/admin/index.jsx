@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Table, InputGroup, FormControl } from "react-bootstrap";
 import axiosInstance from "../axiosInstance"; // Assuming axiosInstance is configured
-import { Form, Modal, Button } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+import { Form, Modal, Button } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
+import { useAuth } from "../auth/AuthContext";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("totalticket");
@@ -16,7 +17,7 @@ const Index = () => {
   const [todayInvoices, setTodayInvoices] = useState([]);
   const [showCareerModal, setShowCareerModal] = useState(false);
   const [showTrackingModal, setShowTrackingModal] = useState(false);
-
+  const { dark } = useAuth();
   const [careers, setCareers] = useState([]);
   const [selectedCareer, setSelectedCareer] = useState("");
   const [tracking, setTracking] = useState("");
@@ -26,11 +27,11 @@ const Index = () => {
   const [preparingShipment, setPreparingShipment] = useState([]);
   const [awaitingtracking, setAwaitingtracking] = useState([]);
 
-
   // Fetch careers data when the modal is opened
   const handleShowModal = (invoiceId) => {
     setCurrentInvoiceId(invoiceId);
-    axiosInstance.get(`/career/gelAll`)
+    axiosInstance
+      .get(`/career/gelAll`)
       .then((response) => setCareers(response.data))
       .catch((error) => console.error("Error fetching careers:", error));
     setShowCareerModal(true);
@@ -49,9 +50,12 @@ const Index = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post(`/invoice/addCareer/${currentInvoiceId}?careerName=${selectedCareer}`, {
-        careerName: selectedCareer
-      });
+      const response = await axiosInstance.post(
+        `/invoice/addCareer/${currentInvoiceId}?careerName=${selectedCareer}`,
+        {
+          careerName: selectedCareer,
+        }
+      );
       toast.success(response.data.message || "Career added successfully!");
       handleCloseModal();
     } catch (error) {
@@ -82,23 +86,27 @@ const Index = () => {
     }
   };
 
-
-
-  //formate date 
+  //formate date
   const formatDateToString = (dateArray) => {
     const [year, month, day] = dateArray;
-    return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   // Fetch data when the tab changes
   useEffect(() => {
     // Fetch all tickets
-    axiosInstance.get(`/third_party_api/ticket/getAllNewTickets`)
+    axiosInstance
+      .get(`/third_party_api/ticket/getAllNewTickets`)
       .then((response) => {
         setTickets(response.data);
         const today = new Date().toISOString().split("T")[0];
         const filteredToday = response.data.filter((ticket) => {
-          const ticketDate = new Date(ticket.queryTime).toISOString().split("T")[0];
+          const ticketDate = new Date(ticket.queryTime)
+            .toISOString()
+            .split("T")[0];
           return ticketDate === today;
         });
         setTodayTickets(filteredToday);
@@ -106,7 +114,8 @@ const Index = () => {
       .catch((error) => console.error("Error fetching tickets:", error));
 
     // Fetch all invoices
-    axiosInstance.get(`/invoice/getVerifiedInvoives`)
+    axiosInstance
+      .get(`/invoice/getVerifiedInvoives`)
       .then((response) => {
         setInvoices(response.data);
         const today = new Date().toISOString().split("T")[0];
@@ -115,17 +124,22 @@ const Index = () => {
           return saleDate === today;
         });
         setTodayInvoices(filteredToday);
-        const preparingShipmentInvoices = response.data.filter((invoice) => invoice.isVerifiedByAdmin === true);
+        const preparingShipmentInvoices = response.data.filter(
+          (invoice) => invoice.isVerifiedByAdmin === true
+        );
         setPreparingShipment(preparingShipmentInvoices);
-        const awaitingTrackingInvoices = response.data.filter((invoice) =>
-          invoice.trackingNumber === null && invoice.isVerifiedByAdmin === true
+        const awaitingTrackingInvoices = response.data.filter(
+          (invoice) =>
+            invoice.trackingNumber === null &&
+            invoice.isVerifiedByAdmin === true
         );
         setAwaitingtracking(awaitingTrackingInvoices);
       })
       .catch((error) => console.error("Error fetching invoices:", error));
 
     // Fetch all customers
-    axiosInstance.get(`/customers/getAll`)
+    axiosInstance
+      .get(`/customers/getAll`)
       .then((response) => {
         const existing = response.data.filter(
           (customer) => customer.customerType?.toLowerCase() === "existing"
@@ -140,26 +154,34 @@ const Index = () => {
       .catch((error) => console.error("Error fetching customers:", error));
   }, []);
 
-
-  const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
+  const getFlagUrl = (countryIso) =>
+    `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
   const handleVerifyInvoice = async (invoiceId) => {
     try {
-      const response = await axiosInstance.get(`/invoice/verifyInvoiceByAdmin/${invoiceId}`);
-      toast.success(response.data.message || 'Invoice verified successfully!', { autoClose: 3000 });
+      const response = await axiosInstance.get(
+        `/invoice/verifyInvoiceByAdmin/${invoiceId}`
+      );
+      toast.success(response.data.message || "Invoice verified successfully!", {
+        autoClose: 3000,
+      });
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to verify invoice', { autoClose: 3000 });
+      toast.error(error.response?.data?.message || "Failed to verify invoice", {
+        autoClose: 3000,
+      });
     }
   };
 
   const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
+    if (!timestamp) return "N/A";
     const date = new Date(timestamp);
-    return date.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).replace(',', ''); // Removes the comma if it appears
+    return date
+      .toLocaleDateString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
+      .replace(",", ""); // Removes the comma if it appears
   };
 
   // Search logic
@@ -168,27 +190,31 @@ const Index = () => {
   };
 
   // Filtered data for tickets
-  const filteredTickets = tickets.filter((ticket) =>
-    ticket.senderName?.toLowerCase().includes(search.toLowerCase()) ||
-    ticket.senderEmail?.toLowerCase().includes(search.toLowerCase())
+  const filteredTickets = tickets.filter(
+    (ticket) =>
+      ticket.senderName?.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.senderEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Filtered data for today's tickets
-  const filteredTodayTickets = todayTickets.filter((ticket) =>
-    ticket.senderName?.toLowerCase().includes(search.toLowerCase()) ||
-    ticket.senderEmail?.toLowerCase().includes(search.toLowerCase())
+  const filteredTodayTickets = todayTickets.filter(
+    (ticket) =>
+      ticket.senderName?.toLowerCase().includes(search.toLowerCase()) ||
+      ticket.senderEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Filtered data for existing customers
-  const filteredCustomers = customers.filter((customer) =>
-    customer.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    customer.customerEmail?.toLowerCase().includes(search.toLowerCase())
+  const filteredCustomers = customers.filter(
+    (customer) =>
+      customer.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      customer.customerEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Filtered data for new customers
-  const filteredNewCustomers = newCustomers.filter((customer) =>
-    customer.customerName?.toLowerCase().includes(search.toLowerCase()) ||
-    customer.customerEmail?.toLowerCase().includes(search.toLowerCase())
+  const filteredNewCustomers = newCustomers.filter(
+    (customer) =>
+      customer.customerName?.toLowerCase().includes(search.toLowerCase()) ||
+      customer.customerEmail?.toLowerCase().includes(search.toLowerCase())
   );
 
   // Filtered data for sales/invoices
@@ -220,39 +246,129 @@ const Index = () => {
   );
 
   return (
-    <section className="followup-table-section">
-      <div className="container-fluid">
+    <section className={`followup-table-section ${dark ? "bg-dark" : ""}`}>
+      <div className="container-fluid ">
         <div className="container">
           {/* Tabs */}
           <Tabs
             activeKey={activeTab}
             onSelect={(k) => setActiveTab(k)}
-            className="mb-3"
+            className="py-3"
           >
-            <Tab eventKey="totalticket" title={<>Total Tickets (<span style={{ color: 'red' }}>{tickets.length}</span>)</>} />
-            <Tab eventKey="todaytickets" title={<>Today's Tickets (<span style={{ color: 'red' }}>{todayTickets.length}</span>)</>} />
-            <Tab eventKey="totalsales" title={<> Total Sales (<span style={{ color: 'red' }}>{invoices.length}</span>)</>} />
-            <Tab eventKey="todaysales" title={<> Today's Sales (<span style={{ color: 'red' }}>{todayInvoices.length}</span>)   </>} />
-            <Tab eventKey="preparingforshipment" title={<>Preparing for Shipment (<span style={{ color: 'red' }}>{preparingShipment.length}</span>)</>} />
-            <Tab eventKey="awaitingtracking" title={<>Awaiting Tracking (<span style={{ color: 'red' }}>{awaitingtracking.length}</span>) </>} />
-            <Tab eventKey="existingcustomer" title={<> Existing Customers (<span style={{ color: 'red' }}>{customers.length}</span>)</>} />
-            <Tab eventKey="newcustomer" title={<>New Customers (<span style={{ color: 'red' }}>{newCustomers.length}</span>)  </>} />
+            <Tab
+              eventKey="totalticket"
+              title={
+                <>
+                  Total Tickets (
+                  <span style={{ color: "red" }}>{tickets.length}</span>)
+                </>
+              }
+            />
+            <Tab
+              eventKey="todaytickets"
+              title={
+                <>
+                  Today's Tickets (
+                  <span style={{ color: "red" }}>{todayTickets.length}</span>)
+                </>
+              }
+            />
+            <Tab
+              eventKey="totalsales"
+              title={
+                <>
+                  {" "}
+                  Total Sales (
+                  <span style={{ color: "red" }}>{invoices.length}</span>)
+                </>
+              }
+            />
+            <Tab
+              eventKey="todaysales"
+              title={
+                <>
+                  {" "}
+                  Today's Sales (
+                  <span style={{ color: "red" }}>
+                    {todayInvoices.length}
+                  </span>){" "}
+                </>
+              }
+            />
+            <Tab
+              eventKey="preparingforshipment"
+              title={
+                <>
+                  Preparing for Shipment (
+                  <span style={{ color: "red" }}>
+                    {preparingShipment.length}
+                  </span>
+                  )
+                </>
+              }
+            />
+            <Tab
+              eventKey="awaitingtracking"
+              title={
+                <>
+                  Awaiting Tracking (
+                  <span style={{ color: "red" }}>
+                    {awaitingtracking.length}
+                  </span>
+                  ){" "}
+                </>
+              }
+            />
+            <Tab
+              eventKey="existingcustomer"
+              title={
+                <>
+                  {" "}
+                  Existing Customers (
+                  <span style={{ color: "red" }}>{customers.length}</span>)
+                </>
+              }
+            />
+            <Tab
+              eventKey="newcustomer"
+              title={
+                <>
+                  New Customers (
+                  <span style={{ color: "red" }}>{newCustomers.length}</span>){" "}
+                </>
+              }
+            />
           </Tabs>
 
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <InputGroup className="search-input">
+            <InputGroup
+              className={`search-input rounded ${
+                dark ? "bg-secondary text-light" : ""
+              }`}
+            >
               <FormControl
-                placeholder={`Search ${activeTab === "existingcustomer" || activeTab === "newcustomer" ? "customers" : "tickets"
-                  } by name or email`}
+                placeholder={`Search ${
+                  activeTab === "existingcustomer" ||
+                  activeTab === "newcustomer"
+                    ? "customers"
+                    : "tickets"
+                } by name or email`}
                 value={search}
                 onChange={handleSearch}
+                className={`border ${
+                  dark ? "border-secondary" : "border-light"
+                } focus:outline-none focus:border-secondary`}
               />
             </InputGroup>
           </div>
 
           {/* Table Rendering for Total Tickets */}
           {activeTab === "totalticket" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -282,7 +398,11 @@ const Index = () => {
 
           {/* Table Rendering for Today's Tickets */}
           {activeTab === "todaytickets" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -312,7 +432,11 @@ const Index = () => {
 
           {/* Table Rendering for Total Sales */}
           {activeTab === "totalsales" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -326,7 +450,9 @@ const Index = () => {
                   <th scope="col">State</th>
                   <th scope="col">Zip Code</th>
                   <th scope="col">Country</th>
-                  <th scope="col" className='text-center'>Product Details  </th>
+                  <th scope="col" className="text-center">
+                    Product Details{" "}
+                  </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
                   <th scope="col">Payment Windows</th>
@@ -337,198 +463,295 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredInvoices.slice().reverse().map((invoice, index) => (
-                  <tr
-                    key={invoice.invoiceId}
-                    className={invoice.trackingNumber ? 'table-success' : ''}
-                  >
-                    <td>{index + 1}.</td>
-                    <td className="text-center">{invoice.invoiceId || "N/A"}</td>
-                    <td>{formatDate(invoice.saleDate)}</td>
-                    <td>{invoice.closerName}</td>
-                    <td>
-                      {invoice.customerName}
-                      <button
-                        type="button"
-                        onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
-                        className="btn btn-link p-0"
-                      >
-                        ....
-                      </button>
-                    </td>
-                    <td>{invoice.customerEmail}</td>
-                    <td className="text-center">{invoice.address?.landmark || "N/A"}</td>
-                    <td className="text-center">{invoice.address?.city || "N/A"}</td>
-                    <td className="text-center">{invoice.address?.state || "N/A"}</td>
-                    <td className="text-center">{invoice.address?.zipCode || "N/A"}</td>
-                    <td className="text-center">
-                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                    </td>
-                    <td className="text-center">
-                      <table className="table-bordered">
-                        <thead>
-                          <tr>
-                            <th style={{ width: "200px" }} className="px-4">Name</th>
-                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
-                            <th style={{ width: "150px" }} className="px-3">Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invoice.orderDto.productOrders.map((order, i) =>
-                            order.product?.map((product, index) => (
-                              <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td>{product.name}</td>
-                                <td>{order.quantity || "N/A"}</td>
-                                <td>{invoice.currency}{order.totalAmount || "N/A"}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                    <td className="text-center">
-                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
-                    </td>
-                    <td className="text-center">{invoice.trackingNumber || "N/A"}</td>
-                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td>
-                      {invoice.shippingCareer ? invoice.shippingCareer : (
-                        <Button
-                          variant="info rounded"
-                          onClick={() => handleShowModal(invoice.invoiceId)}
+                {filteredInvoices
+                  .slice()
+                  .reverse()
+                  .map((invoice, index) => (
+                    <tr
+                      key={invoice.invoiceId}
+                      className={invoice.trackingNumber ? "table-success" : ""}
+                    >
+                      <td>{index + 1}.</td>
+                      <td className="text-center">
+                        {invoice.invoiceId || "N/A"}
+                      </td>
+                      <td>{formatDate(invoice.saleDate)}</td>
+                      <td>{invoice.closerName}</td>
+                      <td>
+                        {invoice.customerName}
+                        <button
+                          type="button"
+                          onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
+                          className="btn btn-link p-0"
                         >
-                          Add
-                        </Button>
-                      )}
-                    </td>
-                    <td>{invoice.deliveryStatus || 'N/A'}</td>
-                    <td className="text-success bold-text">
-                      {invoice.currency || 'USD'} {invoice.payment?.amount}
-                    </td>
-                    <td>
-                      {invoice.isVerifiedByAdmin ? (
-                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
-                      ) : (
-                        <Button
-                          variant="success rounded"
-                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
-                        >
-                          Next
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                          ....
+                        </button>
+                      </td>
+                      <td>{invoice.customerEmail}</td>
+                      <td className="text-center">
+                        {invoice.address?.landmark || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.city || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.state || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.zipCode || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        <img src={getFlagUrl(invoice.countryIso)} alt="" />{" "}
+                        {invoice.countryIso}
+                      </td>
+                      <td className="text-center">
+                        <table className="table-bordered">
+                          <thead>
+                            <tr>
+                              <th style={{ width: "200px" }} className="px-4">
+                                Name
+                              </th>
+                              <th style={{ width: "100px" }} className="px-3">
+                                Quantity
+                              </th>
+                              <th style={{ width: "150px" }} className="px-3">
+                                Price
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoice.orderDto.productOrders.map((order, i) =>
+                              order.product?.map((product, index) => (
+                                <tr
+                                  key={`${i}-${index}`}
+                                  className="table table-bordered"
+                                >
+                                  <td>{product.name}</td>
+                                  <td>{order.quantity || "N/A"}</td>
+                                  <td>
+                                    {invoice.currency}
+                                    {order.totalAmount || "N/A"}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </td>
+                      <td className="text-center">
+                        {invoice.orderDto?.productOrders[0]?.product[0]
+                          ?.strength || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.trackingNumber || "N/A"}
+                      </td>
+                      <td>{invoice.payment?.paymentWindow || "N/A"}</td>
+                      <td>
+                        {invoice.shippingCareer ? (
+                          invoice.shippingCareer
+                        ) : (
+                          <Button
+                            variant="info rounded"
+                            onClick={() => handleShowModal(invoice.invoiceId)}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </td>
+                      <td>{invoice.deliveryStatus || "N/A"}</td>
+                      <td className="text-success bold-text">
+                        {invoice.currency || "USD"} {invoice.payment?.amount}
+                      </td>
+                      <td>
+                        {invoice.isVerifiedByAdmin ? (
+                          <i
+                            className="fa-solid fa-check fa-2xl"
+                            style={{ color: "#31c913" }}
+                          ></i>
+                        ) : (
+                          <Button
+                            variant="success rounded"
+                            onClick={() =>
+                              handleVerifyInvoice(invoice.invoiceId)
+                            }
+                          >
+                            Next
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
-
             </Table>
           )}
 
           {/* Table Rendering for Today's Sales */}
-          {activeTab === "todaysales" && (
-            <Table responsive bordered className="candidate-table">
-              <thead>
-                <tr>
-                  <th>S.N.</th>
-                  <th scope="col">Order ID</th>
-                  <th scope="col">Sale Date</th>
-                  <th scope="col">Closer Name</th>
-                  <th scope="col">Customer Name</th>
-                  <th scope="col">Customer Email</th>
-                  <th scope="col">Street</th>
-                  <th scope="col">City</th>
-                  <th scope="col">State</th>
-                  <th scope="col">Zip Code</th>
-                  <th scope="col">Country</th>
-                  <th scope="col" className='text-center'>Product Details </th>
-                  <th scope="col">Doses</th>
-                  <th scope="col">Tracking Number</th>
-                  <th scope="col">Payment Windows</th>
-                  <th scope="col">Shipping Through</th>
-                  <th scope="col">Paid Amount</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredTodayInvoices.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}
-                  className={invoice.trackingNumber ? 'table-success' : ''}
-                  >
-                    <td>{index + 1}.</td>
-                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
-                    <td>{formatDate(invoice.saleDate)}</td>
-                    <td> {invoice.closerName} </td>
-                    <td>{invoice.customerName}
-                      <button
-                        type="button"
-                        onClick={() => handleShowCustomerModal(invoice)}
-                        className="btn btn-link p-0">....
-                      </button>
-                    </td>
-                    <td> {invoice.customerEmail} </td>
-                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                    <td className='text-center'>
-                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                    </td>
-                    <td className='text-center'>
-                      <table className="table-bordered">
-                        <thead>
-                          <tr>
-                            <th style={{ width: "200px" }} className="px-4">Name</th>
-                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
-                            <th style={{ width: "150px" }} className="px-3">Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invoice.orderDto.productOrders.map((order, i) =>
-                            order.product?.map((product, index) => (
-                              <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td>{product.name}</td>
-                                <td>{order.quantity || 'N/A'}</td>
-                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                    <td className='text-center'>
-                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
-                    </td>
-                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
-                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td>
-                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
-                        Add
-                      </Button>}
-                    </td>
-                    <td className="text-success bold-text">
-                      {invoice.currency || 'USD'} {invoice.payment?.amount}
-                    </td>
-                    <td>
-                      {invoice.isVerifiedByAdmin ? (
-                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
-                      ) : (
-                        <Button
-                          variant="success rounded"
-                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
-                        >
-                          Next
-                        </Button>
-                      )}
-                    </td>
+          {activeTab === "todaysales" &&
+            (filteredTodayInvoices.length === 0 ? (
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: 22 }}>
+                <img style={{size:32}} src="https://cdn-icons-png.flaticon.com/128/17134/17134613.png" alt="" />
+              </div>
+            ) : (
+              <Table
+                responsive
+                bordered
+                className={`candidate-table ${dark ? "table-dark" : ""}`}
+              >
+                <thead>
+                  <tr>
+                    <th>S.N.</th>
+                    <th scope="col">Order ID</th>
+                    <th scope="col">Sale Date</th>
+                    <th scope="col">Closer Name</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Customer Email</th>
+                    <th scope="col">Street</th>
+                    <th scope="col">City</th>
+                    <th scope="col">State</th>
+                    <th scope="col">Zip Code</th>
+                    <th scope="col">Country</th>
+                    <th scope="col" className="text-center">
+                      Product Details
+                    </th>
+                    <th scope="col">Doses</th>
+                    <th scope="col">Tracking Number</th>
+                    <th scope="col">Payment Windows</th>
+                    <th scope="col">Shipping Through</th>
+                    <th scope="col">Paid Amount</th>
+                    <th scope="col">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          )}
+                </thead>
+                <tbody>
+                  {filteredTodayInvoices
+                    .slice()
+                    .reverse()
+                    .map((invoice, index) => (
+                      <tr
+                        key={invoice.invoiceId}
+                        className={
+                          invoice.trackingNumber ? "table-success" : ""
+                        }
+                      >
+                        <td>{index + 1}.</td>
+                        <td className="text-center">
+                          {invoice.invoiceId || "N/A"}
+                        </td>
+                        <td>{formatDate(invoice.saleDate)}</td>
+                        <td> {invoice.closerName} </td>
+                        <td>
+                          {invoice.customerName}
+                          <button
+                            type="button"
+                            onClick={() => handleShowCustomerModal(invoice)}
+                            className="btn btn-link p-0"
+                          >
+                            ....
+                          </button>
+                        </td>
+                        <td> {invoice.customerEmail} </td>
+                        <td className="text-center">
+                          {invoice.address?.landmark || "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.address?.city || "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.address?.state || "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.address?.zipCode || "N/A"}
+                        </td>
+                        <td className="text-center">
+                          <img src={getFlagUrl(invoice.countryIso)} alt="" />{" "}
+                          {invoice.countryIso}
+                        </td>
+                        <td className="text-center">
+                          <table className="table-bordered">
+                            <thead>
+                              <tr>
+                                <th style={{ width: "200px" }} className="px-4">
+                                  Name
+                                </th>
+                                <th style={{ width: "100px" }} className="px-3">
+                                  Quantity
+                                </th>
+                                <th style={{ width: "150px" }} className="px-3">
+                                  Price
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {invoice.orderDto.productOrders.map((order, i) =>
+                                order.product?.map((product, index) => (
+                                  <tr
+                                    key={`${i}-${index}`}
+                                    className="table table-bordered"
+                                  >
+                                    <td>{product.name}</td>
+                                    <td>{order.quantity || "N/A"}</td>
+                                    <td>
+                                      {invoice.currency}
+                                      {order.totalAmount || "N/A"}
+                                    </td>
+                                  </tr>
+                                ))
+                              )}
+                            </tbody>
+                          </table>
+                        </td>
+                        <td className="text-center">
+                          {invoice.orderDto?.productOrders[0]?.product[0]
+                            ?.strength || "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.trackingNumber || "N/A"}
+                        </td>
+                        <td>{invoice.payment?.paymentWindow || "N/A"}</td>
+                        <td>
+                          {invoice.shippingCareer ? (
+                            invoice.shippingCareer
+                          ) : (
+                            <Button
+                              variant="info rounded"
+                              onClick={() => handleShowModal(invoice.invoiceId)}
+                            >
+                              Add
+                            </Button>
+                          )}
+                        </td>
+                        <td className="text-success bold-text">
+                          {invoice.currency || "USD"} {invoice.payment?.amount}
+                        </td>
+                        <td>
+                          {invoice.isVerifiedByAdmin ? (
+                            <i
+                              className="fa-solid fa-check fa-2xl"
+                              style={{ color: "#31c913" }}
+                            ></i>
+                          ) : (
+                            <Button
+                              variant="success rounded"
+                              onClick={() =>
+                                handleVerifyInvoice(invoice.invoiceId)
+                              }
+                            >
+                              Next
+                            </Button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </Table>
+            ))}
 
           {/* Table Rendering for preparingforshipment */}
           {activeTab === "preparingforshipment" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -542,7 +765,9 @@ const Index = () => {
                   <th scope="col">State</th>
                   <th scope="col">Zip Code</th>
                   <th scope="col">Country</th>
-                  <th scope="col" className='text-center'>Product Details </th>
+                  <th scope="col" className="text-center">
+                    Product Details{" "}
+                  </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
                   <th scope="col">Payment Windows</th>
@@ -552,85 +777,134 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPreparingShipment.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}
-                  className={invoice.trackingNumber ? 'table-success' : ''}
-                  >
-                    <td>{index + 1}.</td>
-                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
-                    <td>{formatDate(invoice.saleDate)}</td>
-                    <td> {invoice.closerName} </td>
-                    <td>{invoice.customerName}
-                      <button
-                        type="button"
-                        onClick={() => handleShowCustomerModal(invoice)}
-                        className="btn btn-link p-0">....
-                      </button>
-                    </td>
-                    <td> {invoice.customerEmail} </td>
-                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                    <td className='text-center'>
-                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                    </td>
-                    <td className='text-center'>
-                      <table className="table-bordered">
-                        <thead>
-                          <tr>
-                            <th style={{ width: "200px" }} className="px-4">Name</th>
-                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
-                            <th style={{ width: "150px" }} className="px-3">Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invoice.orderDto.productOrders.map((order, i) =>
-                            order.product?.map((product, index) => (
-                              <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td>{product.name}</td>
-                                <td>{order.quantity || 'N/A'}</td>
-                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                    <td className='text-center'>
-                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
-                    </td>
-                    <td className='text-center'>{invoice.trackingNumber || "N/A"}</td>
-                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td>
-                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
-                        Add
-                      </Button>}
-                    </td>
-                    <td className="text-success bold-text">
-                      {invoice.currency || 'USD'} {invoice.payment?.amount}
-                    </td>
-                    <td>
-                      {invoice.isVerifiedByAdmin ? (
-                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
-                      ) : (
-                        <Button
-                          variant="success rounded"
-                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                {filteredPreparingShipment
+                  .slice()
+                  .reverse()
+                  .map((invoice, index) => (
+                    <tr
+                      key={invoice.invoiceId}
+                      className={invoice.trackingNumber ? "table-success" : ""}
+                    >
+                      <td>{index + 1}.</td>
+                      <td className="text-center">
+                        {invoice.invoiceId || "N/A"}
+                      </td>
+                      <td>{formatDate(invoice.saleDate)}</td>
+                      <td> {invoice.closerName} </td>
+                      <td>
+                        {invoice.customerName}
+                        <button
+                          type="button"
+                          onClick={() => handleShowCustomerModal(invoice)}
+                          className="btn btn-link p-0"
                         >
-                          Next
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                          ....
+                        </button>
+                      </td>
+                      <td> {invoice.customerEmail} </td>
+                      <td className="text-center">
+                        {invoice.address?.landmark || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.city || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.state || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.zipCode || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        <img src={getFlagUrl(invoice.countryIso)} alt="" />{" "}
+                        {invoice.countryIso}
+                      </td>
+                      <td className="text-center">
+                        <table className="table-bordered">
+                          <thead>
+                            <tr>
+                              <th style={{ width: "200px" }} className="px-4">
+                                Name
+                              </th>
+                              <th style={{ width: "100px" }} className="px-3">
+                                Quantity
+                              </th>
+                              <th style={{ width: "150px" }} className="px-3">
+                                Price
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoice.orderDto.productOrders.map((order, i) =>
+                              order.product?.map((product, index) => (
+                                <tr
+                                  key={`${i}-${index}`}
+                                  className="table table-bordered"
+                                >
+                                  <td>{product.name}</td>
+                                  <td>{order.quantity || "N/A"}</td>
+                                  <td>
+                                    {invoice.currency}
+                                    {order.totalAmount || "N/A"}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </td>
+                      <td className="text-center">
+                        {invoice.orderDto?.productOrders[0]?.product[0]
+                          ?.strength || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.trackingNumber || "N/A"}
+                      </td>
+                      <td>{invoice.payment?.paymentWindow || "N/A"}</td>
+                      <td>
+                        {invoice.shippingCareer ? (
+                          invoice.shippingCareer
+                        ) : (
+                          <Button
+                            variant="info rounded"
+                            onClick={() => handleShowModal(invoice.invoiceId)}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </td>
+                      <td className="text-success bold-text">
+                        {invoice.currency || "USD"} {invoice.payment?.amount}
+                      </td>
+                      <td>
+                        {invoice.isVerifiedByAdmin ? (
+                          <i
+                            className="fa-solid fa-check fa-2xl"
+                            style={{ color: "#31c913" }}
+                          ></i>
+                        ) : (
+                          <Button
+                            variant="success rounded"
+                            onClick={() =>
+                              handleVerifyInvoice(invoice.invoiceId)
+                            }
+                          >
+                            Next
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           )}
 
           {/* Table Rendering for awaiting tracking */}
           {activeTab === "awaitingtracking" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -644,7 +918,9 @@ const Index = () => {
                   <th scope="col">State</th>
                   <th scope="col">Zip Code</th>
                   <th scope="col">Country</th>
-                  <th scope="col" className='text-center'>Product Details </th>
+                  <th scope="col" className="text-center">
+                    Product Details{" "}
+                  </th>
                   <th scope="col">Doses</th>
                   <th scope="col">Tracking Number</th>
                   <th scope="col">Payment Windows</th>
@@ -654,87 +930,142 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredAwaitingtracking.slice().reverse().map((invoice, index) => (
-                  <tr key={invoice.invoiceId}>
-                    <td className="text-center">{index + 1}.</td>
-                    <td className='text-center'>{invoice.invoiceId || "N/A"}</td>
-                    <td>{formatDate(invoice.saleDate)}</td>
-                    <td> {invoice.closerName} </td>
-                    <td>{invoice.customerName}
-                      <button
-                        type="button"
-                        onClick={() => handleShowCustomerModal(invoice)}
-                        className="btn btn-link p-0">....
-                      </button>
-                    </td>
-                    <td> {invoice.customerEmail} </td>
-                    <td className='text-center'>{invoice.address?.landmark || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.city || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.state || "N/A"}</td>
-                    <td className='text-center'>{invoice.address?.zipCode || "N/A"}</td>
-                    <td className='text-center'>
-                      <img src={getFlagUrl(invoice.countryIso)} alt="" /> {invoice.countryIso}
-                    </td>
-                    <td className='text-center'>
-                      <table className="table-bordered">
-                        <thead>
-                          <tr>
-                            <th style={{ width: "200px" }} className="px-4">Name</th>
-                            <th style={{ width: "100px" }} className="px-3">Quantity</th>
-                            <th style={{ width: "150px" }} className="px-3">Price</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {invoice.orderDto.productOrders.map((order, i) =>
-                            order.product?.map((product, index) => (
-                              <tr key={`${i}-${index}`} className="table table-bordered">
-                                <td>{product.name}</td>
-                                <td>{order.quantity || 'N/A'}</td>
-                                <td>{invoice.currency}{order.totalAmount || 'N/A'}</td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                    <td className='text-center'>
-                      {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
-                    </td>
-                    {/* <td className='text-center'>{invoice.trackingNumber || "N/A"}</td> */}
-                    <td>
-                      {invoice.trackingNumber ? invoice.trackingNumber : <Button variant="warning rounded" onClick={() => handleShowTrackingModal(invoice.uniqueQueryId)}>
-                        Add Tracking
-                      </Button>}
-                    </td>
-                    <td>{invoice.payment?.paymentWindow || 'N/A'}</td>
-                    <td>
-                      {invoice.shippingCareer ? invoice.shippingCareer : <Button variant="info rounded" onClick={() => handleShowModal(invoice.invoiceId)}>
-                        Add
-                      </Button>}
-                    </td>
-                    <td className="text-success bold-text">
-                      {invoice.currency || 'USD'} {invoice.payment?.amount}
-                    </td>
-                    <td>
-                      {invoice.isVerifiedByAdmin ? (
-                        <i className="fa-solid fa-check fa-2xl" style={{ color: "#31c913" }}></i>
-                      ) : (
-                        <Button
-                          variant="success rounded"
-                          onClick={() => handleVerifyInvoice(invoice.invoiceId)}
+                {filteredAwaitingtracking
+                  .slice()
+                  .reverse()
+                  .map((invoice, index) => (
+                    <tr key={invoice.invoiceId}>
+                      <td className="text-center">{index + 1}.</td>
+                      <td className="text-center">
+                        {invoice.invoiceId || "N/A"}
+                      </td>
+                      <td>{formatDate(invoice.saleDate)}</td>
+                      <td> {invoice.closerName} </td>
+                      <td>
+                        {invoice.customerName}
+                        <button
+                          type="button"
+                          onClick={() => handleShowCustomerModal(invoice)}
+                          className="btn btn-link p-0"
                         >
-                          Next
-                        </Button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                          ....
+                        </button>
+                      </td>
+                      <td> {invoice.customerEmail} </td>
+                      <td className="text-center">
+                        {invoice.address?.landmark || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.city || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.state || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.address?.zipCode || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        <img src={getFlagUrl(invoice.countryIso)} alt="" />{" "}
+                        {invoice.countryIso}
+                      </td>
+                      <td className="text-center">
+                        <table className="table-bordered">
+                          <thead>
+                            <tr>
+                              <th style={{ width: "200px" }} className="px-4">
+                                Name
+                              </th>
+                              <th style={{ width: "100px" }} className="px-3">
+                                Quantity
+                              </th>
+                              <th style={{ width: "150px" }} className="px-3">
+                                Price
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoice.orderDto.productOrders.map((order, i) =>
+                              order.product?.map((product, index) => (
+                                <tr
+                                  key={`${i}-${index}`}
+                                  className="table table-bordered"
+                                >
+                                  <td>{product.name}</td>
+                                  <td>{order.quantity || "N/A"}</td>
+                                  <td>
+                                    {invoice.currency}
+                                    {order.totalAmount || "N/A"}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </td>
+                      <td className="text-center">
+                        {invoice.orderDto?.productOrders[0]?.product[0]
+                          ?.strength || "N/A"}
+                      </td>
+                      {/* <td className='text-center'>{invoice.trackingNumber || "N/A"}</td> */}
+                      <td>
+                        {invoice.trackingNumber ? (
+                          invoice.trackingNumber
+                        ) : (
+                          <Button
+                            variant="warning rounded"
+                            onClick={() =>
+                              handleShowTrackingModal(invoice.uniqueQueryId)
+                            }
+                          >
+                            Add Tracking
+                          </Button>
+                        )}
+                      </td>
+                      <td>{invoice.payment?.paymentWindow || "N/A"}</td>
+                      <td>
+                        {invoice.shippingCareer ? (
+                          invoice.shippingCareer
+                        ) : (
+                          <Button
+                            variant="info rounded"
+                            onClick={() => handleShowModal(invoice.invoiceId)}
+                          >
+                            Add
+                          </Button>
+                        )}
+                      </td>
+                      <td className="text-success bold-text">
+                        {invoice.currency || "USD"} {invoice.payment?.amount}
+                      </td>
+                      <td>
+                        {invoice.isVerifiedByAdmin ? (
+                          <i
+                            className="fa-solid fa-check fa-2xl"
+                            style={{ color: "#31c913" }}
+                          ></i>
+                        ) : (
+                          <Button
+                            variant="success rounded"
+                            onClick={() =>
+                              handleVerifyInvoice(invoice.invoiceId)
+                            }
+                          >
+                            Next
+                          </Button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </Table>
           )}
           {/* Table Rendering for Existing Customers */}
           {activeTab === "existingcustomer" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -752,7 +1083,11 @@ const Index = () => {
                 {filteredCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
                     <td>{index + 1}</td>
-                    <td>{formatDate(customer.customerAddDate && customer.customerAddDate)}</td>
+                    <td>
+                      {formatDate(
+                        customer.customerAddDate && customer.customerAddDate
+                      )}
+                    </td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>
@@ -768,7 +1103,11 @@ const Index = () => {
 
           {/* Table Rendering for New Customers */}
           {activeTab === "newcustomer" && (
-            <Table responsive bordered className="candidate-table">
+            <Table
+              responsive
+              bordered
+              className={`candidate-table ${dark ? "table-dark" : ""}`}
+            >
               <thead>
                 <tr>
                   <th>S.N.</th>
@@ -786,7 +1125,11 @@ const Index = () => {
                 {filteredNewCustomers.map((customer, index) => (
                   <tr key={customer.customerId}>
                     <td>{index + 1}.</td>
-                    <td>{formatDate(customer.customerAddDate && customer.customerAddDate)}</td>
+                    <td>
+                      {formatDate(
+                        customer.customerAddDate && customer.customerAddDate
+                      )}
+                    </td>
                     <td>{customer.customerId}</td>
                     <td>{customer.customerName}</td>
                     <td>{customer.customerEmail}</td>
@@ -811,7 +1154,11 @@ const Index = () => {
           <Form>
             <Form.Group controlId="careerSelect">
               <Form.Label>Select Career</Form.Label>
-              <Form.Control as="select" value={selectedCareer} onChange={(e) => setSelectedCareer(e.target.value)}>
+              <Form.Control
+                as="select"
+                value={selectedCareer}
+                onChange={(e) => setSelectedCareer(e.target.value)}
+              >
                 <option value="">-- Select a Career --</option>
                 {careers.map((career) => (
                   <option key={career.id} value={career.id}>
@@ -857,11 +1204,7 @@ const Index = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-
-
-
     </section>
-
   );
 };
 
