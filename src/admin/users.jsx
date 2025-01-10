@@ -16,7 +16,7 @@ import Report from '../components/Report';
 function users() {
 
 
-  const { userId } = useAuth();
+  const { userId,dark } = useAuth();
 
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -367,15 +367,15 @@ function users() {
 
   return (
     <>
-      <div className=''>
-        <div className="superadmin-page">
+      <div  className='bg-dark'>
+        <div className="superadmin-page ">
           {/* <!-- Main Wrapper --> */}
-          <div className="my-container main-content-block2658 user-management-page">
+          <div className={`my-container main-content-block2658 user-management-page ${dark?"bg-dark":""}`}>
             {/* <!--End Top Nav --> */}
-            <div className="container-fluid mt-3">
+            <div className="container-fluid  mt-3">
               <section className="core-team-section">
                 <div className="container-fluid">
-                  <div className="section-header">
+                  <div className={`section-header ${dark?"bg-secondary":""} `}>
                     <h2 className="title">Teams</h2>
                     <Button className="btn btn-primary" onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addUser">Add New User</Button>
                   </div>
@@ -383,7 +383,7 @@ function users() {
                     {
                       data.map((item, index) => (
                         <div key={index} className="col-lg-3 col-md-6">
-                          <div className="user-team-card p-3 m-2"> {/* Added padding and margin */}
+                          <div className="user-team-card p-3 m-2 " style={{backgroundColor:dark?"#1c2541":"",color:dark?'#fff':'#000'}} > {/* Added padding and margin */}
                             <div className="profile-thumb">
                               <img src={convertToImage(item.imageData)} className="img-fluid rounded-circle" />
                             </div>
@@ -391,7 +391,7 @@ function users() {
                               <h3 className="title">{item.firstName} {item.lastName}</h3>
                               <p className="sub-title">Designation: <strong>{item.roleDto?.roleName}</strong></p>
                             </div>
-                            <div className='' style={{ display: "flex", justifyContent: "end" }}> <div style={{ backgroundColor: "#FFEAC5", width: "7vw", padding: "3px", borderRadius: "5px", cursor: "Pointer" }} onClick={() => handleUpdateShow(item.email)}>Change image</div></div>
+                            <div className='' style={{ display: "flex", justifyContent: "end" }}> <div style={{ backgroundColor: "#FFEAC5", width: "7vw", padding: "3px", borderRadius: "5px",color:'black', cursor: "Pointer" }} onClick={() => handleUpdateShow(item.email)}>Change image</div></div>
 
                           </div>
 
@@ -402,40 +402,40 @@ function users() {
                 </div>
               </section>
               {/* <!-- User Table --> */}
-              <section className="user-table-section py-3">
-                <div className="container-fluid">
-                  <div className="table-wrapper tabbed-table">
-                    <h3 className="title">Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h3>
+              <section className={`user-table-section py-3 ${dark?"bg-dark":""}`}>
+                <div className="container-fluid ">
+                  <div className={`table-wrapper tabbed-table text-center  ${dark?"bg-dark text-light":""}`}>
+                    <h3 className={`${dark?"text-light":"text-dark"}`}>Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h3>
                     <nav className="recent-transactions-tab-header">
-                      <div className="nav nav-item nav-tabs" id="nav-tab" role="tablist">
-                        <button className="nav-link active" id="nav-all-users-tab" data-bs-toggle="tab" data-bs-target="#nav-all-users" type="button" role="tab" aria-controls="nav-all-users" aria-selected="true">All Users</button>
-                        <button className="nav-link" id="nav-new-users-tab" data-bs-toggle="tab" data-bs-target="#nav-new-users" type="button" role="tab" aria-controls="nav-new-users" aria-selected="false">New Users</button>
-                        <button className="nav-link" id="nav-restricted-tab" data-bs-toggle="tab" data-bs-target="#nav-restricted" type="button" role="tab" aria-controls="nav-restricted" aria-selected="false">Restricted Users</button>
+                      <div className="nav nav-item nav-tabs gap-2 py-2" id="nav-tab" role="tablist">
+                        <button className={`"nav-link active ${dark?"text-light":""}`} id="nav-all-users-tab" data-bs-toggle="tab" data-bs-target="#nav-all-users" type="button" role="tab" aria-controls="nav-all-users" aria-selected="true">All Users</button>
+                        <button className={`"nav-link active ${dark?"text-light":""}`}  id="nav-new-users-tab" data-bs-toggle="tab" data-bs-target="#nav-new-users" type="button" role="tab" aria-controls="nav-new-users" aria-selected="false">New Users</button>
+                        <button className={`"nav-link active ${dark?"text-light":""}`}  id="nav-restricted-tab" data-bs-toggle="tab" data-bs-target="#nav-restricted" type="button" role="tab" aria-controls="nav-restricted" aria-selected="false">Restricted Users</button>
                       </div>
                     </nav>
                     <div className="tab-content recent-transactions-tab-body" id="nav-tabContent">
                       <div className="tab-pane table-responsive all-users-tab fade show active" id="nav-all-users" role="tabpanel" aria-labelledby="nav-all-users-tab" tabindex="0">
-                        <table className="table users-table">
+                        <table className={`"table table-bordered w-100 users-table text-light ${dark?"table-dark text-light ":"text-dark"}`}>
                           <thead>
-                            <tr>
-                              <th className="selection-cell-header" data-row-selection="true">
-                                <input type="checkbox" className="" />
+                            <tr className='py-1'>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} data-row-selection="true">
+                                S.no
                               </th>
-                              <th tabindex="0">Profile</th>
-                              <th tabindex="0">User Name</th>
-                              <th tabindex="0">Department</th>
-                              <th tabindex="0">Designation</th>
-                              <th tabindex="0">Team</th>
-                              <th tabindex="0">IP Assigned</th>
-                              <th tabindex="0">Status</th>
-                              <th tabindex="0">Action</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Profile</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">User Name</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Department</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Designation</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Team</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">IP Assigned</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Status</th>
+                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item) => (
+                            {data.map((item,index) => (
                               <tr key={item.id}>
                                 <td className="selection-cell">
-                                  <input type="checkbox" className="" />
+                                  {index+1}
                                 </td>
                                 <td>
                                   <div className="profile-thumb">

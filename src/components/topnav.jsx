@@ -154,18 +154,23 @@ function topnav() {
             </div>
             <div className="right-part">
               <div>
-                <i
-                  className={`fa-solid fa-2xl ${
-                    dark ? "fa-sun text-white " : "fa-moon"
-                  } `}
+                <img
+                
+                  src={
+                    dark
+                      ? "https://cdn-icons-png.flaticon.com/128/11457/11457488.png" // Icon for dark mode
+                      : "https://cdn-icons-png.flaticon.com/128/466/466249.png" // Icon for light mode
+                  }
+                  alt="theme-icon"
                   onClick={handleThemeToggler}
                   style={{
+                    height: 42,
                     marginRight: "10px",
                     cursor: "pointer",
                     transition: "transform 0.5s ease, opacity 0.5s ease",
                     opacity: dark ? 0.5 : 1,
                   }}
-                ></i>
+                />
               </div>
 
               <div
@@ -173,27 +178,31 @@ function topnav() {
                 className="notification"
                 style={{ position: "relative", display: "inline-block" }}
               >
-                <span className="page-title">
+                <img
+                  onClick={handleOpenTimezone}
+                  style={{ height: 36, cursor: "pointer" }}
+                  src="https://cdn-icons-png.flaticon.com/128/2784/2784459.png"
+                  alt=""
+                />
+                {/* <span className="page-title">
                   <i
                     class={`fa-solid fa-clock fa-2xl ${
                       dark ? `text-light` : `text-dark`
                     }  `}
                     onClick={handleOpenTimezone}
                   ></i>
-                </span>
+                </span> */}
               </div>
               <a
                 href="/action_mode"
                 className="notification"
                 style={{ position: "relative", display: "inline-block" }}
               >
-                <span className="page-title">
-                  <i
-                    className={`fa-solid fa-jet-fighter-up fa-2xl ${
-                      dark ? `text-light` : `text-dark`
-                    }`}
-                  ></i>
-                </span>
+                <img
+                  style={{ height: 36, cursor: "pointer" }}
+                  src="https://cdn-icons-png.flaticon.com/128/1183/1183967.png"
+                  alt=""
+                />
               </a>
               {/* <a href="/live_tickets"  className="notification" style={{ position: "relative", display: "inline-block" }}>
                 <i className="fa-solid fa-ticket fa-2xl pointer"></i>
@@ -217,7 +226,7 @@ function topnav() {
               >
                 <img
                   onClick={handleOpenNote}
-                  style={{ height: 36 }}
+                  style={{ height: 36, cursor: "pointer" }}
                   src="https://cdn-icons-png.flaticon.com/128/3561/3561424.png"
                   alt=""
                 />
@@ -229,7 +238,36 @@ function topnav() {
                 ></i> */}
               </a>
 
-              <a
+              <div
+                style={{
+                  marginRight: 20,
+                  position: "relative",
+                  display: "inline-block",
+                }}
+              >
+                <img
+                  onClick={handleOpenCalender}
+                  style={{ height: 38 }}
+                  src="https://cdn-icons-png.flaticon.com/128/5968/5968499.png"
+                  alt="calendar"
+                />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: -12,
+                    right: -5,
+                    backgroundColor: "red",
+                    color: "white",
+                    borderRadius: "50%",
+                    padding: "0px 9px",
+                    fontSize: 16,
+                  }}
+                >
+                  {todayFollowups}
+                </span>
+              </div>
+
+              {/* <a
                 href="#"
                 className="notification"
                 style={{ position: "relative", display: "inline-block" }}
@@ -255,7 +293,7 @@ function topnav() {
                 >
                   {todayFollowups}
                 </span>
-              </a>
+              </a> */}
             </div>
           </nav>
 
@@ -376,7 +414,9 @@ function topnav() {
           </dialog> */}
 
           <div
-            className={`text-black mt-10 rounded shadow py-1 ${dark?"bg-dark":""}`}
+            className={`text-black mt-10 rounded shadow py-1 ${
+              dark ? "bg-dark" : ""
+            }`}
             style={{
               position: "fixed",
               bottom: "300px",

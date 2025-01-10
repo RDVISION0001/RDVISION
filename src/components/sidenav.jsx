@@ -678,9 +678,9 @@ function Sidenav() {
 
         <li className="nav-item">
           <NavLink to="/email" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
-            <i className="fa-solid fa-gear"></i>
+          <i class="fa-solid fa-envelope-open-text"></i>
 
-            <span className="nav-text">Emails</span>
+            <span className="nav-text">Email</span>
 
           </NavLink>
         </li>

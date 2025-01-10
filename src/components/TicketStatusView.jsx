@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "../axiosInstance";
+import { useAuth } from "../auth/AuthContext";
 
 function TicketStatusView({ userId, name }) {
   const [tickets, setTickets] = useState([]);
@@ -16,6 +17,7 @@ function TicketStatusView({ userId, name }) {
   });
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // Set default to current date
   const [expandedTickets, setExpandedTickets] = useState({});
+  const { dark } = useAuth();
 
   const handleToggle = (index) => {
     setExpandedTickets((prevState) => ({
@@ -147,8 +149,13 @@ function TicketStatusView({ userId, name }) {
   return (
     <>
       {/* Ticket Type Selection */}
-      <div className="px-4 d-flex justify-content-between align-items-center mt-4">
-        <div className="d-flex">
+      <div
+        className={`px-4 d-flex rounded  justify-content-between align-items-center mt-4 ${
+          dark ? "bg-secondary text-light" : ""
+        }`}
+        style={{ height: 50 }}
+      >
+        <div className="d-flex ">
           <div className="form-check" style={{ marginLeft: "10px" }}>
             <input
               className="form-check-input"
@@ -162,7 +169,7 @@ function TicketStatusView({ userId, name }) {
               Live Tickets
             </label>
           </div>
-          <div className="form-check" style={{ marginLeft: "10px" }}>
+          <div className="form-check " style={{ marginLeft: "10px" }}>
             <input
               className="form-check-input"
               type="radio"
@@ -178,13 +185,24 @@ function TicketStatusView({ userId, name }) {
         </div>
         <div>
           <div
-            className="d-flex justify-content-center align-items-center gap-2 border py-1 px-2 rounded"
-            style={{ backgroundColor: "#a2d6f9" }}
+            className={`d-flex justify-content-center align-items-center gap-2 border py-1 px-2 rounded position-relative ${
+              dark ? "bg-primary border-0" : ""
+            }`}
+            style={{ backgroundColor: "#a2d6f9", cursor: "pointer" }}
           >
-            <i class="fa-solid fa-user"></i>
+            <i className="fa-solid fa-user"></i>
             <h2 className="" style={{ fontSize: 20 }}>
               {name}
             </h2>
+
+            {/* Cross icon, initially hidden */}
+            <i
+              className="fa-solid fa-xmark position-absolute end-0 top-50 translate-middle-y me-2"
+              style={{
+                display: "none",
+                cursor: "pointer",
+              }}
+            ></i>
           </div>
         </div>
       </div>
@@ -198,7 +216,7 @@ function TicketStatusView({ userId, name }) {
           <input
             type="date"
             id="date"
-            className="form-control"
+            className={`form-control ${dark?"bg-secondary text-light":""} `}
             value={date}
             onChange={handleDateChange}
           />
@@ -265,16 +283,16 @@ function TicketStatusView({ userId, name }) {
       </div>
 
       {/* Ticket Table */}
-      <div className="admin-page tickets-page">
+      <div className="admin-page tickets-page ">
         <div className="my-container main-content-block2658">
-          <div className="container-fluid mt-3">
+          <div className="container-fluid mt-3 ">
             <section className="data-table-bgs_02x24 py-3">
-              <div className="container-fluid">
-                <div className="table-wrapper tabbed-table">
-                  <div className="heading-wrapper">
-                    <h3 className="title">All Tickets</h3>
+              <div className="container-fluid ">
+                <div className="">
+                  <div className="heading-wrapper d-flex justify-content-between align-items-center">
+                    <h3 className={`${dark?"text-light":""}`}>All Tickets</h3>
                     <div>
-                      <span>
+                      <span className={`${dark?"text-light":""}`}>
                         Available Tickets (
                         {liveTicketsActive
                           ? "Live Tickets"
@@ -287,35 +305,35 @@ function TicketStatusView({ userId, name }) {
 
                   <div className="tab-content recent-transactions-tab-body">
                     <div className="tab-pane fade show active">
-                      <div className="tickets-table table-responsive">
-                        <table className="table w-100 border">
+                      <div className={`tickets-table table-responsive ${dark?"table-dark":""} `}>
+                        <table className={`table w-100 border ${dark?"table-dark":""} `}>
                           <thead>
                             <tr>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 S.N.
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 Date/Time
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 Country
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 {" "}
                                 Customer
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 Mob Number{" "}
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 {" "}
                                 Customer Email
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 {" "}
                                 Product{" "}
                               </th>
-                              <th className="whitespace-nowrap bordre border-dark">
+                              <th className={`whitespace-nowrap bordre border-dark ${dark?"bg-secondary":""} `}>
                                 Ticket Status{" "}
                               </th>
                             </tr>
@@ -410,7 +428,7 @@ function TicketStatusView({ userId, name }) {
                       <div className="pagination d-flex flex-column align-items-center justify-content-center mt-3">
                         <div className="d-flex align-items-center justify-content-center gap-2">
                           <button
-                            class="btn btn-outline-primary"
+                            class="btn btn-outline-primary bg-primary  text-light"
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
                           >
@@ -432,7 +450,7 @@ function TicketStatusView({ userId, name }) {
                           ))}
 
                           <button
-                            class="btn btn-outline-primary"
+                            class="btn btn-outline-primary bg-primary text-light"
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
                           >
@@ -444,13 +462,13 @@ function TicketStatusView({ userId, name }) {
                         <div className="d-flex justify-content-center align-items-center mt-3">
                           <label
                             htmlFor="itemsPerPage"
-                            className="form-label mr-2"
+                            className={`form-label mr-2 ${dark?"text-light":""} `}
                           >
                             Items per page:
                           </label>
                           <select
                             id="itemsPerPage"
-                            className="form-select w-auto mx-2"
+                            className={`form-select w-auto mx-2 ${dark? "bg-secondary":""}`}
                             value={itemsPerPage}
                             onChange={handleItemsPerPageChange}
                           >

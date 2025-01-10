@@ -134,11 +134,9 @@ import TicketHouse from './components/TicketHouse';
 import TicketTrack from './components/TicketTrack';
 import TicketDistribution from './components/TicketDistribution';
 import NotificationContainer from './components/NotificationContainer';
-
 import { useSelector } from 'react-redux';
-
-
 import EmailView from './components/EmailView';
+
 
 
 
@@ -150,9 +148,8 @@ function App() {
 
 
   return (
-    <div className={`${theme ?"bg-dark":"bg-white"}`} style={{height:'100vh'}} >
-    
-      <div className='d-flex justify-content-end'>
+    <div className={`${theme ?"bg-dark":"bg-white"}`} style={{height:'100vh'}} >      
+          <div className='d-flex justify-content-end'>
         <NotificationContainer /> {/* This will handle WebSocket notifications */}
         {/* Other app content */}
       </div>
@@ -269,6 +266,7 @@ function App() {
           </div>
         </Router>
       </AuthProvider>
+     
 
     </div>
   );

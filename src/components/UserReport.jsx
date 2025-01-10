@@ -25,7 +25,7 @@ const UserReport = (props) => {
   const formattedPastDate = pastDate.toISOString().split("T")[0];
   const [startDate, setStartDate] = useState(formattedPastDate);
   const [endDate, setEndDate] = useState(formatedToday);
-  const { userReportReloader, setUserReportReloader } = useAuth();
+  const { userReportReloader, setUserReportReloader, dark } = useAuth();
   const [Closer, setCloser] = useState("");
   const [selectedusername, setSelectedUserName] = useState([]);
   useEffect(() => {
@@ -164,10 +164,19 @@ const UserReport = (props) => {
                 className="d-flex justify-content-center align-items-center"
                 style={{ paddingTop: "15px" }}
               >
-                <i class="fa-solid fa-filter fa-xl"></i>
+                <i
+                  class={`fa-solid fa-filter fa-xl ${
+                    dark ? "text-light" : ""
+                  } `}
+                ></i>
               </div>
               <div className="d-flex flex-column">
-                <label htmlFor="startDate">From</label>
+                <label
+                  className={`${dark ? "text-light" : "text-dark"}`}
+                  htmlFor="startDate"
+                >
+                  From
+                </label>
                 <input
                   value={startDate}
                   max={formatedToday} // Maximum date is today
@@ -177,7 +186,12 @@ const UserReport = (props) => {
                 />
               </div>
               <div className="d-flex flex-column">
-                <label htmlFor="endDate">To</label>
+                <label
+                  className={`${dark ? "text-light" : "text-dark"}`}
+                  htmlFor="endDate"
+                >
+                  To
+                </label>
                 <input
                   value={endDate}
                   max={formatedToday} // Maximum date is today
@@ -210,7 +224,7 @@ const UserReport = (props) => {
                           width: "150px",
                           overflow: "hidden",
                           borderRadius: "50%",
-                          backgroundColor: "#f0f0f0",
+                         border:'1px solid gray'
                         }}
                       >
                         {convertToImage(user.imageData) ? (
@@ -219,30 +233,52 @@ const UserReport = (props) => {
                             className="img-fluid"
                             alt={`${user.firstName} ${user.lastName}`}
                             style={{
-                              maxHeight: "100%",
-                              maxWidth: "100%",
-                              borderRadius: "50%",
+                              width: "80px", // Ensures a fixed width
+                              height: "80px", // Ensures a fixed height
+                              borderRadius: "50%", // Makes the image a perfect circle
+                              objectFit: "cover", // Ensures the image covers the circle without distortion
+                              padding:5
                             }}
                           />
                         ) : (
-                          <span>No Image</span>
+                          <img
+                            src="https://cdn-icons-png.flaticon.com/128/1077/1077012.png"
+                            className="img-fluid"
+                            alt="Default User"
+                            style={{
+                              width: "70px",
+                              height: "70px",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                            }}
+                          />
                         )}
                       </div>
 
                       <div style={{ height: "120px" }}>
-                        <div className="fw-bold" style={{ fontSize: "30px" }}>
-                          {user.firstName}
+                        <div
+                          className={`fw-bold text-center text-uppercase ${dark ? "text-light" : ""} `}
+                          style={{ fontSize: "28px" }}
+                        >
+                          <span style={{ fontSize: "28px" }} className={`  ${dark ? "text-light" : "text-secondary"}`}>{user.firstName}</span>
                         </div>
 
                         {findNoOfAssignedTicketsToUser(user.userId) > 0 ? (
                           <div className="d-flex flex-column">
                             <div>
                               <span
+                                className={`${
+                                  dark
+                                    ? "text-light border border-light px-2"
+                                    : "text-dark"
+                                }`}
                                 style={{
                                   border: "1px solid black",
                                   borderRadius: "5px",
                                   padding: "5px",
                                   marginTop: "5px",
+                                  backgroundColor: dark ? "bg-secondary" : "",
+                                  color: dark ? "text-light" : "",
                                 }}
                               >
                                 Today Assigned:{" "}
@@ -250,7 +286,7 @@ const UserReport = (props) => {
                               </span>
                               <button
                                 type="button"
-                                className="btn btn-dark rounded"
+                                className="btn btn-secondary rounded border "
                                 onClick={() =>
                                   handleOpenModal(user.userId, user.firstName)
                                 }
@@ -292,7 +328,10 @@ const UserReport = (props) => {
                         <div class="container shadow">
                           <div class="row border p-2">
                             <div class="col">
-                              <samp> Total Calls</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                {" "}
+                                Total Calls
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getTotalCallOfUser(user.firstName)}
@@ -300,7 +339,9 @@ const UserReport = (props) => {
                           </div>
                           <div class="row border p-2">
                             <div class="col">
-                              <samp>Today Calls</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                Today Calls
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getUsersCallToday(user.firstName)}
@@ -308,7 +349,9 @@ const UserReport = (props) => {
                           </div>
                           <div class="row border p-2">
                             <div class="col">
-                              <samp>Total Email</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                Total Email
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getNumbersOfUsersAction(
@@ -319,7 +362,9 @@ const UserReport = (props) => {
                           </div>
                           <div class="row border p-2">
                             <div class="col">
-                              <samp>Total Sale</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                Total Sale
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getNumbersOfUsersAction(
@@ -330,7 +375,9 @@ const UserReport = (props) => {
                           </div>
                           <div class="row border p-2">
                             <div class="col">
-                              <samp>Total Quation</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                Total Quation
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getNumbersOfUsersAction(
@@ -341,7 +388,9 @@ const UserReport = (props) => {
                           </div>
                           <div class="row border p-2">
                             <div className="col">
-                              <samp>Pay Link</samp>
+                              <samp className={`${dark ? "text-light" : ""}`}>
+                                Pay Link
+                              </samp>
                             </div>
                             <div className="col text-end text-success">
                               {getNumbersOfUsersAction(
@@ -362,36 +411,41 @@ const UserReport = (props) => {
 
       {/* Bootstrap Modal */}
 
-      
+      <Modal
+        show={isModalOpen}
+        onHide={handleCloseModal}
+        className="  w-100 "
+        tabIndex="-1"
+        role=""
+      >
+        <div
+          className={`modal-dialog ${dark?"bg-white":""}   `}
+          style={{ paddingRight: "35px", backgroundColor: "#fff" }}
+          role="document"
+        >
+          <div className={`modal-content ${dark?"bg-dark":""}   `}>
+            <div className="modal-header d-flex justify-content-center w-100 px-4  " style={{ backgroundColor:dark?"#5c677d":"#2196f3" }} >
+              <h5 className="modal-title text-light">
+                Assign Ticket Report (ASR)
+              </h5>
+            </div>
+            <TicketStatusView userId={selectedUser} name={selectedusername} />
 
-        <Modal
-            show={isModalOpen}
-            onHide={handleCloseModal}
-            className="  w-100"
-            tabIndex="-1"
-            role="">
-            <div className="modal-dialog bg-light   " style={{paddingRight:'35px', backgroundColor:'#fff'}} role="document">
-            <div className="modal-content">
-                <div className="modal-header d-flex justify-content-center w-100 px-4 bg-primary">
-                    <h5 className="modal-title text-light">Assign Ticket Report (ASR)</h5>
-                </div>
-                <TicketStatusView userId={selectedUser} name={selectedusername} />
-
-                <div className="modal-footer">
-                <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={handleCloseModal}
-                >
-                    Close
-                </button>
-                {/* <button type="button" className="btn btn-primary">
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCloseModal}
+              >
+                Close
+              </button>
+              {/* <button type="button" className="btn btn-primary">
                     Save Changes
                 </button> */}
-                </div>
             </div>
-            </div>
-       </Modal>
+          </div>
+        </div>
+      </Modal>
 
       {/* Modal for ToCaptain */}
       <Modal
