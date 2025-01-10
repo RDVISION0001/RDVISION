@@ -5,6 +5,7 @@ import { useAuth } from '../auth/AuthContext';
 import TaskProgress from '../components/TaskProgress';
 import ChartWorktime from '../components/ChartWorktime';
 import TicketTrack from '../components/TicketTrack';
+import EmailCompose from '../components/EmailCompose';
 
 
 function indexa() {
@@ -19,6 +20,7 @@ function indexa() {
         <div className="container-fluid mt-3">
           <TaskProgress />
           <ChartWorktime />
+          <EmailCompose/>
         </div>
       </div>
     </>
