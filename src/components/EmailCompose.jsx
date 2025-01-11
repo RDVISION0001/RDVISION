@@ -3,8 +3,10 @@ import axiosInstance from "../axiosInstance";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import styles for the rich text editor
 import { toast } from "react-toastify";
+import { useAuth } from "../auth/AuthContext";
 
 const EmailCompose = ({autoClose}) => {
+    const {userId}=useAuth()
     const [emailData, setEmailData] = useState({
         toEmail: "",
         subject: "",
@@ -42,23 +44,21 @@ const EmailCompose = ({autoClose}) => {
         setEmailData({ ...emailData, body: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit =async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("toEmail", emailData.toEmail);
         formData.append("subject", emailData.subject);
         formData.append("body", emailData.body);
+        formData.append("userId",userId)
 
         attachments.forEach((file) => {
             formData.append("attachments", file);
         });
 
-        axiosInstance
+       await axiosInstance
             .post("/send", formData)
-            .then((response) => response.text())
-            .then((data) => {
-                alert(data);
-            })
+           
             toast.success("emailSent")
             autoClose()
             .catch((error) => {

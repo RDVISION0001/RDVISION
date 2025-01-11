@@ -342,13 +342,13 @@ function topnav() {
             id="timezone"
             className="noteebook-modal bg-light text-black"
             style={{
-              height: "20vh",
+              height: "80vh",
               width: "30vw",
               // display: "flex", // Center content within the dialog
               alignItems: "center", // Vertically center
               justifyContent: "center", // Horizontally center
               position: "fixed",
-              top: "30%",
+              top: "50%",
               left: "50%", // Adjusted for proper centering
               transform: "translate(-50%, -50%)",
               border: "none",

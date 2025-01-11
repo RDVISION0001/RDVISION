@@ -149,9 +149,8 @@ function InvoiceNewTemp() {
                 }}
               >
                 <div
-                  className={`card-body d-flex align-items-center justify-content-center ${
-                    dark ? " text-white" : ""
-                  }`}
+                  className={`card-body d-flex align-items-center justify-content-center ${dark ? " text-white" : ""
+                    }`}
                 >
                   <div>
                     <i
@@ -190,9 +189,8 @@ function InvoiceNewTemp() {
                 }}
               >
                 <div
-                  className={`card-body d-flex align-items-center justify-content-center ${
-                    dark ? " text-white" : ""
-                  }`}
+                  className={`card-body d-flex align-items-center justify-content-center ${dark ? " text-white" : ""
+                    }`}
                 >
                   <div>
                     <i
@@ -229,9 +227,8 @@ function InvoiceNewTemp() {
                 }}
               >
                 <div
-                  className={`card-body d-flex align-items-center justify-content-center ${
-                    dark ? " text-white" : ""
-                  }`}
+                  className={`card-body d-flex align-items-center justify-content-center ${dark ? " text-white" : ""
+                    }`}
                 >
                   <div>
                     <i
@@ -270,9 +267,8 @@ function InvoiceNewTemp() {
                 }}
               >
                 <div
-                  className={`card-body d-flex align-items-center justify-content-center ${
-                    dark ? " text-white" : ""
-                  }`}
+                  className={`card-body d-flex align-items-center justify-content-center ${dark ? " text-white" : ""
+                    }`}
                 >
                   <div>
                     <i
@@ -299,15 +295,13 @@ function InvoiceNewTemp() {
 
       {/* table section */}
       <section
-        className={`followup-table-section py-2 d-flex ${
-          dark ? `bg-dark` : `bg-white`
-        } `}
+        className={`followup-table-section py-2 d-flex ${dark ? `bg-dark` : `bg-white`
+          } `}
       >
         <div className="container-fluid">
           <div
-            className={`table-wrapper tabbed-table ${
-              dark ? `bg-dark` : `bg-white`
-            }`}
+            className={`table-wrapper tabbed-table ${dark ? `bg-dark` : `bg-white`
+              }`}
           >
             <h5 className={` ${dark ? `text-light` : `text-dark`}`}>
               Invoices
@@ -322,9 +316,8 @@ function InvoiceNewTemp() {
                 style={{ maxHeight: "37.5rem" }}
               >
                 <table
-                  className={`table table-bordered w-100 ${
-                    dark ? "bg-dark text-light" : ""
-                  }`}
+                  className={`table table-bordered w-100 ${dark ? "bg-dark text-light" : ""
+                    }`}
                 >
                   <thead
                     className={`sticky-top ${dark ? "bg-dark text-light" : ""}`}
@@ -381,15 +374,14 @@ function InvoiceNewTemp() {
                       .reverse()
                       .map((invoice, index) => (
                         <tr
-                              key={invoice.invoiceId}
-                              className={`${
-                                dark 
-                                  ? "table-dark" 
-                                  : invoice.opened === "paid"
-                                  ? "table-danger"
-                                  : "table-success"
-                              } ${dark ? "bg-dark text-light" : ""}`}
-                            >
+                          key={invoice.invoiceId}
+                          className={`${dark
+                              ? "table-dark"
+                              : invoice.opened === "paid"
+                                ? "table-danger"
+                                : "table-success"
+                            } ${dark ? "bg-dark text-light" : ""}`}
+                        >
 
                           <td>{index + 1}</td>
                           <td style={{ fontSize: 13 }}>{invoice.closerName}</td>
@@ -400,15 +392,13 @@ function InvoiceNewTemp() {
                             {invoice.customerName}
                           </td>
                           <td
-                            className={`text-center ${
-                              dark ? "text-light" : ""
-                            }`}
+                            className={`text-center ${dark ? "text-light" : ""
+                              }`}
                           >
                             {/* Product Details Section - Nested Table */}
                             <table
-                              className={`table table-bordered w-100 ${
-                                dark ? "bg-dark text-light" : ""
-                              }`}
+                              className={`table table-bordered w-100 ${dark ? "bg-dark text-light" : ""
+                                }`}
                             >
                               <thead>
                                 <tr>
@@ -438,22 +428,22 @@ function InvoiceNewTemp() {
                                     order.product?.map((product, index) => (
                                       <tr key={`${i}-${index}`}>
                                         <td
-                                          className={`border ${dark ? `bg-dark text-light`:""}`}
+                                          className={`border ${dark ? `bg-dark text-light` : ""}`}
                                           style={{ fontSize: 12 }}
                                         >
                                           {product.name}
                                         </td>
                                         <td
-                                          className={`border ${dark ? `bg-dark text-light`:""}`}
+                                          className={`border ${dark ? `bg-dark text-light` : ""}`}
                                           style={{ fontSize: 12 }}
                                         >
                                           {order.quantity || "N/A"}
                                         </td>
                                         <td
-                                          className={`border ${dark ? `bg-dark text-light`:"bg-white"}`}
+                                          className={`border ${dark ? `bg-dark text-light` : "bg-white"}`}
                                           style={{ fontSize: 12 }}
                                         >
-                                          {invoice.currency}{" "}
+                                          {order.currency}{" "}
                                           {order.totalAmount || "N/A"}
                                         </td>
                                       </tr>
@@ -463,12 +453,11 @@ function InvoiceNewTemp() {
                             </table>
                           </td>
                           <td style={{ fontSize: 13 }}>
-                            {formatDate(invoice.invoiceGenerateDate)}
+                            {formatDate(invoice.invoiceCreateDate)}
                           </td>
                           <td
-                            className={`text-success font-weight-bold ${
-                              dark ? "text-light" : ""
-                            }`}
+                            className={`text-success font-weight-bold ${dark ? "text-light" : ""
+                              }`}
                             style={{ fontSize: 13 }}
                           >
                             {invoice.currency || "USD"} {invoice.orderAmount}
@@ -529,9 +518,8 @@ function InvoiceNewTemp() {
                           <td>
                             {invoice.paymentStatus !== "paid" && (
                               <button
-                                className={`btn btn-success rounded ${
-                                  dark ? "text-light" : ""
-                                }`}
+                                className={`btn btn-success rounded ${dark ? "text-light" : ""
+                                  }`}
                                 onClick={() =>
                                   invoice.address
                                     ? handleMarkAsPaidClick(invoice)
