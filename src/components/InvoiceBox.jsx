@@ -390,24 +390,24 @@ function InvoiceBox({ ticket }) {
                             alt=""
                           />
                           <address>
-                              {/* Display ticket sender address if it exists */}
-                              {ticket.senderAddress && (
-                                <>
-                                  <strong>Sender Address:</strong> {ticket.senderAddress} <br />
-                                </>
-                              )}
+                            {/* Display ticket sender address if it exists */}
+                            {ticket.senderAddress && (
+                              <>
+                                <strong>Sender Address:</strong> {ticket.senderAddress} <br />
+                              </>
+                            )}
 
-                              {/* Display addressData if it exists */}
-                              {addressData && (
-                                <>
-                                  <strong>Alternate Address:</strong> {addressData.houseNumber},{" "}
-                                  {addressData.landmark}, {addressData.city}, {addressData.state},{" "}
-                                  {addressData.zipCode}, {addressData.country}
-                                </>
-                              )}
+                            {/* Display addressData if it exists */}
+                            {addressData && (
+                              <>
+                                <strong>Alternate Address:</strong> {addressData.houseNumber},{" "}
+                                {addressData.landmark}, {addressData.city}, {addressData.state},{" "}
+                                {addressData.zipCode}, {addressData.country}
+                              </>
+                            )}
 
-                              {/* Fallback when no address is found */}
-                              {!ticket.senderAddress && !addressData && "No address found"}
+                            {/* Fallback when no address is found */}
+                            {!ticket.senderAddress && !addressData && "No address found"}
                           </address>
 
                         </div>
@@ -460,8 +460,8 @@ function InvoiceBox({ ticket }) {
                                                         </div> */}
                         </div>
                         {orderDetails &&
-                        orderDetails.productOrders &&
-                        orderDetails.productOrders.length > 0 ? (
+                          orderDetails.productOrders &&
+                          orderDetails.productOrders.length > 0 ? (
                           <div className="overflow-x-auto">
                             <table className="min-w-full table-auto border-collapse border border-gray-200">
                               <thead>
@@ -493,7 +493,7 @@ function InvoiceBox({ ticket }) {
                                 {orderDetails.productOrders.map(
                                   (productOrder, index) =>
                                     productOrder.product &&
-                                    productOrder.product[0] ? (
+                                      productOrder.product[0] ? (
                                       <tr
                                         key={productOrder.productorderId}
                                         className="hover:bg-gray-50"
@@ -614,9 +614,8 @@ function InvoiceBox({ ticket }) {
 
                   <div
                     id="shippingDetils"
-                    className={`accordion-collapse collapse ${
-                      isCollapsed ? "" : "show"
-                    }`}
+                    className={`accordion-collapse collapse ${isCollapsed ? "" : "show"
+                      }`}
                     data-bs-parent="#accordionAddressDetails"
                   >
                     {true && ( // Adjust condition if necessary
@@ -834,8 +833,8 @@ function InvoiceBox({ ticket }) {
                   .filter((product) =>
                     serchValue.length > 0
                       ? product.name
-                          .toLowerCase()
-                          .includes(serchValue.toLowerCase())
+                        .toLowerCase()
+                        .includes(serchValue.toLowerCase())
                       : true
                   )
                   .filter((product) => product.images !== null)

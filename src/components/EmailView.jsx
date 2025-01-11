@@ -191,9 +191,9 @@ const EmailView = () => {
             alert('No Base64 string available to convert.');
         }
     };
-const handleCloseCompose =()=>{
-    setIsComposeOpen(false)
-}
+    const handleCloseCompose = () => {
+        setIsComposeOpen(false)
+    }
     return (
         <div className={`container-fluid border-2 rounded ${dark ? "bg-dark text-white" : ""}`}>
 
@@ -240,32 +240,57 @@ const handleCloseCompose =()=>{
                             Search
                         </button>
                     </div> */}
-                    <div
-                        className="list-group"
-                        style={{ height: "80vh", overflowY: "auto" }}
-                    >
-                        {emails.map((email, index) => (
-                            <a
-                                key={index}
-                                // onClickCapture={() => handleOpenEmail(.messageId)}
-                                className={`list-group-item list-group-item-action ${extractEmailDetails(email).content === opnedEmail
-                                    ? "bg-primary text-white"
-                                    : dark
-                                        ? "bg-dark text-white"
-                                        : ""
-                                    }`}
-                                onClick={() => handleOpenEmail(extractEmailDetails(email).content, email.attachments)}
+                    <div style={{ position: "relative" }}>
+                        {/* List Group */}
+                        <div
+                            className={`list-group ${loading ? "blurred" : ""}`}
+                            style={{ height: "80vh", overflowY: "auto", filter: loading ? "blur(2px)" : "none" }}
+                        >
+                            {emails.map((email, index) => (
+                                <a
+                                    key={index}
+                                    className={`list-group-item list-group-item-action ${extractEmailDetails(email).content === opnedEmail
+                                            ? "bg-primary text-white"
+                                            : dark
+                                                ? "bg-dark text-white"
+                                                : ""
+                                        }`}
+                                    onClick={() => handleOpenEmail(extractEmailDetails(email).content, email.attachments)}
+                                >
+                                    <div className="d-flex w-100 justify-content-between">
+                                        <strong>{extractEmailDetails(email).from}</strong>
+                                        <small>{dateFormatter(extractEmailDetails(email).receivedDate)}</small>
+                                    </div>
+                                    <p className="mb-1 fw-bold">{extractEmailDetails(email).subject}</p>
+                                    <small>{extractEmailDetails(email).status}</small>
+                                    {extractEmailDetails(email).status !== "Seen" && (
+                                        <span className="badge bg-success ms-2">New</span>
+                                    )}
+                                </a>
+                            ))}
+                        </div>
+
+                        {/* Loading Overlay */}
+                        {loading && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                    zIndex: 1,
+                                }}
                             >
-                                <div className={`d-flex w-100 justify-content-between `}>
-                                    <strong>{extractEmailDetails(email).from}</strong>
-                                    <small className={``}>{dateFormatter(extractEmailDetails(email).receivedDate)}</small>
-                                </div>
-                                <p className="mb-1 fw-bold">{extractEmailDetails(email).subject}</p>
-                                <small className="">{extractEmailDetails(email).status}</small>
-                                {extractEmailDetails(email).status !== "Seen" && <span className="badge bg-success ms-2">New</span>}
-                            </a>
-                        ))}
+                                <span className="text-primary fs-4"> <i class="fa-solid fa-sync fa-spin fa-2xl"></i> Please wait..</span>
+                            </div>
+                        )}
                     </div>
+
                     <nav>
                         <ul className="pagination justify-content-center mt-3">
                             <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
@@ -303,7 +328,7 @@ const handleCloseCompose =()=>{
                         dangerouslySetInnerHTML={{ __html: opnedEmail }}
                         style={{ border: "", borderRadius: "5px", padding: "10px", color: "black", }}
                     />
-                    
+
                     <div className="d-flex flex-wrap">
                         {file.map((files, index) => {
                             if (files.fileType === "Image") {
@@ -349,7 +374,7 @@ const handleCloseCompose =()=>{
                 aria-hidden="true"
                 className="rounded-lg"  // Add Tailwind class to make the modal rounded
             >
-                <EmailCompose autoClose={handleCloseCompose}/>
+                <EmailCompose autoClose={handleCloseCompose} />
                 <div className="modal-body">
                     <button
                         type="button"
