@@ -224,8 +224,8 @@ function MIS_Product() {
     };
 
     const rowDetails = [
-        { label: "Category", valueKey: "category" },
         { label: "Product Name", valueKey: "name" },
+        { label: "Category", valueKey: "category" },
         { label: "Generic Name", valueKey: "genericName" },
         { label: "Brand", valueKey: "brand" },
         { label: "Strength", valueKey: "strength" },
@@ -395,10 +395,10 @@ function MIS_Product() {
                             filteredProducts.filter((product) => product.strength).slice(startIndex, endIndex).map((product, index) => (
                                 <React.Fragment key={product.productId}>
                                     {rowDetails.map((row, rowIndex) => (
-                                        <tr className="border" key={`${product.productId}-${rowIndex}`}>
+                                        <tr className="" style={{border:"2px solid black"}} key={`${product.productId}-${rowIndex}`}>
                                             {rowIndex === 0 && (
                                                 <>
-                                                    <td className="border" rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
+                                                    <td className="border " rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
                                                     <td className="border" rowSpan={rowDetails.length} style={{ padding: "10px", }}>
                                                         {localStorage.getItem("roleName") === "Product_Coordinator" && getImageIds(product.productId).map((imageId) => (
                                                             <>
@@ -444,8 +444,8 @@ function MIS_Product() {
                                                     </td>
                                                 </>
                                             )}
-                                            <td className="fw-bold border" style={{ padding: "5px" }}>{row.label}</td>
-                                            <td className="border" style={{ padding: "5px" }}>
+                                            <td className={`fw-bold border ${row.label==="Product Name"?"bg-info":""}`} style={{ padding: "5px" }}>{row.label}</td>
+                                            <td  className={`${row.label==="Product Name"?"bg-info":""}`} style={{border:"2px solid black", padding:"5px"}} >
                                                 {row.valueKey === "category" && (
                                                     <>
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (

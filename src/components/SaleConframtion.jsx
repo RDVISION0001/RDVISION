@@ -4,10 +4,14 @@ import axiosInstance from '../axiosInstance';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddressForm from '../components/AddressForm';
+import Confetti from "react-confetti"; // Import the confetti library
+
 
 
 function SaleConframtion(props) {
     const userId = localStorage.getItem("userId");
+
+    const [showConfetti, setShowConfetti] = useState(false);
 
     // State to store the dropdown options
     const [options, setOptions] = useState([]);
@@ -199,16 +203,25 @@ function SaleConframtion(props) {
         if (orderDetails.productOrders.length > 0) {
             setLoading(true);
             try {
-                const response = await axiosInstance.post(`/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`, formData); // Send formData instead of setFormData
-                toast.success('Marked as Sale done');
+                const response = await axiosInstance.post(
+                    `/invoice/save-information?ticketId=${selectedTicketId}&userId=${userId}`,
+                    formData
+                );
+                toast.success("Marked as Sale done");
+
+                // Trigger the confetti animation
+                setShowConfetti(true);
+
+                // Stop the confetti after a short delay
+                setTimeout(() => setShowConfetti(false), 8000); // Adjust time as needed
             } catch (error) {
-                console.error('Error sending invoice:', error);
-                toast.error('Failed to send invoice');
-            }finally {
+                console.error("Error sending invoice:", error);
+                toast.error("Failed to send invoice");
+            } finally {
                 setLoading(false);
             }
         } else {
-            toast.error("Please Add At least one poroduct")
+            toast.error("Please Add At least one product");
         }
     };
 
@@ -283,6 +296,7 @@ function SaleConframtion(props) {
     return (
         <>
             <div className="">
+                {showConfetti && <Confetti />}
                 <div className="tab-content vertical-tab-body-wrapper" id="v-pills-tabContent">
                     {/* Tab One */}
                     <div
@@ -495,7 +509,6 @@ function SaleConframtion(props) {
 
                                 {/* Order Items Details Ends Here */}
                                 <div className="d-flex justify-content-center">
-
                                     <button
                                         onClick={handleSendInvoice}
                                         className="btn btn-primary mt-1"

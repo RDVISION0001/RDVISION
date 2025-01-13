@@ -152,8 +152,7 @@ const InvoiceInfo = (props) => {
   const handleClickCallForticket = async (ticketId) => {
     try {
       const response = await axiosInstance.get(
-        `${
-          ticketId.length < 15 ? "/third_party_api/ticket/" : "/upload/"
+        `${ticketId.length < 15 ? "/third_party_api/ticket/" : "/upload/"
         }clickToCall/${ticketId}`
       );
     } catch (error) {
@@ -223,9 +222,8 @@ const InvoiceInfo = (props) => {
               {/* Total Invoices */}
               <div className={`col-md-3 ${dark ? "bg-dark" : ""}`}>
                 <div
-                  className={`card position-relative border ${
-                    dark ? "bg-dark text-white" : ""
-                  }`}
+                  className={`card position-relative border ${dark ? "bg-dark text-white" : ""
+                    }`}
                   style={{ backgroundColor: dark ? "" : "#caf0f8" }}
                 >
                   <div className="div-top">
@@ -247,11 +245,9 @@ const InvoiceInfo = (props) => {
                     </div>
                   </div>
                   <div
-                    className={`details-box position-absolute ${
-                      dark ? "bg-dark text-white" : "bg-white"
-                    } border rounded p-3 shadow transition-all duration-300 ${
-                      showDetails ? "opacity-100" : "opacity-0 invisible"
-                    }`}
+                    className={`details-box position-absolute ${dark ? "bg-dark text-white" : "bg-white"
+                      } border rounded p-3 shadow transition-all duration-300 ${showDetails ? "opacity-100" : "opacity-0 invisible"
+                      }`}
                     style={{ top: "100%", left: "0", width: "100%" }}
                   >
                     <p>Total Follow-ups: 50</p>
@@ -328,7 +324,9 @@ const InvoiceInfo = (props) => {
         </section>
       )}
 
-      <section className={`data-table-bgs_02x24 py-3 ${`${dark ? `bg-dark text-white`:``}`} `}>
+      <section
+        className={`data-table-bgs_02x24 py-3 ${dark ? `bg-dark text-white` : ``}`}
+      >
         <div className="container-fluid">
           <div className="table-wrapper">
             {props.stage === 4 ? (
@@ -336,36 +334,83 @@ const InvoiceInfo = (props) => {
             ) : (
               <h3 className="title">Invoices for after sales service</h3>
             )}
-            <table className={`table table-bordered ${dark ? `table-dark`:`` } `}>
+            <table className={`table table-bordered ${dark ? `table-dark` : ``}`}>
               <thead>
                 <tr className="border">
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>S.No.</th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
+                    S.No.
+                  </th>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Created Date
                   </th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
+                    Tracking Number
+                  </th>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Total Amount
                   </th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Customer Name
                   </th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Country</th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
+                    Country
+                  </th>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Order Details
                   </th>
                   {localStorage.getItem("roleName") === "SeniorSuperVisor" && (
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                    <th
+                      className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                        }`}
+                    >
                       Tracking Number
                     </th>
                   )}
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Delivery Status
                   </th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
                     Last Call Status
                   </th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Action</th>
-                  <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Recording</th>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
+                    Action
+                  </th>
+                  <th
+                    className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
+                      }`}
+                  >
+                    Recording
+                  </th>
                 </tr>
               </thead>
 
@@ -374,122 +419,156 @@ const InvoiceInfo = (props) => {
                   invoices
                     .slice(0, 10) // Limit to the first 10 invoices
                     .reverse() // Reverse the order
-                    .map((invoice, index) => (
-                      <tr key={index} className="border">
-                        <td>{index + 1}</td>
-                        <td className="text-center">
-                          {invoice.saleDate && invoice.saleDate[2]}-
-                          {convertNumberToStringMonth(
-                            invoice.saleDate && invoice.saleDate[1]
-                          )}
-                          -{invoice.saleDate && invoice.saleDate[0]}
-                        </td>
-                        <td className="text-center">
-                          {invoice.orderDto.productOrders[0].currency}{" "}
-                          {invoice.orderDto.totalPayableAmount}
-                        </td>
-                        <td className="text-center">{invoice.customerName}</td>
-                        <td className="text-center">
-                          <img
-                            style={{ height: 14 }}
-                            src={getFlagUrl(invoice.countryIso)}
-                            alt=""
-                          />{" "}
-                          <span style={{ fontSize: 14 }}>
-                            {invoice.countryIso}
-                          </span>
-                        </td>
-                        <td className="text-center">
-                          <div className="product-details">
-                            <table className="table table-sm table-bordered table-striped table-hover">
-                              <thead className="table-light">
-                                <tr>
-                                  <th className={` text-center ${dark ? `bg-muted text-dark`:`` }`} scope="col">Name</th>
-                                  <th className={` text-center ${dark ? `bg-muted text-dark`:`` }`}  scope="col" >
-                                    Quantity
-                                  </th>
-                                  <th className={` text-center ${dark ? `bg-muted text-dark`:`` }`}  scope="col" >
-                                    Price
-                                  </th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {invoice.orderDto?.productOrders?.length > 0 ? (
-                                  invoice.orderDto.productOrders.map(
-                                    (order, i) =>
+                    .map((invoice, index) => {
+                      const isTrackingAvailable = invoice.trackingNumber;
+                      return (
+                        <tr
+                          key={index}
+                          className={`border ${isTrackingAvailable ? "bg-success" : ""
+                            }`} // Apply green background if tracking number is available
+                        >
+                          <td>{index + 1}</td>
+                          <td className="text-center">
+                            {invoice.saleDate && invoice.saleDate[2]}-
+                            {convertNumberToStringMonth(
+                              invoice.saleDate && invoice.saleDate[1]
+                            )}
+                            -{invoice.saleDate && invoice.saleDate[0]}
+                          </td>
+                          <td className="text-center">
+                            {invoice.trackingNumber ? invoice.trackingNumber : "Awating"}
+                          </td>
+                          <td className="text-center">
+                            {invoice.orderDto.productOrders[0].currency}{" "}
+                            {invoice.orderDto.totalPayableAmount}
+                          </td>
+                          <td className="text-center">{invoice.customerName}</td>
+                          <td className="text-center">
+                            <img
+                              style={{ height: 14 }}
+                              src={getFlagUrl(invoice.countryIso)}
+                              alt=""
+                            />{" "}
+                            <span style={{ fontSize: 14 }}>
+                              {invoice.countryIso}
+                            </span>
+                          </td>
+                          <td className="text-center">
+                            <div className="product-details">
+                              <table className="table table-sm table-bordered table-striped table-hover">
+                                <thead className="table-light">
+                                  <tr>
+                                    <th
+                                      className={`text-center ${dark ? `bg-muted text-dark` : ``
+                                        }`}
+                                      scope="col"
+                                    >
+                                      Name
+                                    </th>
+                                    <th
+                                      className={`text-center ${dark ? `bg-muted text-dark` : ``
+                                        }`}
+                                      scope="col"
+                                    >
+                                      Quantity
+                                    </th>
+                                    <th
+                                      className={`text-center ${dark ? `bg-muted text-dark` : ``
+                                        }`}
+                                      scope="col"
+                                    >
+                                      Price
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {invoice.orderDto?.productOrders?.length > 0 ? (
+                                    invoice.orderDto.productOrders.map((order, i) =>
                                       order.product?.map((product, index) => (
                                         <tr key={`${i}-${index}`}>
-                                          <td className={`text-center ${dark ? `bg-secondary text-white`:``} `}>{product.name || "N/A"}</td>
-                                          <td className={`text-center ${dark ? `bg-secondary text-white`:``} `}>
+                                          <td
+                                            className={`text-center ${dark ? `bg-secondary text-white` : ``
+                                              }`}
+                                          >
+                                            {product.name || "N/A"}
+                                          </td>
+                                          <td
+                                            className={`text-center ${dark ? `bg-secondary text-white` : ``
+                                              }`}
+                                          >
                                             {order.quantity || "N/A"}
                                           </td>
-                                          <td className={`text-center ${dark ? `bg-secondary text-white`:``} `}>
+                                          <td
+                                            className={`text-center ${dark ? `bg-secondary text-white` : ``
+                                              }`}
+                                          >
                                             {invoice.currency || "$"}
                                             {order.totalAmount || "0.00"}
                                           </td>
                                         </tr>
                                       ))
-                                  )
+                                    )
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="3" className="text-center">
+                                        No products found
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </td>
+                          {localStorage.getItem("roleName") ===
+                            "SeniorSuperVisor" && (
+                              <td className="text-center">
+                                {invoice.trackingNumber ? (
+                                  invoice.trackingNumber
                                 ) : (
-                                  <tr>
-                                    <td colSpan="3" className="text-center">
-                                      No products found
-                                    </td>
-                                  </tr>
+                                  <button
+                                    className="bg-primary"
+                                    onClick={() =>
+                                      openTrackingBox(invoice.uniqueQueryId)
+                                    }
+                                  >
+                                    Add Tracking Number
+                                  </button>
                                 )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </td>
-                        {localStorage.getItem("roleName") ===
-                          "SeniorSuperVisor" && (
+                              </td>
+                            )}
                           <td className="text-center">
-                            {invoice.trackingNumber ? (
-                              invoice.trackingNumber
-                            ) : (
-                              <button
-                                className="bg-primary"
+                            {invoice.deliveryStatus || "N/A"}
+                          </td>
+                          <td className="text-center">{invoice.assCallStatus}</td>
+                          <td className="text-center">
+                            <Button
+                              onClick={() => handleClick(invoice.uniqueQueryId)}
+                              className="btn-action call rounded-circle"
+                              title="Get connect on call"
+                            >
+                              <i className="fa-solid fa-phone"></i>
+                            </Button>
+                          </td>
+                          <td className="text-center">
+                            {invoice.callRecording ? (
+                              <Button
                                 onClick={() =>
-                                  openTrackingBox(invoice.uniqueQueryId)
+                                  playRecording(invoice.callRecording, index)
                                 }
                               >
-                                Add Tracking Number
-                              </button>
+                                {isPlaying && selectedIndex === index ? (
+                                  <i className="fa-solid fa-pause"></i>
+                                ) : (
+                                  <i className="fa-solid fa-play"></i>
+                                )}
+                              </Button>
+                            ) : (
+                              "Recording not Available"
                             )}
                           </td>
-                        )}
-                        <td className="text-center">
-                          {invoice.deliveryStatus || "N/A"}
-                        </td>
-                        <td className="text-center">{invoice.assCallStatus}</td>
-                        <td className="text-center">
-                          <Button
-                            onClick={() => handleClick(invoice.uniqueQueryId)}
-                            className="btn-action call rounded-circle"
-                            title="Get connect on call"
-                          >
-                            <i className="fa-solid fa-phone"></i>
-                          </Button>
-                        </td>
-                        <td className="text-center">
-                          {invoice.callRecording ? (
-                            <Button
-                              onClick={() =>
-                                playRecording(invoice.callRecording, index)
-                              }
-                            >
-                              {isPlaying && selectedIndex === index ? (
-                                <i className="fa-solid fa-pause"></i>
-                              ) : (
-                                <i className="fa-solid fa-play"></i>
-                              )}
-                            </Button>
-                          ) : (
-                            "Recording not Available"
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                        </tr>
+                      );
+                    })
                 ) : (
                   <tr>
                     <td colSpan="11" className="text-center">
@@ -541,9 +620,11 @@ const InvoiceInfo = (props) => {
         </div>
       </section>
 
+
+
       {/* 2nd table */}
-      <section className={`data-table-bgs_02x24 py-3 ${`${dark ? `bg-dark text-white`:``}`} `}>
-        
+      <section className={`data-table-bgs_02x24 py-3 ${`${dark ? `bg-dark text-white` : ``}`} `}>
+
         <div className="container-fluid">
           <div className="table-wrapper">
             {props.stage === 4 ? (
@@ -556,17 +637,18 @@ const InvoiceInfo = (props) => {
               className="table-container"
               style={{ maxHeight: "800px", overflowY: "auto" }}
             >
-              <table className={`table table-bordered ${dark ? `table-dark`:`` } `}>
+              <table className={`table table-bordered ${dark ? `table-dark` : ``} `}>
                 <thead className="sticky-header">
                   <tr className="border">
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>S.no</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Sale Date</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Name</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Tracking Id</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Delivery Status</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Comment</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Action</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white`:``} `}>Recording</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>S.no</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Sale Date</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Tracking Number</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Name</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Tracking Id</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Delivery Status</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Comment</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Action</th>
+                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Recording</th>
                   </tr>
                 </thead>
                 <tbody className="overflow">
@@ -578,6 +660,9 @@ const InvoiceInfo = (props) => {
                           {invoice.lastActionDate
                             ? formatFollowUpDate(invoice.lastActionDate)
                             : "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.trackingNumber ? invoice.trackingNumber : "Awating"}
                         </td>
                         <td className="text-center">
                           {invoice.senderName

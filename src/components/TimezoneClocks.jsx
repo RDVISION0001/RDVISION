@@ -86,7 +86,7 @@ const TimezoneClocks = () => {
     <div
       style={{
         backgroundColor: "#F8F9FA",
-        minHeight: "100vh",
+        minHeight: "70vh",
         padding: "30px",
       }}
     >
