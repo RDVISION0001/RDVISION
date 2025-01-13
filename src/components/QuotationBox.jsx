@@ -781,7 +781,7 @@ function QuotationBox({ ticket }) {
 
             <div className="d-flex align-items-center">
               <label htmlFor="Currency" className="mx-5">
-                Choose Currency
+               Currency 
               </label>
               <select
                 name="currency"
@@ -789,7 +789,7 @@ function QuotationBox({ ticket }) {
                 onChange={handleChange}
                 id="currency"
                 className="form-control"
-                style={{ maxWidth: "100px", fontSize: "15px" }}
+                style={{ maxWidth: "200px", fontSize: "15px" }}
               >
                 <option value="" disabled>
                   Select Currency
@@ -859,12 +859,12 @@ function QuotationBox({ ticket }) {
 
                           {/* Product Details Section */}
                           <div className="ms-2 w-100 ">
-                            <h6
+                            <strong
                               className="card-title mb-1"
-                              style={{ fontSize: "12px" }}
+                              style={{ fontSize: "14px" }}
                             >
                               {product.name} {product.Price}
-                            </h6>
+                            </strong>
 
                             {/* Price and Quantity Input Section */}
                             {/* <div className="input-group mb-1 d-flex justify-content-around" style={{ fontSize: '12px' }}>

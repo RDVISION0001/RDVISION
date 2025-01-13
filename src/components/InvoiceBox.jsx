@@ -306,6 +306,8 @@ function InvoiceBox({ ticket }) {
     const url = URL.createObjectURL(blob);
     return url;
   }
+
+  
   return (
     <>
       <div className="">
@@ -802,7 +804,7 @@ function InvoiceBox({ ticket }) {
 
             <div className="d-flex align-items-center">
               <label htmlFor="Currency" className="mx-5">
-                Choose Currency
+                Currency
               </label>
               <select
                 name="currency"
@@ -810,7 +812,7 @@ function InvoiceBox({ ticket }) {
                 onChange={handleChange}
                 id="currency"
                 className="form-control"
-                style={{ maxWidth: "100px", fontSize: "15px" }}
+                style={{ maxWidth: "200px", fontSize: "15px" }}
               >
                 <option value="" disabled>
                   Select Currency
@@ -880,41 +882,38 @@ function InvoiceBox({ ticket }) {
 
                           {/* Product Details Section */}
                           <div className="ms-2 w-100 ">
-                            <h6
+                            <strong
                               className="card-title mb-1"
-                              style={{ fontSize: "12px" }}
+                              style={{ fontSize: "14px" }}
                             >
                               {product.name} ({product.strength})
-                            </h6>
-
+                            </strong>
                             {/* Price and Quantity Input Section */}
-                            <div
-                              className="input-group mb-1 d-flex justify-content-around"
-                              style={{ fontSize: "12px" }}
-                            >
-                              <input
-                                type="text"
-                                className="form-control form-control-sm mx-2"
-                                placeholder="Quantity"
-                                style={{ maxWidth: "70px" }}
-                                value={quantityValues[product.productId] || ""}
-                                onChange={(e) =>
-                                  handleQuantityChange(e, product.productId)
-                                }
-                              />
-                              <input
-                                type="text"
-                                className="form-control form-control-sm mx-2"
-                                placeholder="Price"
-                                style={{ maxWidth: "70px" }}
-                                value={priceValues[product.productId] || ""}
-                                onChange={(e) =>
-                                  handlePriceChange(e, product.productId)
-                                }
-                              />
+                            <div className="input-group mb-1 justify-content-around" style={{ fontSize: "12px" }}>
+                              <div className="d-flex flex-column align-items-center">
+                                <label className="form-label">Quantity</label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm mx-2"
+                                  placeholder="Quantity"
+                                  style={{ maxWidth: "70px" }}
+                                  value={quantityValues[product.productId] || ""}
+                                  onChange={(e) => handleQuantityChange(e, product.productId)}
+                                />
+                              </div>
+                              <div className="d-flex flex-column align-items-start mx-2">
+                                <label className="form-label">Price</label>
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  placeholder="Price"
+                                  style={{ maxWidth: "70px" }}
+                                  value={priceValues[product.productId] || ""}
+                                  onChange={(e) => handlePriceChange(e, product.productId)}
+                                />
+                              </div>
                             </div>
                           </div>
-
                           <button
                             className="bg-info mt-2 mt-md-0"
                             style={{ height: "30px", fontSize: "12px" }}
