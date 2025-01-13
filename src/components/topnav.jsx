@@ -9,6 +9,8 @@ import WebsocketService from "./WebsocketServices";
 import { useDispatch } from "react-redux";
 import { toggleTheme } from "../Redux/features/ThemeSlice";
 import BootstrapSwitchButton from "bootstrap-switch-button-react";
+import { Modal } from "react-bootstrap";
+import EmailCompose from "./EmailCompose";
 
 // import TimeZone from './TimeZone';
 
@@ -20,6 +22,8 @@ function topnav() {
   const { isSideBarOpen, setIsSideBarOpen } = useAuth();
   const [isChatBotOPen, setIsChatBotOpen] = useState(false);
   const dispatch = useDispatch();
+  const [isCompoeseOpen, setIsComposeOpen] = useState(false)
+
 
   // Update the handle functions for the notebook
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
@@ -118,36 +122,35 @@ function topnav() {
     setDrak(!dark);
     dispatch(toggleTheme());
   };
+  const handleCloseCompose = () => {
+    setIsComposeOpen(false)
+}
 
   return (
     <>
       {localStorage.getItem("userId") && (
         <div className="topnav  sticky-top z-4 ">
           <nav
-            className={`navbar top-navbar navbar-light ${
-              dark ? `bg-dark` : "bg-white"
-            }  container-fluid `}
+            className={`navbar top-navbar navbar-light ${dark ? `bg-dark` : "bg-white"
+              }  container-fluid `}
           >
             <div className="left-part">
               <a
-                className={`btn border-0 ms-2 ${
-                  dark ? `bg-dark` : `bg-white`
-                }  text-black`}
+                className={`btn border-0 ms-2 ${dark ? `bg-dark` : `bg-white`
+                  }  text-black`}
                 style={{ fontSize: "30px" }}
                 onClick={toggleSidbar}
                 id="menu-btn"
               >
                 {isSideBarOpen ? (
                   <i
-                    class={`fa-solid fa-chevron-left fa-xl ${
-                      dark ? `text-light` : `text-dark`
-                    }`}
+                    class={`fa-solid fa-chevron-left fa-xl ${dark ? `text-light` : `text-dark`
+                      }`}
                   ></i>
                 ) : (
                   <i
-                    class={`fa-solid fa-chevron-right fa-xl ${
-                      dark ? `text-light` : `text-dark`
-                    }`}
+                    class={`fa-solid fa-chevron-right fa-xl ${dark ? `text-light` : `text-dark`
+                      }`}
                   ></i>
                 )}
               </a>
@@ -155,7 +158,21 @@ function topnav() {
             <div className="right-part">
               <div>
                 <img
-                
+                  src=" https://cdn-icons-png.flaticon.com/128/7915/7915323.png"
+                  alt="theme-icon"
+                  onClick={() => setIsComposeOpen(true)}
+                  style={{
+                    height: 42,
+                    marginRight: "10px",
+                    cursor: "pointer",
+                    transition: "transform 0.5s ease, opacity 0.5s ease",
+                    opacity: dark ? 0.5 : 1,
+                  }}
+                />
+              </div>
+              <div>
+                <img
+
                   src={
                     dark
                       ? "https://cdn-icons-png.flaticon.com/128/11457/11457488.png" // Icon for dark mode
@@ -414,9 +431,8 @@ function topnav() {
           </dialog> */}
 
           <div
-            className={`text-black mt-10 rounded shadow py-1 ${
-              dark ? "bg-dark" : ""
-            }`}
+            className={`text-black mt-10 rounded shadow py-1 ${dark ? "bg-dark" : ""
+              }`}
             style={{
               position: "fixed",
               bottom: "300px",
@@ -485,6 +501,27 @@ function topnav() {
           </div>
         </div>
       )}
+
+      <Modal
+        show={isCompoeseOpen}
+        // onHide={() => setIsComposeOpen(false)}
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        className="rounded-lg"  // Add Tailwind class to make the modal rounded
+      >
+        <EmailCompose autoClose={handleCloseCompose} />
+        <div className="modal-body">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsComposeOpen(false)}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
     </>
   );
 }
