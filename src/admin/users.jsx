@@ -105,11 +105,12 @@ function users() {
   const handleDeleteUser = async (userId) => {
     setLoading(true);
     try {
-      await axiosInstance.delete(`/user/deleteUser/${userId}`);
+      await axiosInstance.delete(`/user/deleteUserbyId/${userId}`);
       toast.success('User deleted successfully!'); // Success toast message
     } catch (error) {
       console.error('Error deleting user:', error);
       toast.error('Failed to delete user!'); // Error toast message
+      fetchData(0)
     } finally {
       setLoading(false);
     }
@@ -141,7 +142,7 @@ function users() {
       toast.success("Image updated")
       setImageUploading(false)
       handleUpdateHide()
-      fetchData()
+      fetchData(0)
       setFormData((prevData) => ({
         ...prevData,
         imageData: ""
@@ -225,7 +226,7 @@ function users() {
       const response = await axiosInstance.post('/user/createUser', formData);
       toast.success('User created successfully!');
       handleClose();
-      fetchData()
+      fetchData(0)
     } catch (error) {
       console.error('Error:', error);
       toast.error('User creation failed');
@@ -407,11 +408,11 @@ function users() {
                   <div className={`table-wrapper tabbed-table text-center  ${dark?"bg-dark text-light":""}`}>
                     <h3 className={`${dark?"text-light":"text-dark"}`}>Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h3>
                     <nav className="recent-transactions-tab-header">
-                      <div className="nav nav-item nav-tabs gap-2 py-2" id="nav-tab" role="tablist">
+                      {/* <div className="nav nav-item nav-tabs gap-2 py-2" id="nav-tab" role="tablist">
                         <button className={`"nav-link active ${dark?"text-light":""}`} id="nav-all-users-tab" data-bs-toggle="tab" data-bs-target="#nav-all-users" type="button" role="tab" aria-controls="nav-all-users" aria-selected="true">All Users</button>
                         <button className={`"nav-link active ${dark?"text-light":""}`}  id="nav-new-users-tab" data-bs-toggle="tab" data-bs-target="#nav-new-users" type="button" role="tab" aria-controls="nav-new-users" aria-selected="false">New Users</button>
                         <button className={`"nav-link active ${dark?"text-light":""}`}  id="nav-restricted-tab" data-bs-toggle="tab" data-bs-target="#nav-restricted" type="button" role="tab" aria-controls="nav-restricted" aria-selected="false">Restricted Users</button>
-                      </div>
+                      </div> */}
                     </nav>
                     <div className="tab-content recent-transactions-tab-body" id="nav-tabContent">
                       <div className="tab-pane table-responsive all-users-tab fade show active" id="nav-all-users" role="tabpanel" aria-labelledby="nav-all-users-tab" tabindex="0">
