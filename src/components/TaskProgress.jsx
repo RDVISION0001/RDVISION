@@ -11,7 +11,7 @@ const ProgressBar = ({ label, value, max, colorClass }) => {
     useEffect(() => {
         // Smoothly transition from 0% to the current percentage
         const timeout = setTimeout(() => {
-            setPercentage((value / (label === "Total Sales Progress" ? maxTarget : max)) * 100);
+            setPercentage((value / max) * 100);
         }, 100); // Delay to ensure component is mounted
 
         return () => clearTimeout(timeout); // Clean up timeout on component unmount
@@ -23,7 +23,7 @@ const ProgressBar = ({ label, value, max, colorClass }) => {
                 <label>{label}</label>
                 <div className={`progress-text ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
                     <span className="current-value">{value}</span> /
-                    <span className={`max-value ${dark ? `bg-dark text-white`:`bg-white text-dark`} `} > {(label === "Total Sales Progress" ? maxTarget : max)}</span>
+                    <span className={`max-value ${dark ? `bg-dark text-white`:`bg-white text-dark`} `} > {max}</span>
                 </div>
             </div>
             <div className="progress-bar-background">
@@ -64,7 +64,7 @@ const TaskProgress = () => {
             axiosInstance.get(`/users_task/getYourTodayTask/${localStorage.getItem("userId")}`).then((resp) => {
                 setSaleProgress(prevState => ({
                     ...prevState,
-                    total: resp.data.saleTask
+                    total: resp.data.saleTask>0?resp.data.saleTask:10
                 }));
             })
 

@@ -61,7 +61,7 @@ const InvoiceInfo = (props) => {
 
   const fetchInvoiceData = async () => {
     try {
-      const response = await axiosInstance.get("/invoice/invoideCOunt");
+      const response = await axiosInstance.get(`/invoice/invoideCOunt/${localStorage.getItem("roleName") === "Closer" ? userId : 0}`);
       setInvoiceData({
         totalInvoices: response.data.totalInvoices,
         totalPaidInvoices: response.data.totalPaidInvoices,
@@ -349,12 +349,12 @@ const InvoiceInfo = (props) => {
                   >
                     Created Date
                   </th>
-                  <th
+                  {localStorage.getItem("roleName")==="Closer"  && <th
                     className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
                       }`}
                   >
                     Tracking Number
-                  </th>
+                  </th>}
                   <th
                     className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
                       }`}
@@ -435,9 +435,9 @@ const InvoiceInfo = (props) => {
                             )}
                             -{invoice.saleDate && invoice.saleDate[0]}
                           </td>
-                          <td className="text-center">
+                          {localStorage.getItem("roleName")==="Closer" && <td className="text-center">
                             {invoice.trackingNumber ? invoice.trackingNumber : "Awating"}
-                          </td>
+                          </td>}
                           <td className="text-center">
                             {invoice.orderDto.productOrders[0].currency}{" "}
                             {invoice.orderDto.totalPayableAmount}

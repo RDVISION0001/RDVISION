@@ -25,6 +25,8 @@ import InvoiceBox from "../components/InvoiceBox";
 import QuotationBox from "../components/QuotationBox";
 import TicketTrack from "../components/TicketTrack";
 import SaleConframtion from "../components/SaleConframtion";
+import EmailCompose from "../components/EmailCompose";
+
 
 function live_tickets() {
   const { userId,dark } = useAuth();
@@ -32,6 +34,9 @@ function live_tickets() {
   const { setUserReportReloader } = useAuth();
 
   const [selectedKey, setSelectedKey] = useState(null);
+  const [isCompoeseOpen, setIsComposeOpen] = useState(false)
+
+ const [emailBody,setEmailBody]=useState("")
 
   // Clipboard copy
   const [copied, setCopied] = useState(false);
@@ -141,12 +146,13 @@ function live_tickets() {
     setProductArray([]);
   };
 
-  const handleOn = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId);
-    setSelectNameForInvoice(name);
+  const handleOn = (ticketId, email,body) => {
+    // setSelectTicketForInvoice(ticketId);
+    // setSelectNameForInvoice(name);
     setSelectEmailForInvoice(email);
-    setSelectMobileForInvoice(mobile);
-    setOn(!isInvoiceOn);
+    setEmailBody(body)
+    // setSelectMobileForInvoice(mobile);
+    setIsComposeOpen(true)
   };
   const handleCloses = () => setView(false);
   const handleView = (queryId) => {
@@ -629,6 +635,10 @@ function live_tickets() {
       setCountryFilter([]); // Clear selection if "All" is clicked
     }
   };
+
+  const handleCloseCompose = () => {
+    setIsComposeOpen(false)
+}
 
   return (
     <>
@@ -1130,7 +1140,7 @@ function live_tickets() {
                                         </a>
                                         <Button
                                           onClick={() =>
-                                            handleOn(item.uniqueQueryId)
+                                            handleOn(item.uniqueQueryId,item.senderEmail,`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`)
                                           }
                                           // href="mailto:someone@example.com"
                                           className="btn-action email"
@@ -1747,6 +1757,27 @@ function live_tickets() {
             type="button"
             className="btn btn-secondary"
             onClick={handleClosee}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
+
+      <Modal
+        show={isCompoeseOpen}
+        // onHide={() => setIsComposeOpen(false)}
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        className="rounded-lg"  // Add Tailwind class to make the modal rounded
+      >
+        <EmailCompose autoClose={handleCloseCompose} email={selectEmailForInvoice} body={emailBody} />
+        <div className="modal-body">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsComposeOpen(false)}
           >
             Close
           </button>
