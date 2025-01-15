@@ -10,6 +10,7 @@ import Confetti from "react-confetti"; // Import the confetti library
 
 function SaleConframtion(props) {
     const userId = localStorage.getItem("userId");
+    const [orderDetails, setOrderDetails] = useState(null);
 
     const [showConfetti, setShowConfetti] = useState(false);
 
@@ -146,7 +147,7 @@ function SaleConframtion(props) {
     // Form state for adding products
     const [formData, setFormData] = useState({
         paymentIntentId: "",
-        amount: 0,
+        amount: orderDetails && orderDetails.totalPayableAmount,
         currency: "",
         customerId: "cus_ABC123",
         paymentWindow: "gpay"
@@ -175,7 +176,6 @@ function SaleConframtion(props) {
             console.error('Error fetching products:', error);
         }
     };
-    const [orderDetails, setOrderDetails] = useState(null);
 
     // Fetch order details from apiB when selectedTicketId changes
     useEffect(() => {
@@ -188,6 +188,14 @@ function SaleConframtion(props) {
                 try {
                     const response = await axiosInstance.get(`/order/getOrder/${selectedTicketId}`);
                     setOrderDetails(response.data.dtoList);
+                   if(response.data.dtoList.productOrders.length>0){
+                    setFormData((prev) => ({
+                        ...prev,
+                        amount: response.data.dtoList.totalPayableAmount,
+                        currency:response.data.dtoList.productOrders[0].currency
+                    }));
+                   }
+                    
                 } catch (err) {
                     console.error('Error fetching order details:', err);
                 }
@@ -245,13 +253,14 @@ function SaleConframtion(props) {
                 document.getElementById(`deleteIcon-${productOrderId}`).classList.remove("fa-xl");
                 document.getElementById(`deleteIcon-${productOrderId}`).classList.add("fa-bounce,fa-lg");
             }, 1000);
+
+            
         }
     };
 
     const [selectedProducts, setSelectedProducts] = useState([]); // State to store selected product IDs
     // Log selected products to console
     React.useEffect(() => {
-        console.log(selectedProducts);
     }, [selectedProducts]);
 
     const [priceValues, setPriceValues] = useState({});
@@ -273,25 +282,12 @@ function SaleConframtion(props) {
         }));
     };
 
-    // Resuable function to convert byte code to image url
-    function convertToImage(imageString) {
-        // const byteCharacters = atob(imageString); // Decode base64 string
-        // const byteNumbers = new Array(byteCharacters.length);
-        // for (let i = 0; i < byteCharacters.length; i++) {
-        //     byteNumbers[i] = byteCharacters.charCodeAt(i);
-        // }
-        // const byteArray = new Uint8Array(byteNumbers);
-        // const blob = new Blob([byteArray], { type: 'image/jpeg' });
-        // const url = URL.createObjectURL(blob);
-        // return url;
-    }
-    const handlePaymentChange = (e) => {
+     const handlePaymentChange = (e) => {
         setFormData((prev) => ({
             ...prev,
             [e.target.name]: e.target.value
         }));
     }
-    console.log(orderDetails)
 
     return (
         <>

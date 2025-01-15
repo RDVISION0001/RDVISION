@@ -17,7 +17,7 @@ function MIS_Product() {
     const [filterText, setFilterText] = useState("");
     const [debouncedFilterText, setDebouncedFilterText] = useState("");
     const debounceTimeout = useRef(null);
-    const {dark} = useAuth()
+    const { dark } = useAuth()
     const [category, setCategory] = useState("");
     const [products, setProducts] = useState([]);
     const [image, setImage] = useState([]);
@@ -354,29 +354,54 @@ function MIS_Product() {
         autoplay: true,
         autoplaySpeed: 2000, // Carousel changes every 2 seconds
     };
-
+    const handleCopyImage = async (imageUrl) => {
+        try {
+            // Fetch the image as raw binary data
+            const response = await axiosInstance.get(imageUrl, { responseType: "arraybuffer" });
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    
+            // Verify Clipboard API is available
+            if (!navigator.clipboard) {
+                toast.error("Clipboard API not supported in your browser.");
+                return;
+            }
+    
+            // Write the blob to the clipboard
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    [blob.type]: blob
+                })
+            ]);
+    
+            toast.success("Image copied to clipboard!");
+        } catch (error) {
+            console.error("Failed to copy image:", error);
+            toast.error("Failed to copy image. Try downloading instead.");
+        }
+    };
+    
     return (
-        <div className={`container-fluid  ${dark ? `bg-dark text-white`:`` }`} >
+        <div className={`container-fluid  ${dark ? `bg-dark text-white` : ``}`} >
             <h3 className="title text-center">MIS-Product Department</h3>
             <div className="mb-3">
                 <input
                     type="text"
                     placeholder="Search by Name or Generic Name"
-                    className={`form-control rounded ${dark?`bg-secondary`:``}`}
+                    className={`form-control rounded ${dark ? `bg-secondary` : ``}`}
                     value={filterText}
                     onChange={handleFilterChange}
                 />
             </div>
 
-            <div className={`table  ${dark ? `table-dark`:`` } `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
+            <div className={`table  ${dark ? `table-dark` : ``} `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
                 {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
-                    <button onClick={openAddProduct} className={`rounded ${ dark ?`bg-secondary`:``} `}>Add New Product</button>
+                    <button onClick={openAddProduct} className={`rounded ${dark ? `bg-secondary` : ``} `}>Add New Product</button>
                 </div>}
-                <table className={`table  ${dark ? `table-dark`:`` } `}>
+                <table className={`table  ${dark ? `table-dark` : ``} `}>
                     <thead style={{ position: "sticky", top: 0, zIndex: 1 }}>
                         <tr>
-                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "0%" }}>S.No.</th>
-                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`}
+                            <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`} style={{ width: "0%" }}>S.No.</th>
+                            <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`}
                                 style={{
                                     width: localStorage.getItem("roleName") !== "Product_Coordinator"
                                         ? "5%"
@@ -385,9 +410,9 @@ function MIS_Product() {
                             >
                                 Product Image
                             </th>
-                            <th className={` text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "20%" }} colSpan="2">Product Details</th>
-                            <th className={`text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "15%" }} >Price List</th>
-                            {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={`text-center ${dark?`bg-secondary text-white`:``}`} style={{ width: "10%" }}>Actions</th>}
+                            <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`} style={{ width: "20%" }} colSpan="2">Product Details</th>
+                            <th className={`text-center ${dark ? `bg-secondary text-white` : ``}`} style={{ width: "15%" }} >Price List</th>
+                            {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={`text-center ${dark ? `bg-secondary text-white` : ``}`} style={{ width: "10%" }}>Actions</th>}
                         </tr>
                     </thead>
                     <tbody>
@@ -395,7 +420,7 @@ function MIS_Product() {
                             filteredProducts.filter((product) => product.strength).slice(startIndex, endIndex).map((product, index) => (
                                 <React.Fragment key={product.productId}>
                                     {rowDetails.map((row, rowIndex) => (
-                                        <tr className="" style={{border:"2px solid black"}} key={`${product.productId}-${rowIndex}`}>
+                                        <tr className="" style={{ border: "2px solid black" }} key={`${product.productId}-${rowIndex}`}>
                                             {rowIndex === 0 && (
                                                 <>
                                                     <td className="border " rowSpan={rowDetails.length} style={{ padding: "5px" }}>{startIndex + index + 1}</td>
@@ -415,23 +440,34 @@ function MIS_Product() {
                                                         )
                                                         )}
                                                         {localStorage.getItem("roleName") !== "Product_Coordinator" &&
-                                                           <div  className="d-flex justify-content-center">
-                                                             <div style={{ height: "200px", width: "200px" }}>
-                                                                <Slider {...carouselSettings}>
-                                                                    {getImageIds(product.productId).map(imageId => (
-                                                                        <div key={imageId}>
-                                                                            <img
-                                                                                onClick={() => handleView(`https://image.rdvision.in/images/image/${imageId}`)}
-                                                                                src={`https://image.rdvision.in/images/image/${imageId}`}
-                                                                                alt="No Image Found"
-                                                                                style={{ maxWidth: "100%", height: "200px" }}
-                                                                            />
-                                                                        </div>
-                                                                    ))}
-                                                                </Slider>
+                                                            <div className="d-flex justify-content-center">
+                                                                <div style={{ height: "200px", width: "200px" }}>
+                                                                    <Slider {...carouselSettings}>
+                                                                        {getImageIds(product.productId).map(imageId => (
+                                                                            <>
+                                                                              <button
+                                                                                    onClick={() => handleCopyImage(`https://backend.rdvision.in/images/image/${imageId}`)}
+                                                                                    className="btn btn-primary"
+                                                                                >   
+                                                                                    Copy Image
+                                                                                </button>
+                                                                            <div key={imageId} style={{ textAlign: "center" }}>
+                                                                                <img
+                                                                                    onClick={() => handleView(`https://backend.rdvision.in/images/image/${imageId}`)}
+                                                                                    src={`https://backend.rdvision.in/images/image/${imageId}`}
+                                                                                    alt="No Image Found"
+                                                                                    style={{ maxWidth: "100%", height: "200px", marginBottom: "10px" }}
+                                                                                />
+                                                                                {/* Add the "Copy Image" button below the image */}
+                                                                               
+                                                                            </div>
+                                                                          
+                                                                            </>
+                                                                        ))}
+                                                                    </Slider>
+                                                                </div>
                                                             </div>
-                                                           </div>
-                                                           }
+                                                        }
 
                                                         <div className="mt-3">
                                                             {localStorage.getItem("roleName") === "Product_Coordinator" && <button
@@ -444,8 +480,8 @@ function MIS_Product() {
                                                     </td>
                                                 </>
                                             )}
-                                            <td className={`fw-bold border ${row.label==="Product Name"?"bg-info":""}`} style={{ padding: "5px" }}>{row.label}</td>
-                                            <td  className={`${row.label==="Product Name"?"bg-info":""}`} style={{border:"2px solid black", padding:"5px"}} >
+                                            <td className={`fw-bold border ${row.label === "Product Name" ? "bg-info" : ""}`} style={{ padding: "5px" }}>{row.label}</td>
+                                            <td className={`${row.label === "Product Name" ? "bg-info" : ""}`} style={{ border: "2px solid black", padding: "5px" }} >
                                                 {row.valueKey === "category" && (
                                                     <>
                                                         {product[row.valueKey] && product[row.valueKey] !== "N/A" ? (
@@ -474,13 +510,13 @@ function MIS_Product() {
                                                 <>
                                                     <td rowSpan={rowDetails.length} style={{ padding: "5px" }}>
                                                         {product.priceList && product.priceList.length > 0 ? (
-                                                            <table className={`table table-sm table-bordered ${dark ? `table-secondary`:``}`} style={{ fontSize: "12px" }}>
+                                                            <table className={`table table-sm table-bordered ${dark ? `table-secondary` : ``}`} style={{ fontSize: "12px" }}>
                                                                 <thead>
                                                                     <tr>
-                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Product Code</th>
-                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Quantity</th>
-                                                                        <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Price</th>
-                                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={` text-center ${dark?`bg-secondary text-white`:``}`}>Ac</th>}
+                                                                        <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`}>Product Code</th>
+                                                                        <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`}>Quantity</th>
+                                                                        <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`}>Price</th>
+                                                                        {localStorage.getItem("roleName") === "Product_Coordinator" && <th className={` text-center ${dark ? `bg-secondary text-white` : ``}`}>Ac</th>}
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -589,7 +625,7 @@ function MIS_Product() {
                                     <input
                                         type="number"
                                         placeholder="Quantity"
-                                        className={`form-control ${dark?`bg-secondary text-light`:`` }`}
+                                        className={`form-control ${dark ? `bg-secondary text-light` : ``}`}
                                         value={item.quantity}
                                         onChange={(e) => handleQuantityChange(index, "quantity", e.target.value)}
                                         required
@@ -710,13 +746,13 @@ function MIS_Product() {
                 </Modal.Body>
             </Modal>
 
-            <Modal           
+            <Modal
                 show={isAddProductOpen}
                 onHide={handleCloseProductAdd}
                 centered
                 dialogClassName="custom-modal-width"
             >
-                <Modal.Body className={`d-flex flex-column justify-content-center align-items-center ${dark?"bg-dark":""}`}>
+                <Modal.Body className={`d-flex flex-column justify-content-center align-items-center ${dark ? "bg-dark" : ""}`}>
                     <Uploaded_product closeFunction={handleCloseProductAdd} />
                 </Modal.Body>
             </Modal>

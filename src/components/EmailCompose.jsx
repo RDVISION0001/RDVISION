@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import axiosInstance from "../axiosInstance";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import styles for the rich text editor
+import "react-quill/dist/quill.snow.css";
 import { toast } from "react-toastify";
 import { useAuth } from "../auth/AuthContext";
 
-const EmailCompose = ({autoClose}) => {
-    const {userId}=useAuth()
+const EmailCompose = ({ autoClose, email, body }) => {
+    const { userId } = useAuth();
+    const predefinedSubjects = [
+        "Meeting Reminder",
+        "Project Update",
+        "Invoice Attached",
+        "Follow-Up",
+    ];
+
     const [emailData, setEmailData] = useState({
-        toEmail: "",
+        toEmail: email ? email : "",
         subject: "",
-        body: "", // Keep the body as a string to store the HTML content
+        body: body,
     });
+    const [isCustomSubject, setIsCustomSubject] = useState(false);
     const [attachments, setAttachments] = useState([]);
     const [dragOver, setDragOver] = useState(false);
 
@@ -20,8 +28,19 @@ const EmailCompose = ({autoClose}) => {
         setEmailData({ ...emailData, [name]: value });
     };
 
+    const handleSubjectChange = (e) => {
+        const value = e.target.value;
+        if (value === "custom") {
+            setIsCustomSubject(true);
+            setEmailData({ ...emailData, subject: "" });
+        } else {
+            setIsCustomSubject(false);
+            setEmailData({ ...emailData, subject: value });
+        }
+    };
+
     const handleFileChange = (e) => {
-        setAttachments([...e.target.files]);
+        setAttachments([...attachments, ...Array.from(e.target.files)]);
     };
 
     const handleDragOver = (e) => {
@@ -40,40 +59,80 @@ const EmailCompose = ({autoClose}) => {
         setAttachments((prevFiles) => [...prevFiles, ...files]);
     };
 
+    const handlePaste = (e) => {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.type.startsWith("image/")) {
+                const file = item.getAsFile();
+                setAttachments((prevFiles) => [...prevFiles, file]);
+            }
+        }
+    };
+
     const handleBodyChange = (value) => {
         setEmailData({ ...emailData, body: value });
     };
 
-    const handleSubmit =async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append("toEmail", emailData.toEmail);
         formData.append("subject", emailData.subject);
         formData.append("body", emailData.body);
-        formData.append("userId",userId)
+        formData.append("userId", userId);
 
         attachments.forEach((file) => {
             formData.append("attachments", file);
         });
 
-       await axiosInstance
+        await axiosInstance
             .post("/send", formData)
-           
-            toast.success("emailSent")
-            autoClose()
+            .then(() => {
+                toast.success("Email Sent");
+                autoClose();
+            })
             .catch((error) => {
                 console.error("Error:", error);
+                toast.error("Failed to send email");
             });
     };
 
-    const renderPreview = (file) => {
+    const renderPreview = (file, index) => {
         const fileType = file.type.split("/")[0];
+        const handleRemove = () => {
+            setAttachments((prevFiles) => prevFiles.filter((_, i) => i !== index));
+        };
 
         if (fileType === "image") {
             const imageUrl = URL.createObjectURL(file);
-            return <img src={imageUrl} alt="Preview" style={{ width: "100px", height: "100px", objectFit: "cover" }} />;
+            return (
+                <div className="position-relative">
+                    <img
+                        src={imageUrl}
+                        alt="Preview"
+                        style={{ width: "100px", height: "100px", objectFit: "cover" }}
+                    />
+                    <button
+                        type="button"
+                        className="btn-close position-absolute top-0 end-0"
+                        aria-label="Remove"
+                        onClick={handleRemove}
+                    />
+                </div>
+            );
         } else if (file.type === "application/pdf") {
-            return <span>PDF File: {file.name}</span>;
+            return (
+                <div className="d-flex align-items-center">
+                    <span>PDF File: {file.name}</span>
+                    <button
+                        type="button"
+                        className="btn-close ms-2"
+                        aria-label="Remove"
+                        onClick={handleRemove}
+                    />
+                </div>
+            );
         }
         return null;
     };
@@ -84,6 +143,7 @@ const EmailCompose = ({autoClose}) => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onPaste={handlePaste}
         >
             <h2 className="text-center mb-4">Compose Email</h2>
             <form onSubmit={handleSubmit}>
@@ -108,15 +168,32 @@ const EmailCompose = ({autoClose}) => {
                     <label htmlFor="subject" className="form-label">
                         Subject
                     </label>
-                    <input
-                        type="text"
+                    <select
                         className="form-control"
                         id="subject"
                         name="subject"
-                        value={emailData.subject}
-                        onChange={handleInputChange}
-                        required
-                    />
+                        value={isCustomSubject ? "custom" : emailData.subject}
+                        onChange={handleSubjectChange}
+                    >
+                        <option value="">Select a subject</option>
+                        {predefinedSubjects.map((subject, index) => (
+                            <option key={index} value={subject}>
+                                {subject}
+                            </option>
+                        ))}
+                        <option value="custom">Custom Subject</option>
+                    </select>
+                    {isCustomSubject && (
+                        <input
+                            type="text"
+                            className="form-control mt-2"
+                            placeholder="Enter your subject"
+                            name="subject"
+                            value={emailData.subject}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    )}
                 </div>
 
                 {/* Body (Rich Text Editor) */}
@@ -138,9 +215,8 @@ const EmailCompose = ({autoClose}) => {
                             ],
                         }}
                         theme="snow"
-                        style={{ height: "180px" }} // Set the initial height to 200px
+                        style={{ height: "180px" }}
                     />
-
                 </div>
 
                 {/* Attachments */}
@@ -162,16 +238,44 @@ const EmailCompose = ({autoClose}) => {
                             onChange={handleFileChange}
                         />
                         <p className="text-center text-muted">
-                            Drag & drop files anywhere in the form or click to select
+                            Drag & drop files anywhere in the form, click to select, or paste images.
                         </p>
                     </div>
+                    {/* Pasting images directly */}
+                    {/* Pasting images directly */}
+                    <div
+                        className="border border-dashed p-4 rounded mt-3 bg-light"
+                        style={{ minHeight: "150px" }}
+                    >
+                        <p className="text-center text-muted">
+                            Paste an image directly here or click the button to select an image
+                        </p>
+                        <div className="text-center">
+                            {/* Button for selecting an image */}
+                            <button
+                                className="btn btn-primary"
+                                onClick={() => document.getElementById('fileInput').click()}
+                            >
+                                Select Image to Paste
+                            </button>
+                            <input
+                                type="file"
+                                id="fileInput"
+                                className="d-none"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                        </div>
+                    </div>
+
+
 
                     {/* Show previews of uploaded files */}
                     <div className="mt-3">
                         <div className="d-flex flex-wrap">
                             {attachments.map((file, index) => (
                                 <div key={index} className="m-2">
-                                    {renderPreview(file)}
+                                    {renderPreview(file, index)}
                                 </div>
                             ))}
                         </div>

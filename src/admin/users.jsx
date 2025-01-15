@@ -107,10 +107,10 @@ function users() {
     try {
       await axiosInstance.delete(`/user/deleteUserbyId/${userId}`);
       toast.success('User deleted successfully!'); // Success toast message
+      fetchData(0)
     } catch (error) {
       console.error('Error deleting user:', error);
       toast.error('Failed to delete user!'); // Error toast message
-      fetchData(0)
     } finally {
       setLoading(false);
     }
@@ -365,7 +365,6 @@ function users() {
   }
 
 
-
   return (
     <>
       <div  className='bg-dark'>
@@ -452,13 +451,13 @@ function users() {
                                   {item.firstName} {item.lastName}
                                 </td>
                                 <td className="d-none d-sm-table-cell"> {/* Hidden on xs, visible on sm and larger */}
-                                  {item.departmentDto?.deptName}
+                                  {department.find((dep)=>dep.deptId===item.departmentId) && department.find((dep)=>dep.deptId===item.departmentId).deptName}
                                 </td>
                                 <td className="d-none d-md-table-cell"> {/* Hidden on xs and sm, visible on md and larger */}
-                                  {item.roleDto?.roleName}
+                                {role.find((role)=>role.roleId===item.roleId) && role.find((role)=>role.roleId===item.roleId).roleName}
                                 </td>
                                 <td className="d-none d-lg-table-cell"> {/* Hidden on xs, sm, md, visible on lg and larger */}
-                                  {item.teamDto?.teamName}
+                                {team.find((team)=>team.teamId===item.teamId) && team.find((team)=>team.teamId===item.teamId).teamName}
                                 </td>
                                 <td>
                                   {item.systemIp}
