@@ -17,6 +17,9 @@ function SalesReport() {
     const handleCloseCustomerModal = () => setShowCustomerModal(false);
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(true); // Loading state
+    const [nameEdit, setNameEdit] = useState(false)
+    const [newName,setNewName]=useState("")
+    const [oldName,setOldName]=useState("")
     const handleShowCustomerModal = (invoice) => {
         setSelectedCustomer({
             customerName: invoice.customerName,
@@ -34,6 +37,46 @@ function SalesReport() {
     });
 
     const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
+
+    const [users, setUsers] = useState([]);  // State to hold user data
+    const [selectedUser, setSelectedUser] = useState("");  // State to hold the selected user
+    const [selectedUserForChangeCloser, setSelectedUserForChange] = useState(0)
+
+    useEffect(() => {
+        // Replace with your API endpoint
+        const fetchUsers = async () => {
+            try {
+                const response = await axiosInstance.get('/user/getAllUsers');
+                console.log('API Response:', response);
+
+                // Ensure dtoList exists and filter users based on roleId
+                if (response.data && Array.isArray(response.data.dtoList)) {
+                    const filteredUsers = response.data.dtoList.filter(user => user.roleId === 4);
+                    setUsers(filteredUsers);  // Set filtered users data to state
+                } else {
+                    console.error('Error: No users found in the response');
+                }
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
+    //change closer function 
+    const updateCloserName = async () => {
+        try {
+            await axiosInstance.post('/invoice/updateCloserName', {
+                userId: selectedUserForChangeCloser,
+                invoiceId: selectedInvoiceIdForVerification
+            })
+            toast.success("Closer Updated")
+        } catch (e) {
+            toast.error("Some Error ...")
+        }
+    }
+
 
     useEffect(() => {
         // Call the API on component mount
@@ -282,6 +325,22 @@ function SalesReport() {
 
         closeCustomerEditModel(); // Close modal after saving
     };
+    const handleNameChange=async()=>{
+      try{
+        await axiosInstance.put("/product/updateProductName",{
+            existingName:oldName,
+            newName
+        })
+        toast.success("Name Changed")
+        fetchVerificationList()
+        setOldName("")
+        setNewName("")
+        handleCloses()
+        setNameEdit(false)
+      }catch(e){
+        toast.error("Some Error")
+      }
+    }
 
     return (
         <>
@@ -408,7 +467,23 @@ function SalesReport() {
             <Modal show={view} onHide={handleCloses} centered>
                 <div className="d-flex justify-content-between " style={{ fontSize: "20px" }}>
                     <div className="border p-2 flex-fill text-center">
-                        Close By :- {selectedCloser}
+                        Close By :- {selectedCloser} <span>
+                            <select
+                                id="userDropdown"
+                                value={selectedUserForChangeCloser}
+                                onChange={(e) => setSelectedUserForChange(e.target.value)}
+                                style={{ backgroundColor: "white", color: "black", padding: "3px", margin: "2px" }}
+                            >
+                                <option value="">--Select a user--</option>
+                                {users.map((user) => (
+                                    <option key={user.userId} value={user.userId}>
+                                        {user.firstName + " " + user.lastName}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <button disabled={selectedUserForChangeCloser === 0} style={{ height: "30px", padding: "2px", margin: "2px", color: "white" }} onClick={updateCloserName}>update</button>
+                        </span>
                     </div>
                     <div className="border p-2 flex-fill text-center">
                         Close Date :- {formatDate(selectedtSaleDate)}
@@ -464,7 +539,18 @@ function SalesReport() {
                                                     } alt="Product Image" class="img-fluid" />
 
                                                 </td>
-                                                <td className='text-center'>{product.product[0].name}</td>
+                                                <td className='text-center'>
+                                                    <div className='d-flex flex-column '>
+                                                        <div> <span>{product.product[0].name}</span><i class="fa-solid fa-pen-to-square fa-lg" onClick={() => {
+                                                            setNameEdit(!nameEdit)
+                                                            setOldName(product.product[0].name)
+
+                                                        }} style={{ marginLeft: "5px" }}></i></div>
+                                                        {nameEdit && <div className='d-flex justify-content-between ' style={{paddingLeft:"10px"}}><input type='text' value={newName} onChange={(e)=>setNewName(e.target.value)} placeholder='Enter new name of product' style={{padding:"5px"}} className='bg-white text-black w-75 ' /><button style={{ width: "60px", padding: "2px" }} onClick={handleNameChange}>save</button></div>}
+                                                    </div>
+
+
+                                                </td>
                                                 <td className='text-center'>{product.quantity}</td>
                                                 <td className='text-center'>{product.currency} {product.totalAmount}</td>
                                                 <td className='text-center text-primary' onClick={() => openPriceEditor(selectedPropductOrders)}>Edit</td>
@@ -749,3 +835,4 @@ function SalesReport() {
 }
 
 export default SalesReport;
+

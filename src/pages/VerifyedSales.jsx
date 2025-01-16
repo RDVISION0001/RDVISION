@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../axiosInstance";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Dropdown } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
+import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../auth/AuthContext";
 
 function VerifiedSales() {
@@ -12,7 +12,8 @@ function VerifiedSales() {
   const [error, setError] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-  const [filter, setFilter] = useState("all"); // Default to "all"
+  const [filter, setFilter] = useState("all");
+  const [selectedCloser, setSelectedCloser] = useState("all"); // New state for closerName filter
 
   const handleCloseCustomerModal = () => setShowCustomerModal(false);
   const handleShowCustomerModal = (invoice) => {
@@ -73,36 +74,55 @@ function VerifiedSales() {
     const dayBeforeYesterdayStart = new Date(todayStart);
     dayBeforeYesterdayStart.setDate(todayStart.getDate() - 2);
 
+    let filtered = invoices;
+
     switch (filter) {
       case "today":
-        return invoices.filter((invoice) => {
+        filtered = invoices.filter((invoice) => {
           const verificationDate = new Date(invoice.verificationDate);
           return (
             verificationDate >= todayStart && verificationDate < tomorrowStart
           );
         });
+        break;
       case "yesterday":
-        return invoices.filter((invoice) => {
+        filtered = invoices.filter((invoice) => {
           const verificationDate = new Date(invoice.verificationDate);
           return (
             verificationDate >= yesterdayStart && verificationDate < todayStart
           );
         });
-      case "parsho": // Day before yesterday
-        return invoices.filter((invoice) => {
+        break;
+      case "parsho":
+        filtered = invoices.filter((invoice) => {
           const verificationDate = new Date(invoice.verificationDate);
           return (
             verificationDate >= dayBeforeYesterdayStart &&
             verificationDate < yesterdayStart
           );
         });
-      case "all":
+        break;
       default:
-        return invoices;
+        break;
     }
+
+    // Filter by closerName if selectedCloser is not "all"
+    if (selectedCloser !== "all") {
+      filtered = filtered.filter(
+        (invoice) => invoice.closerName === selectedCloser
+      );
+    }
+
+    return filtered;
   };
 
   const filteredInvoices = getFilteredInvoices();
+
+  // Get unique closer names for the dropdown
+  const uniqueClosers = [
+    "all",
+    ...new Set(invoices.map((invoice) => invoice.closerName)),
+  ];
 
   if (loading) {
     return <div>Loading...</div>;
@@ -116,39 +136,62 @@ function VerifiedSales() {
     <>
       <section className="followup-table-section ">
         <div className="container-fluid">
-          <div className="" style={{marginTop:5}}>
+          <div className="" style={{ marginTop: 5 }}>
             <h3 className="title mb-1 mt-4">Verified Sales</h3>
 
             {/* Filter Buttons */}
-            <div className="mb-1 d-flex justify-content-start gap-3">
-              <Button
-                variant={filter === "today" ? "primary" : "outline-primary"}
-                onClick={() => setFilter("today")}
-                className="btn-lg"
-              >
-                Today
-              </Button>
-              <Button
-                variant={filter === "yesterday" ? "primary" : "outline-primary"}
-                onClick={() => setFilter("yesterday")}
-                className="btn-lg"
-              >
-                Yesterday
-              </Button>
-              <Button
-                variant={filter === "parsho" ? "primary" : "outline-primary"}
-                onClick={() => setFilter("parsho")}
-                className="btn-lg"
-              >
-                Day Before Yesterday
-              </Button>
-              <Button
-                variant={filter === "all" ? "primary" : "outline-primary"}
-                onClick={() => setFilter("all")}
-                className="btn-lg"
-              >
-                All
-              </Button>
+            <div className="mb-3 d-flex justify-content-between">
+              <div>
+                <Button
+                  variant={filter === "today" ? "primary" : "outline-primary"}
+                  onClick={() => setFilter("today")}
+                  className="btn-lg"
+                >
+                  Today
+                </Button>
+                <Button
+                  variant={filter === "yesterday" ? "primary" : "outline-primary"}
+                  onClick={() => setFilter("yesterday")}
+                  className="btn-lg"
+                >
+                  Yesterday
+                </Button>
+                <Button
+                  variant={filter === "parsho" ? "primary" : "outline-primary"}
+                  onClick={() => setFilter("parsho")}
+                  className="btn-lg"
+                >
+                  Day Before Yesterday
+                </Button>
+                <Button
+                  variant={filter === "all" ? "primary" : "outline-primary"}
+                  onClick={() => setFilter("all")}
+                  className="btn-lg"
+                >
+                  All
+                </Button>
+              </div>
+
+              {/* Dropdown Filter for Closer */}
+              <div style={{ zIndex: 1025, position: "relative" }}>
+                <Dropdown>
+                  <Dropdown.Toggle variant="outline-primary" id="closer-filter">
+                    {selectedCloser === "all"
+                      ? "All Closers"
+                      : `Closer: ${selectedCloser}`}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {uniqueClosers.map((closer) => (
+                      <Dropdown.Item
+                        key={closer}
+                        onClick={() => setSelectedCloser(closer)}
+                      >
+                        {closer === "all" ? "All Closers" : closer}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
             </div>
 
             {/* Invoice Table */}
@@ -159,7 +202,7 @@ function VerifiedSales() {
               >
                 <thead
                   className="text-white sticky-top "
-                  style={{ backgroundColor: "#343a40",}}
+                  style={{ backgroundColor: "#343a40", }}
                 >
                   <tr className="">
                     {/* <th scope="col">Ser n.</th> */}
@@ -186,138 +229,109 @@ function VerifiedSales() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredInvoices
-                    .slice()
-                    .reverse()
-                    .map((invoice, index) => (
-                        <tr 
-                        key={invoice.invoiceId} className={invoice.trackingNumber ? "table-success" : ""}>                      
-                        {/* <td className="text-center">{index + 1}.</td> */}
-                        <td className="text-center">
-                          {invoice.invoiceId || "N/A"}
-                        </td>
-                        <td className="text-nowrap">
-                          {formatDate(invoice.saleDate)}
-                        </td>
-                        <td className="text-nowrap">
-                          {formatDate(invoice.verificationDate)}
-                        </td>
-                        <td> {invoice.closerName} </td>
-                        <td>
-                          {invoice.customerName}
-                          <button
-                            type="button"
-                            onClick={() => handleShowCustomerModal(invoice)} // Show customer details modal
-                            className="btn btn-link p-0"
-                          >
-                            ....
-                          </button>
-                        </td>
-                        {/* <td> {invoice.customerEmail} </td> */}
-                        <td className="text-center">
-                          {invoice.address?.landmark || "N/A"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.address?.city || "N/A"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.address?.state || "N/A"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.address?.zipCode || "N/A"}
-                        </td>
-                        <td className="text-center">
-                          <img
-                            style={{ height: 12 }}
-                            src={getFlagUrl(invoice.countryIso)}
-                            alt=""
-                          />{" "}
-                          {invoice.countryIso}
-                        </td>
-                        <td className="text-center">
-                          <table className="table-bordered">
-                            <thead>
-                              <tr>
-                                <th
-                                  style={{ width: "200px", fontSize: 13 }}
-                                  className="px-4 border border-dark"
+                  {filteredInvoices.map((invoice) => (
+                    <tr key={invoice.invoiceId}>
+                      <td>{invoice.invoiceId || "N/A"}</td>
+                      <td>{formatDate(invoice.saleDate)}</td>
+                      <td>{formatDate(invoice.verificationDate)}</td>
+                      <td>{invoice.closerName}</td>
+                      <td>{invoice.customerName}</td>
+                      <td>{invoice.address?.landmark || "N/A"}</td>
+                      <td>{invoice.address?.city || "N/A"}</td>
+                      <td>{invoice.address?.state || "N/A"}</td>
+                      <td>{invoice.address?.zipCode || "N/A"}</td>
+                      <td>
+                        <img
+                          style={{ height: 12 }}
+                          src={getFlagUrl(invoice.countryIso)}
+                          alt=""
+                        />{" "}
+                        {invoice.countryIso}
+                      </td>
+                      <td className="text-center">
+                        <table className="table-bordered">
+                          <thead>
+                            <tr>
+                              <th
+                                style={{ width: "200px", fontSize: 13 }}
+                                className="px-4 border border-dark"
+                              >
+                                Name
+                              </th>
+                              <th
+                                style={{ width: "100px", fontSize: 13 }}
+                                className="px-3 border border-dark"
+                              >
+                                Quantity
+                              </th>
+                              <th
+                                style={{ width: "150px", fontSize: 13 }}
+                                className="px-3 border border-dark"
+                              >
+                                Price
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoice.orderDto.productOrders.map((order, i) =>
+                              order.product?.map((product, index) => (
+                                <tr
+                                  key={`${i}-${index}`}
+                                  className="table table-bordered"
                                 >
-                                  Name
-                                </th>
-                                <th
-                                  style={{ width: "100px", fontSize: 13 }}
-                                  className="px-3 border border-dark"
-                                >
-                                  Quantity
-                                </th>
-                                <th
-                                  style={{ width: "150px", fontSize: 13 }}
-                                  className="px-3 border border-dark"
-                                >
-                                  Price
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {invoice.orderDto.productOrders.map((order, i) =>
-                                order.product?.map((product, index) => (
-                                  <tr
-                                    key={`${i}-${index}`}
-                                    className="table table-bordered"
+                                  <td
+                                    className="border border-dark p-1"
+                                    style={{ fontSize: 12 }}
                                   >
-                                    <td
-                                      className="border border-dark p-1"
-                                      style={{ fontSize: 12 }}
-                                    >
-                                      {product.name}
-                                    </td>
-                                    <td
-                                      className="border border-dark p-1"
-                                      style={{ fontSize: 12 }}
-                                    >
-                                      {order.quantity || "N/A"}
-                                    </td>
-                                    <td
-                                      className="border border-dark p-1"
-                                      style={{ fontSize: 12 }}
-                                    >
-                                      {invoice.currency}
-                                      {order.totalAmount || "N/A"}
-                                    </td>
-                                  </tr>
-                                ))
-                              )}
-                            </tbody>
-                          </table>
+                                    {product.name}
+                                  </td>
+                                  <td
+                                    className="border border-dark p-1"
+                                    style={{ fontSize: 12 }}
+                                  >
+                                    {order.quantity || "N/A"}
+                                  </td>
+                                  <td
+                                    className="border border-dark p-1"
+                                    style={{ fontSize: 12 }}
+                                  >
+                                    {invoice.currency}
+                                    {order.totalAmount || "N/A"}
+                                  </td>
+                                </tr>
+                              ))
+                            )}
+                          </tbody>
+                        </table>
+                      </td>
+                      <td className="text-center">
+                        {invoice.orderDto?.productOrders[0]?.product[0]
+                          ?.strength || "N/A"}
+                      </td>
+                      <td className="text-center">
+                        {invoice.trackingNumber || "N/A"}
+                      </td>
+                      <td>{invoice.payment?.paymentWindow || "N/A"}</td>
+                      {/* <td><button>Add</button></td> */}
+                      <td className="text-success bold-text">
+                        {invoice.currency || "USD"} {invoice.payment?.amount}
+                      </td>
+                      {roleName === "admin" && (
+                        <td>
+                          (
+                          <Button
+                            variant="success rounded"
+                            onClick={() =>
+                              handleVerifyInvoice(invoice.invoiceId)
+                            }
+                          >
+                            Next
+                          </Button>
+                          )
                         </td>
-                        <td className="text-center">
-                          {invoice.orderDto?.productOrders[0]?.product[0]
-                            ?.strength || "N/A"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.trackingNumber || "N/A"}
-                        </td>
-                        <td>{invoice.payment?.paymentWindow || "N/A"}</td>
-                        {/* <td><button>Add</button></td> */}
-                        <td className="text-success bold-text">
-                          {invoice.currency || "USD"} {invoice.payment?.amount}
-                        </td>
-                        {roleName === "admin" && (
-                          <td>
-                            (
-                            <Button
-                              variant="success rounded"
-                              onClick={() =>
-                                handleVerifyInvoice(invoice.invoiceId)
-                              }
-                            >
-                              Next
-                            </Button>
-                            )
-                          </td>
-                        )}
-                      </tr>
-                    ))}
+                      )}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -417,3 +431,4 @@ const formatDate = (timestamp) => {
 };
 
 export default VerifiedSales;
+
