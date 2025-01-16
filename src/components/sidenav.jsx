@@ -119,9 +119,8 @@ function Sidenav() {
 
   return (
     <div
-      className={`side-navbar active-nav d-flex justify-content-between flex-wrap flex-column ${
-        dark ? `bg-dark` : `bg-white`
-      } `}
+      className={`side-navbar active-nav d-flex justify-content-between flex-wrap flex-column ${dark ? `bg-dark` : `bg-white`
+        } `}
       id="sidebar"
     >
       <ul className="nav sidebar2658 flex-column w-100">
@@ -140,9 +139,13 @@ function Sidenav() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName} {lastName}
-                <small className="d-block">{roleName}</small>
+              <a
+                href="#"
+                className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                  }`}
+              >
+                <p>{firstName} {lastName}</p>
+                <h6 className="whitespace-nowrap">{roleName} </h6>
               </a>
             </li>
             <li className="nav-item">
@@ -208,9 +211,13 @@ function Sidenav() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <a href="#" className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light`:``} `}>
-                <span className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{firstName} {lastName}</span>
-                <small className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{roleName}</small>
+              <a
+                href="#"
+                className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                  }`}
+              >
+                <p>{firstName} {lastName}</p>
+                <h6 className="whitespace-nowrap">{roleName} </h6>
               </a>
             </li>
             <li className="nav-item">
@@ -328,26 +335,23 @@ function Sidenav() {
               {localStorage.getItem("collapse") && (
                 <a
                   href="#"
-                  className={`nav-link h3 my-2 w-100 d-block ${
-                    dark ? `text-light` : `text-dark`
-                  }`}
+                  className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                    }`}
                 >
-                  <h5 className="whitespace-nowrap">{firstName} {lastName}</h5>
-                  <p>{roleName}</p>                
+                  <p>{firstName} {lastName}</p>
+                  <h6 className="whitespace-nowrap">{roleName} </h6>
                 </a>
               )}
             </li>
             <li className="nav-item">
               <NavLink to="/closer_index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i
-                  className={`fa-solid fa-chalkboard fa-fw text-dark ${
-                    dark ? `text-white` : `text-light`
-                  }`}
+                  className={`fa-solid fa-chalkboard fa-fw text-dark ${dark ? `text-white` : `text-light`
+                    }`}
                 ></i>
                 <span
-                  className={`nav-text text-dark ${
-                    dark ? `text-white` : `text-light`
-                  } `}
+                  className={`nav-text text-dark ${dark ? `text-white` : `text-light`
+                    } `}
                 >
                   Dashboard
                 </span>
@@ -438,9 +442,13 @@ function Sidenav() {
                     }}
                   />
                 </div>
-                <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                  <span className={`d-block  ${dark ? "text-white" : "text-dark"}`}>{firstName} {lastName}</span>
-                  <small className={`d-block  ${dark ? "text-white" : "text-dark"}`} style={{fontSize:12}}>{roleName}</small>
+                <a
+                  href="#"
+                  className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                    }`}
+                >
+                  <p>{firstName} {lastName}</p>
+                  <h6 className="whitespace-nowrap">{roleName} </h6>
                 </a>
               </li>
               <li className="nav-item">
@@ -491,9 +499,13 @@ function Sidenav() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName} {lastName}
-                <small className="d-block">{roleName}</small>
+              <a
+                href="#"
+                className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                  }`}
+              >
+                <p>{firstName} {lastName}</p>
+                <h6 className="whitespace-nowrap">{roleName} </h6>
               </a>
             </li>
             <li className="nav-item">
@@ -520,9 +532,13 @@ function Sidenav() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName} {lastName}
-                <small className="d-block">{roleName}</small>
+              <a
+                href="#"
+                className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                  }`}
+              >
+                <p>{firstName} {lastName}</p>
+                <h6 className="whitespace-nowrap">{roleName} </h6>
               </a>
             </li>
             <li className="nav-item">
@@ -601,9 +617,13 @@ function Sidenav() {
                   style={{ objectFit: "cover", width: "100%", height: "100%" }}
                 />
               </div>
-              <a href="#" className="nav-link h3 my-2 w-100 d-block">
-                {firstName} {lastName}
-                <small className="d-block">{roleName}</small>
+              <a
+                href="#"
+                className={`nav-link h3 my-2 w-100 d-block ${dark ? `text-light` : `text-dark`
+                  }`}
+              >
+                <p>{firstName} {lastName}</p>
+                <h6 className="whitespace-nowrap">{roleName} </h6>
               </a>
             </li>
             <li className="nav-item">
@@ -684,7 +704,7 @@ function Sidenav() {
 
         <li className="nav-item">
           <NavLink to="/email" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
-          <i class="fa-solid fa-envelope-open-text"></i>
+            <i class="fa-solid fa-envelope-open-text"></i>
 
             <span className="nav-text">Inbox</span>
 

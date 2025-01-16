@@ -258,7 +258,7 @@ function topnav() {
               }`}
             style={{
               position: "fixed",
-              bottom: "300px",
+              bottom: "200px",
               right: "10px",
               width: isNotebookOpen ? "350px" : "5px", // Full width when open, small when hidden
               height: isNotebookOpen ? "600px" : "5px", // Full height when open, small when hidden
