@@ -668,6 +668,12 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
+              <NavLink to="/mis_product" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
+                <i class="fa-solid fa-file"></i>
+                <span className={` ${dark ? "text-white" : "text-dark"}`}>Products Information</span>
+              </NavLink>
+            </li>
+            <li className="nav-item">
               <NavLink to="/invoice" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-solid fa-file-invoice-dollar"></i>
                 <span className={` ${dark ? "text-white" : "text-dark"}`}>Invoice</span>

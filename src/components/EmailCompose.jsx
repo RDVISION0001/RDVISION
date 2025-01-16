@@ -7,6 +7,7 @@ import { useAuth } from "../auth/AuthContext";
 
 const EmailCompose = ({ autoClose, email, body }) => {
     const { userId } = useAuth();
+    const [loading,setLoading]=useState(false)
     const predefinedSubjects = [
         "Meeting Reminder",
         "Project Update",
@@ -63,19 +64,30 @@ const EmailCompose = ({ autoClose, email, body }) => {
         const items = e.clipboardData.items;
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
+    
+            // Handle images
             if (item.type.startsWith("image/")) {
+                const file = item.getAsFile();
+                setAttachments((prevFiles) => [...prevFiles, file]);
+            }
+            
+            // Handle PDFs
+            else if (item.type === "application/pdf") {
                 const file = item.getAsFile();
                 setAttachments((prevFiles) => [...prevFiles, file]);
             }
         }
     };
+    
 
     const handleBodyChange = (value) => {
         setEmailData({ ...emailData, body: value });
     };
 
     const handleSubmit = async (e) => {
+      if(emailData.subject.length>0){
         e.preventDefault();
+        setLoading(true)
         const formData = new FormData();
         formData.append("toEmail", emailData.toEmail);
         formData.append("subject", emailData.subject);
@@ -96,6 +108,10 @@ const EmailCompose = ({ autoClose, email, body }) => {
                 console.error("Error:", error);
                 toast.error("Failed to send email");
             });
+            setLoading(false)
+      }else{
+        toast.info("Please add subject")
+      }
     };
 
     const renderPreview = (file, index) => {
@@ -146,7 +162,7 @@ const EmailCompose = ({ autoClose, email, body }) => {
             onPaste={handlePaste}
         >
             <h2 className="text-center mb-4">Compose Email</h2>
-            <form onSubmit={handleSubmit}>
+            <form >
                 {/* To Email */}
                 <div className="mb-3">
                     <label htmlFor="toEmail" className="form-label">
@@ -168,7 +184,7 @@ const EmailCompose = ({ autoClose, email, body }) => {
                     <label htmlFor="subject" className="form-label">
                         Subject
                     </label>
-                    <select
+                    {/* <select
                         className="form-control"
                         id="subject"
                         name="subject"
@@ -182,8 +198,8 @@ const EmailCompose = ({ autoClose, email, body }) => {
                             </option>
                         ))}
                         <option value="custom">Custom Subject</option>
-                    </select>
-                    {isCustomSubject && (
+                    </select> */}
+      
                         <input
                             type="text"
                             className="form-control mt-2"
@@ -193,7 +209,7 @@ const EmailCompose = ({ autoClose, email, body }) => {
                             onChange={handleInputChange}
                             required
                         />
-                    )}
+                
                 </div>
 
                 {/* Body (Rich Text Editor) */}
@@ -221,7 +237,7 @@ const EmailCompose = ({ autoClose, email, body }) => {
 
                 {/* Attachments */}
                 <div className="m-5">
-                    <label htmlFor="attachments" className="form-label">
+                    {/* <label htmlFor="attachments" className="form-label">
                         Attachments (Image or PDF only)
                     </label>
                     <div
@@ -236,11 +252,11 @@ const EmailCompose = ({ autoClose, email, body }) => {
                             multiple
                             accept="image/*,application/pdf"
                             onChange={handleFileChange}
-                        />
-                        <p className="text-center text-muted">
-                            Drag & drop files anywhere in the form, click to select, or paste images.
-                        </p>
-                    </div>
+                        /> */}
+                    <p className="text-center text-muted">
+                        Drag & drop files anywhere in the form, click to select, or paste images.
+                    </p>
+                    {/* </div> */}
                     {/* Pasting images directly */}
                     {/* Pasting images directly */}
                     <div
@@ -254,7 +270,10 @@ const EmailCompose = ({ autoClose, email, body }) => {
                             {/* Button for selecting an image */}
                             <button
                                 className="btn btn-primary"
-                                onClick={() => document.getElementById('fileInput').click()}
+                                onClick={(e) =>{
+                                    e.preventDefault()
+                                    document.getElementById('fileInput').click()
+                                }}
                             >
                                 Select Image to Paste
                             </button>
@@ -262,9 +281,10 @@ const EmailCompose = ({ autoClose, email, body }) => {
                                 type="file"
                                 id="fileInput"
                                 className="d-none"
-                                accept="image/*"
+                                accept="image/*,application/pdf"
                                 onChange={handleFileChange}
                             />
+
                         </div>
                     </div>
 
@@ -284,9 +304,11 @@ const EmailCompose = ({ autoClose, email, body }) => {
 
                 {/* Submit Button */}
                 <div className="text-center">
-                    <button type="submit" className="btn btn-primary">
+                    {loading?<button  className="btn btn-primary">
+                        Sending ......
+                    </button>:<button onClick={handleSubmit} className="btn btn-primary">
                         Send Email
-                    </button>
+                    </button>}
                 </div>
             </form>
         </div>

@@ -46,7 +46,7 @@ const CloserSalesReport = (props) => {
 
   const fetchInvoiceData = async () => {
     try {
-      const response = await axiosInstance.get("/invoice/invoideCOunt");
+      const response = await axiosInstance.get(`/invoice/invoideCOunt/${localStorage.getItem("roleName") === "Closer" ? userId : 0}`);
       setInvoiceData({
         totalInvoices: response.data.totalInvoices,
         totalPaidInvoices: response.data.totalPaidInvoices,
