@@ -16,7 +16,7 @@ import Report from '../components/Report';
 function users() {
 
 
-  const { userId,dark } = useAuth();
+  const { userId, dark } = useAuth();
 
   ///pagination
   const [currentPage, setCurrentPage] = useState(0);
@@ -134,22 +134,26 @@ function users() {
 
   const updateImageOfUser = async () => {
     setImageUploading(true)
-    const response = await axiosInstance.post("/user/updateImage", {
-      email: emailForIMage,
-      imageData: formData.imageData
-    })
-    if (response.data === "Image Updated") {
-      toast.success("Image updated")
-      setImageUploading(false)
-      handleUpdateHide()
-      fetchData(0)
-      setFormData((prevData) => ({
-        ...prevData,
-        imageData: ""
-      }));
+    if (formData.imageData.length > 10) {
+      const response = await axiosInstance.post("/user/updateImage", {
+        email: emailForIMage,
+        imageData: formData.imageData
+      })
+      if (response.data === "Image Updated") {
+        toast.success("Image updated")
+        setImageUploading(false)
+        handleUpdateHide()
+        fetchData(0)
+        setFormData((prevData) => ({
+          ...prevData,
+          imageData: ""
+        }));
 
+      } else {
+        toast.error("Some Error Occurs")
+      }
     } else {
-      toast.error("Some Error Occurs")
+      toast.info("Please uplaod Image")
     }
     setImageUploading(false)
   }
@@ -367,15 +371,15 @@ function users() {
 
   return (
     <>
-      <div  className='bg-dark'>
+      <div className='bg-dark'>
         <div className="superadmin-page ">
           {/* <!-- Main Wrapper --> */}
-          <div className={`my-container main-content-block2658 user-management-page ${dark?"bg-dark":""}`}>
+          <div className={`my-container main-content-block2658 user-management-page ${dark ? "bg-dark" : ""}`}>
             {/* <!--End Top Nav --> */}
             <div className="container-fluid  mt-3">
               <section className="core-team-section">
                 <div className="container-fluid">
-                  <div className={`section-header ${dark?"bg-secondary":""} `}>
+                  <div className={`section-header ${dark ? "bg-secondary" : ""} `}>
                     <h2 className="title">Teams</h2>
                     <Button className="btn btn-primary" onClick={handleShow} data-bs-toggle="modal" data-bs-target="#addUser">Add New User</Button>
                   </div>
@@ -383,29 +387,79 @@ function users() {
                     {
                       data.map((item, index) => (
                         <div key={index} className="col-lg-3 col-md-6">
-                          <div className="user-team-card p-3 m-2 " style={{backgroundColor:dark?"#1c2541":"",color:dark?'#fff':'#000'}} > {/* Added padding and margin */}
-                            <div className="profile-thumb">
-                              <img src={convertToImage(item.imageData)} className="img-fluid rounded-circle" />
+                          <div
+                            className={` p-3 m-2 d-flex `}
+                            style={{
+                              backgroundColor: dark ? "#1c2541" : "",
+                              color: dark ? "#fff" : "#000",
+                              border: !item.onBreak ? "2px solid red" : "2px solid green", // Adding a border to separate content
+                              borderRadius: "10px",
+                            }}
+                          >
+                            {/* Left side for profile image */}
+                            <div className="profile-thumb mb-3" style={{ flex: 1 }}>
+                              <img
+                                src={convertToImage(item.imageData)}
+                                className="img-fluid "
+                                alt="profile"
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover", // Ensures the image covers the div without stretching
+                                }}
+                              />
                             </div>
-                            <div className="content-area">
-                              <h3 className="title">{item.firstName} {item.lastName}</h3>
-                              <p className="sub-title">Designation: <strong>{item.roleDto?.roleName}</strong></p>
-                            </div>
-                            <div className='' style={{ display: "flex", justifyContent: "end" }}> <div style={{ backgroundColor: "#FFEAC5", width: "7vw", padding: "3px", borderRadius: "5px",color:'black', cursor: "Pointer" }} onClick={() => handleUpdateShow(item.email)}>Change image</div></div>
 
+
+                            {/* Right side for user info */}
+                            <div
+                              className="content-area d-flex flex-column justify-content-between text-center"
+                              style={{
+                                flex: 2,
+                                marginLeft: "5px",
+                                borderLeft: "2px solid black", // Adding a thick black line between the image and content
+                                paddingLeft: "15px",
+                              }}
+                            >
+                              <h4 className="title">{item.firstName} {item.lastName}</h4>
+                              <p className="sub-title">
+                                Designation: <strong> {role.find((role) => role.roleId === item.roleId) && role.find((role) => role.roleId === item.roleId).roleName}
+                                </strong>
+                              </p>
+
+                              {/* Action Button at the bottom */}
+                              <div className="mt-3 d-flex justify-content-between fw-bold" style={{marginLeft:"20px"}}>
+                                <div className={!item.onBreak ? "text-danger" : "text-success"}>{item.onBreak ? "Online" : "Offline"}</div>
+                                <button
+                                  style={{
+                                    backgroundColor: "#FFEAC5",
+                                    width: "25%",
+                                    padding: "3px",
+                                    borderRadius: "5px",
+                                    color: "black",
+                                    cursor: "pointer",
+                                    position: "relative",
+                                  }}
+                                  onClick={() => handleUpdateShow(item.email)}
+                                  className="btn"
+                                >
+                                  <i class="fas fa-edit"></i>
+                                </button>
+                              </div>
+                            </div>
                           </div>
-
                         </div>
+
                       ))
                     }
                   </div>
                 </div>
               </section>
               {/* <!-- User Table --> */}
-              <section className={`user-table-section py-3 ${dark?"bg-dark":""}`}>
+              <section className={`user-table-section py-3 ${dark ? "bg-dark" : ""}`}>
                 <div className="container-fluid ">
-                  <div className={`table-wrapper tabbed-table text-center  ${dark?"bg-dark text-light":""}`}>
-                    <h3 className={`${dark?"text-light":"text-dark"}`}>Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h3>
+                  <div className={`table-wrapper tabbed-table text-center  ${dark ? "bg-dark text-light" : ""}`}>
+                    <h6 className={`${dark ? "text-light" : "text-dark"} m-3`}>Users Table <span className="d-flex justify-content-end"><button onClick={handleWhite}>Target Assigin</button></span> </h6>
                     <nav className="recent-transactions-tab-header">
                       {/* <div className="nav nav-item nav-tabs gap-2 py-2" id="nav-tab" role="tablist">
                         <button className={`"nav-link active ${dark?"text-light":""}`} id="nav-all-users-tab" data-bs-toggle="tab" data-bs-target="#nav-all-users" type="button" role="tab" aria-controls="nav-all-users" aria-selected="true">All Users</button>
@@ -415,57 +469,57 @@ function users() {
                     </nav>
                     <div className="tab-content recent-transactions-tab-body" id="nav-tabContent">
                       <div className="tab-pane table-responsive all-users-tab fade show active" id="nav-all-users" role="tabpanel" aria-labelledby="nav-all-users-tab" tabindex="0">
-                        <table className={`"table table-bordered w-100 users-table text-light ${dark?"table-dark text-light ":"text-dark"}`}>
+                        <table className={`"table table-bordered w-100 users-table text-light ${dark ? "table-dark text-light " : "text-dark"}`}>
                           <thead>
                             <tr className='py-1'>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} data-row-selection="true">
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} data-row-selection="true">
                                 S.no
                               </th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Profile</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">User Name</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Department</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Designation</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Team</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">IP Assigned</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Status</th>
-                              <th className={`"text-center ${dark?"bg-secondary text-light":"bg-dark text-light"}`} tabindex="0">Action</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Profile</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">User Name</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Department</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Designation</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Team</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">IP Assigned</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Status</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {data.map((item,index) => (
+                            {data.map((item, index) => (
                               <tr key={item.id}>
-                                <td className="selection-cell">
-                                  {index+1}
+                                <td className="selection-cell text-center">
+                                  {index + 1}
                                 </td>
-                                <td>
-                                  <div className="profile-thumb">
+                                <td className='text-center'>
+                                  <div className="profile-thumb text-center">
                                     <img
                                       src={convertToImage(item.imageData)}
                                       alt="profile-icon"
                                       className="img-fluid"
-                                      style={{ maxWidth: '50px', height: 'auto' }} // Ensures responsive image size
+                                      style={{ maxWidth: '50px', height: 'auto', borderRadius: "50%", margin: "5px" }} // Ensures responsive image size
                                     />
                                   </div>
                                 </td>
-                                <td>
+                                <td className='text-center'>
                                   {item.firstName} {item.lastName}
                                 </td>
-                                <td className="d-none d-sm-table-cell"> {/* Hidden on xs, visible on sm and larger */}
-                                  {department.find((dep)=>dep.deptId===item.departmentId) && department.find((dep)=>dep.deptId===item.departmentId).deptName}
+                                <td className="d-none d-sm-table-cell text-center"> {/* Hidden on xs, visible on sm and larger */}
+                                  {department.find((dep) => dep.deptId === item.departmentId) && department.find((dep) => dep.deptId === item.departmentId).deptName}
                                 </td>
-                                <td className="d-none d-md-table-cell"> {/* Hidden on xs and sm, visible on md and larger */}
-                                {role.find((role)=>role.roleId===item.roleId) && role.find((role)=>role.roleId===item.roleId).roleName}
+                                <td className="d-none d-md-table-cell text-center"> {/* Hidden on xs and sm, visible on md and larger */}
+                                  {role.find((role) => role.roleId === item.roleId) && role.find((role) => role.roleId === item.roleId).roleName}
                                 </td>
-                                <td className="d-none d-lg-table-cell"> {/* Hidden on xs, sm, md, visible on lg and larger */}
-                                {team.find((team)=>team.teamId===item.teamId) && team.find((team)=>team.teamId===item.teamId).teamName}
+                                <td className="d-none d-lg-table-cell text-center"> {/* Hidden on xs, sm, md, visible on lg and larger */}
+                                  {team.find((team) => team.teamId === item.teamId) && team.find((team) => team.teamId === item.teamId).teamName}
                                 </td>
-                                <td>
+                                <td className='text-center'>
                                   {item.systemIp}
                                 </td>
-                                <td>
-                                  <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", marginRight: "20px", backgroundColor: `${item.onBreak ? "red" : "green"}` }}></div>
+                                <td className="d-flex justify-content-center align-items-center" style={{ height: "60px" }}>
+                                  <div className=' p-2 rounded-circle' style={{ width: "20px", height: "20px", backgroundColor: `${item.onBreak ? "red" : "green"}` }}></div>
                                 </td>
-                                <td className="action">
+                                <td className="action text-center">
                                   <Button className="btn-outline-secondary" onClick={() => handleView(item.userId)} data-bs-toggle="modal" data-bs-target="#exampleModal">View</Button>
                                   <Button
                                     className="mx-sm-3"
@@ -780,17 +834,25 @@ function users() {
           </div>
         </Modal>
 
-        <Modal show={isUpdate} className="d-flex justify-content-center align-items-center">
+        <Modal show={isUpdate}  className="d-flex justify-content-center align-items-center">
           <div className="p-4 bg-white rounded">
             <div className="d-flex flex-wrap justify-content-center align-items-center">
+              {/* User Profile Container */}
               <div className="user-profile d-flex justify-content-center align-items-center position-relative mb-3">
+                {/* Profile Image */}
                 <img
                   src={convertToImage(formData.imageData)}
-                  className="img-fluid "
-
-                  style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                  className="img-fluid rounded-circle"
+                  style={{
+                    width: "150px",
+                    height: "150px",
+                    objectFit: "cover",
+                  }}
+                  alt="profile"
                 />
-                <div className=" position-absolute bottom-0 end-0">
+
+                {/* Edit Button */}
+                <div className="position-absolute bottom-0 end-0 p-2">
                   <input
                     type="file"
                     onChange={handleFileChange}
@@ -803,18 +865,24 @@ function users() {
                   </label>
                 </div>
               </div>
-
             </div>
+
+            {/* Modal Footer with Close and Update Buttons */}
             <div className="mt-4 d-flex justify-content-end">
               <button className="btn btn-secondary" onClick={handleUpdateHide}>
                 Close
               </button>
-              {imageUploading ? "Loading..." : <button className="btn btn-success ms-3" onClick={updateImageOfUser}>
-                Update Image
-              </button>}
+              {imageUploading ? (
+                "Loading..."
+              ) : (
+                <button className="btn btn-success ms-3" onClick={updateImageOfUser}>
+                  Update Image
+                </button>
+              )}
             </div>
           </div>
         </Modal>
+
 
         {/* make agent modal */}
         <Modal show={one} onHide={handleZero} className="modal user-mmt-modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

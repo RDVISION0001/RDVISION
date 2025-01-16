@@ -389,7 +389,7 @@ function UploadedProduct({ closeFunction, selectedProduct, productName }) {
                 <strong className={`${dark?`text-light`:``}`}> Product name :- {productName}</strong>
             </div>}
             {/* Toggle between Basic and Advance Details */}
-            {localStorage.getItem("roleName") === "Product_Coordinator" && <>
+            {(localStorage.getItem("roleName") === "Product_Coordinator" || localStorage.getItem("roleName") === "SeniorSuperVisor")  && <>
                 <section className={`filter-section ${dark ? 'bg-dark' : ''}`}>
                     <div className={`container-fluid  ${dark ? 'bg-dark' : ''}`}>
                         <div className="row">

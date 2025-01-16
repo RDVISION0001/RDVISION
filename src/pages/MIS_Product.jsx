@@ -13,6 +13,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useAuth } from "../auth/AuthContext";
 
+
 function MIS_Product() {
     const [filterText, setFilterText] = useState("");
     const [debouncedFilterText, setDebouncedFilterText] = useState("");
@@ -394,7 +395,7 @@ function MIS_Product() {
             </div>
 
             <div className={`table  ${dark ? `table-dark` : ``} `} style={{ maxHeight: "1000px", overflowY: "auto" }}>
-                {localStorage.getItem("roleName") === "Product_Coordinator" && <div className="d-flex justify-content-end p-3">
+                {(localStorage.getItem("roleName") === "Product_Coordinator" || localStorage.getItem("roleName") === "SeniorSuperVisor") && <div className="d-flex justify-content-end p-3">
                     <button onClick={openAddProduct} className={`rounded ${dark ? `bg-secondary` : ``} `}>Add New Product</button>
                 </div>}
                 <table className={`table  ${dark ? `table-dark` : ``} `}>
