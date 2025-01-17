@@ -29,14 +29,14 @@ import EmailCompose from "../components/EmailCompose";
 
 
 function live_tickets() {
-  const { userId,dark } = useAuth();
+  const { userId, dark } = useAuth();
   const { setFolowupUpdate } = useAuth();
   const { setUserReportReloader } = useAuth();
 
   const [selectedKey, setSelectedKey] = useState(null);
   const [isCompoeseOpen, setIsComposeOpen] = useState(false)
 
- const [emailBody,setEmailBody]=useState("")
+  const [emailBody, setEmailBody] = useState("")
 
   // Clipboard copy
   const [copied, setCopied] = useState(false);
@@ -146,7 +146,7 @@ function live_tickets() {
     setProductArray([]);
   };
 
-  const handleOn = (ticketId, email,body) => {
+  const handleOn = (ticketId, email, body) => {
     // setSelectTicketForInvoice(ticketId);
     // setSelectNameForInvoice(name);
     setSelectEmailForInvoice(email);
@@ -176,8 +176,7 @@ function live_tickets() {
 
   const fetchData = async () => {
     const response = await axiosInstance.get(
-      `/third_party_api/ticket/${
-        assignedTo !== 0 ? `getAllNewTickets/${userId}` : `getAllNewTickets`
+      `/third_party_api/ticket/${assignedTo !== 0 ? `getAllNewTickets/${userId}` : `getAllNewTickets`
       }`
     );
     setData(response.data);
@@ -212,7 +211,7 @@ function live_tickets() {
     const socket = new SockJS("https://rdvision.in/ws");
     const stompClient = new Client({
       webSocketFactory: () => socket,
-      debug: (str) => {},
+      debug: (str) => { },
       onConnect: () => {
         stompClient.subscribe("/topic/third_party_api/ticket/", (message) => {
           const newProduct = JSON.parse(message.body);
@@ -638,17 +637,17 @@ function live_tickets() {
 
   const handleCloseCompose = () => {
     setIsComposeOpen(false)
-}
+  }
 
   return (
     <>
-      <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+      <div className={`${dark ? `bg-dark text-white` : `bg-white text-dark`}`}>
         <div>
           <div>
             {/* <!-- Tabbed Ticket Table --> */}
-            <section className={`followup-table-section d-flex ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+            <section className={`followup-table-section d-flex ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}>
               <div className="container-fluid">
-                <div className={`table-wrapper ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+                <div className={`table-wrapper ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}>
                   {/* <h3 className="title">Live Tickets<span className="d-flex justify-content-end"></span></h3> */}
                   <ul
                     className="nav recent-transactions-tab-header nav-tabs"
@@ -661,9 +660,9 @@ function live_tickets() {
                     >
                       {/* <span> {newNotifications} <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i></span> */}
                       {/* <i className="fa-solid fa-bell fa-shake fa-2xl" style={{ color: "#74C0FC" }}></i> */}
-                      <div className={`${dark ? `bg-dark text-white`:`bg-white text-dark`}`} style={{ fontWeight: "bold", fontSize: "20px" }}>
+                      <div className={`${dark ? `bg-dark text-white` : `bg-white text-dark`}`} style={{ fontWeight: "bold", fontSize: "20px" }}>
                         {" "}
-                        Live Tickets 
+                        Live Tickets
                       </div>
 
                       <div className="col-md-5">
@@ -756,13 +755,12 @@ function live_tickets() {
                                   handleCountryFilter(dropdownCountries[index])
                                 }
                               >
-                                {`${
-                                  countryFilter.includes(
-                                    dropdownCountries[index]
-                                  )
-                                    ? "✅"
-                                    : ""
-                                }`}{" "}
+                                {`${countryFilter.includes(
+                                  dropdownCountries[index]
+                                )
+                                  ? "✅"
+                                  : ""
+                                  }`}{" "}
                                 {dropdownCountries[index]}
                               </Dropdown.Item>
                             ))}
@@ -772,79 +770,72 @@ function live_tickets() {
                     </li>
                   </ul>
                   {activeTab === "followUp" ? (
-                    <div className={`d-flex justify-content-center ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}>
+                    <div className={`d-flex justify-content-center ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Call_Back"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Call_Back"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Call_Back")}
                       >
                         Call Back
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Follow"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Follow"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Follow")}
                       >
                         Follow up
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Interested"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Interested"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Interested")}
                       >
                         Interested
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Not_Interested"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Interested"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Not_Interested")}
                       >
                         Not Interested
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Wrong_Number"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Wrong_Number"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Wrong_Number")}
                       >
                         Wrong Number
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Place_with_other"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Place_with_other"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Place_with_other")}
                       >
                         Place with other
                       </div>
                       <div
-                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${
-                          followUpStatus === "Not_Pickup"
-                            ? "bg-danger"
-                            : "bg-primary"
-                        } `}
+                        className={`mx-4 border rounded p-2 text-white font-bold my-1 ${followUpStatus === "Not_Pickup"
+                          ? "bg-danger"
+                          : "bg-primary"
+                          } `}
                         style={{ cursor: "Pointer" }}
                         onClick={() => setFollowupStatus("Not_Pickup")}
                       >
@@ -859,9 +850,8 @@ function live_tickets() {
                     id="followUpContent"
                   >
                     <div
-                      className={`tab-pane fade ${
-                        activeTab === "newTickets" ? "show active" : ""
-                      }`}
+                      className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""
+                        }`}
                       // className="tab-pane fade"
                       id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
@@ -869,21 +859,21 @@ function live_tickets() {
                       tabindex="0"
                     >
                       <div
-                        className={`followups-table table-responsive table-height border rounded ${dark ? `bg-dark text-white`:`bg-white text-dark`}`}
+                        className={`followups-table table-responsive table-height border rounded ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}
                         style={{ maxHeight: "47rem" }}
                       >
-                        <table className={`table table-border ${dark ? `table-dark text-white`:``}`}>
+                        <table className={`table table-border ${dark ? `table-dark text-white` : ``}`}>
                           <thead className="sticky-top">
                             <tr>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">S.No.</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Date/Time</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Country</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Name</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Number</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Customer Email</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Status</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Requirement</th>
-                              <th className={`${dark ? `bg-secondary text-white`:``}`} tabindex="0">Action</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">S.No.</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Date/Time</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Country</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Customer Name</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Customer Number</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Customer Email</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Status</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Requirement</th>
+                              <th className={`${dark ? `bg-secondary text-white` : ``}`} tabindex="0">Action</th>
                             </tr>
                           </thead>
                           {data ? (
@@ -918,14 +908,13 @@ function live_tickets() {
                                 .map((item, index) => (
                                   <tr
                                     key={index}
-                                    className={`${
-                                      localStorage.getItem("selectedLive") &&
+                                    className={`${localStorage.getItem("selectedLive") &&
                                       localStorage
                                         .getItem("selectedLive")
                                         .includes(item.uniqueQueryId)
-                                        ? "table-success"
-                                        : ""
-                                    }`}
+                                      ? "table-success"
+                                      : ""
+                                      }`}
                                     // style={{
                                     //   boxShadow: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
                                     //   zIndex: localStorage.getItem("selectedLive") === item.uniqueQueryId ? 1 : "auto",
@@ -1003,18 +992,18 @@ function live_tickets() {
                                           style={{
                                             backgroundColor:
                                               copiedId === item.uniqueQueryId &&
-                                              copiedType === "mobile"
+                                                copiedType === "mobile"
                                                 ? "green"
                                                 : "black",
                                             color:
                                               copiedId === item.uniqueQueryId &&
-                                              copiedType === "mobile"
+                                                copiedType === "mobile"
                                                 ? "white"
                                                 : "white",
                                           }}
                                         >
                                           {copiedId === item.uniqueQueryId &&
-                                          copiedType === "mobile"
+                                            copiedType === "mobile"
                                             ? "Copied!"
                                             : "Copy"}
                                         </button>
@@ -1040,18 +1029,18 @@ function live_tickets() {
                                           style={{
                                             backgroundColor:
                                               copiedId === item.uniqueQueryId &&
-                                              copiedType === "email"
+                                                copiedType === "email"
                                                 ? "green"
                                                 : "black",
                                             color:
                                               copiedId === item.uniqueQueryId &&
-                                              copiedType === "email"
+                                                copiedType === "email"
                                                 ? "white"
                                                 : "white",
                                           }}
                                         >
                                           {copiedId === item.uniqueQueryId &&
-                                          copiedType === "email"
+                                            copiedType === "email"
                                             ? "Copied!"
                                             : "Copy"}
                                         </button>
@@ -1129,10 +1118,21 @@ function live_tickets() {
                                         >
                                           <i className="fa-solid fa-phone"></i>
                                         </Button>
+
+                                        {/* skype */}
                                         <a
-                                          href={`sms:${
-                                            item.senderMobile
-                                          }?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                          href={`skype:${item.senderMobile}?call`}
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#followUpModal"
+                                          className="btn-action skype-btn rounded-circle"
+                                        >
+                                          <i class="fa-brands fa-skype fa-xl text-white"></i>
+                                        </a>
+
+
+                                        <a
+                                          href={`sms:${item.senderMobile
+                                            }?&body=${`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
                                           className="btn-action message"
                                           title="Get connect on message"
                                         >
@@ -1140,7 +1140,7 @@ function live_tickets() {
                                         </a>
                                         <Button
                                           onClick={() =>
-                                            handleOn(item.uniqueQueryId,item.senderEmail,`Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`)
+                                            handleOn(item.uniqueQueryId, item.senderEmail, `Hey ${item.senderName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`)
                                           }
                                           // href="mailto:someone@example.com"
                                           className="btn-action email"
@@ -1199,9 +1199,8 @@ function live_tickets() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`next_prev ${
-                        page === currentPage ? "active" : ""
-                      }`}
+                      className={`next_prev ${page === currentPage ? "active" : ""
+                        }`}
                     >
                       {page + 1}
                     </button>
@@ -1318,7 +1317,7 @@ function live_tickets() {
                       name="followUpDateTime"
                       value={formData.followUpDateTime}
                       onChange={handleChange}
-                      onClick={(e)=>e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
                       step="2"
                       style={{ borderRadius: "4px" }}
                     />
@@ -1475,8 +1474,8 @@ function live_tickets() {
                             .filter((product) =>
                               serchValue.length > 0
                                 ? product.name
-                                    .toLowerCase()
-                                    .includes(serchValue.toLowerCase())
+                                  .toLowerCase()
+                                  .includes(serchValue.toLowerCase())
                                 : true
                             )
                             .filter((product) => product.images !== null)
@@ -1489,10 +1488,9 @@ function live_tickets() {
                                 }
                               >
                                 <div
-                                  className={`card p-2 position-relative ${
-                                    productsIds.includes(product.productId) &&
+                                  className={`card p-2 position-relative ${productsIds.includes(product.productId) &&
                                     "shadow-lg bg-info"
-                                  }`}
+                                    }`}
                                   style={{
                                     width: "100%",
                                     maxWidth: "300px",

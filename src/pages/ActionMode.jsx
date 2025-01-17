@@ -32,7 +32,7 @@ function ActionMode() {
     const [searchString, setSearchString] = useState("")
     const [selectedStatus, setSelectedStatus] = useState("New")
     const [ticketNumber, setTicketNumber] = useState(localStorage.getItem("currentWorkingTicket") ? localStorage.getItem("currentWorkingTicket") : 0)
-    const {dark} = useAuth()
+    const { dark } = useAuth()
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(0);
@@ -374,34 +374,34 @@ function ActionMode() {
 
     return (
         <>
-            <section className={`container ${dark?"bg-dark":'bg-light'} `}>
-                <div className="container-fluid  "> 
-                    <div className={`d-flex justify-content-center flex-column ${dark ?"bg-dark":""}`}>
+            <section className={`container ${dark ? "bg-dark" : 'bg-light'} `}>
+                <div className="container-fluid  ">
+                    <div className={`d-flex justify-content-center flex-column ${dark ? "bg-dark" : ""}`}>
                         <div className='text-center d-flex justify-content-center m-3'>
                             <button className="bg-light text-success border" onClick={() => setSelectedStatus("New")}>{selectedStatus === "New" && "✅"} New Tickets</button>
                             <button className="bg-light text-success border" style={{ marginLeft: "15px" }} onClick={() => setSelectedStatus("Follow")}>{selectedStatus !== "New" && "✅"} Negotiations</button>
                         </div>
-                        <div className={`shadow border    p-3 rounded ${dark?"bg-dark border border-secondary":""} w-100`} style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
-                            <div className={`card  ${dark ? "bg-secondary":""} `} style={{ minHeight: "60vh" }}>
+                        <div className={`shadow border    p-3 rounded ${dark ? "bg-dark border border-secondary" : ""} w-100`} style={{ minHeight: '40vh', maxHeight: "90vh", overflowY: "auto" }}>
+                            <div className={`card  ${dark ? "bg-secondary" : ""} `} style={{ minHeight: "60vh" }}>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", left: "-20px" }}>
                                     {ticket && <h5>Query Id:-{ticket.uniqueQueryId && ticket.uniqueQueryId}</h5>}
                                 </div>
                                 <div className="w-25 rounded py-2 bg-primary text-white text-center position-absolute" style={{ top: "-20px", right: "-20px" }}>
                                     {ticket && <h5>Query Date Time :-{ticket.queryTime && formatDateTime(ticket.queryTime)}</h5>}
                                 </div>
-                                <div className={`d-flex justify-content-between mt-3 ${dark ? "bg-secondary":""}`}>
+                                <div className={`d-flex justify-content-between mt-3 ${dark ? "bg-secondary" : ""}`}>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Total Tickets:</span>
-                                        <span className={`ms-2 h4 text-primary ${dark?'text-warning':""} `}>{totalTicket}</span>
+                                        <span className={`ms-2 h4 text-primary ${dark ? 'text-warning' : ""} `}>{totalTicket}</span>
                                     </div>
                                     <div className="d-flex align-items-center">
                                         <span className='fw-bold text-muted'>Current Ticket Number:</span>
-                                        <span className={`ms-2 h4 text-primary ${dark?'text-warning':""} `}>{currentTicket} / {totalTicket}</span>
+                                        <span className={`ms-2 h4 text-primary ${dark ? 'text-warning' : ""} `}>{currentTicket} / {totalTicket}</span>
                                     </div>
                                 </div>
 
 
-                                <div className={`card-body  ${dark?"bg-secondary":""}`} style={{ minHeight: "35vh" }}>
+                                <div className={`card-body  ${dark ? "bg-secondary" : ""}`} style={{ minHeight: "35vh" }}>
                                     {ticket && (
                                         <div className="d-flex gap-2 justify-content-center" style={{ marginBottom: "30px" }}>
                                             {/* Info Button */}
@@ -427,6 +427,18 @@ function ActionMode() {
                                             >
                                                 <i className="fa-solid fa-phone text-white"></i>
                                             </button>
+
+                                            {/* Skype Button */}
+                                            <button
+                                                onClick={() => window.open(`skype:${ticket.senderMobile}?call`, "_self")}
+                                                className="btn btn-primary d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connected on Skype"
+                                            >
+                                                <i className="fa-brands fa-skype fa-xl text-white"></i>
+                                            </button>
+
+
 
                                             {/* SMS Button */}
                                             <a
@@ -542,7 +554,7 @@ function ActionMode() {
                                 </div>
                             </div>
 
-                            <div className={`d-flex justify-content-between mt-3 ${dark?"bg-secondary":""}`}>
+                            <div className={`d-flex justify-content-between mt-3 ${dark ? "bg-secondary" : ""}`}>
                                 <button className="btn btn-primary" onClick={fetchPreviousTicket} disabled={currentTicket == 1}>Prev</button>
                                 <div>
                                     <label htmlFor="number ">Enter ticket number </label>
@@ -647,6 +659,7 @@ function ActionMode() {
                     </form>
                 </Modal.Body>
             </Modal>
+
             <Modal show={show} onHide={handleClose} className="modal assign-ticket-modal fade" id="followUpModal" tabIndex="-1" aria-labelledby="followUpModalLabel" aria-hidden="true">
                 <Modal.Header closeButton>
                     <h1 className="modal-title fs-5 w-100 text-center" id="followUpModalLabel">
@@ -759,13 +772,8 @@ function ActionMode() {
                                     <div
                                         className="contact-info-row d-flex align-items-center justify-content-between"
                                     >
-                                        <a href="" className="contact-info phone"
-                                        ><i className="fa-solid fa-phone"></i> +91 9918293747</a
-                                        >
-                                        <a className="contact-info email" href="#"
-                                        ><i className="fa-solid fa-envelope-open-text"></i>
-                                            example@email.com</a
-                                        >
+                                        <a href="" className="contact-info phone"><i className="fa-solid fa-phone"></i> +91 9918293747</a >
+                                        <a className="contact-info email" href="#"><i className="fa-solid fa-envelope-open-text"></i>example@email.com</a >
                                     </div>
                                     <div className="main-content-area">
                                         <form>
