@@ -22,12 +22,17 @@ import InvoiceBox from "../components/InvoiceBox";
 import QuotationBox from "../components/QuotationBox";
 import TicketTrack from "../components/TicketTrack";
 import SaleConframtion from "../components/SaleConframtion";
+import EmailCompose from "../components/EmailCompose";
 
 function uploaded_tickets() {
   const { userId, dark } = useAuth();
   const { setUserReportReloader } = useAuth();
   const [selectedKey, setSelectedKey] = useState(null);
-
+  const [isCompoeseOpen, setIsComposeOpen] = useState(false)
+  const [emailBody, setEmailBody] = useState("")
+  const handleCloseCompose = () => {
+    setIsComposeOpen(false)
+  }
   // Clipboard copy
   const [copied, setCopied] = useState(false);
 
@@ -155,13 +160,11 @@ function uploaded_tickets() {
     setOn(false);
     setProductArray([]);
   };
-  const handleOn = (queryId, firstName, email, mobile, product) => {
-    setUniqueQueryId(queryId);
-    setSenderNameForEmail(firstName);
+  const handleOn = (email,body) => {
+   console.log("Emmail is ", email)
     setemailForMail(email);
-    setmobileNumber(mobile);
-    setProductArray((prevArray) => [...prevArray, product]);
-    setOn(true);
+    setEmailBody(body)
+    setIsComposeOpen(true);
   };
 
   const [isInvoiceOn, setIsInvoiceOn] = useState(false);
@@ -687,9 +690,8 @@ function uploaded_tickets() {
                     </h5>
                     <p
                       style={{ fontSize: 12 }}
-                      className={`nav-link d-flex justify-content-start gap-2 align-items-center ${
-                        activeTab === "newTickets" ? "active" : ""
-                      } ${dark ? `text-white` : ""}`}
+                      className={`nav-link d-flex justify-content-start gap-2 align-items-center ${activeTab === "newTickets" ? "active" : ""
+                        } ${dark ? `text-white` : ""}`}
                       onClick={() => handleRowClick("newTickets")}
                       id="new-arrivals-tkts-tab"
                       data-bs-toggle="tab"
@@ -712,9 +714,8 @@ function uploaded_tickets() {
                           type="text"
                           name="search-user"
                           id="searchUsers"
-                          className={`form-control ${
-                            dark ? `bg-secondary text-white` : ``
-                          }`}
+                          className={`form-control ${dark ? `bg-secondary text-white` : ``
+                            }`}
                           placeholder="Search by Name ,Email, Mobile"
                           value={shortValue}
                           onChange={handleShortDataValue}
@@ -772,9 +773,8 @@ function uploaded_tickets() {
                     id="followUpContent"
                   >
                     <div
-                      className={`tab-pane fade ${
-                        activeTab === "newTickets" ? "show active" : ""
-                      }`}
+                      className={`tab-pane fade ${activeTab === "newTickets" ? "show active" : ""
+                        }`}
                       // className="tab-pane fade"
                       id="new-arrivals-tkts-tab-pane"
                       role="tabpanel"
@@ -782,15 +782,13 @@ function uploaded_tickets() {
                       tabindex="0"
                     >
                       <div
-                        className={`followups-table table-responsive border rounded ${
-                          dark ? `bg-dark` : "bg-white"
-                        } `}
+                        className={`followups-table table-responsive border rounded ${dark ? `bg-dark` : "bg-white"
+                          } `}
                         style={{ maxHeight: "45rem" }}
                       >
                         <table
-                          className={`table table-border table-striped ${
-                            dark ? `table-dark` : ``
-                          }`}
+                          className={`table table-border table-striped ${dark ? `table-dark` : ``
+                            }`}
                         >
                           <thead className=" sticky-top z-1">
                             <tr>
@@ -885,14 +883,13 @@ function uploaded_tickets() {
                                 .map((item, index) => (
                                   <tr
                                     key={index}
-                                    className={`${
-                                      localStorage.getItem("selectedLive") &&
+                                    className={`${localStorage.getItem("selectedLive") &&
                                       localStorage
                                         .getItem("selectedLive")
                                         .includes(item.uniqueQueryId)
-                                        ? "table-success"
-                                        : ""
-                                    }`}
+                                      ? "table-success"
+                                      : ""
+                                      }`}
                                     // style={{
                                     //   boxShadow: localStorage.getItem("selectedLive") === item.uniqueQueryId ? "0px 5px 15px 0px gray" : "",
                                     //   zIndex: localStorage.getItem("selectedLive") === item.uniqueQueryId ? 1 : "auto",
@@ -906,7 +903,7 @@ function uploaded_tickets() {
                                     }
                                   >
                                     {localStorage.getItem("roleName") ===
-                                    "Admin" ? (
+                                      "Admin" ? (
                                       <td className="selection-cell">
                                         <input
                                           type="checkbox"
@@ -933,13 +930,10 @@ function uploaded_tickets() {
                                     </td>
 
                                     <td>
-                                      <span className="text">{`${
-                                        item.uploadDate[2]
-                                      }-${item.uploadDate[1]}-${
-                                        item.uploadDate[0]
-                                      }\n${
-                                        item.queryTime.split(".")[0]
-                                      }`}</span>
+                                      <span className="text">{`${item.uploadDate[2]
+                                        }-${item.uploadDate[1]}-${item.uploadDate[0]
+                                        }\n${item.queryTime.split(".")[0]
+                                        }`}</span>
                                     </td>
                                     <td className="">
                                       <img
@@ -964,11 +958,10 @@ function uploaded_tickets() {
                                           } // Set copied ID as mobile number
                                         >
                                           <button
-                                            className={`btn rounded ${
-                                              copiedId === item.mobileNumber
-                                                ? "btn-success"
-                                                : "btn-primary"
-                                            }`}
+                                            className={`btn rounded ${copiedId === item.mobileNumber
+                                              ? "btn-success"
+                                              : "btn-primary"
+                                              }`}
                                             onClick={() =>
                                               addCopyRecord(
                                                 item.mobileNumber,
@@ -995,11 +988,10 @@ function uploaded_tickets() {
                                           onCopy={() => setCopiedId(item.email)}
                                         >
                                           <button
-                                            className={`btn rounded ${
-                                              copiedId === item.email
-                                                ? "btn-success"
-                                                : "btn-primary"
-                                            }`}
+                                            className={`btn rounded ${copiedId === item.email
+                                              ? "btn-success"
+                                              : "btn-primary"
+                                              }`}
                                             onClick={() =>
                                               addCopyRecord(
                                                 item.email,
@@ -1042,7 +1034,7 @@ function uploaded_tickets() {
                                       <span className="comment">
                                         {item.productEnquiry.length > 15
                                           ? item.productEnquiry.slice(0, 15) +
-                                            "..."
+                                          "..."
                                           : item.productEnquiry}{" "}
                                         {/* Check length and add ellipsis */}
                                         <br />
@@ -1078,10 +1070,20 @@ function uploaded_tickets() {
                                         >
                                           <i className="fa-solid fa-phone"></i>
                                         </Button>
+
+                                        {/* skype */}
                                         <a
-                                          href={`sms:${
-                                            item.mobileNumber
-                                          }?&body=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                          href={`skype:${item.senderMobile}?call`}
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#followUpModal"
+                                          className="btn-action skype-btn rounded-circle"
+                                        >
+                                          <i class="fa-brands fa-skype fa-xl text-white"></i>
+                                        </a>
+
+                                        <a
+                                          href={`sms:${item.mobileNumber
+                                            }?&body=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
                                           className="btn-action message"
                                           title="Get connect on message"
                                         >
@@ -1090,11 +1092,8 @@ function uploaded_tickets() {
                                         <Button
                                           onClick={() =>
                                             handleOn(
-                                              item.uniqueQueryId,
-                                              item.senderName,
-                                              item.senderEmail,
-                                              item.senderMobile,
-                                              item.productEnquiry
+                                            item.email,
+                                            `Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`
                                             )
                                           }
                                           // href="mailto:someone@example.com"
@@ -1104,9 +1103,8 @@ function uploaded_tickets() {
                                           <i className="fa-solid fa-envelope"></i>
                                         </Button>
                                         <a
-                                          href={`https://wa.me/${
-                                            item.mobileNumber.split("-")[1]
-                                          }?text=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
+                                          href={`https://wa.me/${item.mobileNumber.split("-")[1]
+                                            }?text=${`Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`}`}
                                           target="_blank"
                                           className="btn-action whatsapp"
                                           title="Get connect on whatsapp"
@@ -1152,9 +1150,8 @@ function uploaded_tickets() {
                     <button
                       key={page}
                       onClick={() => setCurrentPage(page)}
-                      className={`next_prev ${
-                        page === currentPage ? "active" : ""
-                      }`}
+                      className={`next_prev ${page === currentPage ? "active" : ""
+                        }`}
                     >
                       {page + 1}
                     </button>
@@ -1307,7 +1304,7 @@ function uploaded_tickets() {
                       name="followUpDateTime"
                       value={formData.followUpDateTime}
                       onChange={handleChange}
-                      onClick={(e)=>e.target.showPicker()}
+                      onClick={(e) => e.target.showPicker()}
                     />
                   </div>
                 )}
@@ -1463,8 +1460,8 @@ function uploaded_tickets() {
                             .filter((product) =>
                               serchValue.length > 0
                                 ? product.name
-                                    .toLowerCase()
-                                    .includes(serchValue.toLowerCase())
+                                  .toLowerCase()
+                                  .includes(serchValue.toLowerCase())
                                 : true
                             )
                             .filter((product) => product.images !== null)
@@ -1477,10 +1474,9 @@ function uploaded_tickets() {
                                 }
                               >
                                 <div
-                                  className={`card p-2 position-relative ${
-                                    productsIds.includes(product.productId) &&
+                                  className={`card p-2 position-relative ${productsIds.includes(product.productId) &&
                                     "shadow-lg bg-info"
-                                  }`}
+                                    }`}
                                   style={{
                                     width: "100%",
                                     maxWidth: "300px",
@@ -1729,6 +1725,26 @@ function uploaded_tickets() {
           </div>
         </Modal>
       </div>
+      <Modal
+        show={isCompoeseOpen}
+        // onHide={() => setIsComposeOpen(false)}
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        className="rounded-lg"  // Add Tailwind class to make the modal rounded
+      >
+        <EmailCompose autoClose={handleCloseCompose} email={emailFormail} body={emailBody} />
+        <div className="modal-body">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsComposeOpen(false)}
+          >
+            Close
+          </button>
+        </div>
+      </Modal>
     </>
   );
 }

@@ -228,9 +228,9 @@ function topnav() {
             </div>
           </nav>
 
-          <div>
+          {/* <div>
             <FloatingButton />
-          </div>
+          </div> */}
 
           {/* Modal for Calendar */}
           <Modal show={showCalendar} onHide={handleCloseCalender} size="lg">

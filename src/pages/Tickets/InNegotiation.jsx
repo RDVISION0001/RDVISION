@@ -6,6 +6,7 @@ import temp2 from "../../assets/emailtemp/temp2.png";
 import temp3 from "../../assets/emailtemp/temp3.png";
 import SaleProductInfo from '../../components/SaleProductInfo'
 
+
 // Clipboard copy
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -20,11 +21,14 @@ import InvoiceInfo from "../../components/InvoiceInfo";
 import { useParams } from "react-router-dom";
 import TicketTrack from "../../components/TicketTrack";
 import SaleConframtion from "../../components/SaleConframtion";
+import EmailCompose from "../../components/EmailCompose";
 
 function InNegotiation() {
+  const [isCompoeseOpen, setIsComposeOpen] = useState(false)
+
   const { date } = useParams(); // Retrieve the 'date' parameter
   const [selectedKey, setSelectedKey] = useState(null);
-  const { setFolowupUpdate,dark } = useAuth();
+  const { setFolowupUpdate, dark } = useAuth();
   const { setUserReportReloader } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const handleClosee = () => setShowModal(false);
@@ -96,7 +100,6 @@ function InNegotiation() {
   const [isInvoiceOn, setIsInvoiceOn] = useState(false);
   const [negodata, setNegoData] = useState([]);
   const handleInvoice = (nego) => {
-    console.log("nego:", nego);
     setNegoData(nego);
     setIsInvoiceOn(!isInvoiceOn);
   };
@@ -147,7 +150,6 @@ function InNegotiation() {
         {},
         { params }
       );
-      console.log(res);
       setResponse(res.data.dtoList);
       toast.success("Update successfully!");
       setFolowupUpdate(uniqueQueryId);
@@ -201,12 +203,11 @@ function InNegotiation() {
     setOn(false);
     setProductArray([]);
   };
-  const handleOn = (ticketId, name, email, mobile) => {
-    setSelectTicketForInvoice(ticketId);
-    setSelectNameForInvoice(name);
+  const handleOn = ( email,body) => {
+    
     setSelectEmailForInvoice(email);
-    setSelectMobileForInvoice(mobile);
-    setOn(!isInvoiceOn);
+    setIsComposeOpen(!isCompoeseOpen);
+    setEmailBody(body)
   };
 
   const [stage1Data, setSatge1Data] = useState([]);
@@ -221,7 +222,6 @@ function InNegotiation() {
     }
   }, [list, assignedTo]);
   const fetchDatas1 = async (stage) => {
-    console.log(assignedTo);
     try {
       const response = await axiosInstance.post(
         "/third_party_api/ticket/negotiationstagebased",
@@ -237,7 +237,6 @@ function InNegotiation() {
     }
   };
   const fetchDatas2 = async (stage) => {
-    console.log(assignedTo);
     try {
       const response = await axiosInstance.post(
         "/third_party_api/ticket/negotiationstagebased",
@@ -253,7 +252,6 @@ function InNegotiation() {
     }
   };
   const fetchDatas3 = async (stage) => {
-    console.log(assignedTo);
     try {
       const response = await axiosInstance.post(
         "/third_party_api/ticket/negotiationstagebased",
@@ -275,7 +273,6 @@ function InNegotiation() {
     // Get the current list of selected tickets from localStorage
     let selectedTickets =
       JSON.parse(localStorage.getItem("selectedNego")) || [];
-    console.log(selectedTickets);
     // Add the new ticket ID if it doesn't already exist
     if (!selectedTickets.includes(ticketId)) {
       selectedTickets.push(ticketId);
@@ -657,10 +654,7 @@ function InNegotiation() {
     }
   };
 
-  const handleShowUniqe = (uniqueQueryId) => {
-    // Your existing handleShow function logic
-    console.log(`Show ticket with ID: ${uniqueQueryId}`);
-  };
+ 
 
   const convertNumberToStringMonth = (number) => {
     switch (number) {
@@ -742,9 +736,8 @@ function InNegotiation() {
     const formattedMinutes = minutes.toString().padStart(2, "0");
 
     // Construct the formatted date string
-    const formattedDate = `${day}-${
-      monthNames[month - 1]
-    }-${year} ${formattedHours}:${formattedMinutes} ${period}`;
+    const formattedDate = `${day}-${monthNames[month - 1]
+      }-${year} ${formattedHours}:${formattedMinutes} ${period}`;
 
     return formattedDate;
   };
@@ -803,7 +796,6 @@ function InNegotiation() {
 
   const handleInputChange = (e) => {
     setserchValue(e.target.value); // Update state with the input's value
-    console.log("Input Value:", e.target.value); // Log the current input value
   };
 
   const handleToggleProduct = (id) => {
@@ -846,6 +838,8 @@ function InNegotiation() {
     }
   };
 
+  const [emailBody, setEmailBody] = useState("")
+  
   const [copiedId, setCopiedId] = useState(null); // Track copied uniqueQueryId
   const [copiedType, setCopiedType] = useState(null); // Track if mobile or email is copied
 
@@ -880,10 +874,9 @@ function InNegotiation() {
   // sale ifo method
 
   const [saleInfoModal, setsaleInfoModal] = useState(false);
-  const [ saleinfoItem,setSaleInfoItem] = useState([])
+  const [saleinfoItem, setSaleInfoItem] = useState([])
 
   const hnadleSaleInfo = (item) => {
-    console.log("sale",item)
     setSaleInfoItem(item)
     setsaleInfoModal(!saleInfoModal);
   };
@@ -892,11 +885,15 @@ function InNegotiation() {
     setsaleInfoModal(false); // Hides the modal
   };
 
+  const handleCloseCompose = () => {
+    setIsComposeOpen(false)
+  }
+
   return (
     <>
       {localStorage.getItem("roleName") === "SeniorSuperVisor" && (
-        <div className={`p-3 ${dark? `bg-dark`:``}`} style={{ textAlign: "start" }}>
-          <label className={`m-3 fw-bold ${dark? `bg-dark`:`text-dark`}`}>
+        <div className={`p-3 ${dark ? `bg-dark` : ``}`} style={{ textAlign: "start" }}>
+          <label className={`m-3 fw-bold ${dark ? `bg-dark` : `text-dark`}`}>
             Select Closer to see their Negotiation tickets
           </label>
           <select
@@ -918,18 +915,18 @@ function InNegotiation() {
           </select>
         </div>
       )}
-      <div className={`d-flex justify-content-end ${dark? `bg-dark`:``} `}>
+      <div className={`d-flex justify-content-end ${dark ? `bg-dark` : ``} `}>
         {localStorage.getItem("roleName") !== "SeniorSuperVisor" && (
-          <div className={`d-flex justify-content-center ${dark? `bg-dark`:``} `}>
+          <div className={`d-flex justify-content-center ${dark ? `bg-dark` : ``} `}>
             <div className="form-check" style={{ marginLeft: "10px" }}>
               <input
-                className={`form-check-input ${dark? `text-white`:``} `}
+                className={`form-check-input ${dark ? `text-white` : ``} `}
                 type="checkbox"
                 id="flexCheckDefault"
                 checked={assignedTo === userId}
                 onChange={() => setAssignedTo(userId)} // Call toggle method on change
               />
-              <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckDefault">
+              <label className={`form-check-label ${dark ? `text-white` : ``} `} htmlFor="flexCheckDefault">
                 Assigned to me
               </label>
             </div>
@@ -941,15 +938,15 @@ function InNegotiation() {
                 checked={assignedTo === 0} // Checked if 'list' is false
                 onChange={() => setAssignedTo(0)} // Call toggle method on change
               />
-              <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckChecked">
+              <label className={`form-check-label ${dark ? `text-white` : ``} `} htmlFor="flexCheckChecked">
                 All negotiation tickets
               </label>
             </div>
           </div>
         )}
         <div className="w-25 d-flex justify-content-center">
-          <div className={`form-check-label ${dark? `text-white`:``} `}>choose view</div>
-          <div className={`form-check-label ${dark? `text-white`:``} `} style={{ marginLeft: "10px" }}>
+          <div className={`form-check-label ${dark ? `text-white` : ``} `}>choose view</div>
+          <div className={`form-check-label ${dark ? `text-white` : ``} `} style={{ marginLeft: "10px" }}>
             <input
               className="form-check-input"
               type="checkbox"
@@ -957,7 +954,7 @@ function InNegotiation() {
               checked={list}
               onChange={toggleCheckbox} // Call toggle method on change
             />
-            <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckDefault">
+            <label className={`form-check-label ${dark ? `text-white` : ``} `} htmlFor="flexCheckDefault">
               List
             </label>
           </div>
@@ -969,7 +966,7 @@ function InNegotiation() {
               checked={!list} // Checked if 'list' is false
               onChange={toggleCheckbox} // Call toggle method on change
             />
-            <label className={`form-check-label ${dark? `text-white`:``} `} htmlFor="flexCheckChecked">
+            <label className={`form-check-label ${dark ? `text-white` : ``} `} htmlFor="flexCheckChecked">
               Card
             </label>
           </div>
@@ -979,7 +976,7 @@ function InNegotiation() {
         {list && (
           <div style={{ width: "100%" }}>
             {/* Stages */}
-            <section className={`followup-table-section py-3 ${dark? `bg-dark`:``} `}>
+            <section className={`followup-table-section py-3 ${dark ? `bg-dark` : ``} `}>
               <div
                 className="pipeline-container"
                 style={{
@@ -1050,14 +1047,14 @@ function InNegotiation() {
                             width: "90%", // Responsive width
                             maxWidth: "200px", // Limit max width
                           }}
-                          className={`${dark? `bg-dark text-white`:`text-dark`} `}
+                          className={`${dark ? `bg-dark text-white` : `text-dark`} `}
                         >
                           {stage.stage < 4 && "Number OF tickets :-"}
                           {stage.stage === 1 &&
                             notPickupCount +
-                              notInteresteCount +
-                              wrongNumberCount +
-                              hangUpCount}
+                            notInteresteCount +
+                            wrongNumberCount +
+                            hangUpCount}
                           {stage.stage === 2 &&
                             followCount + interestedCount + placeWithOtherCOunt}
                           {stage.stage === 3 && saleCount}
@@ -1083,8 +1080,8 @@ function InNegotiation() {
                 ))}
               </div>
             </section>
-            
-            <section className={`filter-section ${dark? `bg-dark`:``} px-4 `}>
+
+            <section className={`filter-section ${dark ? `bg-dark` : ``} px-4 `}>
               <div className="row">
                 <div className="col-md-5">
                   <div className="search-wrapper">
@@ -1092,7 +1089,7 @@ function InNegotiation() {
                       type="text"
                       name="search-user"
                       id="searchUsers"
-                      className={`form-control  ${dark? `text-white bg-dark`:``}`}
+                      className={`form-control  ${dark ? `text-white bg-dark` : ``}`}
                       placeholder="Search Department or Name..."
                       value={shortValue}
                       onChange={handleShortDataValue}
@@ -1108,7 +1105,7 @@ function InNegotiation() {
                       <input
                         type="date"
                         name="filterdate"
-                        className={`form-control  ${dark? `text-white bg-dark`:``}`}
+                        className={`form-control  ${dark ? `text-white bg-dark` : ``}`}
                         placeholder="Search Department or Name..."
                         value={filterdate}
                         onChange={(e) => setFilterDate(e.target.value)}
@@ -1128,13 +1125,12 @@ function InNegotiation() {
             {/*Filters*/}
 
             {selectedStage < 4 && (
-              <section className={`d-flex justify-content-center ${dark ? `bg-dark`:``}`}>
+              <section className={`d-flex justify-content-center ${dark ? `bg-dark` : ``}`}>
                 <div className=" w-50 d-flex justify-content-around p-3">
                   {selectedStage !== 3 && (
                     <button
-                      className={`${
-                        buttonFilterValue === "" ? "bg-success" : "bg-primary"
-                      }`}
+                      className={`${buttonFilterValue === "" ? "bg-success" : "bg-primary"
+                        }`}
                       onClick={() => setbuttonFilterValue("")}
                     >
                       All
@@ -1143,32 +1139,29 @@ function InNegotiation() {
                   {selectedStage === 2 && (
                     <>
                       <button
-                        className={`${
-                          buttonFilterValue === "Follow"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Follow"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Follow")}
                       >
                         Follow
                       </button>
                       {/* <button className={`${buttonFilterValue === "Call_Back" ? "bg-success" : "bg-primary"}`} onClick={() => setbuttonFilterValue("Call_Back")}>Call_Back</button> */}
                       <button
-                        className={`${
-                          buttonFilterValue === "Interested"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Interested"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Interested")}
                       >
                         Interested
                       </button>
                       <button
-                        className={`${
-                          buttonFilterValue === "Place_with_other"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Place_with_other"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Place_with_other")}
                       >
                         Place With Others
@@ -1179,41 +1172,37 @@ function InNegotiation() {
                     <>
                       {" "}
                       <button
-                        className={`${
-                          buttonFilterValue === "Wrong_Number"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Wrong_Number"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Wrong_Number")}
                       >
                         Wrong_Number
                       </button>
                       <button
-                        className={`${
-                          buttonFilterValue === "Not_Pickup"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Not_Pickup"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Not_Pickup")}
                       >
                         Not-pickup
                       </button>
                       <button
-                        className={`${
-                          buttonFilterValue === "Not_Interested"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "Not_Interested"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("Not_Interested")}
                       >
                         Not-Interested
                       </button>
                       <button
-                        className={`${
-                          buttonFilterValue === "hang_up"
-                            ? "bg-success"
-                            : "bg-primary"
-                        }`}
+                        className={`${buttonFilterValue === "hang_up"
+                          ? "bg-success"
+                          : "bg-primary"
+                          }`}
                         onClick={() => setbuttonFilterValue("hang_up")}
                       >
                         Hang_Up
@@ -1225,32 +1214,32 @@ function InNegotiation() {
             )}
             {/* Table */}
             {selectedStage < 4 && (
-              <section className={`followup-table-section py-3 ${dark ? `bg-dark`:``}`}>
+              <section className={`followup-table-section py-3 ${dark ? `bg-dark` : ``}`}>
                 <div className="">
                   <div className="">
-                    <div className={`followups-table table-responsive border rounded table-height ${dark ? `table-dark`:``}`}>
-                      <table className={`table table-hover ${dark ? `table-dark `:``}`}>
-                        <thead className={`sticky-header ${dark ? `bg-secondary `:``}`}>
+                    <div className={`followups-table table-responsive border rounded table-height ${dark ? `table-dark` : ``}`}>
+                      <table className={`table table-hover ${dark ? `table-dark ` : ``}`}>
+                        <thead className={`sticky-header ${dark ? `bg-secondary ` : ``}`}>
                           <tr>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">S.No.</th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0" style={{ width: "120px" }}>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">S.No.</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0" style={{ width: "120px" }}>
                               Date/Time
                             </th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Country</th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Customer Name</th>
-                            <th className={`whitespace-nowrap ${dark ? `text-dark bg-secondary`:``}`} tabIndex="0" >
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Country</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Customer Name</th>
+                            <th className={`whitespace-nowrap ${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0" >
                               Mob Number
                             </th>
-                            <th  className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">Customer Email</th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Status</th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Requirement</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Customer Email</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Status</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Requirement</th>
                             {selectedStage === 2 && (
-                              <th className={`${dark ? `text-dark bg-secondary`:``}`} tabIndex="0">
+                              <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">
                                 Follow Date/Time
                               </th>
                             )}
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0" style={{width:'200px'}}>Follow Comment</th>
-                            <th className={`${dark ? `text-dark bg-secondary`:``}`}  tabIndex="0">Action</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0" style={{ width: '200px' }}>Follow Comment</th>
+                            <th className={`${dark ? `text-dark bg-secondary` : ``}`} tabIndex="0">Action</th>
                             {selectedStage === 3 && (
                               <th tabIndex="0">Sale Date</th>
                             )}
@@ -1267,33 +1256,32 @@ function InNegotiation() {
                               // ${localStorage.getItem("selectedNego") && localStorage.getItem("selectedNego").includes(nego.uniqueQueryId) ? "table-success" :  for selected row
                               <tr
                                 key={index}
-                                className={`${
-                                  localStorage
-                                    .getItem("selectedNego")
-                                    ?.includes(nego.uniqueQueryId)
-                                    ? "table-danger"
-                                    : ""
-                                } ${rowcolor(nego.ticketstatus)}`}
+                                className={`${localStorage
+                                  .getItem("selectedNego")
+                                  ?.includes(nego.uniqueQueryId)
+                                  ? "table-danger"
+                                  : ""
+                                  } ${rowcolor(nego.ticketstatus)}`}
                                 style={{
                                   boxShadow:
                                     localStorage.getItem("selectedNego") &&
-                                    localStorage
-                                      .getItem("selectedNego")
-                                      .includes(nego.uniqueQueryId)
+                                      localStorage
+                                        .getItem("selectedNego")
+                                        .includes(nego.uniqueQueryId)
                                       ? "0px 5px 15px 0px gray"
                                       : "",
                                   zIndex:
                                     localStorage.getItem("selectedNego") &&
-                                    localStorage
-                                      .getItem("selectedNego")
-                                      .includes(nego.uniqueQueryId)
+                                      localStorage
+                                        .getItem("selectedNego")
+                                        .includes(nego.uniqueQueryId)
                                       ? 1
                                       : "auto",
                                   position:
                                     localStorage.getItem("selectedNego") &&
-                                    localStorage
-                                      .getItem("selectedNego")
-                                      .includes(nego.uniqueQueryId)
+                                      localStorage
+                                        .getItem("selectedNego")
+                                        .includes(nego.uniqueQueryId)
                                       ? "relative"
                                       : "static",
                                 }}
@@ -1358,18 +1346,18 @@ function InNegotiation() {
                                       style={{
                                         backgroundColor:
                                           copiedId === nego.uniqueQueryId &&
-                                          copiedType === "mobile"
+                                            copiedType === "mobile"
                                             ? "green"
                                             : "black",
                                         color:
                                           copiedId === nego.uniqueQueryId &&
-                                          copiedType === "mobile"
+                                            copiedType === "mobile"
                                             ? "white"
                                             : "white",
                                       }}
                                     >
                                       {copiedId === nego.uniqueQueryId &&
-                                      copiedType === "mobile"
+                                        copiedType === "mobile"
                                         ? "Copied!"
                                         : "Copy"}
                                     </button>
@@ -1396,18 +1384,18 @@ function InNegotiation() {
                                       style={{
                                         backgroundColor:
                                           copiedId === nego.uniqueQueryId &&
-                                          copiedType === "email"
+                                            copiedType === "email"
                                             ? "green"
                                             : "black",
                                         color:
                                           copiedId === nego.uniqueQueryId &&
-                                          copiedType === "email"
+                                            copiedType === "email"
                                             ? "white"
                                             : "white",
                                       }}
                                     >
                                       {copiedId === nego.uniqueQueryId &&
-                                      copiedType === "email"
+                                        copiedType === "email"
                                         ? "Copied!"
                                         : "Copy"}
                                     </button>
@@ -1417,16 +1405,13 @@ function InNegotiation() {
                                   </span>
                                 </td>
                                 <td>
-                                  {/* {console.log(localStorage.getItem('roleName'))}
-                              {console.log(selectedStage)} */}
                                   <div className="dropdown">
                                     <a
-                                      className={`btn btn-info dropdown-toggle ${
-                                        localStorage.getItem("roleName") ===
-                                          "Closer" && selectedStage === 3
-                                          ? "disabled"
-                                          : ""
-                                      }`}
+                                      className={`btn btn-info dropdown-toggle ${localStorage.getItem("roleName") ===
+                                        "Closer" && selectedStage === 3
+                                        ? "disabled"
+                                        : ""
+                                        }`}
                                       role="button"
                                       data-bs-toggle="dropdown"
                                       style={{
@@ -1438,7 +1423,7 @@ function InNegotiation() {
                                         if (
                                           !(
                                             localStorage.getItem("roleName") ===
-                                              "Closer" && selectedStage === 3
+                                            "Closer" && selectedStage === 3
                                           )
                                         ) {
                                           handleShow(nego.uniqueQueryId);
@@ -1467,8 +1452,8 @@ function InNegotiation() {
                                     <span className="text">
                                       {nego.followUpDateTime
                                         ? formatLocalDateTime(
-                                            nego.followUpDateTime
-                                          )
+                                          nego.followUpDateTime
+                                        )
                                         : ""}
                                     </span>
                                   </td>
@@ -1497,7 +1482,7 @@ function InNegotiation() {
                                       <img
                                         data-bs-toggle="modal"
                                         data-bs-target="#staticBackdrop"
-                                        onClick={()=>hnadleSaleInfo(nego)}
+                                        onClick={() => hnadleSaleInfo(nego)}
                                         className="border bg-success rounded-circle p-2"
                                         src="https://cdn-icons-png.flaticon.com/128/1179/1179519.png"
                                         alt="Hidden"
@@ -1525,13 +1510,22 @@ function InNegotiation() {
                                           ></i>
                                         </Button>
 
+                                        {/* skype */}
+                                        <a
+                                          href={`skype:${nego.senderMobile}?call`}
+                                          data-bs-toggle="modal"
+                                          data-bs-target="#followUpModal"
+                                          className="btn-action skype-btn rounded-circle"
+                                        >
+                                          <i class="fa-brands fa-skype fa-xl text-white"></i>
+                                        </a>
+
                                         {/* SMS Button */}
                                         <a
-                                          href={`sms:${
-                                            nego.senderMobile
-                                              ? nego.senderMobile.split("-")[1]
-                                              : nego.mobileNumber
-                                          }?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                          href={`sms:${nego.senderMobile
+                                            ? nego.senderMobile.split("-")[1]
+                                            : nego.mobileNumber
+                                            }?&body=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
                                           className="btn-action message"
                                           title="Get connected on message"
                                         >
@@ -1545,11 +1539,9 @@ function InNegotiation() {
                                         <Button
                                           onClick={() =>
                                             handleOn(
-                                              nego.uniqueQueryId,
-                                              nego.senderName,
-                                              nego.senderEmail,
-                                              nego.senderMobile,
-                                              nego.queryProductName
+                                              nego.senderEmail?nego.senderEmail:nego.email,
+                                              `Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`
+                                              
                                             )
                                           }
                                           className="btn-action email"
@@ -1563,11 +1555,10 @@ function InNegotiation() {
 
                                         {/* WhatsApp Button */}
                                         <a
-                                          href={`https://wa.me/${
-                                            nego.senderMobile
-                                              ? nego.senderMobile.split("-")[1]
-                                              : nego.mobileNumber
-                                          }?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
+                                          href={`https://wa.me/${nego.senderMobile
+                                            ? nego.senderMobile.split("-")[1]
+                                            : nego.mobileNumber
+                                            }?text=${`Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`}`}
                                           target="_blank"
                                           className="btn-action whatsapp"
                                           title="Get connect on WhatsApp"
@@ -1654,9 +1645,8 @@ function InNegotiation() {
                                 <button
                                   key={page}
                                   onClick={() => handlePageChange(page)}
-                                  className={`pagination-button text-white ${
-                                    currentPage === page ? "active" : ""
-                                  }`}
+                                  className={`pagination-button text-white ${currentPage === page ? "active" : ""
+                                    }`}
                                 >
                                   {page}
                                 </button>
@@ -1720,13 +1710,12 @@ function InNegotiation() {
                 <div className={`col-sm text-center `} key={stage}>
                   <div className="border">
                     <span className="fw-bold">{`Stage ${idx + 1}`}</span>
-                    <div>{`consisting Status ${
-                      stage === "stage1"
-                        ? "Not Connected, wrong mobile number and Not Pickup"
-                        : stage === "stage2"
+                    <div>{`consisting Status ${stage === "stage1"
+                      ? "Not Connected, wrong mobile number and Not Pickup"
+                      : stage === "stage2"
                         ? "Connected follow-ups and call backs"
                         : "only sale"
-                    }`}</div>
+                      }`}</div>
                   </div>
                   <div
                     className="d-flex flex-wrap justify-content-around"
@@ -1736,8 +1725,8 @@ function InNegotiation() {
                     {(stage === "stage1"
                       ? stage1Data
                       : stage === "stage2"
-                      ? stage2Data
-                      : stage3Data
+                        ? stage2Data
+                        : stage3Data
                     ).map((ticket) => (
                       <div
                         key={ticket.uniqueQueryId}
@@ -1846,7 +1835,7 @@ function InNegotiation() {
                   name="followUpDateTime"
                   value={formData.followUpDateTime}
                   onChange={handleChange}
-                  onClick={(e)=>e.target.showPicker()}
+                  onClick={(e) => e.target.showPicker()}
                   step="2"
                   style={{ borderRadius: "4px" }}
                 />
@@ -2002,8 +1991,8 @@ function InNegotiation() {
                         .filter((product) =>
                           serchValue.length > 0
                             ? product.name
-                                .toLowerCase()
-                                .includes(serchValue.toLowerCase())
+                              .toLowerCase()
+                              .includes(serchValue.toLowerCase())
                             : true
                         )
                         .filter((product) => product.images !== null)
@@ -2016,10 +2005,9 @@ function InNegotiation() {
                             }
                           >
                             <div
-                              className={`card p-2 position-relative ${
-                                productsIds.includes(product.productId) &&
+                              className={`card p-2 position-relative ${productsIds.includes(product.productId) &&
                                 "shadow-lg bg-info"
-                              }`}
+                                }`}
                               style={{
                                 width: "100%",
                                 maxWidth: "300px",
@@ -2279,7 +2267,7 @@ function InNegotiation() {
 
       <Modal
         show={saleInfoModal}
-        onHide={handleClosesSale}       
+        onHide={handleClosesSale}
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
@@ -2288,7 +2276,7 @@ function InNegotiation() {
           <Modal.Title id="exampleModalLabel">Sale information</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-         <SaleProductInfo ticket={saleinfoItem} />   {/*saleinfo component */}
+          <SaleProductInfo ticket={saleinfoItem} />   {/*saleinfo component */}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClosesSale}>
@@ -2296,6 +2284,27 @@ function InNegotiation() {
           </Button>
           <Button variant="primary">Understood</Button>
         </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={isCompoeseOpen}
+        // onHide={() => setIsComposeOpen(false)}
+        id="exampleModal"
+        tabIndex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        className="rounded-lg"  // Add Tailwind class to make the modal rounded
+      >
+        <EmailCompose autoClose={handleCloseCompose} email={selectEmailForInvoice} body={emailBody} />
+        <div className="modal-body">
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setIsComposeOpen(false)}
+          >
+            Close
+          </button>
+        </div>
       </Modal>
     </>
   );
