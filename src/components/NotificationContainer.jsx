@@ -11,6 +11,35 @@ const NotificationContainer = () => {
     const [noOfnewticketsReceived, setNoOfnewticketsReceived] = useState(0);
 
     useEffect(() => {
+        const socket = new SockJS('https://backend.rdvision.in/ws');
+        const stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            stompClient.subscribe('/topic/invoice/', (message) => {
+                const updateData = JSON.parse(message.body);
+                setNotifications((prevNotifications) => [
+                    {name:"Verification Pending", type: "inProgress", message: "Paid Invoice Received", ...updateData },
+                    ...prevNotifications
+                ]);
+            });
+
+            stompClient.subscribe('/topic/invoice/verified/', (message) => {
+                const updateData = JSON.parse(message.body);
+                setNotifications((prevNotifications) => [
+                    { type: "completed", message: "Invoice Verified", ...updateData },
+                    ...prevNotifications
+                ]);
+            });
+        });
+
+        return () => {
+            if (stompClient) {
+                stompClient.disconnect();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
         const socket = new SockJS('https://rdvision.in/ws');
         const stompClient = Stomp.over(socket);
 
@@ -29,24 +58,6 @@ const NotificationContainer = () => {
                 ]);
                 setNoOfnewticketsReceived((prevCount) => prevCount + 1);
                 playNotificationSound();
-            });
-
-            stompClient.subscribe('/topic/invoice/paid/', (message) => {
-                const updateData = JSON.parse(message.body);
-                console.log(updateData)
-                setNotifications((prevNotifications) => [
-                    { type: "inProgress", message: "Paid Invoice Received", ...updateData },
-                    ...prevNotifications
-                ]);
-            });
-
-            stompClient.subscribe('/topic/invoice/verified/', (message) => {
-                const updateData = JSON.parse(message.body);
-                console.log(updateData)
-                setNotifications((prevNotifications) => [
-                    { type: "completed", message: "Invoice Verified", ...updateData },
-                    ...prevNotifications
-                ]);
             });
         });
 

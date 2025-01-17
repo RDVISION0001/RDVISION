@@ -135,10 +135,10 @@ const Notification = ({ title, details, requirement, type, name }) => {
                     <div className="d-flex align-items-center" style={{ fontSize: "12px" }}>
                         <img src={getFlagUrl(details)} alt={details} />
                     </div>
-                    <div className="d-flex align-items-center" style={{ fontSize: "12px", marginLeft: "2px" }}>
+                  {type!=="inProgress" && <div className="d-flex align-items-center" style={{ fontSize: "12px", marginLeft: "2px" }}>
                         <span style={{ marginRight: "8px" }}><i className="fa-solid fa-ticket"></i></span>
                         {requirement ? requirement : "No product info"}
-                    </div>
+                    </div>}
                     {/* Timestamp */}
                     <div className="text-muted" style={{ fontSize: "12px", alignSelf: "flex-end" }}>
                         {timeAgo}

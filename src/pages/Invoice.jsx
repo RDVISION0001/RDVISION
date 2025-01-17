@@ -22,12 +22,13 @@ function Invoice(props) {
 
   // WebSocket for notifications
   useEffect(() => {
-    const socket = new SockJS("https://rdvision.in/ws");
+    const socket = new SockJS("https://backend.rdvision.in/ws");
     const stompClient = new Client({
       webSocketFactory: () => socket,
       onConnect: () => {
         stompClient.subscribe("/topic/invoice/", (message) => {
           const newTicket = JSON.parse(message.body);
+          console.log("New Ticket is ",newTicket)
           setTickets((prevTickets) => [newTicket, ...prevTickets]);
         });
       },
@@ -82,7 +83,6 @@ function Invoice(props) {
           console.error("Error fetching order details:", err);
         }
       };
-
       fetchOrderDetails();
     }
   }, [selectedTicketId]);
