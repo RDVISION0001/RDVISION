@@ -224,7 +224,7 @@ function App() {
                       <Route exact path="/super_admin_orders" element={<Orderss />} />
                       <Route exact path="/super_admin_sales" element={<Saless />} />
                       <Route exact path="/super_admin_tickets" element={<Ticketss />} />
-                      <Route exact path="/super_admin_users" element={<Userss />} />
+                      <Route exact path="/super_admin_users" element={<Users />} />
 
                       {/* Captain Manager */}
                       <Route exact path="/captain_index" element={<Indexm />} />

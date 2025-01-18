@@ -19,6 +19,7 @@ import { subMonths, format } from "date-fns";
 import { useAuth } from "../auth/AuthContext";
 import { useSelector } from "react-redux";
 import { theme } from "highcharts";
+import VerifiedSales from "../pages/VerifyedSales";
 
 // Register Chart.js components
 ChartJS.register(
@@ -124,9 +125,8 @@ const indexs = () => {
 
   return (
     <div
-      className={`container-fluid ${
-        dark ? "bg-dark text-light" : "bg-light text-dark"
-      }`}
+      className={`container-fluid ${dark ? "bg-dark text-light" : "bg-light text-dark"
+        }`}
     >
       <div className="p-4">
         <div className="mb-4 d-flex justify-content-between align-items-center">
@@ -137,9 +137,8 @@ const indexs = () => {
               <DatePicker
                 selected={dateRange.from}
                 onChange={handleFromDateChange}
-                className={`"form-control bg-light text-dark rounded px-2 mx-1 ${
-                  dark ? "bg-secondary text-light rounded px-2 py-1" : ""
-                }`}
+                className={`"form-control bg-light text-dark rounded px-2 mx-1 ${dark ? "bg-secondary text-light rounded px-2 py-1" : ""
+                  }`}
                 dateFormat="yyyy-MM-dd"
               />
             </div>
@@ -148,9 +147,8 @@ const indexs = () => {
               <DatePicker
                 selected={dateRange.to}
                 onChange={handleToDateChange}
-                className={`"form-control bg-light text-dark rounded px-2 mx-1 ${
-                  dark ? "bg-secondary text-light rounded px-2 py-1" : ""
-                }`}
+                className={`"form-control bg-light text-dark rounded px-2 mx-1 ${dark ? "bg-secondary text-light rounded px-2 py-1" : ""
+                  }`}
                 dateFormat="yyyy-MM-dd"
               />
             </div>
@@ -159,7 +157,7 @@ const indexs = () => {
 
         <div className="d-flex justify-content-between pb-2 gap-2">
           <div
-            style={{width:'20rem'}} className={` border rounded ${dark ? "bg-secondary" : ""}`}
+            style={{ width: '20rem' }} className={` border rounded ${dark ? "bg-secondary" : ""}`}
           >
             <WidgetCard
               icon="🛍️"
@@ -169,7 +167,7 @@ const indexs = () => {
             />
           </div>
           <div
-            style={{width:'20rem'}} className={` border rounded ${dark ? "bg-secondary" : ""}`}
+            style={{ width: '20rem' }} className={` border rounded ${dark ? "bg-secondary" : ""}`}
           >
             <WidgetCard
               icon="📦"
@@ -179,7 +177,7 @@ const indexs = () => {
             />
           </div>
           <div
-            style={{width:'20rem'}} className={` border rounded ${dark ? "bg-secondary" : ""}`}
+            style={{ width: '20rem' }} className={` border rounded ${dark ? "bg-secondary" : ""}`}
           >
             <WidgetCard
               icon="⚠️"
@@ -189,7 +187,7 @@ const indexs = () => {
             />
           </div>
           <div
-            style={{width:'20rem'}} className={` border rounded ${dark ? "bg-secondary" : ""}`}
+            style={{ width: '20rem' }} className={` border rounded ${dark ? "bg-secondary" : ""}`}
           >
             <WidgetCard
               icon="❌"
@@ -202,14 +200,14 @@ const indexs = () => {
 
         <div className="row mb-4">
           <div className="col-md-8 border rounded">
-            <div className={`"card p-3 ${dark ? "bg-dark":""}`}>
+            <div className={`"card p-3 ${dark ? "bg-dark" : ""}`}>
               <h5>Orders Delivered</h5>
               {/* Pass lineChartData to LineChart */}
               {lineChartData && <LineChart data={lineChartData} />}
             </div>
           </div>
           <div className="col-md-4">
-          <div className={`"card p-3 ${dark ? "bg-dark":""}`}>
+            <div className={`"card p-3 ${dark ? "bg-dark" : ""}`}>
               <h5>Daily Orders Overview</h5>
               {saleAmountData && <LineChart data={saleAmountData} />}
             </div>
@@ -224,7 +222,7 @@ const indexs = () => {
             >
               <h5
                 className="text-center text-success"
-                style={{ color: dark ? "#32cd32" : "#006400" , }}
+                style={{ color: dark ? "#32cd32" : "#006400", }}
               >
                 <a href="#" className="badge bg-success">
                   Recent Sale
@@ -239,23 +237,22 @@ const indexs = () => {
                     💰
                   </div>
                   <div className="ms-3 ">
-                    <h6 className={`"text-muted ${dark?"text-light":""} `}>Product Sold</h6>
-                    <h5 className={`" fw-bold ${dark?"text-light":""}`}>Viagra 100mg Tablet</h5>
-                    <h6 className={`"text-muted ${dark?"text-light":""} `}>Price</h6>
+                    <h6 className={`"text-muted ${dark ? "text-light" : ""} `}>Product Sold</h6>
+                    <h5 className={`" fw-bold ${dark ? "text-light" : ""}`}>Viagra 100mg Tablet</h5>
+                    <h6 className={`"text-muted ${dark ? "text-light" : ""} `}>Price</h6>
                     <h4 className="text-success fw-bold">$15</h4>
                   </div>
                 </div>
                 <div className="d-flex justify-content-between align-items-center mt-4">
-                  <span className={`"text-muted ${dark?"text-light":""} `}>Date:</span>
-                  <span className={`"text-muted  fw-bold ${dark?"text-light":""} `}>Jan 08, 2025</span>
+                  <span className={`"text-muted ${dark ? "text-light" : ""} `}>Date:</span>
+                  <span className={`"text-muted  fw-bold ${dark ? "text-light" : ""} `}>Jan 08, 2025</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className={`"card p-3 ${dark?"bg-dark border boreder-secondary rounded ":""}`}>
-          <h5>Recently Placed Orders</h5>
+        <div className={`"card p-3 ${dark ? "bg-dark border boreder-secondary rounded " : ""}`}>
           <OrderTable dark={dark} />
         </div>
       </div>
@@ -307,60 +304,11 @@ const BarChart = ({ data }) => {
 };
 
 // Order Table Component
-const OrderTable = ({dark}) => {
+const OrderTable = ({ dark }) => {
   return (
-    <table className={`table table-bordered mt-3 ${dark? "table-dark" : ""}`}>
-      <thead className="table-primary">
-        <tr>
-          <th scope="col">Revenue</th>
-          <th scope="col">COGS</th>
-          <th scope="col">Gross Profit</th>
-          <th scope="col">Operating Expenses</th>
-          <th scope="col">Operating Profit</th>
-          <th scope="col">Taxes & Other Expenses</th>
-          <th scope="col">Net Profit</th>
-          <th scope="col">Profit Margin</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>French Fries</td>
-          <td>John Leo</td>
-          <td>New Town</td>
-          <td>
-            <span className="badge bg-warning">Pending</span>
-          </td>
-          <td>10:05</td>
-          <td>$10</td>
-          <td>$10</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Mango Pie</td>
-          <td>Kristen</td>
-          <td>Old Town</td>
-          <td>
-            <span className="badge bg-danger">Canceled</span>
-          </td>
-          <td>14:05</td>
-          <td>$9</td>
-          <td>$9</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>Fried Egg Sandwich</td>
-          <td>Jack Suit</td>
-          <td>Oxford Street</td>
-          <td>
-            <span className="badge bg-success">Delivered</span>
-          </td>
-          <td>12:05</td>
-          <td>$12</td>
-          <td>$12</td>
-        </tr>
-      </tbody>
-    </table>
+    <>
+      <VerifiedSales />
+    </>
   );
 };
 

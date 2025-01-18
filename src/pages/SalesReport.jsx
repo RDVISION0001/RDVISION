@@ -546,7 +546,7 @@ function SalesReport() {
                                                             setOldName(product.product[0].name)
 
                                                         }} style={{ marginLeft: "5px" }}></i></div>
-                                                        {nameEdit && <div className='d-flex justify-content-between ' style={{paddingLeft:"10px"}}><input type='text' value={newName} onChange={(e)=>setNewName(e.target.value)} placeholder='Enter new name of product' style={{padding:"5px"}} className='bg-white text-black w-75 ' /><button style={{ width: "60px", padding: "2px" }} onClick={handleNameChange}>save</button></div>}
+                                                        {(nameEdit && product.product[0].name === oldName) && <div className='d-flex justify-content-between ' style={{paddingLeft:"10px"}}><input type='text' value={newName} onChange={(e)=>setNewName(e.target.value)} placeholder='Enter new name of product' style={{padding:"5px"}} className='bg-white text-black w-75 ' /><button style={{ width: "60px", padding: "2px" }} onClick={handleNameChange}>save</button></div>}
                                                     </div>
 
 

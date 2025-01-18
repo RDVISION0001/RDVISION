@@ -137,7 +137,9 @@ function VerifiedSales() {
       <section className="followup-table-section ">
         <div className="container-fluid">
           <div className="" style={{ marginTop: 5 }}>
-            <h3 className="title mb-1 mt-4">Verified Sales</h3>
+            <h3 className="title mb-1 mt-4">
+              {roleName?.toLowerCase() === "SuperAdmin" ? "RD Vision Sale sheet" : "Verified Sales"}
+            </h3>
 
             {/* Filter Buttons */}
             <div className="mb-3 d-flex justify-content-between">
@@ -207,7 +209,7 @@ function VerifiedSales() {
                   <tr className="">
                     {/* <th scope="col">Ser n.</th> */}
                     <th className="py-2 text-nowrap" scope="col">Order Id </th>
-                    <th scope="col">Sale Date</th>
+                    <th scope="col" className="text-nowrap">Sale Date</th>
                     <th scope="col" className="text-nowrap">Verification Date</th>
                     <th scope="col">Closer </th>
                     <th scope="col">Customer </th>
@@ -225,14 +227,27 @@ function VerifiedSales() {
                     <th scope="col" className="text-nowrap">Payment window</th>
                     {/* <th scope="col">Shipping Through</th> */}
                     <th scope="col" className="text-nowrap">Paid Amount</th>
+
+                    {roleName === "SuperAdmin" && (
+                      <>
+                        <th scope="col" className="text-nowrap">Received Amount (INR)</th>
+                        <th scope="col" className="text-nowrap">Total Cost</th>
+                        <th scope="col" className="text-nowrap">Profit</th>
+                      </>
+                    )}
+
                     {roleName === "admin" && <th scope="col">Action</th>}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredInvoices.map((invoice) => (
-                    <tr key={invoice.invoiceId}>
+                    <tr
+                      key={invoice.invoiceId}
+                      className={invoice.trackingNumber ? "table-success" : ""}
+                    >
+
                       <td>{invoice.invoiceId || "N/A"}</td>
-                      <td>{formatDate(invoice.saleDate)}</td>
+                      <td className="text-nowrap">{formatDate(invoice.saleDate)}</td>
                       <td>{formatDate(invoice.verificationDate)}</td>
                       <td>{invoice.closerName}</td>
                       <td>{invoice.customerName}</td>
@@ -305,12 +320,9 @@ function VerifiedSales() {
                         </table>
                       </td>
                       <td className="text-center">
-                        {invoice.orderDto?.productOrders[0]?.product[0]
-                          ?.strength || "N/A"}
+                        {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
                       </td>
-                      <td className="text-center">
-                        {invoice.trackingNumber || "N/A"}
-                      </td>
+                      <td className="text-center">{invoice.trackingNumber || "N/A"}</td>
                       <td>{invoice.payment?.paymentWindow || "N/A"}</td>
                       {/* <td><button>Add</button></td> */}
                       <td className="text-success bold-text">
@@ -321,18 +333,25 @@ function VerifiedSales() {
                           (
                           <Button
                             variant="success rounded"
-                            onClick={() =>
-                              handleVerifyInvoice(invoice.invoiceId)
-                            }
+                            onClick={() => handleVerifyInvoice(invoice.invoiceId)}
                           >
                             Next
                           </Button>
                           )
                         </td>
                       )}
+                      {roleName === "SuperAdmin" && (
+                        <>
+                          <td className="text-center">need to convert</td>
+                          <td className="text-center">{invoice.totalCost || "N/A"}</td>
+                          <td className="text-center">{invoice.profit || "N/A"}</td>
+                        </>
+                      )}
+
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           </div>
