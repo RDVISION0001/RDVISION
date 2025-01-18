@@ -37,6 +37,34 @@ function users() {
     setSelectedUser(userID)
   };
 
+  ////change hostinger password//
+  const [open, setOpen] = useState(false);
+  const handleClosex = () => {
+    setOpen(false)
+  };
+  const handleOpen = (userID) => {
+    setOpen(true)
+    setSelectedUser(userID)
+    setSelectedagent(userID)
+  };
+
+  const [hostingerPassword, setHostingerPassword] = useState("");
+
+  const handleHostingerSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      userId: selectedagent,
+      password: hostingerPassword
+    };
+    try {
+      const response = await axiosInstance.post("/user/updateHostingerPassword", payload);
+      toast.success('Hostinger password added successfully');
+      handleZero(); // Close the modal on success
+    } catch (error) {
+      console.error("Error adding hostinger:", error);
+    }
+  };
+
   ////make agent //
   const [selectedagent, setSelectedagent] = useState(0)
   const [one, setOne] = useState(false);
@@ -394,6 +422,7 @@ function users() {
                               color: dark ? "#fff" : "#000",
                               border: !item.onBreak ? "2px solid red" : "2px solid green", // Adding a border to separate content
                               borderRadius: "10px",
+                              height: "80%"
                             }}
                           >
                             {/* Left side for profile image */}
@@ -410,7 +439,6 @@ function users() {
                               />
                             </div>
 
-
                             {/* Right side for user info */}
                             <div
                               className="content-area d-flex flex-column justify-content-between text-center"
@@ -426,9 +454,8 @@ function users() {
                                 Designation: <strong> {role.find((role) => role.roleId === item.roleId) && role.find((role) => role.roleId === item.roleId).roleName}
                                 </strong>
                               </p>
-
                               {/* Action Button at the bottom */}
-                              <div className="mt-3 d-flex justify-content-between fw-bold" style={{marginLeft:"20px"}}>
+                              <div className="mt-3 d-flex justify-content-between fw-bold" style={{ marginLeft: "20px" }}>
                                 <div className={!item.onBreak ? "text-danger" : "text-success"}>{item.onBreak ? "Online" : "Offline"}</div>
                                 <button
                                   style={{
@@ -477,6 +504,7 @@ function users() {
                               </th>
                               <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Profile</th>
                               <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">User Name</th>
+                              <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">User Email</th>
                               <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Department</th>
                               <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Designation</th>
                               <th className={`"text-center ${dark ? "bg-secondary text-light" : "bg-dark text-light"}`} tabindex="0">Team</th>
@@ -503,6 +531,9 @@ function users() {
                                 </td>
                                 <td className='text-center'>
                                   {item.firstName} {item.lastName}
+                                </td>
+                                <td className='text-center'>
+                                  {item.email}
                                 </td>
                                 <td className="d-none d-sm-table-cell text-center"> {/* Hidden on xs, visible on sm and larger */}
                                   {department.find((dep) => dep.deptId === item.departmentId) && department.find((dep) => dep.deptId === item.departmentId).deptName}
@@ -538,6 +569,9 @@ function users() {
                                     onClick={() => handleDeleteUser(item.userId)}
                                     style={{ color: "#dd081d" }}>
                                   </i>
+                                  <button type="button" class="btn btn-warning" onClick={() => handleOpen(item.userId)}>
+                                    Hostinger
+                                  </button>
                                 </td>
                               </tr>
                             ))}
@@ -834,7 +868,7 @@ function users() {
           </div>
         </Modal>
 
-        <Modal show={isUpdate}  className="d-flex justify-content-center align-items-center">
+        <Modal show={isUpdate} className="d-flex justify-content-center align-items-center">
           <div className="p-4 bg-white rounded">
             <div className="d-flex flex-wrap justify-content-center align-items-center">
               {/* User Profile Container */}
@@ -928,6 +962,41 @@ function users() {
             </div>
           </div>
         </Modal>
+
+        {/* Change hostinger password*/}
+        <Modal show={open} onHide={handleClosex} className="modal user-mmt-modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content">
+              <div className="modal-body">
+                <h5 className="title text-center">Change Hostinger Password</h5>
+                <div className="main-content-area">
+                  <form className="row g-3" onSubmit={handleHostingerSubmit}>
+                    <div className="col-12">
+                      <label htmlFor="password" className="form-label">Password</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        placeholder="Enter Password"
+                        id="password"
+                        value={hostingerPassword}
+                        onChange={(e) => setHostingerPassword(e.target.value)}
+                      />
+                    </div>
+                    <div className="col-12 mt-5 text-center">
+                      <div className="button-grp">
+                        <button type="button" className="btn btn-secondary" onClick={handleClosex} data-bs-dismiss="modal">Close</button>
+                        <span className="button-space"></span>
+                        <button type="submit" className="btn btn-warning">Save</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+
+
       </div>
 
     </>

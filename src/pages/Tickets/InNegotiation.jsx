@@ -203,8 +203,8 @@ function InNegotiation() {
     setOn(false);
     setProductArray([]);
   };
-  const handleOn = ( email,body) => {
-    
+  const handleOn = (email, body) => {
+
     setSelectEmailForInvoice(email);
     setIsComposeOpen(!isCompoeseOpen);
     setEmailBody(body)
@@ -654,7 +654,7 @@ function InNegotiation() {
     }
   };
 
- 
+
 
   const convertNumberToStringMonth = (number) => {
     switch (number) {
@@ -839,7 +839,7 @@ function InNegotiation() {
   };
 
   const [emailBody, setEmailBody] = useState("")
-  
+
   const [copiedId, setCopiedId] = useState(null); // Track copied uniqueQueryId
   const [copiedType, setCopiedType] = useState(null); // Track if mobile or email is copied
 
@@ -1510,14 +1510,14 @@ function InNegotiation() {
                                           ></i>
                                         </Button>
 
-                                        {/* skype */}
+                                        {/* Skype */}
                                         <a
-                                          href={`skype:${nego.senderMobile}?call`}
+                                          href={`skype:${nego.mobileNumber || senderMobile}?call`}
                                           data-bs-toggle="modal"
                                           data-bs-target="#followUpModal"
                                           className="btn-action skype-btn rounded-circle"
                                         >
-                                          <i class="fa-brands fa-skype fa-xl text-white"></i>
+                                          <i className="fa-brands fa-skype fa-xl text-white"></i>
                                         </a>
 
                                         {/* SMS Button */}
@@ -1539,9 +1539,9 @@ function InNegotiation() {
                                         <Button
                                           onClick={() =>
                                             handleOn(
-                                              nego.senderEmail?nego.senderEmail:nego.email,
+                                              nego.senderEmail ? nego.senderEmail : nego.email,
                                               `Hey ${nego.senderName}, I just received the inquiry from your ${nego.subject}. If you're looking for a good deal, please type YES👍`
-                                              
+
                                             )
                                           }
                                           className="btn-action email"

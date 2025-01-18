@@ -59,11 +59,30 @@ function Check({ data, datareload }) {
     }
   };
 
-  const handleKeyDown = (event, index, item) => {
-    if (event.key === "Enter") {
-      event.preventDefault(); // Prevent form submission
-      handleSave(index, item); // Call save on Enter key
+  const handleKeyDown = (event, index, item, field) => {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      moveToNextField(field, index, item);
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      handleSave(index, item, field);
     }
+  };
+
+  const moveToNextField = (currentField, index, item) => {
+    const fields = [
+      "rate",
+      "totalGoodsCost",
+      "shippingCharge",
+      "totalCost",
+      "paid",
+      "due",
+    ];
+
+    const currentIndex = fields.indexOf(currentField);
+    const nextField = fields[(currentIndex + 1) % fields.length];
+
+    handleDoubleClick(nextField, item[nextField], item, index);
   };
 
   const handleSave = async (index, item, filed, newItem) => {
@@ -71,13 +90,12 @@ function Check({ data, datareload }) {
     const updatedData = {
       id: item.id,
       rate: rate !== null ? rate : item.rate,
-      totalGoodsCost:
-        totalgoodcost !== null ? totalgoodcost : item.totalGoodsCost,
-      shippingCharge:
-        shippingCharge !== null ? shippingCharge : item.shippingCharge,
+      totalGoodsCost: totalgoodcost !== null ? totalgoodcost : item.totalGoodsCost,
+      shippingCharge: shippingCharge !== null ? shippingCharge : item.shippingCharge,
       totalCost: totalCost !== null ? totalCost : item.totalCost,
       paidAmount: paid !== null ? paid : item.paidAmount,
       dueAmount: due !== null ? due : item.dueAmount,
+      invoiceId: data.orderId,
     };
 
     // Check if the updated data is different from initial data
@@ -93,8 +111,10 @@ function Check({ data, datareload }) {
         "/inventory/updateProductOrderDetails",
         updatedData
       );
-      toast.success("Updated");
+
+      toast.success("Updated successfully");
       setLoading(false);
+
       const newInitialData = [...initialData];
       newInitialData[index] = updatedData;
       datareload();
@@ -215,7 +235,7 @@ function Check({ data, datareload }) {
                       value={rate}
                       onChange={(e) => setRate(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) => handleKeyDown(e, index, item, "rate")} // Attach to input
                     />
                   ) : selectedId === item.id && rate ? (
                     rate
@@ -242,7 +262,9 @@ function Check({ data, datareload }) {
                       value={totalgoodcost}
                       onChange={(e) => setTotalGoodCost(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, index, item, "totalGoodsCost")
+                      } // Attach to input
                     />
                   ) : selectedId === item.id && totalgoodcost ? (
                     totalgoodcost
@@ -269,7 +291,9 @@ function Check({ data, datareload }) {
                       value={shippingCharge}
                       onChange={(e) => setShippingCharge(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, index, item, "shippingCharge")
+                      } // Attach to input
                     />
                   ) : selectedId === item.id && shippingCharge ? (
                     shippingCharge
@@ -291,7 +315,9 @@ function Check({ data, datareload }) {
                       value={totalCost}
                       onChange={(e) => setTotalCost(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, index, item, "totalCost")
+                      } // Attach to input
                     />
                   ) : selectedId === item.id && totalCost ? (
                     totalCost
@@ -313,7 +339,9 @@ function Check({ data, datareload }) {
                       value={paid}
                       onChange={(e) => setPaid(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, index, item, "paid")
+                      } // Attach to input
                     />
                   ) : selectedId === item.id && paid ? (
                     paid
@@ -335,7 +363,9 @@ function Check({ data, datareload }) {
                       value={due}
                       onChange={(e) => setDue(e.target.value)}
                       style={{ width: "70px" }}
-                      onKeyDown={(e) => handleKeyDown(e, index, item)} // Attach to input
+                      onKeyDown={(e) =>
+                        handleKeyDown(e, index, item, "due")
+                      } // Attach to input
                     />
                   ) : selectedId === item.id && due ? (
                     due

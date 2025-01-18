@@ -860,7 +860,7 @@ function live_tickets() {
                     >
                       <div
                         className={`followups-table table-responsive table-height border rounded ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}
-                        style={{ maxHeight: "47rem" }}
+                        style={{ maxHeight: "100rem" }}
                       >
                         <table className={`table table-border ${dark ? `table-dark text-white` : ``}`}>
                           <thead className="sticky-top">
