@@ -127,8 +127,8 @@ function Check({ data, datareload }) {
       setTotalCost(null);
       if (filed) {
         setEdit(filed);
-        setSelectedId(newItem.id);
-        setSelectedItem(newItem);
+        setSelectedId(item.id);
+        setSelectedItem(item);
       } else {
         setSelectedId(0);
       }

@@ -371,7 +371,6 @@ function InvoiceNewTemp() {
                   >
                     {invoices
                       .slice()
-                      .reverse()
                       .map((invoice, index) => (
                         <tr
                           key={invoice.invoiceId}

@@ -398,6 +398,18 @@ function NotificationOpner(searchText) {
                                                 <i className="fa-solid fa-phone text-white"></i>
                                             </button>
 
+                                            {/* skype */}
+                                            <a
+                                                href={`skype:${ticket.senderMobile}?call`}
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#followUpModal"
+                                                className="btn btn-primary d-flex align-items-center justify-content-center rounded-circle"
+                                                style={{ width: "45px", height: "45px" }}
+                                                title="Get connect on call"
+                                            >
+                                                <i class="fa-brands fa-skype fa-xl text-white"></i>
+                                            </a>
+
                                             {/* SMS Button */}
                                             <a
                                                 href={`sms:${ticket.senderMobile}?&body=${`Hey ${ticket.senderName}, I just received the inquiry from your ${ticket.subject}. If you're looking for a good deal, please type YES👍`}`}

@@ -123,6 +123,24 @@ const indexs = () => {
     setDateRange((prev) => ({ ...prev, to: date }));
   };
 
+  // Recent sale
+  const [recentSale, setRecentSale] = useState(null);
+
+  useEffect(() => {
+    const fetchLatestSale = async () => {
+      try {
+        const response = await axiosInstance.get("/invoice/getLatestSale");
+        setRecentSale(response.data);
+      } catch (error) {
+        console.error("Error fetching the latest sale:", error);
+      }
+    };
+
+    fetchLatestSale();
+  }, []);
+
+
+
   return (
     <div
       className={`container-fluid ${dark ? "bg-dark text-light" : "bg-light text-dark"
@@ -222,32 +240,102 @@ const indexs = () => {
             >
               <h5
                 className="text-center text-success"
-                style={{ color: dark ? "#32cd32" : "#006400", }}
+                style={{ color: dark ? "#32cd32" : "#006400" }}
               >
                 <a href="#" className="badge bg-success">
                   Recent Sale
                 </a>
               </h5>
               <div className="card-body text-center">
-                <div className="d-flex justify-content-center align-items-center mb-4">
-                  <div
-                    className="icon text-warning"
-                    style={{ fontSize: "3rem" }}
-                  >
-                    💰
-                  </div>
-                  <div className="ms-3 ">
-                    <h6 className={`"text-muted ${dark ? "text-light" : ""} `}>Product Sold</h6>
-                    <h5 className={`" fw-bold ${dark ? "text-light" : ""}`}>Viagra 100mg Tablet</h5>
-                    <h6 className={`"text-muted ${dark ? "text-light" : ""} `}>Price</h6>
-                    <h4 className="text-success fw-bold">$15</h4>
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between align-items-center mt-4">
-                  <span className={`"text-muted ${dark ? "text-light" : ""} `}>Date:</span>
-                  <span className={`"text-muted  fw-bold ${dark ? "text-light" : ""} `}>Jan 08, 2025</span>
-                </div>
+                {recentSale ? (
+                  <>
+                    <div className="d-flex justify-content-center align-items-center mb-4">
+                      <div
+                        className="icon text-warning"
+                        style={{ fontSize: "3rem" }}
+                      >
+                        💰
+                      </div>
+                      <div className="ms-3">
+                        {/* Product Sold */}
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <h6 className={`text-muted mb-0 ${dark ? "text-light" : ""}`}>
+                            Product Sold:
+                          </h6>
+                          <h5 className={`fw-bold mb-0 ${dark ? "text-light" : ""}`}>
+                            {recentSale.productOrders?.[0]?.product?.[0]?.name || "N/A"}
+                          </h5>
+                        </div>
+                        {/* Price */}
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                          <h6 className={`text-muted mb-0 ${dark ? "text-light" : ""}`}>
+                            Price:
+                          </h6>
+                          <h4 className="text-success fw-bold mb-0">
+                            {recentSale.productOrders?.[0]?.currency} {recentSale.productOrders?.[0]?.totalAmount || "0.00"}
+                          </h4>
+                        </div>
+                        {/* Quantity */}
+                        <div className="d-flex justify-content-between align-items-center">
+                          <h6 className={`text-muted mb-0 ${dark ? "text-light" : ""}`}>
+                            Quantity:
+                          </h6>
+                          <h5 className="fw-bold mb-0">
+                            {recentSale.productOrders?.[0]?.quantity || "0"}
+                          </h5>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="d-flex justify-content-between align-items-center mt-4">
+                      <span className={`text-muted ${dark ? "text-light" : ""}`}>
+                        Customer Name:
+                      </span>
+                      <span className={`text-muted fw-bold ${dark ? "text-light" : ""}`}>
+                        {recentSale.customerName || "N/A"}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4">
+                      <span className={`text-muted ${dark ? "text-light" : ""}`}>
+                        Mobile:
+                      </span>
+                      <span className={`text-muted fw-bold ${dark ? "text-light" : ""}`}>
+                        {recentSale.customerMobile || "N/A"}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4">
+                      <span className={`text-muted ${dark ? "text-light" : ""}`}>
+                        Email:
+                      </span>
+                      <span className={`text-muted fw-bold ${dark ? "text-light" : ""}`}>
+                        {recentSale.customerEmail || "N/A"}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4">
+                      <span className={`text-muted ${dark ? "text-light" : ""}`}>
+                        Date:
+                      </span>
+                      <span className={`text-muted fw-bold ${dark ? "text-light" : ""}`}>
+                        {recentSale.saleDate
+                          ? `${recentSale.saleDate[2]}-${recentSale.saleDate[1]}-${recentSale.saleDate[0]}`
+                          : "N/A"}
+                      </span>
+                    </div>
+                    <div className="d-flex justify-content-between align-items-center mt-4">
+                      <span className={`text-muted ${dark ? "text-light" : ""}`}>
+                        Closer By:
+                      </span>
+                      <span className={`text-muted fw-bold ${dark ? "text-light" : ""}`}>
+                        {recentSale.closerName || "N/A"}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-muted">Loading...</p>
+                )}
               </div>
+
+
             </div>
           </div>
         </div>
@@ -313,3 +401,4 @@ const OrderTable = ({ dark }) => {
 };
 
 export default indexs;
+
