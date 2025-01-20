@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Tab, Table, InputGroup, FormControl } from "react-bootstrap";
-import axiosInstance from "../axiosInstance"; // Assuming axiosInstance is configured
+import axiosInstance from "../axiosInstance"; 
 import { Form, Modal, Button } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
+import "react-toastify/dist/ReactToastify.css"; 
 import { useAuth } from "../auth/AuthContext";
 
 const Index = () => {
@@ -37,8 +37,8 @@ const Index = () => {
     setShowCareerModal(true);
   };
   const handleCloseModal = () => {
-    setShowCareerModal(false); // Close the career modal
-    setShowTrackingModal(false); // Close the tracking modal
+    setShowCareerModal(false);
+    setShowTrackingModal(false);
     setSelectedCareer("");
     setTracking("");
   };
@@ -342,22 +342,19 @@ const Index = () => {
 
           <div className="d-flex justify-content-between align-items-center mb-3">
             <InputGroup
-              className={`search-input rounded ${
-                dark ? "bg-secondary text-light" : ""
-              }`}
+              className={`search-input rounded ${dark ? "bg-secondary text-light" : ""
+                }`}
             >
               <FormControl
-                placeholder={`Search ${
-                  activeTab === "existingcustomer" ||
-                  activeTab === "newcustomer"
+                placeholder={`Search ${activeTab === "existingcustomer" ||
+                    activeTab === "newcustomer"
                     ? "customers"
                     : "tickets"
-                } by name or email`}
+                  } by name or email`}
                 value={search}
                 onChange={handleSearch}
-                className={`border ${
-                  dark ? "border-secondary" : "border-light"
-                } focus:outline-none focus:border-secondary`}
+                className={`border ${dark ? "border-secondary" : "border-light"
+                  } focus:outline-none focus:border-secondary`}
               />
             </InputGroup>
           </div>
@@ -589,7 +586,7 @@ const Index = () => {
           {activeTab === "todaysales" &&
             (filteredTodayInvoices.length === 0 ? (
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: 22 }}>
-                <img style={{size:32}} src="https://cdn-icons-png.flaticon.com/128/17134/17134613.png" alt="" />
+                <img style={{ size: 32 }} src="https://cdn-icons-png.flaticon.com/128/17134/17134613.png" alt="" />
               </div>
             ) : (
               <Table

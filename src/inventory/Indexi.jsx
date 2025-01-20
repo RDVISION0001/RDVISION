@@ -14,7 +14,7 @@ import EditOrderDetails from './EditOrderDetails'
 
 
 function Indexi() {
-  const { roleName, userId ,dark} = useAuth();
+  const { roleName, userId, dark } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false);
@@ -266,7 +266,7 @@ function Indexi() {
 
 
   return (
-    <div className={`${dark ? "bg-dark":""}`} onClick={() => setEdit(false)} style={{ height: "100vh" }}>
+    <div className={`${dark ? "bg-dark" : ""}`} onClick={() => setEdit(false)} style={{ height: "100vh" }}>
       <section className="followup-table-section py-3">
         <div className="m-3">
           <div className="d-flex justify-content-between">
@@ -297,30 +297,30 @@ function Indexi() {
 
           {/* Invoice Table */}
           <div className="followups-table table-responsive table-height">
-            <table className={`table table-bordered table-striped ${dark?"table-dark  border-white":""}`} style={{ border: '2px solid #000' }}>
+            <table className={`table table-bordered table-striped ${dark ? "table-dark  border-white" : ""}`} style={{ border: '2px solid #000' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                 <tr>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>S.No.</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Order ID</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Sale Date</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Tracking Number</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Tracking Status</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Shipping Label</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Customer Name</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Street</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>City</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>State</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Zip Code</th>
-                  <th className="border-dark" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Country</th>
-                  <th className="border-dark text-center border p-1" style={{ backgroundColor:dark? "#6c757d":'#FFC300' }}>Product Details</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>S.No.</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Order ID</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Sale Date</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Tracking Number</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Tracking Status</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Shipping Label</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Customer Name</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Street</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>City</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>State</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Zip Code</th>
+                  <th className="border-dark" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Country</th>
+                  <th className="border-dark text-center border p-1" style={{ backgroundColor: dark ? "#6c757d" : '#FFC300' }}>Product Details</th>
                 </tr>
               </thead>
 
               <tbody>
                 {orders.slice().reverse().map((invoice, index) => (
                   <tr key={invoice.invoiceId}>
-                    <td className={`border-dark border text-center ${dark?"border-light":""}`}>{index + 1}</td>
-                    <td className="border-dark border text-center">{invoice.orderId || "N/A"}</td>
+                    <td className={`border-dark border text-center ${dark ? "border-light" : ""}`}>{index + 1}</td>
+                    <td className="border-dark border text-center"><strong>{invoice.orderId || "N/A"}</strong></td>
                     <td className="border-dark border text-center">{formatDate(invoice.orderReceivedDate)}</td>
                     <td className='border border-dark  text-center'>
                       {invoice.trackingNumber ? (
@@ -341,7 +341,7 @@ function Indexi() {
                     </td>
                     <td className="border-dark border text-center">
                       {invoice.shippingLabel ? (
-                        <div style={{height:"180px"}} className="d-flex justify-content-center align-items-">
+                        <div style={{ height: "180px" }} className="d-flex justify-content-center align-items-">
                           {/* Display the shipping label image */}
                           <img
                             src={invoice.shippingLabel}
@@ -397,9 +397,9 @@ function Indexi() {
                         <table className="table-bordered me-3">
                           <thead>
                             <tr>
-                              <th className={`border-dark text-center border p-1 table-column ${dark?"bg-primary border-light":""} `}style={{ fontSize: 12 }} >Name</th>
-                              <th className={`border-dark text-center border p-1 table-column ${dark?"bg-primary border-light":""} `} style={{ fontSize: 12 }} >Quantity</th>
-                              <th className={`border-dark text-center border p-1 table-column ${dark?"bg-primary border-light":""} `} style={{ fontSize: 12 }} >Doses</th>
+                              <th className={`border-dark text-center border p-1 table-column ${dark ? "bg-primary border-light" : ""} `} style={{ fontSize: 12 }} >Name</th>
+                              <th className={`border-dark text-center border p-1 table-column ${dark ? "bg-primary border-light" : ""} `} style={{ fontSize: 12 }} >Quantity</th>
+                              <th className={`border-dark text-center border p-1 table-column ${dark ? "bg-primary border-light" : ""} `} style={{ fontSize: 12 }} >Doses</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -416,7 +416,7 @@ function Indexi() {
 
                         {/* Second Table */}
 
-                        <div onClick={(e) => e.stopPropagation()} 
+                        <div onClick={(e) => e.stopPropagation()}
                         >
                           <EditOrderDetails data={invoice} datareload={fetchOrders} />
 
