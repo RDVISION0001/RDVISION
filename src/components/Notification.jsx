@@ -125,9 +125,9 @@ const Notification = ({ title, details, requirement, type, name }) => {
                             ></i>
                         </button>
                     </div>
-                    <div>
+                  {type==="newLead" &&  <div>
                         <i class="fa-solid fa-location-arrow fa-xl" onClick={() => setIsActionModeOpen(true)} style={{ color: "#0056eb", cursor: "Pointer" }}></i>
-                    </div>
+                    </div>}
                 </div>
 
                 {/* Details */}

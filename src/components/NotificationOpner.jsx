@@ -11,6 +11,7 @@ import temp3 from '../assets/emailtemp/temp3.png';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { useAuth } from '../auth/AuthContext';
 
 function NotificationOpner(searchText) {
     const [ticket, setTicket] = useState(null); // Holds the current ticket
@@ -24,7 +25,7 @@ function NotificationOpner(searchText) {
     const [text, setText] = useState("")
     const [serchValue, setserchValue] = useState("")
     const [productsIds, setProductIds] = useState([])
-    const { userId } = localStorage.getItem("userId")
+    const { userId } = useAuth()
     const [currentTicket, setCurrentTicket] = useState(0)
     const [totalTicket, setTotalTicket] = useState(0)
     const [searchString, setSearchString] = useState("")
@@ -343,7 +344,7 @@ function NotificationOpner(searchText) {
         addCopyRecord(uniqueQueryId, text); // Log the copied record
     };
     const getFlagUrl = (countryIso) => `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
-
+console.log(userId)
 
     return (
         <>
@@ -607,7 +608,7 @@ function NotificationOpner(searchText) {
                                 name="comment"
                                 value={formData.comment}
                                 onChange={handleChange}
-                                required
+                                
                             ></textarea>
                         </div>
                         {error && <p className="text-danger">{error}</p>}

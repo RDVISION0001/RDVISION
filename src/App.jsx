@@ -154,7 +154,6 @@ function App() {
         {/* Other app content */}
       </div>
       <ToastContainer />
-      <AuthProvider>
         <Router>
           <div className="superadmin-page">            
             {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}
@@ -265,7 +264,7 @@ function App() {
             </div>
           </div>
         </Router>
-      </AuthProvider>
+      
      
 
     </div>
