@@ -322,7 +322,7 @@ function VerifiedSales() {
                         {roleName === "SuperAdmin" && (
                           <>
                             <td className="text-success bold-text">
-                              {convertedAmount ? `${convertedAmount.toFixed(2)} INR` : "N/A"}
+                              {convertedAmount ? `INR ${convertedAmount.toFixed(2)}` : "N/A"}
                             </td>
                             <td className="text-center">{invoice.totalCost || "N/A"}</td>
                             <td className="text-center">{invoice.profit || "N/A"}</td>

@@ -209,7 +209,7 @@ const CloserSalesReport = (props) => {
                 </thead>
                 <tbody className="overflow">
                   {invoices.length > 0 ? (
-                    [...invoices].reverse().map((invoice, index) => (
+                    [...invoices].map((invoice, index) => (
                       <tr className="border" key={index}>
                         <td className="text-center">{index + 1}</td>
                         <td className="text-center">

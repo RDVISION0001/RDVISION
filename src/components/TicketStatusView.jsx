@@ -9,7 +9,7 @@ function TicketStatusView({ userId, name }) {
   const [isLoading, setIsLoading] = useState(false);
   const [liveTicketsActive, setLiveTicketsActive] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5); // Default items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
   const [ticketstatus, setTicketstatus] = useState({
     Not_Interested: 0,
     Not_Pickup: 0,

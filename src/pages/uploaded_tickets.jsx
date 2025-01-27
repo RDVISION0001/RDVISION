@@ -784,7 +784,7 @@ function uploaded_tickets() {
                       <div
                         className={`followups-table table-responsive border rounded ${dark ? `bg-dark` : "bg-white"
                           } `}
-                        style={{ maxHeight: "45rem" }}
+                        style={{ maxHeight: "100rem" }}
                       >
                         <table
                           className={`table table-border table-striped ${dark ? `table-dark` : ``

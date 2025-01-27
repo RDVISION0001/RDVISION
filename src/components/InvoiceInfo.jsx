@@ -349,7 +349,7 @@ const InvoiceInfo = (props) => {
                   >
                     Created Date
                   </th>
-                  {localStorage.getItem("roleName")==="Closer"  && <th
+                  {localStorage.getItem("roleName") === "Closer" && <th
                     className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``
                       }`}
                   >
@@ -418,7 +418,6 @@ const InvoiceInfo = (props) => {
                 {invoices.length > 0 ? (
                   invoices
                     .slice(0, 10) // Limit to the first 10 invoices
-                    .reverse() // Reverse the order
                     .map((invoice, index) => {
                       const isTrackingAvailable = invoice.trackingNumber;
                       return (
@@ -435,7 +434,7 @@ const InvoiceInfo = (props) => {
                             )}
                             -{invoice.saleDate && invoice.saleDate[0]}
                           </td>
-                          {localStorage.getItem("roleName")==="Closer" && <td className="text-center">
+                          {localStorage.getItem("roleName") === "Closer" && <td className="text-center">
                             {invoice.trackingNumber ? invoice.trackingNumber : "Awating"}
                           </td>}
                           <td className="text-center">
@@ -624,7 +623,6 @@ const InvoiceInfo = (props) => {
 
       {/* 2nd table */}
       <section className={`data-table-bgs_02x24 py-3 ${`${dark ? `bg-dark text-white` : ``}`} `}>
-
         <div className="container-fluid">
           <div className="table-wrapper">
             {props.stage === 4 ? (
@@ -632,7 +630,6 @@ const InvoiceInfo = (props) => {
             ) : (
               <h3 className="title">Tickets for after sales service</h3>
             )}
-
             <div
               className="table-container"
               style={{ maxHeight: "800px", overflowY: "auto" }}
@@ -653,78 +650,68 @@ const InvoiceInfo = (props) => {
                 </thead>
                 <tbody className="overflow">
                   {saleTicketData.length > 0 ? (
-                    saleTicketData.map((invoice, index) => (
-                      <tr key={index} className="border">
-                        <td className="text-center">{index + 1}</td>
-                        <td className="text-center">
-                          {invoice.lastActionDate
-                            ? formatFollowUpDate(invoice.lastActionDate)
-                            : "N/A"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.trackingNumber ? invoice.trackingNumber : "Awating"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.senderName
-                            ? invoice.senderName
-                            : invoice.firstName}
-                        </td>
-                        <td className="text-center">
-                          {invoice.trackingNumber ? (
-                            invoice.trackingNumber
-                          ) : localStorage.getItem("roleName") ===
-                            "SeniorSuperVisor" ? (
-                            <button
-                              className="bg-primary"
-                              onClick={() =>
-                                openTrackingBox(invoice.uniqueQueryId)
-                              }
-                            >
-                              Add Tracking Number
-                            </button>
-                          ) : (
-                            "Awaiting for Tracking..."
-                          )}
-                        </td>
-                        <td className="text-center">
-                          {invoice.deliveryStatus
-                            ? invoice.deliveryStatus
-                            : "NA"}
-                        </td>
-                        <td className="text-center">
-                          {invoice.comment && invoice.comment.slice(0, 20)}
-                        </td>
-                        <td className="text-center">
-                          <Button
-                            onClick={() =>
-                              handleClickCallForticket(invoice.uniqueQueryId)
-                            }
-                            className="btn-action call rounded-circle"
-                            title="Get connect on call"
-                          >
-                            <i className="fa-solid fa-phone"></i>
-                          </Button>
-                        </td>
-                        <td className="text-center">
-                          {invoice.recordingFile ? (
+                    saleTicketData
+                      .map((invoice, index) => (
+                        <tr key={index} className="border">
+                          <td className="text-center">{index + 1}</td>
+                          <td className="text-center">
+                            {invoice.lastActionDate
+                              ? formatFollowUpDate(invoice.lastActionDate)
+                              : "N/A"}
+                          </td>
+                          <td className="text-center">
+                            {invoice.trackingNumber ? invoice.trackingNumber : "Awaiting"}
+                          </td>
+                          <td className="text-center">
+                            {invoice.senderName ? invoice.senderName : invoice.firstName}
+                          </td>
+                          <td className="text-center">
+                            {invoice.trackingNumber ? (
+                              invoice.trackingNumber
+                            ) : localStorage.getItem("roleName") === "SeniorSuperVisor" ? (
+                              <button
+                                className="bg-primary"
+                                onClick={() => openTrackingBox(invoice.uniqueQueryId)}
+                              >
+                                Add Tracking Number
+                              </button>
+                            ) : (
+                              "Awaiting for Tracking..."
+                            )}
+                          </td>
+                          <td className="text-center">
+                            {invoice.deliveryStatus ? invoice.deliveryStatus : "NA"}
+                          </td>
+                          <td className="text-center">
+                            {invoice.comment && invoice.comment.slice(0, 20)}
+                          </td>
+                          <td className="text-center">
                             <Button
-                              className=""
-                              onClick={() =>
-                                playRecording(invoice.recordingFile, index)
-                              }
+                              onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
+                              className="btn-action call rounded-circle"
+                              title="Get connect on call"
                             >
-                              {isPlaying && selectedIndex === index ? (
-                                <i className="fa-solid fa-pause"></i>
-                              ) : (
-                                <i className="fa-solid fa-play"></i>
-                              )}
+                              <i className="fa-solid fa-phone"></i>
                             </Button>
-                          ) : (
-                            "Recording not Available"
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                          </td>
+                          <td className="text-center">
+                            {invoice.recordingFile ? (
+                              <Button
+                                className=""
+                                onClick={() => playRecording(invoice.recordingFile, index)}
+                              >
+                                {isPlaying && selectedIndex === index ? (
+                                  <i className="fa-solid fa-pause"></i>
+                                ) : (
+                                  <i className="fa-solid fa-play"></i>
+                                )}
+                              </Button>
+                            ) : (
+                              "Recording not Available"
+                            )}
+                          </td>
+                        </tr>
+                      ))
                   ) : (
                     <tr>
                       <td colSpan="7" className="text-center">
@@ -733,6 +720,7 @@ const InvoiceInfo = (props) => {
                     </tr>
                   )}
                 </tbody>
+
               </table>
             </div>
           </div>

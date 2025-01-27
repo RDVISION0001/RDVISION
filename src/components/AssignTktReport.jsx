@@ -22,8 +22,6 @@ function AssignTktReport() {
         'hang_up': '#FFD580'         // Soft Yellow
     };
 
-
-
     const handleFilterChange = () => {
         const requestData = {
             startDate: fromDate,
@@ -46,7 +44,7 @@ function AssignTktReport() {
     useEffect(() => {
 
         handleFilterChange()
-    }, [toDate,fromDate]);
+    }, [toDate, fromDate]);
     return (
         <div>
             <section className="followup-table-section py-3">
