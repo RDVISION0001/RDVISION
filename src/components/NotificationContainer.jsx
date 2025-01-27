@@ -15,21 +15,28 @@ const NotificationContainer = () => {
         const stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {
-            stompClient.subscribe('/topic/invoice/', (message) => {
-                const updateData = JSON.parse(message.body);
-                setNotifications((prevNotifications) => [
-                    {name:"Verification Pending", type: "inProgress", message: "Paid Invoice Received", ...updateData },
-                    ...prevNotifications
-                ]);
-            });
+            if (localStorage.getItem("roleName") === "SeniorSuperVisor") {
+                stompClient.subscribe('/topic/invoice/', (message) => {
+                    const updateData = JSON.parse(message.body);
+                    setNotifications((prevNotifications) => [
+                        { name: "New Invoice Received", type: "inProgress", message: "Paid Invoice Received", ...updateData },
+                        ...prevNotifications
+                    ]);
 
-            stompClient.subscribe('/topic/invoice/verified/', (message) => {
-                const updateData = JSON.parse(message.body);
-                setNotifications((prevNotifications) => [
-                    { type: "completed", message: "Invoice Verified", ...updateData },
-                    ...prevNotifications
-                ]);
-            });
+                });
+            }
+
+            if (localStorage.getItem("roleName") === "Closer") {
+                stompClient.subscribe('/topic/invoice/verified/', (message) => {
+                    const updateData = JSON.parse(message.body);
+                    if (updateData.createdByUserId === parseInt(localStorage.getItem("userId"))) {
+                        setNotifications((prevNotifications) => [
+                            { type: "completed", message: "Invoice Verified", ...updateData },
+                            ...prevNotifications
+                        ]);
+                    }
+                });
+            }
         });
 
         return () => {
@@ -48,10 +55,10 @@ const NotificationContainer = () => {
                 const newNotification = JSON.parse(message.body);
                 setNotifications((prevNotifications) => [
                     {
-                        type: "newLead", 
-                        name:newNotification.senderName,// Assign the appropriate type here
-                        message:newNotification.senderCountryIso,
-                        product:newNotification.queryProductName,
+                        type: "newLead",
+                        name: newNotification.senderName,// Assign the appropriate type here
+                        message: newNotification.senderCountryIso,
+                        product: newNotification.queryProductName,
                         ...newNotification
                     },
                     ...prevNotifications

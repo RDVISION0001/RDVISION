@@ -567,6 +567,7 @@ function SalesReport() {
                                         <div>Payment Intent id :- {paymnet.paymentIntentId}</div>
                                         <div>Payment Status :- <span className="text-green-600">{paymnet.paymentStatus}</span></div>
                                         <div>Paid Amount :- <span className="text-green-600">{paymnet.currency} {paymnet.amount}</span></div>
+                                        <div>Payment Windows :- <span className="text-green-600">{paymnet.paymentWindow}</span></div>
                                         <button onClick={handleOpenPaymentModel} style={{ height: "25px", padding: "1px 5px", fontSize: "15px" }}>Edit</button>
 
                                     </div>

@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 
 function Check({ data, datareload }) {
   const [product, setProduct] = useState([]);
-  const [selectedId, setSelectedId] = useState(0);
+  const { selectedId, setSelectedId } = useAuth()
   const [selectedItem, setSelectedItem] = useState();
   const [rate, setRate] = useState(selectedItem ? selectedItem.rate : null);
   const [totalgoodcost, setTotalGoodCost] = useState(
@@ -55,7 +55,7 @@ function Check({ data, datareload }) {
       if (field === "paid") setPaid(value);
       if (field === "due") setDue(value);
     } else {
-      handleSave(index, selectedItem, field, item);
+      handleSave(index, item, field, item);
     }
   };
 
