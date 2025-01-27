@@ -373,7 +373,7 @@ function SalesReport() {
                                     </thead>
                                     {invoices.length > 0 ?
                                         <tbody>
-                                            {invoices.slice().reverse().map((invoice) => (
+                                            {invoices.slice().map((invoice) => (
                                                 <tr className="border" key={invoice.invoiceId}>
                                                     <td className='text-center border border-dark px-2'> {invoice.closerName} </td>
                                                     <td className='text-center border border-dark px-2'>{formatDate(invoice.saleDate)}</td>
