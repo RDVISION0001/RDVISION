@@ -1,21 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
-import { useNavigate, NavLink } from 'react-router-dom';
-import './login.css';
-import axiosInstance from '../axiosInstance';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthContext";
+import { useNavigate, NavLink } from "react-router-dom";
+import "./login.css";
+import axiosInstance from "../axiosInstance";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function login() {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [emailPasswordWrappper, setEmailPasswpordWrapper] = useState(true);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
 
   const handleKeyDown = (event) => {
     handleKeyDownEnter(event);
@@ -23,13 +29,13 @@ function login() {
   };
 
   const handleKeyDownEnter = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       sendOtp();
     }
   };
 
   const handleKeyDownEnterLogin = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSubmit(event);
     }
   };
@@ -42,7 +48,7 @@ function login() {
       navigateBasedOnRole(status);
       window.location.reload();
     } catch (error) {
-      setError('Login failed');
+      setError("Login failed");
       setLoading(false);
     }
     setLoading(false);
@@ -68,12 +74,13 @@ function login() {
   };
 
   const passwordWrong = () => toast("Password is incorrect");
-  const otpHasSent = () => toast.success('OTP has been sent to your email!');
+  const otpHasSent = () => toast.success("OTP has been sent to your email!");
 
   const sendOtp = async () => {
     setLoading(true);
     try {
-      await axiosInstance.post('/auth/generateOtp', { email, password });
+      await axiosInstance.post("/auth/generateOtp", { email, password });
+      setEmailPasswpordWrapper(false);
       setOtpSent(true);
       otpHasSent();
     } catch (err) {
@@ -98,41 +105,75 @@ function login() {
                 <div className="col-lg-6">
                   <div className="card-body p-md-5 mx-md-4">
                     <div className="text-center">
-                      <h4 className="mt-1 mb-5 pb-1">Login</h4>
+                      <h4 className="mt-1 mb-5 pb-1">Login </h4>
                     </div>
 
                     <form onSubmit={handleSubmit}>
                       <p>Please login to your account</p>
-
-                      <div data-mdb-input-init className="form-outline mb-4">
-                        <input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="form-control"
-                          placeholder="Email address"
-                        />
-                        <label className="form-label">Email</label>
-                      </div>
-
-                      <div data-mdb-input-init className="form-outline mb-4">
-                        <input
-                          type="password"
-                          value={password}
-                          onKeyDown={handleKeyDown}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="form-control"
-                          placeholder="Password"
-                        />
-                        <div className="d-flex justify-content-between align-items-center">
-                          <label className="form-label">Password</label>
-                          {isCapsLockOn && <span className="text-danger fw-bold">Caps Lock is ON</span>}
+                      {emailPasswordWrappper && <div>
+                        <div data-mdb-input-init className="form-outline mb-4">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="form-control"
+                            placeholder="Email address"
+                          />
+                          <label className="form-label">Email </label>
                         </div>
-                      </div>
+
+                        <div data-mdb-input-init className="form-outline mb-4">
+                          <div
+                            className="d-flex"
+                            style={{ position: "relative" }}
+                          >
+                            <input
+                              type={isPasswordVisible ? "text" : "password"}
+                              value={password}
+                              onKeyDown={handleKeyDown}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="form-control"
+                              placeholder="Password"
+                            />
+                            <button
+                              type="button"
+                              className="btn btn-link"
+                              onClick={togglePasswordVisibility}
+                              style={{
+                                border: "none",
+                                background: "none",
+                                position: "absolute",
+                                right: "10px",
+                                top: "50%",
+                                transform: "translateY(-50%)",
+                                padding: 0,
+                              }}
+                            >
+                              <i
+                                className={`fa ${
+                                  isPasswordVisible ? "fa-eye-slash" : "fa-eye"
+                                }`}
+                                style={{ fontSize: "15px" }}
+                              ></i>
+                            </button>
+                          </div>
+
+                          <div className="d-flex justify-content-between align-items-center">
+                            <label className="form-label">Password</label>
+                            {isCapsLockOn && (
+                              <span className="text-danger fw-bold">
+                                Caps Lock is ON
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>}
 
                       {otpSent && (
                         <>
-                          <label className="d-flex justify-content-center">Enter OTP</label>
+                          <label className="d-flex justify-content-center">
+                            Enter OTP
+                          </label>
                           <div className="form-outline mb-4">
                             <input
                               type="text"
@@ -146,40 +187,63 @@ function login() {
                           </div>
                         </>
                       )}
-
                     </form>
                     <div className="text-center pt-1 mb-5 pb-1">
                       {otpSent ? (
                         loading ? (
-                          <div className='d-flex justify-content-center'><div className='loader'></div></div>
+                          <div className="d-flex justify-content-center">
+                            <div className="loader"></div>
+                          </div>
                         ) : (
-                          <button className="btn btn-danger" onClick={handleSubmit}>Login</button>
+                          <button
+                            className="btn btn-danger"
+                            onClick={handleSubmit}
+                          >
+                            Login
+                          </button>
                         )
+                      ) : loading ? (
+                        <div className="d-flex justify-content-center">
+                          <div className="loader"></div>
+                        </div>
                       ) : (
-                        loading ? (
-                          <div className='d-flex justify-content-center'><div className='loader'></div></div>
-                        ) : (
-                          <button className="btn btn-danger" onClick={sendOtp}>Request Otp</button>
-                        )
+                        <button className="btn btn-danger" onClick={sendOtp}>
+                          Request Otp
+                        </button>
                       )}
-                      {otpSent && <button className="btn btn-danger" style={{ marginLeft: "10px" }} onClick={sendOtp}>Resend Otp</button>}
+                      {otpSent && (
+                        <button
+                          className="btn btn-danger"
+                          style={{ marginLeft: "10px" }}
+                          onClick={sendOtp}
+                        >
+                          Resend Otp
+                        </button>
+                      )}
                     </div>
-                    <div className='custom-navlink'><NavLink to="/forgot_password">Forgot Password</NavLink></div>
+                    <div className="custom-navlink">
+                      <NavLink to="/forgot_password">Forgot Password</NavLink>
+                    </div>
                   </div>
                 </div>
                 <div className="col-lg-6 d-flex align-items-center gradient-custom-2">
                   <div className="text-white px-3 py-4 p-md-5 mx-md-4">
                     <h4 className="mb-4">Welcome to RD Vision CRM</h4>
-                    <p className="small mb-0"> Your gateway to enhanced customer
-                      relationships and business success. Our platform is designed to
-                      provide you with all the tools you need to manage your customer
-                      interactions efficiently and effectively. From daily insights to
-                      keep you updated with the latest information, to comprehensive customer
-                      profiles that ensure you provide the most personalized service possible,
-                      we've got you covered. Our integrated task manager helps you stay on top of
-                      your to-do list,ensuring you never miss a follow-up or important deadline.
-                      Additionally, our robust reporting tools offer detailed analytics to track your
-                      progress and make informed decisions that drive your business forward.</p>
+                    <p className="small mb-0">
+                      {" "}
+                      Your gateway to enhanced customer relationships and
+                      business success. Our platform is designed to provide you
+                      with all the tools you need to manage your customer
+                      interactions efficiently and effectively. From daily
+                      insights to keep you updated with the latest information,
+                      to comprehensive customer profiles that ensure you provide
+                      the most personalized service possible, we've got you
+                      covered. Our integrated task manager helps you stay on top
+                      of your to-do list,ensuring you never miss a follow-up or
+                      important deadline. Additionally, our robust reporting
+                      tools offer detailed analytics to track your progress and
+                      make informed decisions that drive your business forward.
+                    </p>
                   </div>
                 </div>
               </div>
