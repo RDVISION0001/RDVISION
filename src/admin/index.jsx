@@ -97,6 +97,9 @@ const Index = () => {
 
   // Fetch data when the tab changes
   useEffect(() => {
+
+
+    fetchInvvoice()
     // Fetch all tickets
     axiosInstance
       .get(`/third_party_api/ticket/getAllNewTickets`)
@@ -154,6 +157,34 @@ const Index = () => {
       .catch((error) => console.error("Error fetching customers:", error));
   }, []);
 
+
+  // get verified invoices
+
+  const fetchInvvoice =()=>{
+    axiosInstance
+      .get(`/invoice/getVerifiedInvoives`)
+      .then((response) => {
+        setInvoices(response.data);
+        const today = new Date().toISOString().split("T")[0];
+        const filteredToday = response.data.filter((invoice) => {
+          const saleDate = formatDateToString(invoice.verificationDate);
+          return saleDate === today;
+        });
+        setTodayInvoices(filteredToday);
+        const preparingShipmentInvoices = response.data.filter(
+          (invoice) => invoice.isVerifiedByAdmin === true
+        );
+        setPreparingShipment(preparingShipmentInvoices);
+        const awaitingTrackingInvoices = response.data.filter(
+          (invoice) =>
+            invoice.trackingNumber === null &&
+            invoice.isVerifiedByAdmin === true
+        );
+        setAwaitingtracking(awaitingTrackingInvoices);
+      })
+      .catch((error) => console.error("Error fetching invoices:", error));
+  }
+
   const getFlagUrl = (countryIso) =>
     `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
@@ -162,6 +193,7 @@ const Index = () => {
       const response = await axiosInstance.get(
         `/invoice/verifyInvoiceByAdmin/${invoiceId}`
       );
+      fetchInvvoice()
       toast.success(response.data.message || "Invoice verified successfully!", {
         autoClose: 3000,
       });
