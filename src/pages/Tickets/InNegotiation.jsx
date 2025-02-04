@@ -1571,20 +1571,20 @@ function InNegotiation() {
                                         </a>
 
                                         {/* Quotation Button */}
-                                        {selectedStage === 3 && (
-                                          <Button
-                                            onClick={() =>
-                                              handleQuotation(nego)
-                                            }
-                                            className="rounded-circle"
-                                            title="Get connect on"
-                                          >
-                                            <i
-                                              className="fa-share-from-square"
-                                              aria-label="Quotation"
-                                            ></i>
-                                          </Button>
-                                        )}
+
+                                        <Button
+                                          onClick={() =>
+                                            handleQuotation(nego)
+                                          }
+                                          className="rounded-circle"
+                                          title="Get connect on"
+                                        >
+                                          <i
+                                            className="fa-share-from-square"
+                                            aria-label="Quotation"
+                                          ></i>
+                                        </Button>
+
 
                                         {/* Invoice Button */}
                                         <Button
@@ -2239,7 +2239,7 @@ function InNegotiation() {
         <h1 className="w-100 text-center mb-3" id="followUpModalLabel">
           <u> Send Quotation</u>
         </h1>
-        <QuotationBox ticket={negoquotation} />
+        <QuotationBox ticket={negoquotation} stage={selectedStage} />
       </Modal>
 
       {/* when select Sale */}
@@ -2282,7 +2282,7 @@ function InNegotiation() {
           <Button variant="secondary" onClick={handleClosesSale}>
             Close
           </Button>
-          <Button variant="primary">Understood</Button>
+          {/* <Button variant="primary">Understood</Button> */}
         </Modal.Footer>
       </Modal>
 

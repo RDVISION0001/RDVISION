@@ -377,12 +377,12 @@ function InvoiceBox({ ticket }) {
               )}
               {/* <!-- ticket details ends here --> */}
               <div className="accordion status-wrappers" id="accordionExample">
-                <div className="text-danger">
+                {/* <div className="text-danger">
                   {" "}
                   !Impotent Before Sending Invoice Make sure every Product is
                   added with proper{" "}
                   <span className="fw-bold">Quantity and Price</span>
-                </div>
+                </div> */}
 
                 <div className="accordion-item">
                   <h2 className="accordion-header">
@@ -524,14 +524,14 @@ function InvoiceBox({ ticket }) {
                           </div>
                         )}
                         <div className="add-more-products-wrapper ">
-                          <Button
+                          {/* <Button
                             onClick={handleShow}
                             data-bs-toggle="modal"
                             data-bs-target="#addMoreItemsModal"
                             className="btn btn-primary"
                           >
                             Add Product
-                          </Button>
+                          </Button> */}
                         </div>
                       </div>
                     </div>

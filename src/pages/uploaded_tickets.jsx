@@ -39,7 +39,7 @@ function uploaded_tickets() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(1000);
   const [filterdate, setFilterDate] = useState(null);
   // Form data state
   const [formData, setFormData] = useState({
