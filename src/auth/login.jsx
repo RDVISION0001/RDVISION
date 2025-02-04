@@ -18,7 +18,7 @@ function login() {
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [emailPasswordWrappper, setEmailPasswpordWrapper] = useState(true);
-
+  const [roleID, setRoleId] = useState()
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
@@ -79,10 +79,11 @@ function login() {
   const sendOtp = async () => {
     setLoading(true);
     try {
-      await axiosInstance.post("/auth/generateOtp", { email, password });
+      const response = await axiosInstance.post("/auth/generateOtp", { email, password });
       setEmailPasswpordWrapper(false);
       setOtpSent(true);
       otpHasSent();
+      setRoleId(response.data.role)
     } catch (err) {
       passwordWrong();
       setLoading(false);
@@ -150,9 +151,8 @@ function login() {
                               }}
                             >
                               <i
-                                className={`fa ${
-                                  isPasswordVisible ? "fa-eye-slash" : "fa-eye"
-                                }`}
+                                className={`fa ${isPasswordVisible ? "fa-eye-slash" : "fa-eye"
+                                  }`}
                                 style={{ fontSize: "15px" }}
                               ></i>
                             </button>
@@ -172,7 +172,7 @@ function login() {
                       {otpSent && (
                         <>
                           <label className="d-flex justify-content-center">
-                            Enter OTP
+                            {(roleID == 1 || roleID == 2) ? "  Enter OTP" : "Enter MFA"}
                           </label>
                           <div className="form-outline mb-4">
                             <input
@@ -182,7 +182,7 @@ function login() {
                               onKeyDown={handleKeyDownEnterLogin}
                               maxLength="6"
                               className="form-control"
-                              placeholder="Enter 6-digit OTP"
+                              placeholder={(roleID == 1 || roleID == 2) ? "  Enter OTP " : "Enter MFA"}
                             />
                           </div>
                         </>
@@ -208,16 +208,23 @@ function login() {
                         </div>
                       ) : (
                         <button className="btn btn-danger" onClick={sendOtp}>
-                          Request Otp
+                          Request Otp/MFA
                         </button>
                       )}
                       {otpSent && (
+                        (roleID == 1 || roleID == 2) ?
                         <button
                           className="btn btn-danger"
                           style={{ marginLeft: "10px" }}
                           onClick={sendOtp}
                         >
                           Resend Otp
+                        </button>:<button
+                          className="btn btn-danger"
+                          style={{ marginLeft: "10px" }}
+                          onClick={sendOtp}
+                        >
+                          Resend MFA
                         </button>
                       )}
                     </div>

@@ -414,7 +414,7 @@ function Sidenav() {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink to="/closer_sales_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
+              <NavLink to="/sales_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i class="fa-regular fa-flag"></i>
                 <span className={` ${dark ? "text-white" : "text-dark"}`}>Today Sales Report</span>
               </NavLink>
