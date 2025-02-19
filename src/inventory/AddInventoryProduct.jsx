@@ -13,6 +13,8 @@ function AddInventoryProduct({ closeFunction, refetchFunction, product, isUpdate
         pricePerPill: product && product.pricePerPill
     });
 
+    const [loading, setLoading] = useState(false)
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -22,28 +24,38 @@ function AddInventoryProduct({ closeFunction, refetchFunction, product, isUpdate
     };
 
     const handleSubmit = async (e) => {
+        setLoading(true)
         e.preventDefault();
         if (isUpdate) {
-            const response = await axiosInstance.put("/product/updateInventoryProduct", {
-                productId: product.productId,
-                name: formData.name,
-                composition: formData.composition,
-                brand: formData.brand,
-                packagingType: formData.packagingType,
-                strength: formData.strength,
-                blisterPrice: formData.blisterPrice,
-                pricePerPill: formData.pricePerPill
-            })
-            closeFunction()
-            refetchFunction()
-            toast.success(response.data.message)
+            try {
+                const response = await axiosInstance.put("/product/updateInventoryProduct", {
+                    productId: product.productId,
+                    name: formData.name,
+                    composition: formData.composition,
+                    brand: formData.brand,
+                    packagingType: formData.packagingType,
+                    strength: formData.strength,
+                    blisterPrice: formData.blisterPrice,
+                    pricePerPill: formData.pricePerPill
+                })
+                closeFunction()
+                refetchFunction()
+                toast.success(response.data.message)
+                setLoading(false)
+            } catch (e) {
+                setLoading(false)
+                toast.error(error?.response?.data?.message || "An error occurred. Please try again.");
+            }
         } else {
             try {
                 const response = await axiosInstance.post("/product/addInventoryProduct", formData);
                 toast.success(response?.data?.message || "Product added successfully!");
                 closeFunction()
                 refetchFunction()
+                setLoading(false)
+
             } catch (error) {
+                setLoading(false)
                 toast.error(error?.response?.data?.message || "An error occurred. Please try again.");
             }
         }
@@ -141,9 +153,11 @@ function AddInventoryProduct({ closeFunction, refetchFunction, product, isUpdate
                     </div>
                 </div>
                 <div className="mt-4 text-center">
-                    <button type="submit" className="btn btn-warning text-white rounded">
+                   {loading?<p  className="btn btn-warning text-white rounded">
+                        please wait....
+                    </p>: <button type="submit" className="btn btn-warning text-white rounded">
                         {isUpdate ? "Update Product" : " Add Product"}
-                    </button>
+                    </button>}
                 </div>
             </form>
             <ToastContainer />
