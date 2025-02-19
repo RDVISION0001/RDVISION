@@ -112,7 +112,6 @@ export const AuthProvider = ({ children }) => {
     setUserId('');
     setFirstName('');
     setAttendanceId('');
-    window.location.reload()
     toast.info('Logged out successfully');
   };
 

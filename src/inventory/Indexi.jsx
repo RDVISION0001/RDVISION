@@ -279,12 +279,12 @@ function Indexi() {
               >
                 All
               </Button>
-              <Button
+              <NavLink
                 className="btn btn-primary"
-                href='/prodcut-list'
+                to='/product_list'
               >
                 Product List
-              </Button>
+              </NavLink>
             </div>
             {localStorage.getItem("userId") && (
               <p className="nav-item">
@@ -297,7 +297,7 @@ function Indexi() {
           </div>
 
           {/* Invoice Table */}
-          <div className="followups-table table-responsive table-height">
+          <div className="followups-table table-responsive ">
             <table className={`table table-bordered table-striped ${dark ? "table-dark  border-white" : ""}`} style={{ border: '2px solid #000' }}>
               <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
                 <tr>
@@ -392,10 +392,10 @@ function Indexi() {
                         {copiedInvoiceId === invoice.orderId ? "Copied" : "Copy"}
                       </button>
                     </td>
-                    <td className="text-center border-dark border">
+                    <td className="text-center border-dark border" >
                       <div className="d-flex justify-content-between">
                         {/* First Table */}
-                        <table className="table-bordered me-3">
+                        <table className="table-bordered me-3"  style={{width:"400px"}}>
                           <thead>
                             <tr>
                               <th className={`border-dark text-center border p-1 table-column ${dark ? "bg-primary border-light" : ""} `} style={{ fontSize: 12 }} >Name</th>

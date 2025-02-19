@@ -705,9 +705,7 @@ function Sidenav() {
         <li className="nav-item">
           <NavLink to="/email" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
             <i class="fa-solid fa-envelope-open-text"></i>
-
             <span className="nav-text">Inbox</span>
-
           </NavLink>
         </li>
         {localStorage.getItem("userId") && (
