@@ -281,6 +281,7 @@ function Indexi() {
               </Button>
               <Button
                 className="btn btn-primary"
+                href='/prodcut-list'
               >
                 Product List
               </Button>
