@@ -138,7 +138,7 @@ function Check({ data, datareload }) {
   };
 
   return (
-    <div>
+    <div className="w-100 w-md-50 w-lg-40vw">
       {product.length > 0 ? (
         <table className="table table-bordered table-striped">
           <thead className="thead-dark">

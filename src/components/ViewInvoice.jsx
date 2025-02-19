@@ -4,7 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import axiosInstance from '../axiosInstance';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { Modal } from 'react-bootstrap';
 import AddressForm from './AddressForm';
 
