@@ -272,15 +272,21 @@ function Indexi() {
           <div className="d-flex justify-content-between">
             {/* Filter Buttons */}
             <div className="mb-3 d-flex justify-content-start gap-3">
-              <Button
+              {/* <Button
                 variant={filter === 'all' ? 'primary' : 'outline-primary'}
                 onClick={() => setFilter('all')}
                 className="btn btn-primary"
               >
                 All
-              </Button>
+              </Button> */}
+              {/* <NavLink
+                className="btn btn-primary rounded bg-black p-2 fw-bold"
+                to='/product_list'
+              >
+                Orders
+              </NavLink> */}
               <NavLink
-                className="btn btn-primary"
+                className="btn btn-primary rounded bg-black p-2 fw-bold"
                 to='/product_list'
               >
                 Product List
@@ -395,7 +401,7 @@ function Indexi() {
                     <td className="text-center border-dark border" >
                       <div className="d-flex justify-content-between">
                         {/* First Table */}
-                        <table className="table-bordered me-3"  style={{width:"400px"}}>
+                        <table className="table-bordered me-3" style={{ width: "400px" }}>
                           <thead>
                             <tr>
                               <th className={`border-dark text-center border p-1 table-column ${dark ? "bg-primary border-light" : ""} `} style={{ fontSize: 12 }} >Name</th>
