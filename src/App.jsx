@@ -85,6 +85,7 @@ import AssignTktReport from './components/AssignTktReport';
 
 // inventory management
 import Indexi from './inventory/Indexi';
+import ProductList from './inventory/ProductList';
 
 // componenets css
 import './components/css/themedigproX01.css';
@@ -141,131 +142,131 @@ import EmailView from './components/EmailView';
 
 
 function App() {
-  const [isTicketTrackOn,setIsTicketTrackOn] = useState(false)
-  const {theme} = useSelector((state)=>state.Theme)
-  
-  
+  const [isTicketTrackOn, setIsTicketTrackOn] = useState(false)
+  const { theme } = useSelector((state) => state.Theme)
+
+
 
 
   return (
-    <div className={`${theme ?"bg-dark":"bg-white"}`} style={{height:'100vh'}} >      
-          <div className='d-flex justify-content-end'>
+    <div className={`${theme ? "bg-dark" : "bg-white"}`} style={{ height: '100vh' }} >
+      <div className='d-flex justify-content-end'>
         <NotificationContainer /> {/* This will handle WebSocket notifications */}
         {/* Other app content */}
       </div>
       <ToastContainer />
-        <Router>
-          <div className="superadmin-page">            
-            {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}
-            <div className={`${localStorage.getItem("roleName")==="Inventory"?"":"my-container main-content-block2658 active-cont bg-white"}`}>
-              {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Topnav />}
-              <div className={`d-flex  ${theme ?"bg-dark":"bg-white"}`}>
-                <div>
-                  {localStorage.getItem("roleName") !== "Admin" &&  localStorage.getItem("roleName")!=="Inventory" && <div className={`${theme ? 'text-white':'text-dark'}`} onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
-                  <div className={`d-flex ${theme ?"bg-dark":"bg-white"} `}>
-                    {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block '>
-                      {localStorage.getItem("userId") && <TicketTrack />}
-                    </div> : ""}
-                  </div>
+      <Router>
+        <div className="superadmin-page">
+          {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}
+          <div className={`${localStorage.getItem("roleName") === "Inventory" ? "" : "my-container main-content-block2658 active-cont bg-white"}`}>
+            {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Topnav />}
+            <div className={`d-flex  ${theme ? "bg-dark" : "bg-white"}`}>
+              <div>
+                {localStorage.getItem("roleName") !== "Admin" && localStorage.getItem("roleName") !== "Inventory" && <div className={`${theme ? 'text-white' : 'text-dark'}`} onClick={() => setIsTicketTrackOn((prev) => !prev)}>{isTicketTrackOn ? <i class="fa-regular fa-rectangle-xmark"></i> : <i class="fa-solid fa-book-open-reader"></i>}</div>}
+                <div className={`d-flex ${theme ? "bg-dark" : "bg-white"} `}>
+                  {isTicketTrackOn ? localStorage.getItem("roleName") !== "Admin" && <div className='d-none d-md-block '>
+                    {localStorage.getItem("userId") && <TicketTrack />}
+                  </div> : ""}
                 </div>
-                <div className="w-100 overflow-auto">
-                  {localStorage.getItem("roleName") !== "Admin" &&
-                    <div>
-                      {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <TicketDistribution />}
-                    </div>}
-                  <Routes>
-                    {/* Customer Invoice */}
-                    <Route exact path="/coustomer_invoice" element={<Coustomer />} />
-                    <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
-                    <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
-                    <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
-                    <Route exact path="/terms" element={<Terms_Conditions />} />
-
-                    {/* Authentication */}
-                    <Route exact path="/" element={<Login />} />
-                    <Route exact path="/logout" element={<Logout />} />
-                    <Route exact path="/forgot_password" element={<Forgetpassword />} />
-                    <Route exact path="/payment_window" element={<PaymentWindow />} />
-                    {/* Private Routes */}
-                    <Route element={<PrivateRoute />}>
-                      {/* Components */}
-                      <Route exact path="/sidenav" element={<Sidenav />} />
-                      <Route exact path="/sale_conframtion" element={<SaleConframtion />} />
-
-                      {/* Pages */}
-                      <Route exact path="/live_tickets" element={<Live />} />
-                      <Route exact path="/upload_tickets" element={<Upticket />} />
-                      <Route exact path="/in_negotiation" element={<InNegotiation />} />
-                      <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
-                      <Route exact path="/upload_products" element={<Products />} />
-                      <Route exact path="/new_products" element={<New_Products />} />
-                      <Route exact path="/action_mode" element={<ActionMode />} />
-                      <Route exact path="/sales_report" element={<SalesReport />} />
-                      <Route exact path="/Verified_sales" element={<VerifyedSales />} />
-                      <Route exact path="/invoice" element={<InvoiceNewTemp />} />
-                      <Route exact path="/mis_product" element={<MIS_Product />} />
-                      <Route exact path="/image_upload" element={<ImgUpload />} />
-
-
-                      {/* Admin */}
-                      <Route exact path="/admin_index" element={<Index />} />
-                      <Route exact path="/admin_invoices" element={<Invoices />} />
-                      <Route exact path="/admin_orders" element={<Orders />} />
-                      <Route exact path="/admin_sales" element={<Sales />} />
-                      <Route exact path="/admin_tickets" element={<Tickets />} />
-                      <Route exact path="/admin_users" element={<Users />} />
-                      <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
-                      <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
-
-                      {/* Super Admin */}
-                      <Route exact path="/super_admin_index" element={<Indexs />} />
-                      <Route exact path="/super_admin_invoices" element={<Invoicess />} />
-                      <Route exact path="/super_admin_orders" element={<Orderss />} />
-                      <Route exact path="/super_admin_sales" element={<Saless />} />
-                      <Route exact path="/super_admin_tickets" element={<Ticketss />} />
-                      <Route exact path="/super_admin_users" element={<Users />} />
-
-                      {/* Captain Manager */}
-                      <Route exact path="/captain_index" element={<Indexm />} />
-                      <Route exact path="/captain_invoices" element={<Invoicesm />} />
-                      <Route exact path="/captain_orders" element={<Ordersm />} />
-                      <Route exact path="/captain_sales" element={<Salesm />} />
-                      <Route exact path="/captain_to_closer" element={<Tocloser />} />
-                      <Route exact path="/captain_tickets" element={<Ticketsm />} />
-
-                      {/* Closer/Agent */}
-                      <Route exact path="/closer_index" element={<Indexa />} />
-                      <Route exact path="/closer_orders" element={<Ordersa />} />
-                      <Route exact path="/closer_sales" element={<Salesa />} />
-                      <Route exact path="/closer_users" element={<Usersa />} />
-                      <Route exact path="/after_sales_service" element={<Ass />} />
-                      <Route exact path="/closer_sales_report" element={<CloserSalesReport />} />
-
-
-                      {/* Senior Supervisor */}
-                      <Route exact path="/senior_supervisor_index" element={<Indexss />} />
-                      <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
-                      <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
-                      <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
-                      <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
-                      <Route exact path="/ticket_house" element={<TicketHouse />} />
-                      <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
-
-                      {/* inventory  management*/}
-                      <Route exact path="/index" element={<Indexi />} />
-                      <Route exact path="/email" element={<EmailView />} />
-
-
-                    </Route>
-                  </Routes>
-                </div>
-
               </div>
+              <div className="w-100 overflow-auto">
+                {localStorage.getItem("roleName") !== "Admin" &&
+                  <div>
+                    {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <TicketDistribution />}
+                  </div>}
+                <Routes>
+                  {/* Customer Invoice */}
+                  <Route exact path="/coustomer_invoice" element={<Coustomer />} />
+                  <Route exact path="/viewinvoice/:orderid" element={<ViewInvoice />} />
+                  <Route exact path="/success/:orderid" element={<PaymentSuccess />} />
+                  <Route exact path="/failed_payment/:orderid" element={<PaymentFailed />} />
+                  <Route exact path="/terms" element={<Terms_Conditions />} />
+
+                  {/* Authentication */}
+                  <Route exact path="/" element={<Login />} />
+                  <Route exact path="/logout" element={<Logout />} />
+                  <Route exact path="/forgot_password" element={<Forgetpassword />} />
+                  <Route exact path="/payment_window" element={<PaymentWindow />} />
+                  {/* Private Routes */}
+                  <Route element={<PrivateRoute />}>
+                    {/* Components */}
+                    <Route exact path="/sidenav" element={<Sidenav />} />
+                    <Route exact path="/sale_conframtion" element={<SaleConframtion />} />
+
+                    {/* Pages */}
+                    <Route exact path="/live_tickets" element={<Live />} />
+                    <Route exact path="/upload_tickets" element={<Upticket />} />
+                    <Route exact path="/in_negotiation" element={<InNegotiation />} />
+                    <Route exact path="/in_negotiation/:date" element={<InNegotiation />} />
+                    <Route exact path="/upload_products" element={<Products />} />
+                    <Route exact path="/new_products" element={<New_Products />} />
+                    <Route exact path="/action_mode" element={<ActionMode />} />
+                    <Route exact path="/sales_report" element={<SalesReport />} />
+                    <Route exact path="/Verified_sales" element={<VerifyedSales />} />
+                    <Route exact path="/invoice" element={<InvoiceNewTemp />} />
+                    <Route exact path="/mis_product" element={<MIS_Product />} />
+                    <Route exact path="/image_upload" element={<ImgUpload />} />
+
+
+                    {/* Admin */}
+                    <Route exact path="/admin_index" element={<Index />} />
+                    <Route exact path="/admin_invoices" element={<Invoices />} />
+                    <Route exact path="/admin_orders" element={<Orders />} />
+                    <Route exact path="/admin_sales" element={<Sales />} />
+                    <Route exact path="/admin_tickets" element={<Tickets />} />
+                    <Route exact path="/admin_users" element={<Users />} />
+                    <Route exact path="/admin_to_everyone" element={<ToEveryone />} />
+                    <Route exact path="/admin_upload_tickets" element={<Upload_tickets />} />
+
+                    {/* Super Admin */}
+                    <Route exact path="/super_admin_index" element={<Indexs />} />
+                    <Route exact path="/super_admin_invoices" element={<Invoicess />} />
+                    <Route exact path="/super_admin_orders" element={<Orderss />} />
+                    <Route exact path="/super_admin_sales" element={<Saless />} />
+                    <Route exact path="/super_admin_tickets" element={<Ticketss />} />
+                    <Route exact path="/super_admin_users" element={<Users />} />
+
+                    {/* Captain Manager */}
+                    <Route exact path="/captain_index" element={<Indexm />} />
+                    <Route exact path="/captain_invoices" element={<Invoicesm />} />
+                    <Route exact path="/captain_orders" element={<Ordersm />} />
+                    <Route exact path="/captain_sales" element={<Salesm />} />
+                    <Route exact path="/captain_to_closer" element={<Tocloser />} />
+                    <Route exact path="/captain_tickets" element={<Ticketsm />} />
+
+                    {/* Closer/Agent */}
+                    <Route exact path="/closer_index" element={<Indexa />} />
+                    <Route exact path="/closer_orders" element={<Ordersa />} />
+                    <Route exact path="/closer_sales" element={<Salesa />} />
+                    <Route exact path="/closer_users" element={<Usersa />} />
+                    <Route exact path="/after_sales_service" element={<Ass />} />
+                    <Route exact path="/closer_sales_report" element={<CloserSalesReport />} />
+
+
+                    {/* Senior Supervisor */}
+                    <Route exact path="/senior_supervisor_index" element={<Indexss />} />
+                    <Route exact path="/senior_supervisor_upload_tickets" element={<Uptickets />} />
+                    <Route exact path="/senior_supervisor_tickets" element={<Ticketsss />} />
+                    <Route exact path="/senior_supervisor_invoices" element={<Invoicesss />} />
+                    <Route exact path="/senior_supervisor_to_captain" element={<Team />} />
+                    <Route exact path="/ticket_house" element={<TicketHouse />} />
+                    <Route exact path="/assign_ticket_report" element={<AssignTktReport />} />
+
+                    {/* inventory  management*/}
+                    <Route exact path="/index" element={<Indexi />} />
+                    <Route exact path="/email" element={<EmailView />} />
+                    <Route exact path="/prodcut-list" element={<ProductList />} />
+
+                  </Route>
+                </Routes>
+              </div>
+
             </div>
           </div>
-        </Router>
-      
-     
+        </div>
+      </Router>
+
+
 
     </div>
   );
