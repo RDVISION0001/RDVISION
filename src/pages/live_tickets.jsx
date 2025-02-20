@@ -20,7 +20,6 @@ import "react-toastify/dist/ReactToastify.css";
 // Clipboard copy
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import TicketJourney from "../components/TicketJourney";
-
 import InvoiceBox from "../components/InvoiceBox";
 import QuotationBox from "../components/QuotationBox";
 import TicketTrack from "../components/TicketTrack";
@@ -29,7 +28,7 @@ import EmailCompose from "../components/EmailCompose";
 
 
 function live_tickets() {
-  const { userId, dark } = useAuth();
+  const { roleName, dark, userId } = useAuth();
   const { setFolowupUpdate } = useAuth();
   const { setUserReportReloader } = useAuth();
 
@@ -729,7 +728,7 @@ function live_tickets() {
                           </Dropdown.Toggle>
 
                           <Dropdown.Menu
-                            style={{ maxHeight: "200px", overflowY: "auto" }}
+                            style={{ maxHeight: "200px", overflowY: "auto", zIndex: 1200 }}
                           >
                             <Dropdown.Item
                               className={
@@ -860,7 +859,7 @@ function live_tickets() {
                     >
                       <div
                         className={`followups-table table-responsive table-height border rounded ${dark ? `bg-dark text-white` : `bg-white text-dark`}`}
-                        style={{ maxHeight: "100rem" }}
+                        
                       >
                         <table className={`table table-border ${dark ? `table-dark text-white` : ``}`}>
                           <thead className="sticky-top">
@@ -1009,10 +1008,11 @@ function live_tickets() {
                                         </button>
                                       </CopyToClipboard>
                                       <span className="text">
-                                        {maskMobileNumber(item.senderMobile)}
+                                        {(roleName === 'Admin' || roleName === 'SuperAdmin')
+                                          ? item.senderMobile
+                                          : maskMobileNumber(item.senderMobile)}
                                       </span>
                                     </td>
-
                                     <td>
                                       {/* For Email */}
                                       <CopyToClipboard
@@ -1046,10 +1046,11 @@ function live_tickets() {
                                         </button>
                                       </CopyToClipboard>
                                       <span className="text">
-                                        {maskEmail(item.senderEmail)}
+                                        {(roleName === 'Admin' || roleName === 'SuperAdmin')
+                                          ? item.senderEmail
+                                          : maskEmail(item.senderEmail)}
                                       </span>
                                     </td>
-
                                     <td
                                       onClick={() =>
                                         handleShow(item.uniqueQueryId)
