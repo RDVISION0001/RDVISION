@@ -155,12 +155,13 @@ function App() {
         {/* Other app content */}
       </div>
       <ToastContainer />
-      {!isAuthenticated ?
+      {!isAuthenticated &&
         <Router>
           <div style={{display:"flex",justifyContent:"center"}}>
             <Login />
           </div>
-        </Router> :
+        </Router>} 
+        {isAuthenticated &&
         <Router>
           <div className="superadmin-page">
             {localStorage.getItem("userId") && localStorage.getItem("roleName") !== "Inventory" && <Sidenav />}

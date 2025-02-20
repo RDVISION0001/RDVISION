@@ -14,7 +14,7 @@ import EditOrderDetails from './EditOrderDetails'
 
 
 function Indexi() {
-  const { roleName, userId, dark } = useAuth();
+  const { roleName, userId, dark,logout } = useAuth();
   const [invoices, setInvoices] = useState([]);
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(false);
@@ -39,7 +39,8 @@ function Indexi() {
   const [selecteOrderProductName, setSelectedOrderProductName] = useState("")
   const [selectedOrderProductQuantity, setselectedOrderProductQuantity] = useState("")
   const [selectedOrderProductDose, setSelectedOrderProductDose] = useState("")
-  const { edit, setEdit } = useAuth(); // Track which field is being edited
+  const { edit, setEdit } = useAuth(); // Track which field is being edite
+  const navigate =useNavigate()
   const openImage = (image) => {
     let newtext = image.replace("backend", "image")
     let newImage = newtext.replace("getChatImageById", "getChatImageGoodQualityById")
@@ -259,11 +260,21 @@ function Indexi() {
     fetchOrders()
   }
 
-  const handleClick = (order, id) => {
-    console.log(order)
-    console.log(id)
-  }
-
+useEffect(() => {
+    const interval = setInterval(() => {
+      const loginTime = localStorage.getItem("loginTime");
+      if (loginTime) {
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - loginTime;
+        if (timeDiff >= 12 * 60 * 60 * 1000) {
+          // 10000 ms = 10 seconds
+          navigate("/");
+          logout();
+          clearInterval(interval); // Stop checking after logging out
+        }
+      }
+    }, 1000);
+  });
 
   return (
     <div className={`${dark ? "bg-dark" : ""}`} onClick={() => setEdit(false)} style={{ height: "100vh" }}>
