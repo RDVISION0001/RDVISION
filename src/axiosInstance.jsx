@@ -2,7 +2,14 @@ import axios from 'axios';
 
 // Create an Axios instance
 const axiosInstance = axios.create({
+
+  // Production Env
   baseURL: 'https://backend.rdvision.in',
+
+  // UAT Env
+  // baseURL: 'https://uatbackend.rdvision.tech',
+
+  // For Backend Env
   // baseURL:'http://localhost:8080'
 });
 
