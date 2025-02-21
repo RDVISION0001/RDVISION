@@ -420,7 +420,7 @@ function SalesReport() {
                                                         {invoice.orderDto?.productOrders[0]?.product[0]?.strength || "N/A"}
                                                     </td>
                                                     <td className="text-success border border-dark px-2 bold-text">
-                                                        {invoice.currency || 'USD'} {invoice.payment?.amount}
+                                                        {invoice.orderDto.productOrders[0].currency} {invoice.payment?.amount}
                                                     </td>
                                                     <td className='text-center border border-dark px-2'>{invoice.payment?.paymentWindow || 'N/A'}</td>
                                                     <td className='text-center border border-dark px-2'>

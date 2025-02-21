@@ -6,6 +6,7 @@ import { Stomp } from "@stomp/stompjs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import R2ZWYCP from '../assets/notification/R2ZWYCP.mp3';
 import { Modal } from "react-bootstrap";
+import Swal from "sweetalert2";
 
 const NotificationContainer = () => {
     const [notifications, setNotifications] = useState([]);
@@ -18,7 +19,6 @@ const NotificationContainer = () => {
         const socket = new SockJS('https://backend.rdvision.in/ws');
 
         const stompClient = Stomp.over(socket);
-
         stompClient.connect({}, () => {
             if (localStorage.getItem("roleName") === "SeniorSuperVisor") {
                 stompClient.subscribe('/topic/invoice/', (message) => {
@@ -31,6 +31,33 @@ const NotificationContainer = () => {
                 });
             }
 
+            stompClient.subscribe('/topic/payment-received/', (message) => {
+                const updateData = JSON.parse(message.body);
+                if (localStorage.getItem("userId") == updateData.userId) {
+                    Swal.fire({
+                        title: "Payment Successful!",
+                        text: "Payment Received  " + updateData.payment.currency + " " + updateData.payment.amount,
+                        icon: "success",
+                        confirmButtonText: "Received from " + updateData.customerName,
+                        confirmButtonColor: "#4CAF50",
+                        // footer: '<a href="https://yourwebsite.com/invoice/123456">Download Invoice</a>',
+                        showCloseButton: true,
+                        // timer: 5000 // Auto-close after 5 seconds
+                    });
+                }else{
+                    Swal.fire({
+                        title: "Your Teammate received A Payment From Stripe!",
+                        text: "Payment Received ",
+                        icon: "success",
+                        confirmButtonText: "Received from " + updateData.customerName,
+                        confirmButtonColor: "#4CAF50",
+                        // footer: '<a href="https://yourwebsite.com/invoice/123456">Download Invoice</a>',
+                        showCloseButton: true,
+                        // timer: 5000 // Auto-close after 5 seconds
+                    });
+                }
+
+            });
             if (localStorage.getItem("roleName") === "Closer") {
                 stompClient.subscribe('/topic/invoice/verified/', (message) => {
                     const updateData = JSON.parse(message.body);

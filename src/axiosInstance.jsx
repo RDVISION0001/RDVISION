@@ -4,10 +4,10 @@ import axios from 'axios';
 const axiosInstance = axios.create({
 
   // Production Env
-  // baseURL: 'https://backend.rdvision.in',
+  baseURL: 'https://backend.rdvision.in',
 
   // UAT Env
-  baseURL: 'https://uatbackend.rdvision.tech',
+  // baseURL: 'https://uatbackend.rdvision.tech',
 
   // For Backend Env
   // baseURL:'http://localhost:8080'
