@@ -218,7 +218,7 @@ function VerifiedSales() {
 
                     {roleName === "SuperAdmin" && (
                       <>
-                        <th scope="col" className="text-nowrap">Received Amount (INR)</th>
+                        <th scope="col" className="text-nowrap">Received Amount (INR) -7%</th>
                         <th scope="col" className="text-nowrap">Total Cost</th>
                         <th scope="col" className="text-nowrap">Profit</th>
                       </>
@@ -229,9 +229,14 @@ function VerifiedSales() {
                 </thead>
                 <tbody>
                   {filteredInvoices.map((invoice) => {
-                    // Convert orderAmount to INR dynamically for each invoice
-                    const orderAmount = invoice.payment?.amount || 0;
-                    const convertedAmount = exchangeRate ? orderAmount * exchangeRate : 0;
+                    // Get the paid amount in USD
+                    const paidAmountUSD = invoice.payment?.amount || 0;
+
+                    // Decrease the received amount by 7% (if needed)
+                    const receivedAmountUSD = paidAmountUSD * 0.93; // Same as decreasedPaidAmountUSD
+
+                    // Convert the decreased received amount to INR
+                    const receivedAmountINR = exchangeRate ? receivedAmountUSD * exchangeRate : 0;
 
                     return (
                       <tr
@@ -321,8 +326,9 @@ function VerifiedSales() {
                         </td>
                         {roleName === "SuperAdmin" && (
                           <>
+                            {/* Display Received Amount after 7% decrease and converted to INR */}
                             <td className="text-success bold-text">
-                              {convertedAmount ? `INR ${convertedAmount.toFixed(2)}` : "N/A"}
+                              {receivedAmountINR ? `INR ${receivedAmountINR.toFixed(2)}` : "N/A"}
                             </td>
                             <td className="text-center">{invoice.totalCost || "N/A"}</td>
                             <td className="text-center">{invoice.profit || "N/A"}</td>

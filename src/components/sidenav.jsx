@@ -149,15 +149,17 @@ function Sidenav() {
               </a>
             </li>
             <li className="nav-item">
-              <NavLink
-                to="/super_admin_index"
-                className={`nav-link ${dark ? "text-dark" : "text-white"}`}
-              >
+              <NavLink to="/super_admin_index" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-chalkboard fa-fw"></i>
                 <span className={` ${dark ? "text-white" : "text-dark"}`}>Dashboard</span>
               </NavLink>
             </li>
-
+            <li className="nav-item">
+              <NavLink to="/super_admin_report" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
+                <i class="fa-regular fa-font-awesome"></i>
+                <span className={`${dark ? "text-white" : "text-dark"}`}>Report</span>
+              </NavLink>
+            </li>
             <li className="nav-item">
               <NavLink to="/super_admin_users" className={`nav-link ${dark ? "text-light" : "text-dark"}`}>
                 <i className="fa-solid fa-people-group"></i>
