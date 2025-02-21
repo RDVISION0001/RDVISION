@@ -116,7 +116,7 @@ const TicketDistribution = () => {
                         fontSize: '14px',
                         fontWeight: 'bold',
                         whiteSpace: 'nowrap',
-                        zIndex: 1000,
+                        zIndex: 1200,
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                         opacity: 0.9,
                         transition: 'all 0.2s ease-in-out',

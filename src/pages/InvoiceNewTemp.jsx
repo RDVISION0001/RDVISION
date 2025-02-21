@@ -313,7 +313,7 @@ function InvoiceNewTemp() {
             ) : (
               <div
                 className="table-responsive "
-                style={{ maxHeight: "37.5rem" }}
+                style={{ maxHeight: "100%" }}
               >
                 <table
                   className={`table table-bordered w-100 ${dark ? "bg-dark text-light" : ""
@@ -375,10 +375,10 @@ function InvoiceNewTemp() {
                         <tr
                           key={invoice.invoiceId}
                           className={`${dark
-                              ? "table-dark"
-                              : invoice.opened === "paid"
-                                ? "table-danger"
-                                : "table-success"
+                            ? "table-dark"
+                            : invoice.opened === "paid"
+                              ? "table-danger"
+                              : "table-success"
                             } ${dark ? "bg-dark text-light" : ""}`}
                         >
 
