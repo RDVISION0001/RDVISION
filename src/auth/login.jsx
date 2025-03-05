@@ -97,10 +97,10 @@ function login() {
   }, []);
 
   return (
-    <section className="h-100 gradient-form w-50">
+    <section className="h-100 gradient-form w-100 w-md-75 w-lg-50">
       <div className="container py-5 h-100">
         <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-xl-10">
+          <div className="col-xl-6">
             <div className="card rounded-3 text-black">
               <div className="row g-0">
                 <div className="col-lg-6">
@@ -213,19 +213,19 @@ function login() {
                       )}
                       {otpSent && (
                         (roleID == 1 || roleID == 2) ?
-                        <button
-                          className="btn btn-danger"
-                          style={{ marginLeft: "10px" }}
-                          onClick={sendOtp}
-                        >
-                          Resend Otp
-                        </button>:<button
-                          className="btn btn-danger"
-                          style={{ marginLeft: "10px" }}
-                          onClick={sendOtp}
-                        >
-                          Resend MFA
-                        </button>
+                          <button
+                            className="btn btn-danger"
+                            style={{ marginLeft: "10px" }}
+                            onClick={sendOtp}
+                          >
+                            Resend Otp
+                          </button> : <button
+                            className="btn btn-danger"
+                            style={{ marginLeft: "10px" }}
+                            onClick={sendOtp}
+                          >
+                            Resend MFA
+                          </button>
                       )}
                     </div>
                     <div className="custom-navlink">
