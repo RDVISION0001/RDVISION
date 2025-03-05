@@ -152,12 +152,17 @@ function App() {
         {/* Other app content */}
       </div>
       <ToastContainer />
-      {!isAuthenticated &&
+      {!isAuthenticated && (
         <Router>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Login />
+           
+            <Routes>
+              <Route path='/' element={ <Login />}/>
+              <Route path="/forgot_password" element={<Forgetpassword />} />
+            </Routes>
           </div>
-        </Router>}
+        </Router>
+      )}
       {/* {isAuthenticated && */}
       <Router>
         <div className="superadmin-page">
@@ -187,9 +192,7 @@ function App() {
                   <Route exact path="/terms" element={<Terms_Conditions />} />
 
                   {/* Authentication */}
-                  <Route exact path="/" element={<Login />} />
                   <Route exact path="/logout" element={<Logout />} />
-                  <Route exact path="/forgot_password" element={<Forgetpassword />} />
                   <Route exact path="/payment_window" element={<PaymentWindow />} />
 
                   {/* Private Routes */}
