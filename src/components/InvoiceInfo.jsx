@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import axiosInstance from "../axiosInstance";
 import { toast } from "react-toastify";
 import { Button } from "react-bootstrap";
@@ -6,14 +6,14 @@ import { useAuth } from "../auth/AuthContext";
 
 
 const InvoiceInfo = (props) => {
+  // सभी hooks ऊपर परिभाषित किए गए हैं
   const [invoices, setInvoices] = useState([]);
-  const { userId } = useAuth();
+  const { userId, dark } = useAuth(); // dark flag preserved
   const [currentSrc, setCurrentSrc] = useState("");
   const [isPlaying, setIsPlaying] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const audioRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { dark } = useAuth();
 
   const [invoiceData, setInvoiceData] = useState({
     totalInvoices: null,
@@ -27,6 +27,18 @@ const InvoiceInfo = (props) => {
   const [error, setError] = useState(null);
   const getFlagUrl = (countryIso) =>
     `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
+
+  const [saleTicketData, setSaleTicketData] = useState([]);
+  // search hooks को भी ऊपर परिभाषित करें
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredTickets = useMemo(() => {
+    return (saleTicketData || []).filter((invoice) =>
+      (invoice.senderName || invoice.firstName || "")
+        .toLowerCase()
+        .includes(searchQuery.trim().toLowerCase())
+    );
+  }, [saleTicketData, searchQuery]);
+
   // Fetch Invoice Count Data
   useEffect(() => {
     fetchInvoiceData();
@@ -42,8 +54,6 @@ const InvoiceInfo = (props) => {
       formattedMonth
     )}-${formattedDay}`;
   }
-
-  const [saleTicketData, setSaleTicketData] = useState([]);
 
   const fetchTicketSaleData = async () => {
     const response = await axiosInstance.post(
@@ -61,7 +71,10 @@ const InvoiceInfo = (props) => {
 
   const fetchInvoiceData = async () => {
     try {
-      const response = await axiosInstance.get(`/invoice/invoideCOunt/${localStorage.getItem("roleName") === "Closer" ? userId : 0}`);
+      const response = await axiosInstance.get(
+        `/invoice/invoideCOunt/${localStorage.getItem("roleName") === "Closer" ? userId : 0
+        }`
+      );
       setInvoiceData({
         totalInvoices: response.data.totalInvoices,
         totalPaidInvoices: response.data.totalPaidInvoices,
@@ -82,9 +95,7 @@ const InvoiceInfo = (props) => {
 
   const fetchInvoices = async () => {
     try {
-      const response = await axiosInstance.get(
-        `/invoice/getAssInvoice/${userId}`
-      );
+      const response = await axiosInstance.get(`/invoice/getAssInvoice/${userId}`);
       setInvoices(response.data);
     } catch (error) {
       console.error("Error fetching invoices:", error);
@@ -141,9 +152,7 @@ const InvoiceInfo = (props) => {
 
   const handleClick = async (ticketId) => {
     try {
-      const response = await axiosInstance.get(
-        `/invoice/clickToCall/${ticketId}`
-      );
+      await axiosInstance.get(`/invoice/clickToCall/${ticketId}`);
     } catch (error) {
       console.error("Error calling ticket:", error);
     }
@@ -151,7 +160,7 @@ const InvoiceInfo = (props) => {
 
   const handleClickCallForticket = async (ticketId) => {
     try {
-      const response = await axiosInstance.get(
+      await axiosInstance.get(
         `${ticketId.length < 15 ? "/third_party_api/ticket/" : "/upload/"
         }clickToCall/${ticketId}`
       );
@@ -164,12 +173,10 @@ const InvoiceInfo = (props) => {
     (src, index) => {
       // Construct the new URL from src
       setSelectedIndex(index);
-      let newUrl = `https:${src.split(":")[2].split("}")[0]}`; // Ensure proper URL formation
+      let newUrl = `https:${src.split(":")[2].split("}")[0]}`;
       newUrl = newUrl.split(`"`)[0];
 
-      // Check if the new URL is different from the current source
       if (currentSrc !== newUrl) {
-        // Pause the audio if it's currently playing
         if (audioRef.current) {
           audioRef.current.pause();
         }
@@ -181,9 +188,9 @@ const InvoiceInfo = (props) => {
         audioRef.current
           .play()
           .then(() => {
-            setIsPlaying(true); // Update playing state on successful play
+            setIsPlaying(true);
           })
-          .catch((err) => console.error("Error playing audio:", err)); // Handle any play errors
+          .catch((err) => console.error("Error playing audio:", err));
       } else {
         // Toggle play/pause based on current playing state
         if (isPlaying) {
@@ -192,15 +199,15 @@ const InvoiceInfo = (props) => {
         } else {
           audioRef.current
             .play()
-            .then(() => setIsPlaying(true)) // Update playing state on successful play
-            .catch((err) => console.error("Error resuming audio:", err)); // Handle any play errors
+            .then(() => setIsPlaying(true))
+            .catch((err) => console.error("Error resuming audio:", err));
         }
       }
     },
     [currentSrc, isPlaying]
   );
 
-  // Move loading and error checks here, after all hooks
+  // Early returns AFTER all hooks are declared
   if (loading) return <p className="text-center">Loading...</p>;
   if (error) return <p>{error}</p>;
 
@@ -213,6 +220,7 @@ const InvoiceInfo = (props) => {
       )}-${newdate.split(",")[0]}`
     );
   };
+
   return (
     <>
       {props.stage !== 4 && (
@@ -619,151 +627,126 @@ const InvoiceInfo = (props) => {
         </div>
       </section>
 
-
-
       {/* 2nd table */}
-      <section className={`data-table-bgs_02x24 py-3 ${`${dark ? `bg-dark text-white` : ``}`} `}>
+      <section className={`data-table-bgs_02x24 py-3 ${dark ? "bg-dark text-white" : ""}`}>
         <div className="container-fluid">
+          {/* Header with Title and Inline Search Bar */}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h3 className="title">
+              {props.stage === 4 ? "Ticket Tracking" : "Tickets for After Sales Service"}
+            </h3>
+            <input
+              type="text"
+              className="form-control w-25"
+              placeholder="Search by Name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+
           <div className="table-wrapper">
-            {props.stage === 4 ? (
-              <h3 className="title">Ticket Tracking</h3>
-            ) : (
-              <h3 className="title">Tickets for after sales service</h3>
-            )}
-            <div
-              className="table-container"
-              style={{ maxHeight: "800px", overflowY: "auto" }}
-            >
-              <table className={`table table-bordered ${dark ? `table-dark` : ``} `}>
+            <div className="table-container" style={{ maxHeight: "800px", overflowY: "auto" }}>
+              <table className={`table table-bordered ${dark ? "table-dark" : ""}`}>
                 <thead className="sticky-header">
                   <tr className="border">
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>S.no</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Sale Date</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Tracking Number</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Name</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Tracking Id</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Delivery Status</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Comment</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Action</th>
-                    <th className={`text-center whitespace-nowrap ${dark ? `bg-secondary text-white` : ``} `}>Recording</th>
+                    <th className="text-center">S.no</th>
+                    <th className="text-center">Sale Date</th>
+                    <th className="text-center">Tracking Number</th>
+                    <th className="text-center">Name</th>
+                    <th className="text-center">Tracking Id</th>
+                    <th className="text-center">Delivery Status</th>
+                    <th className="text-center">Comment</th>
+                    <th className="text-center">Action</th>
+                    <th className="text-center">Recording</th>
                   </tr>
                 </thead>
-                <tbody className="overflow">
-                  {saleTicketData.length > 0 ? (
-                    saleTicketData
-                      .map((invoice, index) => (
-                        <tr key={index} className="border">
-                          <td className="text-center">{index + 1}</td>
-                          <td className="text-center">
-                            {invoice.lastActionDate
-                              ? formatFollowUpDate(invoice.lastActionDate)
-                              : "N/A"}
-                          </td>
-                          <td className="text-center">
-                            {invoice.trackingNumber ? invoice.trackingNumber : "Awaiting"}
-                          </td>
-                          <td className="text-center">
-                            {invoice.senderName ? invoice.senderName : invoice.firstName}
-                          </td>
-                          <td className="text-center">
-                            {invoice.trackingNumber ? (
-                              invoice.trackingNumber
-                            ) : localStorage.getItem("roleName") === "SeniorSuperVisor" ? (
-                              <button
-                                className="bg-primary"
-                                onClick={() => openTrackingBox(invoice.uniqueQueryId)}
-                              >
-                                Add Tracking Number
-                              </button>
-                            ) : (
-                              "Awaiting for Tracking..."
-                            )}
-                          </td>
-                          <td className="text-center">
-                            {invoice.deliveryStatus ? invoice.deliveryStatus : "NA"}
-                          </td>
-                          <td className="text-center">
-                            {invoice.comment && invoice.comment.slice(0, 20)}
-                          </td>
-                          <td className="text-center">
-                            <Button
-                              onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
-                              className="btn-action call rounded-circle"
-                              title="Get connect on call"
-                            >
-                              <i className="fa-solid fa-phone"></i>
+
+                <tbody>
+                  {filteredTickets.length > 0 ? (
+                    filteredTickets.map((invoice, index) => (
+                      <tr key={invoice.uniqueQueryId || index} className="border">
+                        <td className="text-center">{index + 1}</td>
+                        <td className="text-center">
+                          {invoice.lastActionDate ? formatFollowUpDate(invoice.lastActionDate) : "N/A"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.trackingNumber || "Awaiting"}
+                        </td>
+                        <td className="text-center">
+                          {invoice.senderName || invoice.firstName}
+                        </td>
+                        <td className="text-center">
+                          {invoice.trackingNumber ? (
+                            invoice.trackingNumber
+                          ) : localStorage.getItem("roleName") === "SeniorSuperVisor" ? (
+                            <button className="bg-primary" onClick={() => openTrackingBox(invoice.uniqueQueryId)}>
+                              Add Tracking Number
+                            </button>
+                          ) : (
+                            "Awaiting for Tracking..."
+                          )}
+                        </td>
+                        <td className="text-center">{invoice.deliveryStatus || "NA"}</td>
+                        <td className="text-center">
+                          {invoice.comment ? invoice.comment.slice(0, 20) : "No comment"}
+                        </td>
+                        <td className="text-center">
+                          <Button
+                            onClick={() => handleClickCallForticket(invoice.uniqueQueryId)}
+                            className="btn-action call rounded-circle"
+                            title="Get connect on call"
+                          >
+                            <i className="fa-solid fa-phone"></i>
+                          </Button>
+                        </td>
+                        <td className="text-center">
+                          {invoice.recordingFile ? (
+                            <Button onClick={() => playRecording(invoice.recordingFile, index)}>
+                              {isPlaying && selectedIndex === index ? (
+                                <i className="fa-solid fa-pause"></i>
+                              ) : (
+                                <i className="fa-solid fa-play"></i>
+                              )}
                             </Button>
-                          </td>
-                          <td className="text-center">
-                            {invoice.recordingFile ? (
-                              <Button
-                                className=""
-                                onClick={() => playRecording(invoice.recordingFile, index)}
-                              >
-                                {isPlaying && selectedIndex === index ? (
-                                  <i className="fa-solid fa-pause"></i>
-                                ) : (
-                                  <i className="fa-solid fa-play"></i>
-                                )}
-                              </Button>
-                            ) : (
-                              "Recording not Available"
-                            )}
-                          </td>
-                        </tr>
-                      ))
+                          ) : (
+                            "Recording not Available"
+                          )}
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="text-center">
-                        No Sales found.
-                      </td>
+                      <td colSpan="9" className="text-center">No matching tickets found.</td>
                     </tr>
                   )}
                 </tbody>
-
               </table>
             </div>
           </div>
-          <div className="text-center">
-            <dialog
-              id="trackingInput"
-              className="w-100 h-100 bg-transparent justify-content-center align-items-center"
-              style={{ height: "100vh" }}
-            >
-              <div className="d-flex flex-column justify-content-center align-items-center bg-white p-3 rounded">
-                <div
-                  style={{
-                    width: "100%",
-                    textAlign: "right",
-                    marginBottom: "4px",
-                  }}
-                >
-                  <i
-                    className="fa-solid fa-xmark fa-xl"
-                    onClick={closeTrackingBox}
-                    style={{ color: "#ff1900", cursor: "pointer" }}
-                  ></i>
-                </div>
-                <input
-                  type="text"
-                  value={trackingNumber}
-                  onChange={(e) => setTrackingNumber(e.target.value)}
-                  autoFocus
-                  className="p-2 bg-white text-black"
-                  style={{ width: "500px" }}
-                  placeholder="Enter Tracking Number"
-                />
-                <button
-                  className="bg-primary text-white m-2"
-                  onClick={addTrackingNumber}
-                >
-                  Add Tracking Number
-                </button>
+
+          {/* Tracking Number Input Dialog */}
+          <dialog id="trackingInput" className="tracking-dialog">
+            <div className="dialog-content">
+              <div className="dialog-header">
+                <i className="fa-solid fa-xmark fa-xl close-icon" onClick={closeTrackingBox}></i>
               </div>
-            </dialog>
-          </div>
+              <input
+                type="text"
+                value={trackingNumber}
+                onChange={(e) => setTrackingNumber(e.target.value)}
+                autoFocus
+                className="tracking-input"
+                placeholder="Enter Tracking Number"
+              />
+              <button className="bg-primary text-white m-2" onClick={addTrackingNumber}>
+                Add Tracking Number
+              </button>
+            </div>
+          </dialog>
         </div>
       </section>
+
+
 
       {/* Hidden audio element for playing recordings */}
       <audio ref={audioRef} style={{ display: "none" }} />
