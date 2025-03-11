@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import LiveCalander from "./LiveCalander";
 import TimezoneClocks from "./TimezoneClocks";
 import axiosInstance from "../axiosInstance";
@@ -9,40 +9,29 @@ import WebsocketService from "./WebsocketServices";
 import { useDispatch } from "react-redux";
 import { toggleTheme } from "../Redux/features/ThemeSlice";
 import BootstrapSwitchButton from "bootstrap-switch-button-react";
-
 import { Modal } from "react-bootstrap";
 import EmailCompose from "./EmailCompose";
-
-// import TimeZone from './TimeZone';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function topnav() {
   const { takingBreak } = useAuth();
-  const { setUserReportReloader } = useAuth();
   const { followupState } = useAuth();
-  const { noOfNweticketsRecevied, setNoOfnewticketsReceived } = useAuth();
   const { isSideBarOpen, setIsSideBarOpen } = useAuth();
   const [isChatBotOPen, setIsChatBotOpen] = useState(false);
   const dispatch = useDispatch();
-  const [isCompoeseOpen, setIsComposeOpen] = useState(false)
+  const [isCompoeseOpen, setIsComposeOpen] = useState(false);
 
-
-  // Update the handle functions for the notebook
+  // Notebook state and handlers
   const [isNotebookOpen, setIsNotebookOpen] = useState(false);
+  const handleOpenNote = () => setIsNotebookOpen(!isNotebookOpen);
 
-  const handleOpenNote = () => {
-    setIsNotebookOpen(!isNotebookOpen);
-  };
-
-  const handleCloseNotebook = () => {
-    setIsNotebookOpen(false);
-  };
-
-  // handle Open Calendar
+  // Calendar state and handlers
   const [showCalendar, setShowCalendar] = useState(false);
   const handleOpenCalender = () => setShowCalendar(true);
   const handleCloseCalender = () => setShowCalendar(false);
 
-  // handle Open Timezone
+  // Timezone state and handlers
   const [showTimezone, setShowTimezone] = useState(false);
   const handleOpenTimezone = () => setShowTimezone(true);
   const handleCloseTimezone = () => setShowTimezone(false);
@@ -52,21 +41,20 @@ function topnav() {
     const interval = setInterval(() => {
       setSeconds((prevSeconds) => prevSeconds + 1);
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (!takingBreak) {
       if (localStorage.getItem("userId")) {
-        let workTime = parseInt(localStorage.getItem("workTime"));
-        localStorage.setItem("workTime", (workTime += 1));
+        let workTime = parseInt(localStorage.getItem("workTime"), 10) || 0;
+        localStorage.setItem("workTime", workTime + 1);
       }
     } else {
-      let breakTime = parseInt(localStorage.getItem("breakTime"));
-      localStorage.setItem("breakTime", (breakTime += 1));
+      let breakTime = parseInt(localStorage.getItem("breakTime"), 10) || 0;
+      localStorage.setItem("breakTime", breakTime + 1);
     }
-  }, [seconds]);
+  }, [seconds, takingBreak]);
 
   const [todayFollowups, setTodayFollowups] = useState(0);
   useEffect(() => {
@@ -88,39 +76,79 @@ function topnav() {
   };
 
   const { dark, setDrak } = useAuth();
-
   const handleThemeToggler = () => {
     setDrak(!dark);
     dispatch(toggleTheme());
   };
-  const handleCloseCompose = () => {
-    setIsComposeOpen(false)
-}
+
+  const handleCloseCompose = () => setIsComposeOpen(false);
+
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+
+  const handleExportLive = async () => {
+    try {
+      const response = await axiosInstance.get("/export/excel/tickets", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "export_live.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Live Export successful");
+    } catch (error) {
+      console.error("Live Export error:", error);
+      toast.error("Live Export failed");
+    }
+  };
+
+  const handleExportABC = async () => {
+    try {
+      const response = await axiosInstance.get("/export/excel/upload-tickets", {
+        responseType: "blob",
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "export_ABC.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("ABC Export successful");
+    } catch (error) {
+      console.error("ABC Export error:", error);
+      toast.error("ABC Export failed");
+    }
+  };
 
   return (
     <>
       {localStorage.getItem("userId") && (
         <div className="topnav sticky-top z-4">
           <nav
-            className={`navbar top-navbar navbar-light ${dark ? `bg-dark` : "bg-white"
-              }  container-fluid`}
+            className={`navbar top-navbar navbar-light ${dark ? "bg-dark" : "bg-white"
+              } container-fluid`}
           >
             <div className="left-part">
               <a
-                className={`btn border-0 ms-2 ${dark ? `bg-dark` : `bg-white`} text-black`}
-
+                className={`btn border-0 ms-2 ${dark ? "bg-dark" : "bg-white"
+                  } text-black`}
                 style={{ fontSize: "30px" }}
                 onClick={toggleSidbar}
                 id="menu-btn"
               >
                 {isSideBarOpen ? (
                   <i
-                    class={`fa-solid fa-chevron-left fa-xl ${dark ? `text-light` : `text-dark`}`}
+                    className={`fa-solid fa-chevron-left fa-xl ${dark ? "text-light" : "text-dark"
+                      }`}
                   ></i>
                 ) : (
                   <i
-                    class={`fa-solid fa-chevron-right fa-xl ${dark ? `text-light` : `text-dark`}`}
-
+                    className={`fa-solid fa-chevron-right fa-xl ${dark ? "text-light" : "text-dark"
+                      }`}
                   ></i>
                 )}
               </a>
@@ -128,8 +156,8 @@ function topnav() {
             <div className="right-part">
               <div>
                 <img
-                  src=" https://cdn-icons-png.flaticon.com/128/7915/7915323.png"
-                  alt="theme-icon"
+                  src="https://cdn-icons-png.flaticon.com/128/7915/7915323.png"
+                  alt="compose-email"
                   onClick={() => setIsComposeOpen(true)}
                   style={{
                     height: 42,
@@ -142,7 +170,6 @@ function topnav() {
               </div>
               <div>
                 <img
-
                   src={
                     dark
                       ? "https://cdn-icons-png.flaticon.com/128/11457/11457488.png"
@@ -159,9 +186,7 @@ function topnav() {
                   }}
                 />
               </div>
-
               <div
-                href="/timezone"
                 className="notification"
                 style={{ position: "relative", display: "inline-block" }}
               >
@@ -169,7 +194,7 @@ function topnav() {
                   onClick={handleOpenTimezone}
                   style={{ height: 36, cursor: "pointer" }}
                   src="https://cdn-icons-png.flaticon.com/128/2784/2784459.png"
-                  alt=""
+                  alt="timezone"
                 />
               </div>
               <a
@@ -180,10 +205,9 @@ function topnav() {
                 <img
                   style={{ height: 36, cursor: "pointer" }}
                   src="https://cdn-icons-png.flaticon.com/128/1183/1183967.png"
-                  alt=""
+                  alt="action-mode"
                 />
               </a>
-
               <a
                 href="#"
                 className="notification"
@@ -193,10 +217,9 @@ function topnav() {
                   onClick={handleOpenNote}
                   style={{ height: 36, cursor: "pointer" }}
                   src="https://cdn-icons-png.flaticon.com/128/3561/3561424.png"
-                  alt=""
+                  alt="notebook"
                 />
               </a>
-
               <div
                 style={{
                   marginRight: 20,
@@ -206,7 +229,7 @@ function topnav() {
               >
                 <img
                   onClick={handleOpenCalender}
-                  style={{ height: 38 }}
+                  style={{ height: 38, cursor: "pointer" }}
                   src="https://cdn-icons-png.flaticon.com/128/5968/5968499.png"
                   alt="calendar"
                 />
@@ -225,12 +248,19 @@ function topnav() {
                   {todayFollowups}
                 </span>
               </div>
+              {(localStorage.getItem("roleName") === "Admin" || localStorage.getItem("roleName") === "SuperAdmin") && (
+                <div className="topnav sticky-top z-4">
+                  <nav className="navbar top-navbar navbar-light container-fluid">
+                    <div className="right-part">
+                      <button className="btn btn-secondary me-2" onClick={() => setIsExportModalOpen(true)}>
+                        Export
+                      </button>
+                    </div>
+                  </nav>
+                </div>
+              )}
             </div>
           </nav>
-
-          {/* <div>
-            <FloatingButton />
-          </div> */}
 
           {/* Modal for Calendar */}
           <Modal show={showCalendar} onHide={handleCloseCalender} size="lg">
@@ -252,7 +282,7 @@ function topnav() {
             </Modal.Body>
           </Modal>
 
-          {/* Chatbot and Notebook components remain as is */}
+          {/* Chatbot and Notebook Components */}
           <div
             className={`text-black mt-10 rounded shadow py-1 ${dark ? "bg-dark" : ""
               }`}
@@ -260,17 +290,17 @@ function topnav() {
               position: "fixed",
               bottom: "200px",
               right: "10px",
-              width: isNotebookOpen ? "350px" : "5px", // Full width when open, small when hidden
-              height: isNotebookOpen ? "600px" : "5px", // Full height when open, small when hidden
+              width: isNotebookOpen ? "350px" : "5px",
+              height: isNotebookOpen ? "600px" : "5px",
               border: "none",
               zIndex: 10,
-              backgroundColor: isNotebookOpen ? "#fff" : "#f0f0f0", // Change background if needed
-              cursor: "pointer", // Indicate clickable when minimized
-              overflow: isNotebookOpen ? "auto" : "hidden", // Add scrolling when open
+              backgroundColor: isNotebookOpen ? "#fff" : "#f0f0f0",
+              cursor: "pointer",
+              overflow: isNotebookOpen ? "auto" : "hidden",
             }}
             onClick={() => {
               if (!isNotebookOpen) {
-                setIsNotebookOpen(true); // Open chat when clicking minimized window
+                setIsNotebookOpen(true);
               }
             }}
           >
@@ -283,17 +313,17 @@ function topnav() {
               position: "fixed",
               bottom: "100px",
               right: "10px",
-              width: isChatBotOPen ? "350px" : "5px", // Full width when open, small when hidden
-              height: isChatBotOPen ? "500px" : "5px", // Full height when open, small when hidden
+              width: isChatBotOPen ? "350px" : "5px",
+              height: isChatBotOPen ? "500px" : "5px",
               border: "none",
               zIndex: 1000,
               overflow: "hidden",
-              backgroundColor: isChatBotOPen ? "#fff" : "#f0f0f0", // Change background if needed
-              cursor: "pointer", // Indicate clickable when minimized
+              backgroundColor: isChatBotOPen ? "#fff" : "#f0f0f0",
+              cursor: "pointer",
             }}
             onClick={() => {
               if (!isChatBotOPen) {
-                setIsChatBotOpen(true); // Open chat when clicking minimized window
+                setIsChatBotOpen(true);
               }
             }}
           >
@@ -327,12 +357,11 @@ function topnav() {
 
       <Modal
         show={isCompoeseOpen}
-        // onHide={() => setIsComposeOpen(false)}
         id="exampleModal"
         tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
-        className="rounded-lg"  // Add Tailwind class to make the modal rounded
+        className="rounded-lg"
       >
         <EmailCompose autoClose={handleCloseCompose} />
         <div className="modal-body">
@@ -345,6 +374,25 @@ function topnav() {
           </button>
         </div>
       </Modal>
+
+      {/* Export Modal */}
+      <Modal show={isExportModalOpen} onHide={() => setIsExportModalOpen(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Export Data</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="d-flex flex-column align-items-center">
+          <button className="btn btn-danger mb-2 w-50" onClick={handleExportLive}>
+            Export Live
+          </button>
+          <button className="btn btn-warning w-50" onClick={handleExportABC}>
+            Export ABC
+          </button>
+        </Modal.Body>
+      </Modal>
+
+
+      {/* Toast container for notifications */}
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }
