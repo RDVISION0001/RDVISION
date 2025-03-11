@@ -378,7 +378,7 @@ function topnav() {
       {/* Export Modal */}
       <Modal show={isExportModalOpen} onHide={() => setIsExportModalOpen(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>Export Data</Modal.Title>
+          <Modal.Title>Export Tickets</Modal.Title>
         </Modal.Header>
         <Modal.Body className="d-flex flex-column align-items-center">
           <button className="btn btn-danger mb-2 w-50" onClick={handleExportLive}>
