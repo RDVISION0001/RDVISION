@@ -6,7 +6,6 @@ import { useAuth } from "../auth/AuthContext";
 
 
 const InvoiceInfo = (props) => {
-  // सभी hooks ऊपर परिभाषित किए गए हैं
   const [invoices, setInvoices] = useState([]);
   const { userId, dark } = useAuth(); // dark flag preserved
   const [currentSrc, setCurrentSrc] = useState("");
@@ -29,7 +28,6 @@ const InvoiceInfo = (props) => {
     `https://flagcdn.com/32x24/${countryIso.toLowerCase()}.png`;
 
   const [saleTicketData, setSaleTicketData] = useState([]);
-  // search hooks को भी ऊपर परिभाषित करें
   const [searchQuery, setSearchQuery] = useState("");
   const filteredTickets = useMemo(() => {
     return (saleTicketData || []).filter((invoice) =>
