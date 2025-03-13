@@ -160,8 +160,8 @@ function uploaded_tickets() {
     setOn(false);
     setProductArray([]);
   };
-  const handleOn = (email,body) => {
-   console.log("Emmail is ", email)
+  const handleOn = (email, body) => {
+    console.log("Emmail is ", email)
     setemailForMail(email);
     setEmailBody(body)
     setIsComposeOpen(true);
@@ -952,7 +952,7 @@ function uploaded_tickets() {
                                       {""}
                                       <td>
                                         <CopyToClipboard
-                                          text={`Copied number: ${item.mobileNumber}`} // Custom text to copy
+                                          text={`${item.mobileNumber}`} // Custom text to copy
                                           onCopy={() =>
                                             setCopiedId(item.mobileNumber)
                                           } // Set copied ID as mobile number
@@ -965,7 +965,7 @@ function uploaded_tickets() {
                                             onClick={() =>
                                               addCopyRecord(
                                                 item.mobileNumber,
-                                                `Copied number: ${item.mobileNumber}`
+                                                `${item.mobileNumber}`
                                               )
                                             }
                                           >
@@ -1092,8 +1092,8 @@ function uploaded_tickets() {
                                         <Button
                                           onClick={() =>
                                             handleOn(
-                                            item.email,
-                                            `Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`
+                                              item.email,
+                                              `Hey ${item.firstName} {item.lastName}, I just received the inquiry from your ${item.subject}. if you're looking for good deal please type YES👍`
                                             )
                                           }
                                           // href="mailto:someone@example.com"
